@@ -4,7 +4,7 @@ var less = require('gulp-less');
 
 gulp.task('less', function(cb) {
   gulp
-    .src('styles/less/mage.less')
+    .src('styles/less/m20e.less')
     .pipe(less())
     .pipe(gulp.dest("styles/"));
   cb();

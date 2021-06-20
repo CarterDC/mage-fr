@@ -1,0 +1,71 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="fiche-header">
+        <div class= 'header-column' style="flex: 1; margin-left:6px;">
+            <div class= 'header-row'>
+              {{actorData.name}}
+                <input class = "charname" name="data.displayName" type="text" value="{{data.displayName}}" data-dtype="String" title="{{localize 'MAGE.hints.displayName'}}" />
+                <span class="item-type">{{localize "ITEM.TypeAbility"}}</span>
+            </div>
+        </div>        
+    </header>
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a data-tab="detail"><label>{{localize "MAGE.navtabs.detail"}}</label></a>
+        <a data-tab="description"><label>{{localize "MAGE.navtabs.description"}}</label></a>
+    </nav>
+    <section class="sheet-body">
+        
+        <section class="tab" data-group="primary" data-tab="detail">
+            <div class="grid two-col">
+                <div class= "field">
+                    <label for="data.subType">{{localize "MAGE.labels.subType"}} : </label>
+                    <select name="data.subType">
+                        {{#select data.subType}}
+                            {{#each config.abilityType as |value key|}}
+                                <option value="{{key}}">{{localize value}}</option>
+                            {{/each}}
+                        {{/select}}
+                    </select>
+                </div>
+                <div class= "field">
+                    <label for="data.value">{{localize "MAGE.labels.value"}} : </label>
+                    <input name="data.value" type="text" value="{{data.value}}" data-dtype="Number" min="0" max="5"/>
+                </div>
+                <div class= "field" title="{{localize 'MAGE.hints.specialisation'}}">
+                    <label for="data.specialisation">{{localize "MAGE.labels.specialisation"}} : </label>
+                    {{#if (lt data.value 4)}}
+                    <input name="data.specialisation" type="text" value="{{data.specialisation}}" data-dtype="String" disabled/>
+                    {{else}}
+                    <input name="data.specialisation" type="text" value="{{data.specialisation}}" data-dtype="String"/>
+                    {{/if}}
+                </div>
+                <div class= "field" title="{{localize 'MAGE.hints.extra'}}">
+                    <label for="data.extra">{{localize "MAGE.labels.extra"}} : </label>
+                    <select name="data.extra">
+                        {{#select data.extra}}
+                            {{#each config.extraDecorations as |value key|}}
+                                <option value="{{value}}">{{value}}</option>
+                            {{/each}}
+                        {{/select}}
+                    </select>
+                </div>
+                {{#if isGM}}
+                <div class= "field" title="{{localize 'MAGE.hints.systemName'}}">
+                    <label for="name">{{localize "MAGE.labels.systemName"}} : </label>
+                    <input name="name" type="text" value="{{item.name}}" data-dtype="String" />
+                </div>
+                {{/if}}
+            </div>
+            <div class= "field" title="{{localize 'MAGE.hints.displayDescription'}}">
+                <label for="data.displayDescription">{{localize "MAGE.labels.displayDescription"}} : </label>
+<textarea name="data.displayDescription">{{data.displayDescription}}</textarea>
+            </div>
+        </section>
+
+        <section class="tab" data-group="primary" data-tab="description">
+            <div class= "field" title="{{localize 'MAGE.hints.systemDescription'}}">
+                <label for="data.systemDescription">{{localize "MAGE.labels.systemDescription"}} : </label>
+                {{editor content=data.systemDescription target='data.systemDescription' button=true owner=owner editable=true}}
+            </div>
+        </section>
+    </section>
+</form>

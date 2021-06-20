@@ -1,0 +1,43 @@
+<form class="{{cssClass}}" autocomplete="off">
+  {{> "systems/mage-fr/templates/actor/header-block.hbs"}}
+
+
+  <section class="items">
+    <h3>Owned Items</h3>
+    <ol class="actor-items">
+    {{#each actor.items as |item id|}}
+        <li class="actor-item" data-item-id="{{id}}">
+            <div class="item-name">
+              <img src="{{item.img}}" title="{{item.name}}" width="24" height="24"/>
+                <h4>{{item.name}}</h4>
+            </div>
+            <div class="item-controls">
+                <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
+                <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
+            </div>
+        </li>
+    {{/each}}
+    </ol>
+  </section>
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a data-tab="stats">STATS</a>
+    <a data-tab="magye">MAGYE</a>
+    <a data-tab="bio">BIO</a>
+    <a data-tab="stuff">STUFF</a>
+  </nav>
+
+
+
+  <section class="sheet-body">
+
+    <section class="tab" data-group="primary" data-tab="stats"></section>
+
+    <section class="tab" data-group="primary" data-tab="magye"></section>
+
+    <section class="tab" data-group="primary" data-tab="bio"></section>
+
+    <section class="tab" data-group="primary" data-tab="stuff"></section>
+  </section>
+
+</form>
+
