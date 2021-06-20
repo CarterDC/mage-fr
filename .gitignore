@@ -1,0 +1,12 @@
+# IDE
+.vscode/
+
+# Node Modules
+node_modules/
+
+# Some Other shit
+package-lock.json
+mage-fr.lock
+workspace.code-workspace
+# original photoshop files
+*.psd

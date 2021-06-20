@@ -1,0 +1,223 @@
+{
+  "Actor": {
+    "types": ["charMage"],
+    "templates":{
+      "playable":{
+        "characterCreationDone": false,
+        "currentXP": 0,
+        "totalXP": 0
+      },
+      "resourceHealth":{
+        "health":{
+          "max": 7,
+          "value": 7,
+          "lethal": 7,
+          "aggravated": 7,
+          "malusList": "0, 1, 1, 2, 2, 5, 5"
+        }
+      },
+      "resourceWillpower":{
+        "willpower":{
+          "max": 5,
+          "value": 5,
+          "lethal": 5,
+          "aggravated": 5
+        }
+      },
+      "resourceMagePower":{
+        "magepower":{
+          "max":0,
+          "value":0,
+          "quintessence": 0,
+          "paradox": 0
+        }
+      },
+      "__comment1__": "attributes entries are ordered to be AUTO populated in 3 columns",
+      "attributes":{
+        "attributes":{
+          "stre":{
+            "value": 1,
+            "specialisation": ""
+          },
+          "char":{
+            "value": 1,
+            "specialisation": ""
+          },
+          "perc":{
+            "value": 1,
+            "specialisation": ""
+          },
+          "dext":{
+            "value": 1,
+            "specialisation": ""
+          },
+          "mani":{
+            "value": 1,
+            "specialisation": ""
+          },    
+          "inte":{
+            "value": 1,
+            "specialisation": ""
+          },   
+          "stam":{
+            "value": 1,
+            "specialisation": ""
+          },
+          "appa":{
+            "value": 1,
+            "specialisation": ""
+          },
+          "wits":{
+            "value": 1,
+            "specialisation": ""
+          }
+        }        
+      },
+      "__comment2__": "spheres entries are ordered to be AUTO populated in 3 columns",
+      "spheres":{
+        "spheres":{
+          "forc":{
+            "value": 0,
+            "specialisation": ""
+          },
+          "corr":{
+            "value": 0,
+            "specialisation": ""
+          },
+          "mind":{
+            "value": 0,
+            "specialisation": ""
+          },
+          "matt":{
+            "value": 0,
+            "specialisation": ""
+          },
+          "time":{
+            "value": 0,
+            "specialisation": ""
+          },
+          "spir":{
+            "value": 0,
+            "specialisation": ""
+          },
+          "life":{
+            "value": 0,
+            "specialisation": ""
+          },
+          "entr":{
+            "value": 0,
+            "specialisation": ""
+          },
+          "prim":{
+            "value": 0,
+            "specialisation": ""
+          }
+        }  
+      }
+    },
+    "charMage": {
+      "templates":[
+        "playable",
+        "resourceHealth",
+        "resourceWillpower",
+        "resourceMagePower",
+        "attributes",
+        "spheres"
+      ],
+
+      "arete": 1,
+
+      "__comment3__": "bio entries are ordered to be AUTO populated in 2 columns",
+      "__comment4__": "the 'ligne-sep' values instruct the display to insert a line for aesthetic purposes only",
+      "bio":{
+        "tradition":{
+          "displayValue": "MAGE.defaults.TBDf",
+          "ref": ""
+        },
+        "birthday":{
+          "displayValue": "MAGE.defaults.TBDf"
+        },
+        "mentor":{
+          "displayValue": "MAGE.defaults.TBDm",
+          "ref": ""
+        },
+        "apparentAge":{
+          "displayValue": "MAGE.defaults.TBDm"
+        },
+        "cabale":{
+          "displayValue": "MAGE.defaults.TBDf"
+        },
+        "awakeningAge":{
+          "displayValue": "MAGE.defaults.TBDm"
+        },
+        "sep1":{
+          "displayValue": "ligne-sep"
+        },
+        "sep2": {
+          "displayValue": "ligne-sep"
+        },
+        "essence":{
+          "displayValue": "MAGE.defaults.TBDf",
+          "ref": ""
+        },
+        "sex":{
+          "displayValue": "MAGE.defaults.TBDm"
+        },
+        "nature":{
+          "displayValue": "MAGE.defaults.TBDf",
+          "ref": ""
+        },
+        "height":{
+          "displayValue": "MAGE.defaults.TBDf"
+        },
+        "attitude":{
+          "displayValue": "MAGE.defaults.TBDf",
+          "ref": ""
+        },
+        "weight": {
+          "displayValue": "MAGE.defaults.TBDm"
+        }
+      },
+
+      "misc": {
+        "description":"MAGE.defaults.description",
+        "contactDescription": "Mage.defaults.contactDescription",
+        "fullBackground": "MAGE.defaults.fullBackground",
+        "studyPoints": "MAGE.defaults.studyPoints",
+
+        "possessedStuff":"MAGE.defaults.possessedStuff",
+        "carriedStuff":"MAGE.defaults.carriedStuff"
+      },
+
+      "aliases": [],
+      "extra" : ""
+    }
+  },
+
+  "Item": {
+    "types": [
+      "ability"
+    ],
+    "templates":{
+      "virtualStat":{
+        "isVirtualStat": true
+      },
+      "rollableItem":{
+        "isRollable": true
+      }
+    },
+
+    "ability":{
+      "templates":[
+        "virtualStat"
+      ],
+      "displayName":"",
+      "systemDescription": "",
+      "displayDescription":"",
+      "subType": "talent",
+      "value": 0,
+      "specialisation": "",
+      "extra": ""
+    }
+  }
+}

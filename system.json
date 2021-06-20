@@ -1,0 +1,40 @@
+{
+  "name": "mage-fr",
+  "title": "Mage l'Ascension",
+  "description": "Mage l'Ascension - 20e, système pour Foundry VTT",
+  "author": "Carter_DC",
+  
+  "version": "0.0.2",
+  "templateVersion": "1",
+  "minimumCoreVersion": "0.8.3",
+  "compatibleCoreVersion": "0.8.7",
+
+  "esmodules": ["mage.js"],
+
+  "styles": ["styles/mage.css"],
+
+  "packs": [],
+
+  "languages": [
+    {
+      "lang": "fr",
+      "name": "Français",
+      "path": "lang/fr.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/fr.json"
+    }
+  ],
+
+  "gridDistance": 1,
+  "gridUnits": "m",
+
+  "primaryTokenAttribute": "health",
+  
+  "url": "https://github.com/CarterDC/mage-fr",
+  "manifest": "https://raw.githubusercontent.com/CarterDC/mage-fr/main/system.json",
+  "download": "https://github.com/CarterDC/mage-fr/archive/refs/heads/main.zip",
+  "license": "LICENSE.txt"
+}
