@@ -108,6 +108,10 @@
       "edit": "Editer",
       "remove": "Supprimer",
       "add": "Ajouter"
+    },
+    "new": {
+      "key": "new.value",
+      "value": "Nvelle Valeur"
     }
   },
 
