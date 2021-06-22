@@ -1,0 +1,160 @@
+
+
+.m20e.sheet{
+  .form{
+    font-family: "signika", sans-serif;
+    font-size: 14px;
+    font-weight:600;
+    color: @dark-grey;
+  }
+  
+  .sheet-header{
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    
+    .header-column{
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      justify-content:flex-start; 
+      align-items: flex-start;
+    }
+    .header-row{
+      width:100%;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    
+    img{
+      height: 100px;
+      width: 100px;      
+      max-width: none;
+      border : none;
+      cursor: pointer;
+    }
+    
+    .name{
+      flex: 8 8; 
+      margin: 6px 6px 0 0;
+      border-top: 0px;
+      border-left: 0px;
+      border-right: 0px;
+      border-bottom-color: @main-red;
+      border-bottom-width: 2px;
+      background: none;
+    }
+  }
+  
+  .sheet-tabs{
+    height: 32px;
+    margin: 5px 0;
+    border-bottom: 0px;
+    border-left: 1px @mid-grey;
+    font-family: "Diablo";
+    font-weight: bold;
+    text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
+    font-size: 18px;
+    text-align: center;
+    
+    a {
+      color: @dark-grey;  
+      background: #bdb9b2;
+      border: 1px solid @light-grey;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0px 5px;
+      
+      label {
+        flex: 10 10;
+        text-align: center;
+      }
+      .mini-button {
+        height: 20px;
+        width: 20px;
+        display: none;
+      }
+      .mini-button[data-hidden='false'] {
+        height: 20px;
+        width: 20px;
+        display: inline-flex;
+      }
+    }
+    a.active {
+      color: @main-red;
+      background: #bdb9b200;
+      border-color: @mid-grey;
+      border-bottom: 0px;
+    }
+    a:hover {
+      text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.7), 1px 1px 0 rgba(245, 242, 217, 1);
+    }
+    a:hover .mini-button[data-action='lock'] {
+      display: inline-flex;
+    }
+  }
+}
+.m20e.actor{
+
+  .sheet-header{
+    .name{
+      height:30px;
+      color:@dark-grey;
+      font-family: "Diablo";
+      font-weight: bold;
+      font-size: 24px;
+    }
+    img{
+      margin: 5px 0;
+      padding: 3px;
+      background-color: ivory; //todo linear diagonal gradient
+      box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.7);
+      transform: rotate(1deg);
+    }
+  }
+
+}
+.m20e.item{
+  .sheet-header{
+
+  .item-type{
+      margin: 0px 5px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      color: #606060;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 3px;
+      padding: 3px;
+  }
+  img {
+      height: auto;
+      width: 50px;
+      margin: 0 0; 
+      cursor: pointer;
+      box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.7);
+  }    
+    .name{
+      margin: 0px 0px 5px;
+      align-self: center;
+      height:26px;
+      color:@dark-grey;
+      font-family: "Diablo";
+      font-weight: bold;
+      font-size: 20px;
+    }
+  }
+  img.sheetLogo{
+    display:block;
+    min-width: 100px;
+    min-height: 100px;
+    height:auto;
+    max-width: 100%;
+  }
+
+}
+
+

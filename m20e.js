@@ -1,7 +1,7 @@
 
 // Import Modules
 import * as utils from './module/utils.js'
-import { M20e } from './module/config.js'
+import { M20E } from './module/config.js'
 import M20eActor from './module/actor/actor.js'
 import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItem from './module/item/item.js'
@@ -15,10 +15,10 @@ Hooks.once('init', async function () {
       M20eActor,
       M20eItem
     },
-    config: M20e
+    config: M20E
   };
 
-  CONFIG.M20e = M20e;
+  CONFIG.M20E = M20E;
   CONFIG.Actor.documentClass = M20eActor;
   CONFIG.Item.documentClass = M20eItem;
 

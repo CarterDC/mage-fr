@@ -1,6 +1,5 @@
 <form class="{{cssClass}}" autocomplete="off">
-  {{> "systems/mage-fr/templates/actor/header-block.hbs"}}
-
+  {{> "systems/mage-fr/templates/actor/header-cat.hbs"}}
 
   <section class="items">
     <h3>Owned Items</h3>
@@ -19,18 +18,21 @@
     {{/each}}
     </ol>
   </section>
+
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a data-tab="stats">STATS</a>
-    <a data-tab="magye">MAGYE</a>
-    <a data-tab="bio">BIO</a>
-    <a data-tab="stuff">STUFF</a>
+    <a data-tab="stats"><label>{{localize "M20E.navtabs.stats"}}</label></a>
+    <a data-tab="magye"><label>{{localize "M20E.navtabs.magye"}}</label></a>
+    <a data-tab="bio"><label>{{localize "M20E.navtabs.bio"}}</label></a>
+    <a data-tab="stuff"><label>{{localize "M20E.navtabs.stuff"}}</label></a>
   </nav>
 
 
 
   <section class="sheet-body">
 
-    <section class="tab" data-group="primary" data-tab="stats"></section>
+    <section class="tab" data-group="primary" data-tab="stats">
+      {{> "systems/mage-fr/templates/actor/attributes-cat.hbs"}}
+    </section>
 
     <section class="tab" data-group="primary" data-tab="magye"></section>
 

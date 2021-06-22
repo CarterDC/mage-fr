@@ -1,5 +1,7 @@
 
-/* Fonts */
+/************
+** Fonts **
+*************/
 @font-face {
   font-family: "Diablo";
   src: url("../assets/fonts/Diablo-Light.woff") format("woff");
@@ -14,7 +16,60 @@
 }
 
 /************
+** Colors **
+*************/
+
+@main-red: #610d11;
+@main-green : #18520b;
+@dark-grey: #191813;
+@mid-grey: #4b4a44;
+@light-grey: #7a7971;
+
+/************
 ** Imports **
 *************/
-//TODO : Lot of cleaning and tidying !!!
-@import "./general.less";
+@import "./sheets.less";
+@import "./categories.less";
+@import "./bullets.less";
+@import "./buttons.less";
+@import "./resources.less";
+@import "./stats.less";
+
+
+.m20e{
+
+  .hidden-field{
+    display: none;
+  }
+  
+  .flex0{
+    flex:0;
+  }
+  .flex1{
+    flex:1;
+  }
+
+  .grid {
+    display: grid;
+    column-gap: 10px;
+    row-gap: 0px;
+    align-content: start;
+    padding: 0;
+    
+    .column-header {
+      margin: 3px 0;
+      text-align: center;
+    }
+  }
+  .one-col {
+    grid-template-columns: auto;
+  }
+  .two-col {
+    grid-column: span 2 / span 2;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .three-col {
+    grid-column: span 3 / span 3;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }  
+}

@@ -1,0 +1,54 @@
+//categories
+.m20e{
+  .category {
+    margin: 5px 0;
+    
+    .category-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      
+      width: 100%;
+      height: 28px;
+      margin: 10px 0;
+      border-bottom: 1px solid @main-red;
+      
+      label {
+        flex: 10 10;
+        color: @main-red;
+        font-family: "Diablo";
+        text-align: center;
+        font-size: 18px;
+        font-weight: normal;
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.7), 1px 1px 0 rgba(245, 242, 217, 0.6);
+      }
+      .mini-button {
+        height: 25px;
+        width: 25px;
+        font-size: 20px;
+        display: none;
+      }
+      .mini-button[data-hidden='false'] {
+        height: 25px;
+        width: 25px;
+        font-size: 20px;
+        display: inline-flex;
+      }
+    }
+    .category-banner:hover .mini-button[data-action='lock'] {
+      display: inline-flex;
+    }
+    
+    .mini-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 3px 0;
+      
+      label {
+        flex: 10 10;
+        text-align: center;
+      }
+    }
+  }
+}

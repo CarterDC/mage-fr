@@ -1,0 +1,48 @@
+<header class="sheet-header">
+    <div class= 'header-colunm flex0'>
+       <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="Profile Image"/>
+    </div>
+    <div class= 'header-column flex1' style="margin-left:6px;">
+        <div class= 'header-row'>
+            <input class = "name" name="name" type="text" value="{{actor.name}}"/>
+            <div class="dice-button" data-action = "dice-button"></div>
+        </div>
+        <div class= 'header-row'>
+            <div class="resource-panel health" data-resource="health">
+                <div class="boxes">
+                    {{#forLoop data.health.max}}
+                        <div class="box" data-clickable="true" data-index="{{this}}" data-state=""></div>
+                    {{/forLoop}}
+                </div>
+                <div>
+                    <label class="resource-context" data-resource="health">{{data.health.status}}</label>
+                    {{#if (ne data.health.malus 0)}}
+                        <label>{{data.health.malus}}D</label>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="resource-panel category willpower" style="margin: 0 0 0 0;" data-category="willpower" data-resource="willpower">
+                <div class="boxes">
+                    {{#forLoop data.willpower.max}}
+                        <div class="box" data-clickable="true" data-index="{{this}}" data-state=""></div>
+                    {{/forLoop}}
+                </div>
+                <div class="stat willpower" style="margin-left:4px;" data-active= "false">
+                    <a class="stat-label resource-context" data-resource="willpower">
+                        {{localize "MAGE.willpower"}}
+                    </a>
+                    <input class = "hidden-field" name="data.willpower.max" type="text" value="{{data.willpower.max}}" data-dtype="Number" min="0" max="10"/>
+                </div>
+            </div>
+        </div>
+        <div class= 'header-row'>
+            <div class="resource-panel magepower" data-resource="magepower">
+                <div class="boxes" style="justify-content: space-between;">
+                    {{#forLoop 20}}
+                        <div class="box" data-clickable = "{{../data.canSeeParadox}}" data-index="{{this}}" data-state=""></div>
+                    {{/forLoop}}
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

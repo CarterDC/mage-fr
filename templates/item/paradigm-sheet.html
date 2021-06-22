@@ -1,0 +1,40 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <div class= 'header-column flex1'>
+            <div class= 'header-row'>
+                <input class = "name" name="item.name" type="text" value="{{item.name}}" data-dtype="String" title=""/>
+                <span class="item-type">{{localize "ITEM.TypeParadigm"}}</span>
+            </div>
+        </div>
+    </header>
+    <nav class="sheet-tabs tabs" data-group="primary">
+        <a data-tab="detail"><label>{{localize "M20E.navtabs.detail"}}</label></a>
+        <a data-tab="lexicon">
+          <div class="mini-button decoy" data-action="lock" data-hidden="{{data.locks.rotes}}"></div>
+          <div class="mini-button decoy" data-hidden="{{data.locks.rotes}}" data-locked="{{data.locks.rotes}}"></div>
+          <label>{{localize "M20E.navtabs.lexicon"}}</label>
+          <div class="mini-button" data-action="add" data-hidden="{{data.locks.rotes}}" data-locked="{{data.locks.rotes}}"><i class="fas fa-plus"></i></div>
+          <div class="mini-button" data-action="lock" data-category="rotes" data-hidden="{{data.locks.rotes}}">
+              {{#if data.locks.rotes}}<i class="fas fa-lock"></i>
+              {{else}}<i class="fas fa-unlock-alt"></i>{{/if}}
+          </div>
+        </a>
+    </nav>
+    <section class="sheet-body">
+        <section class="tab" data-group="primary" data-tab="detail">
+            <div class="grid one-col">
+                <div class= "field">
+                    <label for="data.cssClass">{{localize "M20E.labels.cssClass"}} : </label>
+                    <input name="data.cssClass" type="text" value="{{data.cssClass}}" data-dtype="String"/>
+                </div>
+                <div class= "field" title="{{localize 'MAGE.hints.specialisation'}}">
+                    <label for="data.sheetLogo">{{localize "M20E.labels.sheetLogo"}} : </label>
+                    <img class="sheetLogo" name="{{data.sheetLogo}}" src="{{data.sheetLogo}}" data-edit="data.sheetLogo" title="{{data.sheetLogo}}"/>
+                </div>
+            </div>
+        </section>
+        <section class="tab" data-group="primary" data-tab="lexicon">
+
+        </section>
+    </section>
+</form>

@@ -38,7 +38,6 @@ export default class M20eActorSheet extends ActorSheet {
 
   /** @override */
   getData(options) {
-
     const sheetData = super.getData(options);
 
     // The Actor's data
@@ -47,8 +46,6 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.data = actorData.data;
 
     log({name : sheetData.actor.name, type: sheetData.actor.type});
-    const test = "prout";
-    log({test})
     return sheetData
   }
 

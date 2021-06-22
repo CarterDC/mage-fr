@@ -1,16 +1,52 @@
-export function log(args){
-  console.log(`%cM20E | %c`, "color: royalblue; font-weight: bold;", "color: #ccc; font-weight: normal;", args)
-}
-
 export async function preloadHandlebarsTemplates() {
   const templatesPaths = [
     "systems/mage-fr/templates/actor/actor-sheet.hbs",
-    "systems/mage-fr/templates/actor/header-block.hbs"
+    "systems/mage-fr/templates/actor/cat-banner.hbs",
+    "systems/mage-fr/templates/actor/attributes-cat.hbs",
+    "systems/mage-fr/templates/actor/header-cat.hbs"
   ];
   return loadTemplates(templatesPaths);
 }
 
+export function log(args){
+  console.log(`%cM20E | %c`, "color: royalblue; font-weight: bold;", "color: #ccc; font-weight: normal;", args)
+}
+
+export function _isValidUpdate(element){
+  let isValid = true;
+  if( element.type === 'text' && element.dataset.dtype === 'Number'){
+    if(isNaN(element.value) || element.value === ''){
+      ui.notifications.error(`'${element.value}' is not a Number !`);
+      isValid = false;
+    } else {
+      const newNumber = Number(element.value);
+      const min = Number(element.min);
+      const max = Number(element.max);
+      if((newNumber < min) || (newNumber > max)){
+        ui.notifications.error(`'${newNumber}' is out of bounds (${min} - ${max}) !`);
+        isValid = false;
+      }
+    }
+  }
+  return isValid;
+}
+
 export function RegisterHandlebarsHelpers(){
+
+  //github.com/adg29/concat.js
+  Handlebars.registerHelper('concat', function () {
+    let outStr = ''
+    for (const arg in arguments) {
+      if (typeof arguments[arg] !== 'object') {
+        outStr += arguments[arg]
+      }
+    }
+    return outStr
+  })
+
+  Handlebars.registerHelper('isEven', function (index) {
+    return ((index % 2) === 1);
+  })
 
   Handlebars.registerHelper('sign', function (num, options) {
     if((options === "-") && (num>0)){
@@ -27,16 +63,6 @@ export function RegisterHandlebarsHelpers(){
     return result
   })
   
-  Handlebars.registerHelper('concat', function () {
-    let outStr = ''
-    for (const arg in arguments) {
-      if (typeof arguments[arg] !== 'object') {
-        outStr += arguments[arg]
-      }
-    }
-    return outStr
-  })
-
   Handlebars.registerHelper("clickableBullet", function(list, key, index) {
     if(!list){return;}
     //indexes are base 0
@@ -51,13 +77,12 @@ export function RegisterHandlebarsHelpers(){
     return false;
   })
 
-
   Handlebars.registerHelper("inc", function(value, increment = 1)
   {
     return parseInt(value) + parseInt(increment);
   })
 
-  //todo : pass only resource object + index
+  //
   Handlebars.registerHelper('rez', function (index, health) {
     if((health.max - health.aggravated) > index){ return 3;}
     if((health.max - health.lethal) > index){ return 2;}
