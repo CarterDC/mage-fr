@@ -196,6 +196,7 @@
 
   "Item": {
     "types": [
+      "paradigm",
       "ability"
     ],
     "templates":{
@@ -206,7 +207,11 @@
         "isRollable": true
       }
     },
-
+    "paradigm":{
+      "overrides": {},
+      "sheetLogo": "",
+      "cssClass": "mage"
+    },
     "ability":{
       "templates":[
         "virtualStat"

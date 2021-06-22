@@ -1,0 +1,78 @@
+//stats
+.m20e{
+  .stat{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    
+    .stat-extra{
+      font-size: 18px;
+      font-weight: bolder; 
+      padding-bottom: 2px;
+      padding-right: 1px;
+    }
+    
+    .stat-label:hover {
+      text-shadow: 0 0 1px @main-red;
+    }
+    
+    .ligne{
+      flex: 10 10;
+      height: 1em;
+      margin: 0 2px 2px;
+      border-bottom: 1px solid @light-grey;
+    }
+    
+    .edit-bar{
+      display: flex;
+      flex: 0 0;
+      flex-direction: row;
+      flex-wrap: nowrap;
+      align-items: center;
+      justify-content: space-around;
+      
+      input{
+        flex: 0 0;
+        height: 20px;
+        padding: 0 0;
+        text-align: center;
+      }
+    }
+    
+    .edit-bar[data-locked='true']{
+      display: none;
+    }
+    
+    .bullet[data-clickable='true']{
+      cursor: pointer; 
+    }
+  }
+  .stat[data-active='true'] .stat-label{
+    color: @main-red;
+    text-shadow: 0 0 1px @dark-grey;
+  }
+
+  .field{
+    display: block;
+    margin: 5px 5px;
+
+    select{
+        width: 100%;
+    }
+
+    textarea{
+        resize: none;
+        border: none;
+        min-height: 45px;
+        height: 45px;
+        font-family: "signika", sans-serif;
+        font-size: 14px;
+        font-weight:400;
+        font-style: oblique;
+        color: #202020;
+    }
+  }
+}

@@ -1,0 +1,140 @@
+{
+  "ACTOR.TypeCharMage": "Perso Mage",
+  "ITEM.TypeParadigm": "Paradigme",
+  "ITEM.TypeAbility": "Capacité",
+  "ITEM.TypeRote": "Routine",
+  "ITEM.TypeBackground": "Historique",
+  "ITEM.TypeMeritflaw": "Atout & Handicap",
+  "ITEM.TypeMeritflawAlt": "Atout /<br>Handicap",
+  "ITEM.TypeEvent": "Evènement de Chronique",
+  "ITEM.TypeEventAlt": "Chronique :<br>Evènement",
+  "ITEM.TypeContact": "Contact",
+  "ITEM.TypeConsumable": "Consommable",
+
+  "M20E": {
+
+    "navtabs": {
+      "stats": "STATS",
+      "magye": "MAGYE",
+      "bio": "BIO",
+      "stuff": "STUFF",
+      "detail": "DETAIL",
+      "description": "DESCRIPTION",
+      "lexicon": "LEXIQUE"
+    },
+
+    "categories": {
+      "attributes": "ATTRIBUTS",
+      "abilities": "CAPACITES",
+      "spheres": "SPHERES",
+      "arete": "ENTELECHIE",
+      "rotes": "ROUTINES",
+      "description": "DESCRIPTION",
+      "backgrounds": "HISTORIQUES",
+      "meritsflaws": "ATOUTS & HANDICAPS",
+      "chronic": "CHRONIQUE",
+      "story": "BACKGROUND",
+      "contacts": "CONTACTS",
+      "equipement": "EQUIPEMENT"
+    },
+    "category":{
+      "attributes": "Attribut",
+      "spheres": "Sphère",
+      "arete": "Entéléchie",
+      "willpower": "Volonté",
+      "abilities": "Capacité",
+      "rotes": "Routine",
+      "description": "Description",
+      "backgrounds": "Historique",
+      "meritsflaws": "Atout & Handicap",
+      "chronic": "Evènement",
+      "story": "Background",
+      "contacts": "Contact",
+      "equipement": "Equipement"
+    },
+
+    "attributes": {
+      "physical": "Physique",
+      "social": "Social",
+      "mental": "Mental",
+      "stre": "Force",
+      "dext": "Dexterité",
+      "stam": "Vigueur",
+      "char": "Charisme",
+      "mani": "Manipulation",
+      "appa": "Apparence",
+      "perc": "Perception",
+      "inte": "Intelligence",
+      "wits": "Astuce"
+    },
+
+    "spheres": {
+      "corr": "Corresp.",
+      "entr": "Entropie",
+      "spir": "Esprit",
+      "forc": "Forces",
+      "matt": "Matière",
+      "life": "Vie",
+      "mind": "Psyché",
+      "time": "Temps",
+      "prim": "Prime"
+    },
+
+    "subType":{
+      "talent": "Talent",
+      "talents": "Talents",
+      "skill": "Compétence",
+      "skills": "Compétences",
+      "knowledge": "Connaissance",
+      "knowledges": "Connaissances",
+      "merit": "Atout",
+      "merits": "Atouts",
+      "flaw": "Handicap",
+      "flaws": "Handicaps"
+    },
+
+    "labels": {
+      "type": "Type",
+      "subType": "Sous-Type",
+      "value": "Valeur",
+      "quantity": "Quantité",
+      "specialisation": "Spécialisation",
+      "extra": "Extra",
+      "cssClass": "Classe CSS",
+      "sheetLogo": "Logo fiche de perso"
+    },
+
+    "hints": {
+      "edit": "Editer",
+      "remove": "Supprimer",
+      "add": "Ajouter"
+    }
+  },
+
+  "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
+  "SETTINGS.playersCanSeeParadoxPoints": "Peut voir les points de Paradoxe.",
+  "SETTINGS.playersCanSeeParadoxPointsHint": "Les joueurs ne voient pas leur Paradoxe (⚠ ils ne pourront plus interagir avec leur 'barre de puissance').",
+  "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",
+  "SETTINGS.useHealthMalus": "Malus de santé au pool de dés.",
+  "SETTINGS.useHealthMalusHint": "Applique automatiquement le malus au pool de dés (défini par la liste éditable en clic droit sur la santé).",
+  "SETTINGS.untrainedMalus": "Malus de capacité non-entraînée.",
+  "SETTINGS.untrainedMalusHint": "Applique différents Malus au POOL DE DES pour les Talents, Compétences et Connaissances non entraînées.",
+  "SETTINGS.untrMalusaNone": "Aucun Malus.",
+  "SETTINGS.untrMalusbSoft": "Talent :  0, Comp. :  0, Conn. : -1",
+  "SETTINGS.untrMaluscBalanced": "Talent :  0, Comp. : -1, Conn. : -2",
+  "SETTINGS.untrMalusdMed": "Talent : -1, Comp. : -1, Conn. : -1",
+  "SETTINGS.untrMaluseHard": "Talent : -1, Comp. : -2, Conn. : -3",
+  "SETTINGS.specialisationRule": "Jets avec Spécialisation.",
+  "SETTINGS.specialisationRuleHint": "Les 10 donnent un succès supplémentaire lors de l'utilisation d'une Spé.",
+  "SETTINGS.roteRule": "Jet des Routines.",
+  "SETTINGS.roteRuleHint": "Les 10 donnent un succès supplémentaire lors de l'utilisation d'une Routine.",
+  "SETTINGS.magicThreshold": "Diff. de base des effets magiques.",
+  "SETTINGS.magicThresholdHint": "Difficulté totale = diff. de base + Niveau de sphère max dans l'effet. (indexé sur la diff de base)",
+  "SETTINGS.aPosterioriModifyRoll": "+1 Succès <=> -1 pt Volonté.",
+  "SETTINGS.defaultThrowSettings": "Mode de lancer par défaut.",
+  "SETTINGS.defaultThrowSettingsHint": "Option par défaut dans le panneau des Jets pour la gestion des 1.",
+  "SETTINGS.throwSettingsBlandRoll": "Les 1 ne font rien de spécial.",
+  "SETTINGS.throwSettingsDeductFailure": "Chaque 1 retire un succès.",
+  "SETTINGS.throwSettingsDFXS": "'1' => -1 succès. + '10' => +1 succès."
+
+}

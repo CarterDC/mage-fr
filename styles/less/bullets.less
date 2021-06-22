@@ -1,0 +1,26 @@
+//Bullets
+.bullet-display{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-around;
+  border-color:  @dark-grey;
+  
+  .bullet {
+    height: 14px;
+    width: 11px;
+    border: 2px solid;
+    border-color: inherit;
+    background: transparent;
+    display: inline-block;
+    border-radius: 50%;
+    margin-right: 2px;
+  }
+  .bullet[data-active='true']{
+    background: @mid-grey; 
+  }
+}
+.bullet-display[data-locked='false']{
+  display: none;
+}
