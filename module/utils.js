@@ -3,7 +3,8 @@ export async function preloadHandlebarsTemplates() {
     "systems/mage-fr/templates/actor/actor-sheet.hbs",
     "systems/mage-fr/templates/actor/cat-banner.hbs",
     "systems/mage-fr/templates/actor/attributes-cat.hbs",
-    "systems/mage-fr/templates/actor/header-cat.hbs"
+    "systems/mage-fr/templates/actor/header-cat.hbs",
+    "systems/mage-fr/templates/item/paradigm-sheet.hbs"
   ];
   return loadTemplates(templatesPaths);
 }
@@ -29,6 +30,30 @@ export function _isValidUpdate(element){
     }
   }
   return isValid;
+}
+
+export const isObject = myVariable =>
+  myVariable && typeof myVariable === 'object' && !Array.isArray(myVariable);
+
+export const addDelimiter = (a, b) =>
+  a ? `${a}.${b}` : b;
+
+export function ddpropertiesToArray(obj = {}, head = ''){
+  return Object.entries(obj).reduce((acc, cur) =>
+  {
+    return addDelimiter(acc, cur);
+  });
+}
+
+export function propertiesToArray(obj = {}, prevPath = ''){
+  return Object.entries(obj)
+    .reduce((acc, [key, value]) => 
+      {
+        let path = addDelimiter(prevPath, key);
+        return isObject(value) ?
+          acc.concat(propertiesToArray(value, path))
+         : acc.concat({path : path, value: value})
+      }, []);
 }
 
 export function RegisterHandlebarsHelpers(){

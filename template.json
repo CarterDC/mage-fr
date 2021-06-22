@@ -208,7 +208,19 @@
       }
     },
     "paradigm":{
-      "overrides": {},
+      "lexicon": {
+        "spheres":{
+          "corr":"Grille",
+          "time": "Horloge"
+        },
+        "categories":{
+          "arete": "Eliteness"
+        },
+        "attributes":{
+          "stre": "Patate",
+          "appa": "BG"
+        }
+      },
       "sheetLogo": "",
       "cssClass": "mage"
     },
