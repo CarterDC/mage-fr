@@ -69,6 +69,23 @@ export function RegisterHandlebarsHelpers(){
     return outStr
   })
 
+  Handlebars.registerHelper('locadigm', function () {
+    let concatStr = '';
+    for(let i = 1; i< arguments.length -1; i++){
+      if(typeof arguments[i] !== 'object'){
+        concatStr += arguments[i]
+      }
+    }
+    const paraData = arguments[0];
+    try {
+      const lexiconValue = getProperty(paraData.lexicon, concatStr);
+      if(!lexiconValue) throw '';
+      return lexiconValue;
+    } catch (e) {
+      return game.i18n.localize(`M20E.${concatStr}`);
+    }
+  })
+
   Handlebars.registerHelper('isEven', function (index) {
     return ((index % 2) === 1);
   })

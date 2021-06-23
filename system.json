@@ -4,7 +4,7 @@
   "description": "Mage l'Ascension - 20e, système pour Foundry VTT",
   "author": "Carter_DC",
   
-  "version": "0.0.3",
+  "version": "0.0.4",
   "templateVersion": "1",
   "minimumCoreVersion": "0.8.3",
   "compatibleCoreVersion": "0.8.7",

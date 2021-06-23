@@ -1,4 +1,8 @@
-<form class="{{cssClass}}" autocomplete="off">
+<form class="{{cssClass}}" autocomplete="off" >
+  {{#if paraData}}
+  <div class="paradigm-img" style="background-image: url('{{paraData.sheetLogo}}');"></div>
+  {{/if}}
+  <div style="position:relative;">
   {{> "systems/mage-fr/templates/actor/header-cat.hbs"}}
 
   <section class="items">
@@ -40,6 +44,6 @@
 
     <section class="tab" data-group="primary" data-tab="stuff"></section>
   </section>
-
+</div>
 </form>
 

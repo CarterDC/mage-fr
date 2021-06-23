@@ -1,13 +1,24 @@
 
 
 .m20e.sheet{
+  .paradigm-img{
+    position: absolute;
+    border: none;
+    margin-top: -10px;
+    right:0;
+    width: 100%;
+    height: calc(100% - 28px);
+    opacity: 0.2;
+    background-size: contain;
+    background-repeat: repeat-y;
+  }
   form{
     font-family: "signika", sans-serif;
     font-size: 14px;
     font-weight: 600;
     color: @dark-grey;
   }
-  
+
   .sheet-header{
     flex-wrap: nowrap;
     align-items: flex-start;
@@ -61,7 +72,7 @@
     
     a {
       color: @dark-grey;  
-      background: #bdb9b2;
+      background: rgba(0,0,0,0.3);
       border: 1px solid @light-grey;
       display: flex;
       justify-content: space-between;

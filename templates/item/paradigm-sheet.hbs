@@ -22,6 +22,7 @@
     </nav>
     <section class="sheet-body">
         <section class="tab" data-group="primary" data-tab="detail">
+            <br>
             <div class="grid one-col">
                 <div class= "field">
                     <label for="data.cssClass">{{localize "M20E.labels.cssClass"}} : </label>
@@ -34,24 +35,24 @@
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="lexicon">
-          <div class="grid two-col">
-            <div class="stat attribute">
+          <br>
+          <div class="category grid one-col">
+            <div class="stat lexicon">
               <label>Clef</label>
-            </div>
-            <div class="stat attribute">
               <label>Valeur</label>
               <div class="edit-bar" data-locked="{{locks.lexicon}}">
+                <a class="mini-button decoy"></a>
                 <a class="mini-button decoy"></a>
               </div>
             </div>
             {{#each lexicon as |entry key|}}
-            <div class="stat attribute" data-key="{{key}}">
-              <input  type="text" value="{{entry.path}}" data-dtype="String" {{#if ../locks.lexicon}} disabled {{/if}}/>
-            </div>
-            <div class="stat attribute" data-key="{{key}}">
-              <input  type="text" value="{{entry.value}}" data-dtype="String" {{#if ../locks.lexicon}} disabled {{/if}}/>
+            <div class="stat lexicon" data-key="{{key}}">
+              <input class="lexicon-path" type="text" value="{{entry.path}}" data-dtype="String" disabled/>
+              <input class="lexicon-value" type="text" value="{{entry.value}}" data-dtype="String" disabled/>
               <div class="edit-bar" data-locked="{{../locks.lexicon}}">
-                <a class="mini-button" data-action="remove" title = "{{localize 'MAGE.hints.remove'}}"><i class="fas fa-trash"></i></a>              </div>
+                <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
+                <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
+              </div>
             </div>
             {{/each}}
           </div>
