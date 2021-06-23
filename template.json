@@ -208,19 +208,7 @@
       }
     },
     "paradigm":{
-      "lexicon": {
-        "spheres":{
-          "corr":"Grille",
-          "time": "Horloge"
-        },
-        "categories":{
-          "arete": "Eliteness"
-        },
-        "attributes":{
-          "stre": "Patate",
-          "appa": "BG"
-        }
-      },
+      "lexicon": {},
       "sheetLogo": "",
       "cssClass": "mage"
     },

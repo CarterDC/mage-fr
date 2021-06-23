@@ -5,10 +5,11 @@ import { M20E } from './module/config.js'
 import M20eActor from './module/actor/actor.js'
 import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItem from './module/item/item.js'
-import M20eItemSheet from './module/item/item-sheet.js'
+import M20eItemSheet from './module/item/baseitem-sheet.js'
+import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 
 Hooks.once('init', async function () {
-  console.log('MAGE | Initialisation du système')
+  console.log('M20E | Initialisation du système')
 
   game.m20e = {
     entities: {
@@ -24,15 +25,20 @@ Hooks.once('init', async function () {
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet);
-  Actors.registerSheet('mage', M20eActorSheet, { makeDefault: true });
+  Actors.registerSheet('m20e', M20eActorSheet, { makeDefault: true });
   Items.unregisterSheet('core', ItemSheet);
-  Items.registerSheet('mage', M20eItemSheet, { makeDefault: true });
+  Items.registerSheet('m20e', M20eItemSheet, { 
+    types: ["ability"], //todo , add all the other base item types
+    makeDefault: true 
+  });
+  Items.registerSheet("m20e", M20eParadigmSheet, {
+    types: ["paradigm"],
+    makeDefault: true
+  });
 
   //
   utils.preloadHandlebarsTemplates();
   utils.RegisterHandlebarsHelpers();
-
-  //console.log('MAGE | config : ', CONFIG);
 })
 
 Hooks.on('createActor', async function (actor, options, userID) {

@@ -10,4 +10,8 @@
     super(...args);
   }
 
+  get paradigm() {
+    return this.items.filter(item => item.type === "paradigm")[0];
+  }
+
 }

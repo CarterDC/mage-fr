@@ -8,7 +8,7 @@
     {{#each data.attributes as |attribute key|}}
     <div class="stat attribute" data-key="{{key}}" data-active= "false">
       <a class="stat-label tooltip">
-        {{localize (concat "M20E.attributes." key)}}
+        {{locadigm ../paraData "attributes." key}}
         {{#if attribute.specialisation}}
         <span class="righttooltiptext">{{localize "MAGE.labels.spe"}} : {{attribute.specialisation}}</span>
         {{/if}}

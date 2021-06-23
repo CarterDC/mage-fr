@@ -45,7 +45,11 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.actor = actorData;
     sheetData.data = actorData.data;
 
-    log({name : sheetData.actor.name, type: sheetData.actor.type});
+    const paradigm = this.actor.paradigm;
+    if(paradigm) {
+      sheetData.paraData = paradigm.data.data;
+    }
+    log({actor : sheetData.actor.name, paraData: sheetData.paraData});
     return sheetData
   }
 
