@@ -223,14 +223,15 @@
 .bullet-display .bullet {
   height: 14px;
   width: 11px;
-  border: 2px solid;
+  border: 2px;
+  border-style: solid;
   border-color: inherit;
   background: transparent;
   display: inline-block;
   border-radius: 50%;
   margin-right: 2px;
 }
-.bullet-display .bullet[data-active='true'] {
+.bullet-display .bullet[data-state='active'] {
   background: #4b4a44;
 }
 .bullet-display[data-locked='false'] {
@@ -326,32 +327,37 @@
   margin-top: 0px;
   border: 2px outset #191813;
   box-sizing: content-box;
-  background: rgba(24, 104, 7, 0.5);
 }
 .m20e .resource-panel .boxes .box[data-clickable='true'] {
   cursor: pointer;
 }
-.m20e .resource-panel .boxes .box[data-state='1'] {
-  background: rgba(121, 8, 19, 0.7);
+.m20e .health .box,
+.m20e .willpower .box {
+  background-color: rgba(24, 104, 7, 0.5);
 }
-.m20e .resource-panel .boxes .box[data-state='2'] {
-  background: rgba(121, 8, 19, 0.7) url('../assets/images/strike1.png');
+.m20e .health .box[data-state='1'],
+.m20e .willpower .box[data-state='1'] {
+  background-color: rgba(121, 8, 19, 0.7);
+}
+.m20e .health .box[data-state='2'],
+.m20e .willpower .box[data-state='2'] {
+  background-color: rgba(121, 8, 19, 0.7);
+  background-image: url('../assets/ui/strike1.png');
   background-size: contain;
 }
-.m20e .resource-panel .boxes .box[data-state='3'] {
-  background: rgba(121, 8, 19, 0.7) url('../assets/images/strike2.png');
+.m20e .health .box[data-state='3'],
+.m20e .willpower .box[data-state='3'] {
+  background-color: rgba(121, 8, 19, 0.7);
+  background-image: url('../assets/ui/strike2.png');
   background-size: contain;
 }
-.m20e .resource-panel.magepower {
+.m20e .magepower {
   margin-top: 10px;
 }
-.m20e .resource-panel.magepower .box {
-  background: none;
-}
-.m20e .resource-panel.magepower .box[data-state='1'] {
+.m20e .magepower .box[data-state='1'] {
   background-image: radial-gradient(rgba(253, 253, 253, 0.9), rgba(182, 167, 82, 0.4), rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
 }
-.m20e .resource-panel.magepower .box[data-state='2'] {
+.m20e .magepower .box[data-state='2'] {
   background-image: radial-gradient(rgba(121, 8, 19, 0.9), rgba(10, 10, 10, 0.6), rgba(0, 0, 0, 0));
 }
 .m20e .stat {

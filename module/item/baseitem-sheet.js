@@ -42,9 +42,13 @@ export default class M20eItemSheet extends ItemSheet {
   getData(options) {
     const sheetData = super.getData(options);
 
+    //the item's data
     const itemData = this.item.data.toObject(false);
     sheetData.item = itemData;
     sheetData.data = itemData.data;
+
+    //usefull data
+    sheetData.isGM = game.user.isGM;
 
     return sheetData;
   }

@@ -1,19 +1,32 @@
 export async function preloadHandlebarsTemplates() {
   const templatesPaths = [
     "systems/mage-fr/templates/actor/actor-sheet.hbs",
-    "systems/mage-fr/templates/actor/cat-banner.hbs",
-    "systems/mage-fr/templates/actor/attributes-cat.hbs",
-    "systems/mage-fr/templates/actor/header-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/cat-banner.hbs",
+    "systems/mage-fr/templates/actor/parts/attributes-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/header-cat.hbs",
     "systems/mage-fr/templates/item/paradigm-sheet.hbs"
   ];
   return loadTemplates(templatesPaths);
 }
 
-export function log(args){
-  console.log(`%cM20E | %c`, "color: royalblue; font-weight: bold;", "color: #ccc; font-weight: normal;", args)
+const consoleTrace = args => {
+  console.groupCollapsed(`%cM20E | %c`, "color: royalblue; font-weight: bold;", "color: #ccc; font-weight: normal;", args);
+  console.trace();
+  console.groupEnd();
 }
 
-export function _isValidUpdate(element){
+export const consoleLog = args =>
+console.log(`%cM20E | %c`, "color: royalblue; font-weight: bold;", "color: #ccc; font-weight: normal;", args);
+
+export function log(args){
+  return consoleTrace(args);
+}
+
+export function canSeeParadox(){
+  return game.settings.get("m20e", "playersCanSeeParadoxPoints") || game.user.isGM;
+}
+
+export function isValidUpdate(element){
   let isValid = true;
   if( element.type === 'text' && element.dataset.dtype === 'Number'){
     if(isNaN(element.value) || element.value === ''){
@@ -21,6 +34,7 @@ export function _isValidUpdate(element){
       isValid = false;
     } else {
       const newNumber = Number(element.value);
+      //todo: not assume that there's always a min & max value ^^
       const min = Number(element.min);
       const max = Number(element.max);
       if((newNumber < min) || (newNumber > max)){
@@ -32,18 +46,11 @@ export function _isValidUpdate(element){
   return isValid;
 }
 
-export const isObject = myVariable =>
+const isObject = myVariable =>
   myVariable && typeof myVariable === 'object' && !Array.isArray(myVariable);
 
-export const addDelimiter = (a, b) =>
+const addDelimiter = (a, b) =>
   a ? `${a}.${b}` : b;
-
-export function ddpropertiesToArray(obj = {}, head = ''){
-  return Object.entries(obj).reduce((acc, cur) =>
-  {
-    return addDelimiter(acc, cur);
-  });
-}
 
 export function propertiesToArray(obj = {}, prevPath = ''){
   return Object.entries(obj)
@@ -67,7 +74,7 @@ export function RegisterHandlebarsHelpers(){
       }
     }
     return outStr
-  })
+  });
 
   Handlebars.registerHelper('locadigm', function () {
     let concatStr = '';
@@ -84,18 +91,18 @@ export function RegisterHandlebarsHelpers(){
     } catch (e) {
       return game.i18n.localize(`M20E.${concatStr}`);
     }
-  })
+  });
 
   Handlebars.registerHelper('isEven', function (index) {
     return ((index % 2) === 1);
-  })
+  });
 
   Handlebars.registerHelper('sign', function (num, options) {
     if((options === "-") && (num>0)){
       return "-" + num;
     }
     return (num>0 ? "+" + num : num)
-  })
+  });
 
   Handlebars.registerHelper('forLoop', function (n, content) {
     let result = ''
@@ -103,13 +110,17 @@ export function RegisterHandlebarsHelpers(){
       result += content.fn(i)
     }
     return result
-  })
+  });
   
+  Handlebars.registerHelper("bulletState", function(value, index) {
+    return (value > index) ? "active" : "";
+  });
+
   Handlebars.registerHelper("clickableBullet", function(list, key, index) {
     if(!list){return;}
     //indexes are base 0
     return index < list[key].valueMax;
-  })
+  });
 
   Handlebars.registerHelper('in', function () {
     let entryToFind = arguments[0];
@@ -117,27 +128,28 @@ export function RegisterHandlebarsHelpers(){
       if(entryToFind === arguments[i]){return true;}
     }
     return false;
-  })
+  });
 
   Handlebars.registerHelper("inc", function(value, increment = 1)
   {
     return parseInt(value) + parseInt(increment);
-  })
+  });
 
   //
-  Handlebars.registerHelper('rez', function (index, health) {
-    if((health.max - health.aggravated) > index){ return 3;}
-    if((health.max - health.lethal) > index){ return 2;}
-    if((health.max - health.value) > index){ return 1;}
+  Handlebars.registerHelper('res', function (resource, index) {
+    if((resource.max - resource.aggravated) > index){ return 3;}
+    if((resource.max - resource.lethal) > index){ return 2;}
+    if((resource.max - resource.value) > index){ return 1;}
     return 0;
-  })
+  });
 
-  Handlebars.registerHelper('magepower', function (index, quint, para) {
+  //todo : refaire ça aussi avec juste 2 params
+  Handlebars.registerHelper('magepower', function (magepower, index) {
     let returnValue = 0;
-    if(quint > index) return 1;
-    if(canSeeParadox() && (20 - para) <= index) return 2;
+    if(magepower.quintessence > index) return 1;
+    if(canSeeParadox() && (20 - magepower.paradox) <= index) return 2;
     return returnValue;
-  })
+  });
 
   Handlebars.registerHelper('rollModeIcon', function (result) {
     let rollModeIcon = "";
@@ -155,14 +167,14 @@ export function RegisterHandlebarsHelpers(){
         rollModeIcon = "fas fa-users";
     }
     return rollModeIcon;
-  })
+  });
 
   Handlebars.registerHelper('throwresult', function (result) {
     if(result == "?") return "?";
     if(result == "0") return game.i18n.localize('MAGE.throwresult.failure') + " !";
     if(result > 0) return result + " " + game.i18n.localize('MAGE.throwresult.success') + " !";
     return game.i18n.localize('MAGE.throwresult.critfailure') + " (" + result + ") !";
-  })
+  });
 
 
 }

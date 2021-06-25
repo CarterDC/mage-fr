@@ -1,7 +1,9 @@
 
 // Import Modules
 import * as utils from './module/utils.js'
+import {log} from "./module/utils.js";
 import { M20E } from './module/config.js'
+import { registerSystemSettings } from "./module/settings.js";
 import M20eActor from './module/actor/actor.js'
 import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItem from './module/item/item.js'
@@ -9,7 +11,7 @@ import M20eItemSheet from './module/item/baseitem-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 
 Hooks.once('init', async function () {
-  console.log('M20E | Initialisation du système')
+  log('Initialisation du système')
 
   game.m20e = {
     entities: {
@@ -36,7 +38,9 @@ Hooks.once('init', async function () {
     makeDefault: true
   });
 
-  //
+  // Register System Settings
+  registerSystemSettings();
+
   utils.preloadHandlebarsTemplates();
   utils.RegisterHandlebarsHelpers();
 })
