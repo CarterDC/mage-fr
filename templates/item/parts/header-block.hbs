@@ -1,0 +1,13 @@
+<header class="sheet-header">
+    {{#if itemImg}} 
+    <div class= "img-colunm">
+      <img src="{{itemImg}}" data-edit="img" title="{{localize "M20E.hints.imgClick"}}" alt="{{item.name}} - Image"/>
+    </div>
+    {{/if}}
+    <div class="header-column">
+        <div class="header-row">
+            <input class = "name" name="name" type="text" value="{{item.name}}" data-dtype="String"/>
+            <span class="item-type">{{{localize itemType}}}</span>
+        </div>
+    </div>
+</header>

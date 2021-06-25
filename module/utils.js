@@ -1,10 +1,11 @@
 export async function preloadHandlebarsTemplates() {
   const templatesPaths = [
-    "systems/mage-fr/templates/actor/actor-sheet.hbs",
     "systems/mage-fr/templates/actor/parts/cat-banner.hbs",
     "systems/mage-fr/templates/actor/parts/attributes-cat.hbs",
     "systems/mage-fr/templates/actor/parts/header-cat.hbs",
-    "systems/mage-fr/templates/item/paradigm-sheet.hbs"
+    "systems/mage-fr/templates/item/parts/header-block.hbs",
+    "systems/mage-fr/templates/item/parts/nav-block.hbs",
+    "systems/mage-fr/templates/item/parts/description-block.hbs"
   ];
   return loadTemplates(templatesPaths);
 }
@@ -44,6 +45,20 @@ export function isValidUpdate(element){
     }
   }
   return isValid;
+}
+
+export async function getCompendiumDocumentByName(packName, documentName){
+  const pack = game.packs.get(packName);
+  if(!pack){
+    ui.notifications.error(`MAGE | ${packName} pack not found !`);
+    return Promise.reject();
+  }
+  const indexEntry = pack.index.find(entry => entry.name === documentName);
+  if(!indexEntry){
+    ui.notifications.error(`MAGE | ${documentName} not found in pack ${packName} !`);
+    return Promise.reject();
+  }
+  return await pack.getDocument(indexEntry._id);
 }
 
 const isObject = myVariable =>

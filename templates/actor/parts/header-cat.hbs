@@ -1,13 +1,13 @@
 <header class="sheet-header">
-    <div class= 'header-colunm flex0'>
-       <img src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="Profile Image"/>
+    <div class="img-colunm">
+       <img src="{{actor.img}}" data-edit="img" title="{{localize "M20E.hints.imgClick"}}" alt="{{actor.name}} - Image"/>
     </div>
-    <div class= 'header-column flex1' style="margin-left:6px;">
-        <div class= 'header-row'>
-            <input class = "name" name="name" type="text" value="{{actor.name}}"/>
+    <div class="header-column">
+        <div class="header-row">
+            <input class = "name" name="name" type="text" value="{{actor.name}}" data-dtype="String"/>
             <div class="dice-button" data-action = "dice-button"></div>
         </div>
-        <div class= 'header-row'>
+        <div class="header-row">
             <div class="resource-panel health" data-resource="health">
                 <div class="boxes">
                     {{#forLoop data.health.max}}
@@ -29,13 +29,13 @@
                 </div>
                 <div class="stat willpower" style="margin-left:4px;" data-active= "false">
                     <a class="stat-label resource-context" data-resource="willpower">
-                        {{localize "MAGE.willpower"}}
+                        {{localize "M20E.willpower"}}
                     </a>
-                    <input class = "hidden-field" name="data.willpower.max" type="text" value="{{data.willpower.max}}" data-dtype="Number" min="0" max="10"/>
+                    <input class="hidden-field" name="data.willpower.max" type="text" value="{{data.willpower.max}}" data-dtype="Number" min="0" max="10"/>
                 </div>
             </div>
         </div>
-        <div class= 'header-row'>
+        <div class="header-row">
             <div class="resource-panel magepower" data-resource="magepower">
                 <div class="boxes" style="justify-content: space-between;">
                     {{#forLoop 20}}

@@ -8,14 +8,14 @@
     align-items: center;
     justify-content: space-between;
     
-    .stat-extra{
+    .stat-extra{//TODO : sould be in abilities
       font-size: 18px;
       font-weight: bolder; 
       padding-bottom: 2px;
       padding-right: 1px;
     }
     
-    .stat-label:hover {
+    .stat-label:hover {//TODO : not all stat labels should behave like that
       text-shadow: 0 0 1px @main-red;
     }
     
@@ -55,6 +55,12 @@
     text-shadow: 0 0 1px @dark-grey;
   }
 
+  .stat.attribute,
+  .stat.sphere{
+      height: 20px;
+      margin: 3px 0; 
+  }
+
   .stat.lexicon{
     input{
       height: 24px;
@@ -83,13 +89,22 @@
     textarea{
         resize: none;
         border: none;
-        min-height: 45px;
-        height: 45px;
+        min-height: 80px;
+        height: 80px;
         font-family: "signika", sans-serif;
         font-size: 14px;
         font-weight:400;
         font-style: oblique;
         color: #202020;
+    }
+
+    .editor{
+      font-size: 14px;
+      font-weight: normal;
+      height: 200px;
+      border: 1px solid #7a7971;
+      border-radius: 3px;
+      padding-left: 3px;
     }
   }
 }

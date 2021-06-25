@@ -49,6 +49,22 @@
       "equipement": "EQUIPEMENT"
     },
 
+    "category":{
+      "attributes": "Attribut",
+      "spheres": "Sphère",
+      "arete": "Entéléchie",
+      "willpower": "Volonté",
+      "abilities": "Capacité",
+      "rotes": "Routine",
+      "description": "Description",
+      "backgrounds": "Historique",
+      "meritsflaws": "Atout & Handicap",
+      "chronic": "Evènement",
+      "story": "Background",
+      "contacts": "Contact",
+      "equipement": "Equipement"
+    },
+
     "attributes": {
       "physical": "Physique",
       "social": "Social",
@@ -94,6 +110,9 @@
       "subType": "Sous-Type",
       "value": "Valeur",
       "quantity": "Quantité",
+      "systemName": "⚠ Nom système",
+      "systemDescription": "⚠ Description Système",
+      "displayDescription": "Description Personnalisée",
       "specialisation": "Spécialisation",
       "extra": "Extra",
       "cssClass": "Classe CSS",
@@ -103,8 +122,15 @@
     "hints": {
       "edit": "Editer",
       "remove": "Supprimer",
-      "add": "Ajouter"
-    }
+      "add": "Ajouter",
+      "specialisation": "Utilisé uniquement à partir du rang 4.",
+      "displayDescription": "Apparait souvent en info-bulle ou en 'linkant' dans le chat",
+      "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags."
+    },
+
+    "arete": "Entéléchie",
+    "willpower": "Volonté",
+    "health": "Santé"
   },
 
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
