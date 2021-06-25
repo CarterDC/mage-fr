@@ -40,20 +40,20 @@
   flex-wrap: nowrap;
   align-items: flex-start;
 }
-.m20e.sheet .sheet-header .header-column {
-  display: flex;
+.m20e.sheet .sheet-header .img-colunm {
+  flex: 0;
   flex-direction: column;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+}
+.m20e.sheet .sheet-header .header-column {
+  margin-left: 6px;
 }
 .m20e.sheet .sheet-header .header-row {
-  width: 100%;
   display: flex;
+  width: 100%;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
 }
 .m20e.sheet .sheet-header img {
   height: 100px;
@@ -63,14 +63,15 @@
   cursor: pointer;
 }
 .m20e.sheet .sheet-header .name {
-  flex: 8 8;
-  margin: 6px 6px 0 0;
-  border-top: 0px;
-  border-left: 0px;
-  border-right: 0px;
-  border-bottom-color: #610d11;
-  border-bottom-width: 2px;
+  border: none;
+  border-bottom: 2px solid #610d11;
   background: none;
+}
+.m20e.sheet .sheet-header .dice-button {
+  flex: 0 0 45px;
+  align-self: flex-end;
+  height: 45px;
+  margin-left: 5px;
 }
 .m20e.sheet .sheet-tabs {
   height: 32px;
@@ -119,7 +120,13 @@
 .m20e.sheet .sheet-tabs a:hover .mini-button[data-action='lock'] {
   display: inline-flex;
 }
+.m20e.sheet .dice-button {
+  background: url("../assets/ui/ten-dice.png") no-repeat;
+  background-size: contain;
+  cursor: pointer;
+}
 .m20e.actor .sheet-header .name {
+  margin-top: -5px;
   height: 30px;
   color: #191813;
   font-family: "Diablo";
@@ -158,6 +165,9 @@
   font-family: "Diablo";
   font-weight: bold;
   font-size: 20px;
+}
+.m20e.item section.tab {
+  margin-top: 5px;
 }
 .m20e.item img.sheetLogo {
   display: block;
@@ -407,6 +417,11 @@
   color: #610d11;
   text-shadow: 0 0 1px #191813;
 }
+.m20e .stat.attribute,
+.m20e .stat.sphere {
+  height: 20px;
+  margin: 3px 0;
+}
 .m20e .stat.lexicon input {
   height: 24px;
   margin: 3px 10px 3px 0;
@@ -431,22 +446,50 @@
 .m20e .field textarea {
   resize: none;
   border: none;
-  min-height: 45px;
-  height: 45px;
+  min-height: 80px;
+  height: 80px;
   font-family: "signika", sans-serif;
   font-size: 14px;
   font-weight: 400;
   font-style: oblique;
   color: #202020;
 }
+.m20e .field .editor {
+  font-size: 14px;
+  font-weight: normal;
+  height: 200px;
+  border: 1px solid #7a7971;
+  border-radius: 3px;
+  padding-left: 3px;
+}
+.systemDescription {
+  padding: 0px 2px;
+  line-height: 14px;
+  font-size: 12px;
+}
+.systemDescription .descHeader {
+  margin: 5px 0px 10px;
+  text-align: justify;
+}
+.systemDescription .descFooter {
+  margin: 10px 0px 5px;
+}
+.systemDescription .level-description {
+  margin: 5px 0px;
+}
+.systemDescription .level-description .bullets {
+  font-size: 14px;
+  font-weight: bold;
+  float: left;
+  width: 53px;
+}
+.systemDescription .level-description .level {
+  float: left;
+  font-weight: bold;
+  padding-right: 3px;
+}
 .m20e .hidden-field {
   display: none;
-}
-.m20e .flex0 {
-  flex: 0;
-}
-.m20e .flex1 {
-  flex: 1;
 }
 .m20e .grid {
   display: grid;
@@ -460,6 +503,7 @@
   text-align: center;
 }
 .m20e .one-col {
+  grid-column: span 1;
   grid-template-columns: auto;
 }
 .m20e .two-col {

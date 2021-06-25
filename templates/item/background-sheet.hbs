@@ -1,0 +1,27 @@
+<form class="{{cssClass}}" autocomplete="off">
+  {{> "systems/mage-fr/templates/item/parts/header-block.hbs" itemImg = item.img itemType = "ITEM.TypeBackground"}}
+
+  {{> "systems/mage-fr/templates/item/parts/nav-block.hbs"}}
+
+  <section class="sheet-body">
+      <section class="tab" data-group="primary" data-tab="detail">
+          <div class="grid two-col">
+              <div class= "field">
+                  <label for="data.value">{{localize "M20E.labels.value"}} : </label>
+                  <input name="data.value" type="text" value="{{data.value}}" data-dtype="Number" min="0" max="5"/>
+              </div>
+              {{#if isGM}}
+              <div class= "field" title="{{localize 'M20E.hints.systemName'}}">
+                  <label for="item.name">{{localize "M20E.labels.systemName"}} : </label>
+                  <input name="item.name" type="text" value="{{item.name}}" data-dtype="String" />
+              </div>
+              {{/if}}
+          </div>
+          <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
+              <label for="data.displayDescription">{{localize "M20E.labels.displayDescription"}} : </label>
+<textarea name="data.displayDescription">{{data.displayDescription}}</textarea>
+          </div>
+      </section>
+      {{> "systems/mage-fr/templates/item/parts/description-block.hbs" isDescEditable = isGM}}
+  </section>
+</form>

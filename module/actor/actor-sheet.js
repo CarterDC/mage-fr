@@ -1,6 +1,6 @@
 import {log} from "../utils.js";
 import * as utils from '../utils.js'
-
+import { FakeItem } from '../item/fake-item-sheet.js'
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -68,7 +68,6 @@ export default class M20eActorSheet extends ActorSheet {
     if(game.user.isGM){
       
     }
-    debugger;
     super.activateListeners(html);
   }
 
@@ -138,7 +137,7 @@ export default class M20eActorSheet extends ActorSheet {
         break;
 
       case 'edit':
-        //this.editItem(element, dataset);
+        this.editItem(element);
         break;
 
       case 'remove':
@@ -156,9 +155,49 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
+  //utile ?
   getStatElement(event){
     const element = event.currentTarget;
     return element.closest(".stat");
   }
 
+  editItem(element) {
+    const category = element.closest(".category").dataset.category;
+    if (category === 'attributes' || category === 'spheres') {
+      const key = element.closest(".stat").dataset.key;
+      //use a fakeItem dialog to edit attribute (or sphere)
+      this.editFakeItem(category, key);
+    } else {
+      // regular item edit
+      let itemId = element.closest(".stat").dataset.itemId;
+      let item = this.actor.items.get(itemId);
+      item.sheet.render(true);
+    }
+  }
+
+  async editFakeItem(category, key){
+    //systemDescription provided by compendium given key.
+    let dialogData = {
+      category: category,
+      key: key,
+      actor: this.actor,
+      item: {
+        type: game.i18n.localize(`M20E.category.${category}`),
+        name: game.i18n.localize(`M20E.${category}.${key}`),
+        data: {
+          data: getProperty(this.actor.data, `data.${category}.${key}`)
+        }
+      }
+    }
+    //add compendium description to stat.systemDescription
+    let packName = `mage-fr.${category}-desc`;
+    utils.getCompendiumDocumentByName(
+      packName,
+      dialogData.key
+    ).then(packItem => {
+      dialogData.item.data.data.systemDescription = packItem.data.content;
+      let fakeItem = new FakeItem(dialogData);
+      fakeItem.render(true);
+    });
+  }
 }

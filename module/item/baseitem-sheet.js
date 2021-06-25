@@ -18,7 +18,7 @@ export default class M20eItemSheet extends ItemSheet {
       this.options.width = this.position.width = itemSheetOptions.width;
       this.options.height = this.position.height = itemSheetOptions.height;
       //todo : replace with para class if owned item
-      this.options.classes.push(itemSheetOptions.classes);
+      //this.options.classes.push(itemSheetOptions.classes);//pas faire comme ça !
       //todo : other things for sure
     }
   }

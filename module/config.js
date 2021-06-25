@@ -26,14 +26,16 @@ M20E.categoriesWithLocks = [
 
 
 M20E.itemSheetOptions = {
-  ability:{
+  paradigm:{
     width: 400,
     height: 500
   },
-  paradigm:{
+  fakeitem:{
     width: 400,
-    height: 500,
-    classes: ['mage']
+    height: 375
+  },
+  background:{
+    width: 400,
+    height: 310
   }
-
 }

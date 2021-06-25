@@ -38,39 +38,48 @@
         "attributes":{
           "stre":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "char":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "perc":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "dext":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "mani":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },    
           "inte":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },   
           "stam":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "appa":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "wits":{
             "value": 1,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           }
         }        
       },
@@ -79,39 +88,48 @@
         "spheres":{
           "forc":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "corr":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "mind":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "matt":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "time":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "spir":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "life":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "entr":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           },
           "prim":{
             "value": 0,
-            "specialisation": ""
+            "specialisation": "",
+            "displayDescription":""
           }
         }  
       }
@@ -196,11 +214,13 @@
   "Item": {
     "types": [
       "paradigm",
+      "background",
       "ability"
     ],
     "templates":{
       "virtualStat":{
-        "isVirtualStat": true
+        "isVirtualStat": true,
+        "value": 0
       },
       "rollableItem":{
         "isRollable": true
@@ -211,16 +231,24 @@
       "sheetLogo": "",
       "cssClass": "mage"
     },
+    "background":{
+      "templates":[
+        "virtualStat"
+      ],
+      "systemDescription": "",
+      "displayDescription":"",
+      "extra": "",
+      "effects":[]
+    },
     "ability":{
       "templates":[
         "virtualStat"
       ],
+      "subType": "talent",
+      "specialisation": "",
       "displayName":"",
       "systemDescription": "",
       "displayDescription":"",
-      "subType": "talent",
-      "value": 0,
-      "specialisation": "",
       "extra": ""
     }
   }
