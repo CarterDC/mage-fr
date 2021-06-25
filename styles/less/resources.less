@@ -19,33 +19,36 @@
         margin-top: 0px;
         border: 2px outset @dark-grey;
         box-sizing:content-box;
-        background:rgba(24, 104, 7, 0.5);
       }
       .box[data-clickable='true']{
         cursor: pointer;
       }
-      .box[data-state='1']{
-        background:rgba(121, 8, 19, 0.7);
-      }
-      .box[data-state='2']{
-        background:rgba(121, 8, 19, 0.7) url('../assets/images/strike1.png');
-        background-size: contain;
-      }
-      .box[data-state='3']{ 
-        background:rgba(121, 8, 19, 0.7) url('../assets/images/strike2.png');
-        background-size: contain;
-      }
     }
   }
-  .resource-panel.magepower{
-    margin-top: 10px;
+  .health,.willpower{
     .box{
-      background:none;
+      background-color:rgba(24, 104, 7, 0.5);
     }
-    .box[data-state='1']{ 
+    .box[data-state='1']{
+      background-color:rgba(121, 8, 19, 0.7);
+    }
+    .box[data-state='2']{
+      background-color:rgba(121, 8, 19, 0.7);
+      background-image: url('../assets/ui/strike1.png');
+      background-size: contain;
+    }
+    .box[data-state='3']{ 
+      background-color :rgba(121, 8, 19, 0.7);
+      background-image: url('../assets/ui/strike2.png');
+      background-size: contain;
+    }
+  }
+  .magepower{
+    margin-top: 10px;
+    .box[data-state='1']{
       background-image: radial-gradient(rgba(253, 253, 253, 0.9),rgba(182, 167, 82, 0.4), rgba(130,81,20,0.4), rgba(0,0,0,0));
     }
-    .box[data-state='2']{ 
+    .box[data-state='2']{
       background-image: radial-gradient(rgba(121, 8, 19, 0.9),rgba(10, 10, 10, 0.6), rgba(0,0,0,0));
     }
   }

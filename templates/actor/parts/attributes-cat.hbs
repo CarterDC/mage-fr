@@ -1,0 +1,29 @@
+<section class="category attributes" data-category="attributes">
+  {{!-- Attributes --}}
+  {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" paraData = paraData category="attributes" lock = locks.attributes}}
+  <div class="grid three-col">
+    <label class="column-header">{{locadigm ../paraData "attributes.physical"}}</label>
+    <label class="column-header">{{locadigm ../paraData "attributes.social"}}</label>
+    <label class="column-header">{{locadigm ../paraData "attributes.mental"}}</label>                
+    {{#each data.attributes as |attribute key|}}
+    <div class="stat attribute" data-key="{{key}}" data-active= "false">
+      <a class="stat-label tooltip">
+        {{locadigm ../paraData "attributes." key}}
+        {{#if attribute.specialisation}}
+        <span class="righttooltiptext">{{localize "M20E.labels.spe"}} : {{attribute.specialisation}}</span>
+        {{/if}}
+      </a>
+      <div class="ligne"></div>
+      <div class="edit-bar" data-locked="{{../locks.attributes}}">
+        <input name="data.attributes.{{key}}.value" type="text" value="{{attribute.value}}" data-dtype="Number" min="0" max="10"/>
+        <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a> 
+      </div>
+      <div class="bullet-display" data-locked="{{../locks.attributes}}">                        
+        {{#forLoop 5}}
+        <span class="bullet" data-index="{{this}}" data-state="{{bulletState attribute.value this}}"></span>
+        {{/forLoop}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</section>

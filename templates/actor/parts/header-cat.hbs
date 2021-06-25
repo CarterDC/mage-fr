@@ -11,7 +11,7 @@
             <div class="resource-panel health" data-resource="health">
                 <div class="boxes">
                     {{#forLoop data.health.max}}
-                        <div class="box" data-clickable="true" data-index="{{this}}" data-state=""></div>
+                        <div class="box" data-clickable="{{../editable}}" data-index="{{this}}" data-state="{{res ../data.health this}}"></div>
                     {{/forLoop}}
                 </div>
                 <div>
@@ -24,7 +24,7 @@
             <div class="resource-panel category willpower" style="margin: 0 0 0 0;" data-category="willpower" data-resource="willpower">
                 <div class="boxes">
                     {{#forLoop data.willpower.max}}
-                        <div class="box" data-clickable="true" data-index="{{this}}" data-state=""></div>
+                        <div class="box" data-clickable="{{../editable}}" data-index="{{this}}" data-state="{{res ../data.willpower this}}"></div>
                     {{/forLoop}}
                 </div>
                 <div class="stat willpower" style="margin-left:4px;" data-active= "false">
@@ -39,7 +39,7 @@
             <div class="resource-panel magepower" data-resource="magepower">
                 <div class="boxes" style="justify-content: space-between;">
                     {{#forLoop 20}}
-                        <div class="box" data-clickable = "{{../data.canSeeParadox}}" data-index="{{this}}" data-state=""></div>
+                        <div class="box" data-clickable = "{{../canSeeParadox}}" data-index="{{this}}" data-state="{{magepower ../data.magepower this}}"></div>
                     {{/forLoop}}
                 </div>
             </div>

@@ -5,7 +5,8 @@
       "playable":{
         "characterCreationDone": false,
         "currentXP": 0,
-        "totalXP": 0
+        "totalXP": 0,
+        "studyPoints": "MAGE.defaults.studyPoints"
       },
       "resourceHealth":{
         "health":{
@@ -26,8 +27,8 @@
       },
       "resourceMagePower":{
         "magepower":{
-          "max":0,
-          "value":0,
+          "max": 0,
+          "value": 0,
           "quintessence": 0,
           "paradox": 0
         }
@@ -181,9 +182,7 @@
 
       "misc": {
         "description":"MAGE.defaults.description",
-        "contactDescription": "Mage.defaults.contactDescription",
         "fullBackground": "MAGE.defaults.fullBackground",
-        "studyPoints": "MAGE.defaults.studyPoints",
 
         "possessedStuff":"MAGE.defaults.possessedStuff",
         "carriedStuff":"MAGE.defaults.carriedStuff"

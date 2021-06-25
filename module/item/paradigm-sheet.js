@@ -28,7 +28,6 @@ export default class M20eParadigmSheet extends M20eItemSheet {
   /** @override */
   getData(options) {
     const sheetData = super.getData(options);
-    log(sheetData)
     sheetData.locks = this.locks;
     sheetData.lexicon = this.lexicon;
     sheetData.lexicon.sort(function (a, b) {

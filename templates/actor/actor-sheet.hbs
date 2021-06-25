@@ -3,25 +3,7 @@
   <div class="paradigm-img" style="background-image: url('{{paraData.sheetLogo}}');"></div>
   {{/if}}
   <div style="position:relative;">
-  {{> "systems/mage-fr/templates/actor/header-cat.hbs"}}
-
-  <section class="items">
-    <h3>Owned Items</h3>
-    <ol class="actor-items">
-    {{#each actor.items as |item id|}}
-        <li class="actor-item" data-item-id="{{id}}">
-            <div class="item-name">
-              <img src="{{item.img}}" title="{{item.name}}" width="24" height="24"/>
-                <h4>{{item.name}}</h4>
-            </div>
-            <div class="item-controls">
-                <a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>
-                <a class="item-control item-delete" title="Delete Item"><i class="fas fa-trash"></i></a>
-            </div>
-        </li>
-    {{/each}}
-    </ol>
-  </section>
+  {{> "systems/mage-fr/templates/actor/parts/header-cat.hbs"}}
 
   <nav class="sheet-tabs tabs" data-group="primary">
     <a data-tab="stats"><label>{{localize "M20E.navtabs.stats"}}</label></a>
@@ -30,12 +12,10 @@
     <a data-tab="stuff"><label>{{localize "M20E.navtabs.stuff"}}</label></a>
   </nav>
 
-
-
   <section class="sheet-body">
 
     <section class="tab" data-group="primary" data-tab="stats">
-      {{> "systems/mage-fr/templates/actor/attributes-cat.hbs"}}
+      {{> "systems/mage-fr/templates/actor/parts/attributes-cat.hbs"}}
     </section>
 
     <section class="tab" data-group="primary" data-tab="magye"></section>
