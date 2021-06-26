@@ -1,6 +1,7 @@
 import {log} from "../utils.js";
 import * as utils from '../utils.js'
-import { FakeItem } from '../item/fake-item-sheet.js'
+import { FakeItem } from '../apps/fakeitem-sheet.js'
+
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
@@ -53,7 +54,7 @@ export default class M20eActorSheet extends ActorSheet {
       sheetData.paraData = paradigm.data.data;
     }
     
-    log({actor : sheetData.actor.name, sheet: sheetData});
+    log({actor : sheetData.actor.name, sheetData : sheetData});
     return sheetData
   }
 
@@ -135,7 +136,7 @@ export default class M20eActorSheet extends ActorSheet {
         this.locks[category] = !toggle;
         //enable / disable drag&drop for this specific category
         //this.dragDropManager(category);
-        this.render()
+        this.render();
         break;
 
       case 'add':
@@ -181,29 +182,33 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
+  /**
+   * Displays a "fake item-sheet" from actor's attributes or spheres
+   * Enables edition of misc values : paradigmic name (actually stored in the lexicon),
+   * specialisation and description, along with main value.
+   * also displays the associated systemDescription sourced from matching compendium.
+   * 
+   * @param {String} category  actor's property name either "attributes" or "spheres"
+   * @param {String} key       category's propertyName (ie: 'stre', 'forc', 'spir' ...)
+   */
   async editFakeItem(category, key){
-    //systemDescription provided by compendium given key.
-    let dialogData = {
+    //retrieve attribute (or sphere) name from paradigm item's lexicon if any
+    const lexiconEntry = this.actor._getLexiconEntry(`${category}.${key}`);
+    //get systemDescription from compendium given category and key
+    const packName = `mage-fr.${category}-desc`;
+    const packItem = await utils.getCompendiumDocumentByName(packName, key);
+ 
+    const itemData = {
       category: category,
       key: key,
-      actor: this.actor,
-      item: {
-        type: game.i18n.localize(`M20E.category.${category}`),
-        name: game.i18n.localize(`M20E.${category}.${key}`),
-        data: {
-          data: getProperty(this.actor.data, `data.${category}.${key}`)
-        }
-      }
+      type: game.i18n.localize(`M20E.category.${category}`),
+      lexiconName: lexiconEntry || '',
+      placeholderName : game.i18n.localize(`M20E.${category}.${key}`),
+      systemDescription: packItem ? packItem.data.content : game.i18n.localize(`M20E.errors.missingContent`)
     }
-    //add compendium description to stat.systemDescription
-    let packName = `mage-fr.${category}-desc`;
-    utils.getCompendiumDocumentByName(
-      packName,
-      dialogData.key
-    ).then(packItem => {
-      dialogData.item.data.data.systemDescription = packItem.data.content;
-      let fakeItem = new FakeItem(dialogData);
-      fakeItem.render(true);
-    });
+    //display fake sheet
+    const fakeItem = new FakeItem(this.actor, itemData);
+    fakeItem.render(true);
   }
+
 }

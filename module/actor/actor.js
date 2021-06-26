@@ -26,6 +26,11 @@ import {log} from '../utils.js'
     return this.items.filter(item => item.type === "paradigm")[0];
   }
 
+  _getLexiconEntry(relativePath){
+    const paraItem = this.paradigm;
+    if(!paraItem) return;
+    return paraItem._getLexiconEntry(relativePath);
+  }
   /*updateMagePower(){
     let magePower = actorData.data.magepower;
     magePower.max = magePower.quintessence + magePower.paradox;

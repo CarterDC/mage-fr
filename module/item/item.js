@@ -9,4 +9,8 @@ export default class M20eItem extends Item {
     super(...args);
   }
 
+  _getLexiconEntry(relativePath){
+    if(this.type !== 'paradigm') return;
+    return getProperty(this.data.data.lexicon, relativePath);
+  }
 }
