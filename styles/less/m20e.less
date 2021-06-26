@@ -15,27 +15,48 @@
   font-style: normal;
 }
 
-/************
-** Colors **
-*************/
 
-@main-red: #610d11;
-@main-green : #18520b;
-@dark-grey: #191813;
-@mid-grey: #4b4a44;
-@light-grey: #7a7971;
+
+/**************
+** Variables **
+***************/
+
+:root { //for selectors outside the m20e scope
+  --m20e-badRed:#610d11; // var(--m20e-badRed)
+  --m20e-badRedAlpha:#610d11b2; // var(--m20e-badRedAlpha)
+  --m20e-goodGreen: #18520b; // var(--m20e-goodGreen)
+  --m20e-goodGreenAlpha: #18520b80; // var(--m20e-goodGreenAlpha)
+  --m20e-darkGrey: #191813; // var(--m20e-darkGrey)
+  --m20e-midGrey: #4b4a44; // var(--m20e-midGrey)
+  --m20e-lightGrey: #7a7971; // var(--m20e-lightGrey)
+}
+.m20e{
+  --titleColor: #610d11; // var(--titleColor)
+  --highlightColor: #610d11; // var(--highlightColor)
+  --hoverColor: #610d11; // var(--hoverColor)
+  --titleFontFam: "Diablo"; // var(--titleFontFam)
+  --charNameFontSize : 24px; // var(--charNameFontSize)
+  --itemNameFontSize : 20px; // var(--itemNameFontSize)
+  --navFontSize: 18px; // var(--navFontSize)
+  --catFontSize: 18px; // var(--catFontSize)
+  --mainFontFam: "signika", sans-serif; // var(--mainFontFam)
+  --mainFontSize: 14px; // var(--mainFontSize)
+  --smallFontSize: 12px; // var(--smallFontSize)
+}
 
 /************
 ** Imports **
 *************/
+
 @import "./sheets.less";
 @import "./categories.less";
 @import "./bullets.less";
 @import "./buttons.less";
 @import "./resources.less";
 @import "./stats.less";
+@import "./paradigms.less";
 
-
+//everything that can be used outside the m20e scope goes here
 .systemDescription{  
   padding: 0px 2px;
   line-height: 14px;

@@ -1,3 +1,8 @@
+import {log} from "../utils.js";
+import * as utils from '../utils.js'
+
+//TODO : mettre les meme sécurités d'édition que sur une fiche normale
+// (pas de modif delavaleur apès la créa)
 /**
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {Application}
@@ -43,22 +48,39 @@ export class FakeItem extends Application {
 
   /** @override */
   activateListeners(html) {
-    html.find('input').change(this.onInputChange.bind(this));
+    html.find('input').change(this._onChangeInput.bind(this));
     $(document).on('keydown', this.onKeyDown.bind(this));
     super.activateListeners(html);
   }
 
-  async onInputChange(event) {
-    event.preventDefault();
-    let inputElement = event.currentTarget;
-    let inputName = inputElement.name.substring(5); //get rid of 'data.'
-    let inputValue = inputElement.value;
-
-    this.item.data.data[inputName] = inputValue;
-    this.actor._updateSingleValue(
-      `${this.category}.${this.key}.${inputName}`,
-      inputValue)
+  async _onChangeInput(event) {
+    const inputElement = event.target;
+    if(! utils.isValidUpdate(inputElement)){
+      return this.render();
+    }
+    const inputValue = inputElement.value;
+    if(inputElement.name === 'name'){
+      if(inputValue === ''){
+        return this.render();
+      }
+      //update our fakeitem's name (to be rerendered)
+      this.item.name = inputValue;
+      //change the name in the paradigm lexicon
+      const paraItem = this.actor.paradigm;
+      let obj = {};
+      obj[`data.lexicon.${this.category}.${this.key}`] = inputValue;
+      paraItem.update(obj)
       .then(result => this.render());
+    } else {
+      const inputName = inputElement.name.substring(5); //get rid of 'data.'
+      //update our fakeitem's data (to be rerendered)
+      this.item.data.data[inputName] = inputValue;
+      //update the actor with new value
+      this.actor._safeUpdateProperty(
+        `${this.category}.${this.key}.${inputName}`,
+        inputValue)
+        .then(result => this.render());
+    }
   }
 
   onKeyDown(event) {
@@ -66,6 +88,7 @@ export class FakeItem extends Application {
     if (event.key === "Escape") {
       event.preventDefault();
       event.stopPropagation();
+      //throw a random thing in the close function to prevent an update
       return this.close({statUpdate: false});
     }
   }
@@ -73,7 +96,7 @@ export class FakeItem extends Application {
   /** @inheritdoc */
   async close(options) {
     
-    if(!options){
+    /*if(!options){
       //update stat if necessary
       
       let html = this.element;
@@ -88,11 +111,11 @@ export class FakeItem extends Application {
         }
       });
       if(entryToUpdate){
-        await this.actor._updateSingleValue(
+        await this.actor._safeUpdateProperty(
           `${this.category}.${this.key}.${entryToUpdate.name}`,
           entryToUpdate.value);
       }
-    }
+    }*/
     return super.close();
   }
 }

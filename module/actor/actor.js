@@ -50,19 +50,23 @@ import {log} from '../utils.js'
     }
   }
 
-  async _updateSingleValue(relativePath, newValue){
-    //beware of floats !
-    const entryValue = (isNaN(newValue) ? newValue: parseInt(newValue) );
+  /** 'Safe' update as in 
+   * "if value is a number, parseInt it just to be on the 'safe' side"
+   * assumes the value as already been checked against min & max
+   */
+  async _safeUpdateProperty(relativePath, newValue){
+    //beware of floats !!!
+    const propertyValue = (isNaN(newValue) ? newValue: parseInt(newValue) );
     let obj = {};
-    obj[`data.${relativePath}`] = entryValue;
+    obj[`data.${relativePath}`] = propertyValue;
     return await this.update(obj);
   }
 
-  async _updateResource(resourceName, resource) {
+/*  async _updateResource(resourceName, resource) {
     let obj = {};
     obj[`data.${resourceName}`] = resource;
     await this.update(obj);
-  }
+  }*/
 
   _increaseMagepower(index){
     if( ! utils.canSeeParadox() ) return;
@@ -72,11 +76,11 @@ import {log} from '../utils.js'
     //adding quint and/or removing paradox
     if ((20 - paradox) < base1Index) { //paradox in the box, remove it
       paradox -= 1;
-      this._updateResource('magepower', {paradox});
+      this._safeUpdateProperty('magepower', {paradox});
     } else {//add a quint point (according to index)
       if (quintessence < base1Index) {
         quintessence += 1;
-        this._updateResource('magepower', {quintessence});
+        this._safeUpdateProperty('magepower', {quintessence});
       }
     }
   }
@@ -89,11 +93,11 @@ import {log} from '../utils.js'
     //adding paradox and/or removing quintessence
     if ((quintessence) >= base1Index) { //quint in the box, remove it
       quintessence -= 1;
-      this._updateResource('magepower', {quintessence});
+      this._safeUpdateProperty('magepower', {quintessence});
     } else {//add a paradox point (according to index)
       if ((20 - paradox) >= base1Index) {
         paradox += 1;
-        this._updateResource('magepower', {paradox});
+        this._safeUpdateProperty('magepower', {paradox});
       }
     }
   }
@@ -106,15 +110,15 @@ import {log} from '../utils.js'
     //decrease main value first(bashing), then lethal, then aggravated
     if ((max - value) < base1Index) {
       value -= 1;
-      this._updateResource(resourceName, {value});
+      this._safeUpdateProperty(resourceName, {value});
     } else {
       if ((max - lethal) < base1Index) {
         lethal -= 1;
-        this._updateResource(resourceName, {lethal});
+        this._safeUpdateProperty(resourceName, {lethal});
       } else {
         if ((max - aggravated) < base1Index) {
           aggravated -= 1;
-          this._updateResource(resourceName, {aggravated});
+          this._safeUpdateProperty(resourceName, {aggravated});
         }
       }
     }
@@ -128,15 +132,15 @@ import {log} from '../utils.js'
     //increase aggravated first, then lethal, then main value(bashing)
     if ((max - aggravated) >= base1Index) {
       aggravated += 1;
-      this._updateResource(resourceName, {aggravated});
+      this._safeUpdateProperty(resourceName, {aggravated});
     } else {
       if ((max - lethal) >= base1Index) {
         lethal += 1;
-        this._updateResource(resourceName, {lethal});
+        this._safeUpdateProperty(resourceName, {lethal});
       } else {
         if ((max - value) >= base1Index) {
           value += 1;
-          this._updateResource(resourceName, {value});
+          this._safeUpdateProperty(resourceName, {value});
         }
       }
     }
@@ -147,7 +151,7 @@ import {log} from '../utils.js'
     let newValue = quintessence + parseInt(mod);
     if( newValue < 0 ) newValue = 0;
     if( newValue + paradox > 20 ) newValue = 20 - paradox;
-    return this._updateSingleValue('magepower.quintessence', newValue);
+    return this._safeUpdateProperty('magepower.quintessence', newValue);
   }
 
   async modParadox(mod){
@@ -156,7 +160,7 @@ import {log} from '../utils.js'
     if( newValue < 0 ) newValue = 0;
     if( newValue + quintessence > 20 ) newValue = 20 - quintessence;
     //TODO : add whisp to GM on certain paradox values
-    return this._updateSingleValue('magepower.paradox', newValue);
+    return this._safeUpdateProperty('magepower.paradox', newValue);
   }
 
 /*  async addWound(amount, woundType = '', overhead = false){
@@ -168,7 +172,7 @@ import {log} from '../utils.js'
       if(overhead){
 
       } else {
-        return this._updateSingleValue(`health.${woundType}`, 0);
+        return this._safeUpdateValue(`health.${woundType}`, 0);
       }
     }
 

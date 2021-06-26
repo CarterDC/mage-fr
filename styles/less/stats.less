@@ -16,14 +16,14 @@
     }
     
     .stat-label:hover {//TODO : not all stat labels should behave like that
-      text-shadow: 0 0 1px @main-red;
+      text-shadow: 0 0 1px var(--hoverColor);
     }
     
     .ligne{
       flex: 10 10;
       height: 1em;
       margin: 0 2px 2px;
-      border-bottom: 1px solid @light-grey;
+      border-bottom: 1px solid var(--m20e-lightGrey);
     }
     
     .edit-bar{
@@ -51,8 +51,8 @@
     }
   }
   .stat[data-active='true'] .stat-label{
-    color: @main-red;
-    text-shadow: 0 0 1px @dark-grey;
+    color: var(--highlightColor);
+    text-shadow: 0 0 1px var(--m20e-darkGrey);
   }
 
   .stat.attribute,
@@ -95,14 +95,14 @@
         font-size: 14px;
         font-weight:400;
         font-style: oblique;
-        color: #202020;
+        color: var(--m20e-darkGrey);
     }
 
     .editor{
       font-size: 14px;
       font-weight: normal;
       height: 200px;
-      border: 1px solid #7a7971;
+      border: 1px solid var(--m20e-lightGrey);
       border-radius: 3px;
       padding-left: 3px;
     }

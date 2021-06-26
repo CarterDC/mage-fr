@@ -14,6 +14,12 @@ export default class M20eActorSheet extends ActorSheet {
     //creates the 'locks' object like {attributes: true, } from an array of categories
     this.locks = CONFIG.M20E.categoriesWithLocks.reduce((acc, cur) =>
       ({...acc, [cur]: true}),{});
+    
+    //add the paradigm css class if any to the default options.
+    const paraItem = this.actor.paradigm;
+    if(paraItem){
+      this.options.classes.push(paraItem.data.data.cssClass);
+    }
   }
 
   /** @override */

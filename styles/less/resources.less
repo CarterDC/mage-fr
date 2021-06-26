@@ -17,7 +17,7 @@
         height: 12px;
         margin-left:2px;
         margin-top: 0px;
-        border: 2px outset @dark-grey;
+        border: 2px outset var(--m20e-darkGrey);
         box-sizing:content-box;
       }
       .box[data-clickable='true']{
@@ -27,18 +27,18 @@
   }
   .health,.willpower{
     .box{
-      background-color:rgba(24, 104, 7, 0.5);
+      background-color: var(--m20e-goodGreenAlpha);
     }
     .box[data-state='1']{
-      background-color:rgba(121, 8, 19, 0.7);
+      background-color: var(--m20e-badRedAlpha);
     }
     .box[data-state='2']{
-      background-color:rgba(121, 8, 19, 0.7);
+      background-color: var(--m20e-badRedAlpha);
       background-image: url('../assets/ui/strike1.png');
       background-size: contain;
     }
     .box[data-state='3']{ 
-      background-color :rgba(121, 8, 19, 0.7);
+      background-color : var(--m20e-badRedAlpha);
       background-image: url('../assets/ui/strike2.png');
       background-size: contain;
     }
@@ -49,7 +49,7 @@
       background-image: radial-gradient(rgba(253, 253, 253, 0.9),rgba(182, 167, 82, 0.4), rgba(130,81,20,0.4), rgba(0,0,0,0));
     }
     .box[data-state='2']{
-      background-image: radial-gradient(rgba(121, 8, 19, 0.9),rgba(10, 10, 10, 0.6), rgba(0,0,0,0));
+      background-image: radial-gradient(rgba(97, 13, 17, 0.9),rgba(10, 10, 10, 0.6), rgba(0,0,0,0));
     }
   }
 }
