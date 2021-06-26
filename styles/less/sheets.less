@@ -13,10 +13,14 @@
     background-repeat: repeat-y;
   }
   form{
-    font-family: "signika", sans-serif;
-    font-size: 14px;
+    font-family: var(--mainFontFam);
+    font-size: var(--mainFontSize);
     font-weight: 600;
-    color: @dark-grey;
+    color: var(--m20e-darkGrey);
+    
+    input:focus {
+      box-shadow: 0 0 2px 1px var(--highlightColor);
+    }
   }
 
   .sheet-header{
@@ -49,8 +53,10 @@
     }
     
     .name{
+      font-family: var(--titleFontFam);
+      font-weight: bold;
       border: none;
-      border-bottom: 2px solid @main-red;
+      border-bottom: 2px solid var(--titleColor);
       background: none;
     }
 
@@ -66,17 +72,17 @@
     height: 32px;
     margin: 5px 0;
     border-bottom: 0px;
-    border-left: 1px @mid-grey;
-    font-family: "Diablo";
+    border-left: 1px var(--m20e-midGrey);
+    font-family: var(--titleFontFam);
+    font-size: var(--navFontSize);
     font-weight: bold;
     text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
-    font-size: 18px;
     text-align: center;
     
     a {
-      color: @dark-grey;  
+      color: var(--m20e-darkGrey);  
       background: rgba(0,0,0,0.3);
-      border: 1px solid @light-grey;
+      border: 1px solid var(--m20e-lightGrey);
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -99,9 +105,9 @@
       }
     }
     a.active {
-      color: @main-red;
-      background: #bdb9b200;
-      border-color: @mid-grey;
+      color:  var(--titleColor);
+      background: #bdb9b200; // todo : check that out
+      border-color: var(--m20e-midGrey);
       border-bottom: 0px;
     }
     a:hover {
@@ -118,6 +124,66 @@
     cursor: pointer;
   }
 
+  .tooltip{
+    .righttooltiptext {
+      visibility: hidden;        
+      background: rgba(0, 0, 0, 0.8) url(../assets/ui/parchment-dark.jpg) repeat;
+      text-align: center;
+      text-decoration: none;
+      text-shadow: none;
+      border: 1px solid var(--m20e-lightGrey);
+      border-radius: 3px;
+      padding: 5px 10px;
+      position: fixed;
+      margin: -5px 0px 0px 5px; 
+      z-index: 1;
+    }
+    .righttooltiptext::after {
+      content: " ";
+      position: absolute;
+      top: 50%;
+      right: 100%;
+      margin-top: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: transparent var(--m20e-darkGrey) transparent transparent;
+    }
+    .bottomtooltiptext {
+      visibility: hidden;
+      background: rgba(0, 0, 0, 0.8) url(../assets/ui/parchment-dark.jpg) repeat;
+      text-align: left;
+      text-decoration: none;
+      text-shadow: none;
+      font-size: 12px;
+      font-weight: normal;
+      border: 1px solid var(--m20e-lightGrey);
+      border-radius: 3px;
+      padding: 5px 10px;
+      position: absolute;
+      width:95%;
+      top: 100%;
+      left: 5%;
+      margin: 5px 0px 0px 0px; 
+      z-index: 1;
+    }
+    .bottomtooltiptext::after {
+      content: " ";
+      position: absolute;
+      bottom: 100%;
+      left: 10%;
+      margin-top: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: transparent transparent var(--m20e-darkGrey) transparent;
+    }
+  } 
+
+  .tooltip:hover .righttooltiptext {
+    visibility: visible;
+  }
+  .tooltip:hover .bottomtooltiptext {
+    visibility: visible;
+  }
 }
 .m20e.actor{
 
@@ -125,10 +191,8 @@
     .name{
       margin-top: -5px;
       height:30px;
-      color:@dark-grey;
-      font-family: "Diablo";
-      font-weight: bold;
-      font-size: 24px;
+      color: var(--m20e-darkGrey);
+      font-size: var(--charNameFontSize);
     }
     img{
       margin: 5px 0;
@@ -147,7 +211,7 @@
         height: 50px;
         display: flex;
         align-items: center;
-        color: #606060;
+        color: var(--m20e-midGrey); //#606060; 
         background: rgba(0, 0, 0, 0.05);
         border-radius: 3px;
         padding: 3px;
@@ -159,15 +223,13 @@
         cursor: pointer;
         box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.7);
     }    
-      .name{
-        margin: 0px 0px 5px;
-        align-self: center;
-        height:26px;
-        color:@dark-grey;
-        font-family: "Diablo";
-        font-weight: bold;
-        font-size: 20px;
-      }
+    .name{
+      margin: 0px 0px 5px;
+      align-self: center;
+      height:26px;
+      color: var(--m20e-darkGrey);
+      font-size: var(--itemNameFontSize);
+    }
   }
   section.tab{
     margin-top: 5px;

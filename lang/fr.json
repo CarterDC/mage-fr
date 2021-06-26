@@ -114,6 +114,7 @@
       "systemDescription": "⚠ Description Système",
       "displayDescription": "Description Personnalisée",
       "specialisation": "Spécialisation",
+      "spe": "Spé",
       "extra": "Extra",
       "cssClass": "Classe CSS",
       "sheetLogo": "Logo fiche de perso"
