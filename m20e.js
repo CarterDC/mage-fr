@@ -1,7 +1,7 @@
 
 // Import Modules
 import * as utils from './module/utils.js'
-import {log} from "./module/utils.js";
+import { log } from "./module/utils.js";
 import { M20E } from './module/config.js'
 import { registerSystemSettings } from "./module/settings.js";
 import M20eActor from './module/actor/actor.js'
@@ -11,7 +11,7 @@ import M20eItemSheet from './module/item/baseitem-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 
 Hooks.once('init', async function () {
-  log('Initialisation du système')
+  log('Initialisation du système');
 
   game.m20e = {
     entities: {
@@ -46,17 +46,17 @@ Hooks.once('init', async function () {
 })
 
 Hooks.on('createActor', async function (actor, options, userID) {
-
+  //todo :  maybe use precreate or something ?
   //check current user is the one that triggered the création
   //(don't add abilities to the actor multiple times)
-  if (userID != game.user.id) { return;}
+  if ( userID != game.user.id ) { return;}
 
 })
 
 Hooks.on('createItem', async function (item, options, userID) {
 
   //check current user is the one that triggered the création
-  if (userID != game.user.id) { return; }
+  if ( userID != game.user.id ) { return; }
 
 
 })

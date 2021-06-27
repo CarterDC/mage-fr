@@ -17,29 +17,34 @@ const consoleTrace = args => {
 }
 
 export const consoleLog = args =>
-console.log(`%cM20E | %c`, "color: royalblue; font-weight: bold;", "color: #ccc; font-weight: normal;", args);
+  console.log(`%cM20E | %c`, "color: royalblue; font-weight: bold;", "color: #ccc; font-weight: normal;", args);
 
-export function log(args){
+export function log(args) {
   return consoleTrace(args);
 }
 
-export function canSeeParadox(){
+export function canSeeParadox() {
   return game.settings.get("m20e", "playersCanSeeParadoxPoints") || game.user.isGM;
 }
 
-export function isValidUpdate(element){
+export function isValidUpdate(element) {
   let isValid = true;
-  if( element.type === 'text' && element.dataset.dtype === 'Number'){
-    if(isNaN(element.value) || element.value === ''){
-      ui.notifications.error(`'${element.value}' is not a Number !`);
+  if ( element.type === 'text' && element.dataset.dtype === 'Number' ) {
+    if ( isNaN( element.value ) || element.value === '') {
+      ui.notifications.error(game.i18n.format("M20E.notifications.nan", {value: element.value}));
       isValid = false;
     } else {
-      const newNumber = Number(element.value);
+      const newNumber = Number( element.value );
       //todo: not assume that there's always a min & max value ^^
       const min = Number(element.min);
       const max = Number(element.max);
-      if((newNumber < min) || (newNumber > max)){
-        ui.notifications.error(`'${newNumber}' is out of bounds (${min} - ${max}) !`);
+      if ( (newNumber < min) || (newNumber > max) ) {
+        ui.notifications.error(game.i18n.format("M20E.notifications.outtaBounds",
+          {
+            value: newNumber,
+            min: min,
+            max: max
+        }));
         isValid = false;
       }
     }
@@ -47,15 +52,15 @@ export function isValidUpdate(element){
   return isValid;
 }
 
-export async function getCompendiumDocumentByName(packName, documentName){
-  const pack = game.packs.get(packName);
-  if(!pack){
-    ui.notifications.error(`MAGE | ${packName} pack not found !`);
+export async function getCompendiumDocumentByName(packName, documentName) {
+  const pack = game.packs.get( packName );
+  if ( !pack ) {
+    ui.notifications.error( `MAGE | ${packName} pack not found !` );
     return Promise.reject();
   }
   const indexEntry = pack.index.find(entry => entry.name === documentName);
-  if(!indexEntry){
-    ui.notifications.error(`MAGE | ${documentName} not found in pack ${packName} !`);
+  if ( !indexEntry ) {
+    ui.notifications.error( `MAGE | ${documentName} not found in pack ${packName} !` );
     return Promise.reject();
   }
   return await pack.getDocument(indexEntry._id);
@@ -67,8 +72,8 @@ const isObject = myVariable =>
 const addDelimiter = (a, b) =>
   a ? `${a}.${b}` : b;
 
-export function propertiesToArray(obj = {}, prevPath = ''){
-  return Object.entries(obj)
+export function propertiesToArray(obj = {}, prevPath = '') {
+  return Object.entries( obj )
     .reduce((acc, [key, value]) => 
       {
         let path = addDelimiter(prevPath, key);
@@ -78,7 +83,7 @@ export function propertiesToArray(obj = {}, prevPath = ''){
       }, []);
 }
 
-export function RegisterHandlebarsHelpers(){
+export function RegisterHandlebarsHelpers() {
 
   //github.com/adg29/concat.js
   Handlebars.registerHelper('concat', function () {
@@ -106,10 +111,6 @@ export function RegisterHandlebarsHelpers(){
     } catch (e) {
       return game.i18n.localize(`M20E.${concatStr}`);
     }
-  });
-
-  Handlebars.registerHelper('isEven', function (index) {
-    return ((index % 2) === 1);
   });
 
   Handlebars.registerHelper('sign', function (num, options) {
@@ -145,11 +146,6 @@ export function RegisterHandlebarsHelpers(){
     return false;
   });
 
-  Handlebars.registerHelper("inc", function(value, increment = 1)
-  {
-    return parseInt(value) + parseInt(increment);
-  });
-
   //
   Handlebars.registerHelper('res', function (resource, index) {
     if((resource.max - resource.aggravated) > index){ return 3;}
@@ -158,38 +154,11 @@ export function RegisterHandlebarsHelpers(){
     return 0;
   });
 
-  //todo : refaire ça aussi avec juste 2 params
   Handlebars.registerHelper('magepower', function (magepower, index) {
     let returnValue = 0;
     if(magepower.quintessence > index) return 1;
     if(canSeeParadox() && (20 - magepower.paradox) <= index) return 2;
     return returnValue;
   });
-
-  Handlebars.registerHelper('rollModeIcon', function (result) {
-    let rollModeIcon = "";
-    switch(game.settings.get("core", "rollMode")){
-      case "gmroll":
-        rollModeIcon = "fas fa-user-friends";
-        break;
-      case "blindroll":
-        rollModeIcon = "fas fa-eye-slash";
-        break;
-      case "selfroll":
-        rollModeIcon = "fas fa-user";
-        break;
-      default:
-        rollModeIcon = "fas fa-users";
-    }
-    return rollModeIcon;
-  });
-
-  Handlebars.registerHelper('throwresult', function (result) {
-    if(result == "?") return "?";
-    if(result == "0") return game.i18n.localize('MAGE.throwresult.failure') + " !";
-    if(result > 0) return result + " " + game.i18n.localize('MAGE.throwresult.success') + " !";
-    return game.i18n.localize('MAGE.throwresult.critfailure') + " (" + result + ") !";
-  });
-
 
 }

@@ -52,6 +52,11 @@
   background-size: contain;
   background-repeat: repeat-y;
 }
+.m20e.sheet .context-items {
+  font-family: "signika", sans-serif;
+  font-size: 12px;
+  font-weight: lighter;
+}
 .m20e.sheet form {
   font-family: var(--mainFontFam);
   font-size: var(--mainFontSize);
@@ -59,6 +64,9 @@
   color: var(--m20e-darkGrey);
 }
 .m20e.sheet form input:focus {
+  box-shadow: 0 0 2px 1px var(--highlightColor);
+}
+.m20e.sheet form textarea:focus {
   box-shadow: 0 0 2px 1px var(--highlightColor);
 }
 .m20e.sheet .sheet-header {
@@ -538,6 +546,17 @@
   font-size: 14px;
   font-weight: normal;
   height: 200px;
+  border: 1px solid var(--m20e-lightGrey);
+  border-radius: 3px;
+  padding-left: 3px;
+}
+.m20e .field .fake-editor {
+  margin-top: 3px;
+  font-size: 14px;
+  font-weight: normal;
+  color: var(--m20e-darkGrey);
+  background-color: rgba(0, 0, 0, 0.05);
+  min-height: 20px;
   border: 1px solid var(--m20e-lightGrey);
   border-radius: 3px;
   padding-left: 3px;

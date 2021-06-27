@@ -1,5 +1,12 @@
 <form class="{{cssClass}}" autocomplete="off">
-  {{> "systems/mage-fr/templates/item/parts/header-block.hbs" itemType = item.type}}
+  <header class="sheet-header">
+    <div class="header-column">
+        <div class="header-row">
+            <input class = "name" name="lexiconName" type="text" value="{{lexiconName}}" data-dtype="String" placeholder="{{placeholderName}}"/>
+            <span class="item-type">{{type}}</span>
+        </div>
+    </div>
+  </header>
 
   {{> "systems/mage-fr/templates/item/parts/nav-block.hbs"}}
 
@@ -7,23 +14,28 @@
         <section class="tab" data-group="primary" data-tab="detail">
             <div class="grid two-col">
                  <div class= "field">
-                    <label for="data.value">{{localize "M20E.labels.value"}} : </label>
-                    <input name="data.value" type="text" value="{{data.value}}" data-dtype="Number" min="0" max="10"/>
+                    <label>{{localize "M20E.labels.value"}} : </label>
+                    <input name="{{concat "data." category "." key ".value"}}" type="text" value="{{value}}" data-dtype="Number" min="0" max="10"/>
                 </div>
                 <div class= "field" title="{{localize 'M20E.hints.specialisation'}}">
-                    <label for="data.specialisation">{{localize "M20E.labels.specialisation"}} : </label>
-                    <input name="data.specialisation" type="text" value="{{data.specialisation}}" data-dtype="String"/>
+                    <label>{{localize "M20E.labels.specialisation"}} : </label>
+                    <input name="{{concat "data." category "." key ".specialisation"}}" type="text" value="{{specialisation}}" data-dtype="String"/>
                 </div>
                 <div class= "field" title="{{localize 'M20E.hints.systemName'}}">
-                    <label for="sysname">{{localize "M20E.labels.systemName"}} : </label>
+                    <label>{{localize "M20E.labels.systemName"}} : </label>
                     <input name="sysname" type="text" value="{{localize (concat "M20E." category "." key)}}" data-dtype="String" disabled/>
                 </div>
             </div>
             <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
-                <label for="data.displayDescription">{{localize "M20E.labels.displayDescription"}} : </label>
-<textarea name="data.displayDescription">{{data.displayDescription}}</textarea>
+                <label>{{localize "M20E.labels.displayDescription"}} : </label>
+<textarea name="{{concat "data." category "." key ".displayDescription"}}">{{{displayDescription}}}</textarea>
             </div>
         </section>
-    {{> "systems/mage-fr/templates/item/parts/description-block.hbs" isDescEditable = false}}
+        <section class="tab" data-group="primary" data-tab="description">
+            <div class= "field" title="{{localize 'M20E.hints.systemDescription'}}">
+                <label>{{localize "M20E.labels.systemDescription"}} : </label>
+                <div class="fake-editor">{{{systemDescription}}}</div>
+            </div>
+        </section>
     </section>
 </form>

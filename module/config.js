@@ -32,7 +32,7 @@ M20E.itemSheetOptions = {
   },
   fakeitem:{
     width: 400,
-    height: 375
+    height: 360
   },
   background:{
     width: 400,
