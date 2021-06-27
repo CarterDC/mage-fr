@@ -2,7 +2,8 @@ import * as utils from '../utils.js'
 import {log} from '../utils.js'
 
 /**
- * Extend the base Actor entity by defining a custom roll data structure which is ideal for the Simple system.
+ * Implements M20eActor as an extension of the Actor class
+ * atm only used by the charMage actor-type.
  * @extends {Actor}
  */
  export default class M20eActor extends Actor {
@@ -18,7 +19,7 @@ import {log} from '../utils.js'
     super.prepareData();
     const actorData = this.data;
 
-    this._updateHealthStats();
+    this._updateHealthStats();    
     //this.updateMagePower(actorData);
   }
 
@@ -26,16 +27,25 @@ import {log} from '../utils.js'
     return this.items.filter(item => item.type === "paradigm")[0];
   }
 
-  _getLexiconEntry(relativePath){
+  getLexiconEntry(relativePath) {
     const paraItem = this.paradigm;
-    if(!paraItem) return;
-    return paraItem._getLexiconEntry(relativePath);
+    if ( !paraItem ) {
+      //todo : localize the shit out of this ! 
+      ui.notifications.warning('This character does not appear to have a paradigm item.')
+      return;
+    }
+    return paraItem.getLexiconEntry(relativePath);
   }
-  /*updateMagePower(){
-    let magePower = actorData.data.magepower;
-    magePower.max = magePower.quintessence + magePower.paradox;
-    magePower.value = magePower.quintessence;
-  }*/
+
+  async setLexiconEntry(relativePath, newValue){
+    const paraItem = this.paradigm;
+    if ( !paraItem ) {
+      //todo : localize the shit out of this ! 
+      ui.notifications.warning('This character does not have a paradigm item.')
+      return;
+    }
+    return await paraItem.setLexiconEntry(relativePath, newValue);
+  }
 
   /** Reevaluates secondary health stats 'status' and 'malus'
    * according to health values and the list of maluses
@@ -48,7 +58,7 @@ import {log} from '../utils.js'
     const wounds = health.max - health.value;
 
     health.status = game.i18n.localize(`M20E.healthStatus.${wounds}`);
-    if (wounds > 0) {
+    if ( wounds > 0 ) {
       health.malus = maluses[wounds - 1];
     } else {
       health.malus = 0;
@@ -61,29 +71,23 @@ import {log} from '../utils.js'
    */
   async _safeUpdateProperty(relativePath, newValue){
     //beware of floats !!!
-    const propertyValue = (isNaN(newValue) ? newValue: parseInt(newValue) );
+    const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
     let obj = {};
     obj[`data.${relativePath}`] = propertyValue;
     return await this.update(obj);
   }
 
-/*  async _updateResource(resourceName, resource) {
-    let obj = {};
-    obj[`data.${resourceName}`] = resource;
-    await this.update(obj);
-  }*/
-
   _increaseMagepower(index){
-    if( ! utils.canSeeParadox() ) return;
+    if( ! utils.canSeeParadox() ) { return; }
     const base1Index = index += 1;
     let {quintessence, paradox} = this.data.data.magepower;
 
     //adding quint and/or removing paradox
-    if ((20 - paradox) < base1Index) { //paradox in the box, remove it
+    if ( (20 - paradox) < base1Index ) { //paradox in the box, remove it
       paradox -= 1;
       this._safeUpdateProperty('magepower', {paradox});
     } else {//add a quint point (according to index)
-      if (quintessence < base1Index) {
+      if ( quintessence < base1Index ) {
         quintessence += 1;
         this._safeUpdateProperty('magepower', {quintessence});
       }
@@ -91,16 +95,16 @@ import {log} from '../utils.js'
   }
 
   _decreaseMagepower(index){
-    if( ! utils.canSeeParadox() ) return;
+    if ( ! utils.canSeeParadox() ) { return; }
     const base1Index = index += 1;
     let {quintessence, paradox} = this.data.data.magepower;
 
     //adding paradox and/or removing quintessence
-    if ((quintessence) >= base1Index) { //quint in the box, remove it
+    if ( (quintessence) >= base1Index ) { //quint in the box, remove it
       quintessence -= 1;
       this._safeUpdateProperty('magepower', {quintessence});
     } else {//add a paradox point (according to index)
-      if ((20 - paradox) >= base1Index) {
+      if ( (20 - paradox) >= base1Index ) {
         paradox += 1;
         this._safeUpdateProperty('magepower', {paradox});
       }
@@ -113,15 +117,15 @@ import {log} from '../utils.js'
     let {max, value, lethal, aggravated} = this.data.data[resourceName];
 
     //decrease main value first(bashing), then lethal, then aggravated
-    if ((max - value) < base1Index) {
+    if ( (max - value) < base1Index ) {
       value -= 1;
       this._safeUpdateProperty(resourceName, {value});
     } else {
-      if ((max - lethal) < base1Index) {
+      if ( (max - lethal) < base1Index ) {
         lethal -= 1;
         this._safeUpdateProperty(resourceName, {lethal});
       } else {
-        if ((max - aggravated) < base1Index) {
+        if ( (max - aggravated) < base1Index ) {
           aggravated -= 1;
           this._safeUpdateProperty(resourceName, {aggravated});
         }
@@ -135,15 +139,15 @@ import {log} from '../utils.js'
     let {max, value, lethal, aggravated} = this.data.data[resourceName];
 
     //increase aggravated first, then lethal, then main value(bashing)
-    if ((max - aggravated) >= base1Index) {
+    if ( (max - aggravated) >= base1Index ) {
       aggravated += 1;
       this._safeUpdateProperty(resourceName, {aggravated});
     } else {
-      if ((max - lethal) >= base1Index) {
+      if ( (max - lethal) >= base1Index ) {
         lethal += 1;
         this._safeUpdateProperty(resourceName, {lethal});
       } else {
-        if ((max - value) >= base1Index) {
+        if ( (max - value) >= base1Index ) {
           value += 1;
           this._safeUpdateProperty(resourceName, {value});
         }
@@ -151,30 +155,30 @@ import {log} from '../utils.js'
     }
   }
 
-  async modQuintessence(mod){
+  async modQuintessence(mod) {
     const {quintessence, paradox}  = this.data.data.magepower;
     let newValue = quintessence + parseInt(mod);
-    if( newValue < 0 ) newValue = 0;
-    if( newValue + paradox > 20 ) newValue = 20 - paradox;
+    if ( newValue < 0 ) { newValue = 0; }
+    if ( newValue + paradox > 20 ) { newValue = 20 - paradox; }
     return this._safeUpdateProperty('magepower.quintessence', newValue);
   }
 
-  async modParadox(mod){
+  async modParadox(mod) {
     const {quintessence, paradox}  = this.data.data.magepower;
     let newValue = paradox + parseInt(mod);
-    if( newValue < 0 ) newValue = 0;
-    if( newValue + quintessence > 20 ) newValue = 20 - quintessence;
-    //TODO : add whisp to GM on certain paradox values
+    if ( newValue < 0 ) { newValue = 0; }
+    if ( newValue + quintessence > 20 ) { newValue = 20 - quintessence; }
+    //TODO : maybe add whisp to GM on certain paradox values
     return this._safeUpdateProperty('magepower.paradox', newValue);
   }
 
-/*  async addWound(amount, woundType = '', overhead = false){
+/*  async addWound(amount, woundType = '', overhead = false) {
     const health = duplicate(this.data.data.health);
     woundType = woundType === '' ? 'value' : woundType;
     const current = getProperty(health, woundType);
     //log(current);
-    if(amount > current){
-      if(overhead){
+    if ( amount > current ) {
+      if  (overhead ){
 
       } else {
         return this._safeUpdateValue(`health.${woundType}`, 0);

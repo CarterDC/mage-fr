@@ -12,6 +12,13 @@
     background-size: contain;
     background-repeat: repeat-y;
   }
+
+  .context-items{
+    font-family: "signika", sans-serif;
+    font-size: 12px;
+    font-weight:lighter;
+  }
+
   form{
     font-family: var(--mainFontFam);
     font-size: var(--mainFontSize);
@@ -19,6 +26,9 @@
     color: var(--m20e-darkGrey);
     
     input:focus {
+      box-shadow: 0 0 2px 1px var(--highlightColor);
+    }
+    textarea:focus {
       box-shadow: 0 0 2px 1px var(--highlightColor);
     }
   }

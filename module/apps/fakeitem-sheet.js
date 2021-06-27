@@ -82,18 +82,23 @@ export class FakeItem extends FormApplication {
 
   async _onChangeLexiconName(inputElement) {
     const inputValue = inputElement.value;
-    if(inputValue === ''){
+    if(inputValue === ''){ // TODO : get rid of this if empty string to remove is implemented
       return this.render();
     }
     //update our fakeitem's name (to be rerendered)
     this.itemData.lexiconName = inputValue;
     //change the name in the paradigm lexicon
-    const paraItem = this.actor.paradigm;
-    let obj = {};
-    obj[`data.lexicon.${this.itemData.category}.${this.itemData.key}`] = inputValue;
-    debugger;
-    paraItem.update(obj)
-    .then(result => this.render());
+    this.actor.setLexiconEntry(this.itemData.relativePath, inputValue);
   }
 
+  async close(options) {
+    const html = $(this.element);
+    const newValue = html.find(".name")[0].value;
+    const lexiconEntry = this.actor.getLexiconEntry(this.itemData.relativePath);
+    if( newValue !== lexiconEntry ){
+      //last update before closing
+      this.actor.setLexiconEntry(this.itemData.relativePath, newValue);
+    }
+    super.close(options);
+  }
 }

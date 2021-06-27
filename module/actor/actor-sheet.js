@@ -1,9 +1,9 @@
-import {log} from "../utils.js";
+import {log} from "../utils.js"
 import * as utils from '../utils.js'
 import { FakeItem } from '../apps/fakeitem-sheet.js'
 
 /**
- * Extend the basic ActorSheet with some very simple modifications
+ * Implements M20eActorSheet as an extension of the ActorSheet class
  * @extends {ActorSheet}
  */
 export default class M20eActorSheet extends ActorSheet {
@@ -15,10 +15,10 @@ export default class M20eActorSheet extends ActorSheet {
     //creates the 'locks' object like {attributes: true, } from an array of categories
     this.locks = CONFIG.M20E.categoriesWithLocks.reduce((acc, cur) =>
       ({...acc, [cur]: true}),{});
-    
+
     //add the paradigm css class if any to the default options.
     const paraItem = this.actor.paradigm;
-    if(paraItem){
+    if ( paraItem ) {
       this.options.classes.push(paraItem.data.data.cssClass);
     }
   }
@@ -50,12 +50,12 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.canSeeParadox = utils.canSeeParadox();
 
     const paradigm = this.actor.paradigm;
-    if(paradigm) {
+    if( paradigm ) {
       sheetData.paraData = paradigm.data.data;
     }
-    
-    log({actor : sheetData.actor.name, sheetData : sheetData});
-    return sheetData
+
+    //log({actor : sheetData.actor.name, sheetData : sheetData});
+    return sheetData;
   }
 
   /** @override */
@@ -72,9 +72,10 @@ export default class M20eActorSheet extends ActorSheet {
       html.find('.resource-panel .box[data-clickable="true"]').mousedown(this._onResourceBoxClick.bind(this)); //todo maybe add clickable ?
     }
 
-    if(game.user.isGM){
-      
+    if ( game.user.isGM ) {
+      new ContextMenu(html, '.resource-context', this._resourceContextMenu);
     }
+
     super.activateListeners(html);
   }
 
@@ -82,22 +83,99 @@ export default class M20eActorSheet extends ActorSheet {
   /*  Event Handlers                              */
   /* -------------------------------------------- */
 
+  _resourceContextMenu = [
+    {
+      name: game.i18n.localize('M20E.context.editWillpowerMax'),
+      icon: '<i class="fas fa-pencil-alt"></i>',
+      callback: element => {
+        this.editResource({
+          relativePath: 'willpower.max',
+          currentValue: getProperty(this.actor.data.data, 'willpower.max'),
+          name: `${game.i18n.localize('M20E.willpower')} Max`
+        });
+      },
+      condition: element => {
+        return (element[0].dataset.resource === 'willpower');
+      }
+    },
+    {
+      name: game.i18n.localize('M20E.context.editHealthMax'),
+      icon: '<i class="fas fa-pencil-alt"></i>',
+      callback: element => {
+        this.editResource({
+          relativePath: 'health.max',
+          currentValue: getProperty(this.actor.data.data, 'health.max'),
+          name: `${game.i18n.localize('M20E.health')} Max`
+        });
+      },
+      condition: element => {
+        return (element[0].dataset.resource === 'health');
+      }
+    },
+    {
+      name: game.i18n.localize('M20E.context.editHealthMalus'),
+      icon: '<i class="fas fa-pencil-alt"></i>',
+      callback: element => {
+        this.editResource({
+          relativePath: 'health.malusList',
+          currentValue: getProperty(this.actor.data.data, 'health.malusList'),
+          name: `Malus ${game.i18n.localize("M20E.health")}`
+        });
+      },
+      condition: element => {
+        return (element[0].dataset.resource === 'health');
+      }
+    }
+  ]
+
+  async editResource(promptData) {
+// todo : redo with format
+    let newValue = await Dialog.prompt({
+      title: promptData.name,
+      content: `<p style='text-align:center;'>
+        ${game.i18n.format("M20E.prompts.newValue", {name : promptData.name})}</p>
+        <input type='text' value='${promptData.currentValue}'/><br><br>`,
+      rejectClose: false,
+      callback: (html) => html.find('input').val()
+    })
+    // newValue can either be a Number (max values) or a String in the case of malusList
+    if ( newValue === null || newValue === '' ) { return; }
+    if ( newValue !== promptData.currentValue ) {
+      //TODO !!!: check for nan against type of current value (easier ^^)
+      if ( ! isNaN(newValue) ) {
+        newValue = parseInt(newValue);
+        //validate against min and max (0 -10)
+        if ( newValue < 0 || 10 < newValue ) {
+          ui.notifications.error(game.i18n.format("M20E.notifications.outtaBounds",
+          {
+            value: newValue,
+            min: 0,
+            max: 10
+          }));
+          return;
+        }
+      }
+      return await this.actor._safeUpdateProperty(promptData.relativePath, newValue);
+    }
+  }
+
+
   _onResourceBoxClick(event) {
     event.preventDefault();
     const element = event.currentTarget;
     const index = parseInt(element.dataset.index);
     const resourceName = element.closest('.resource-panel').dataset.resource;
 
-    switch (event.which) {
+    switch ( event.which ) {
       case 1://left button
-        if(resourceName === 'magepower'){
+        if ( resourceName === 'magepower' ) {
           this.actor._increaseMagepower(index);
         } else {
           this.actor._decreaseResource(resourceName, index);
         }
         break;
       case 3://right button
-        if(resourceName === 'magepower'){
+        if ( resourceName === 'magepower' ){
           this.actor._decreaseMagepower(index);
         } else {
           this.actor._increaseResource(resourceName, index);
@@ -110,7 +188,7 @@ export default class M20eActorSheet extends ActorSheet {
 
   async _onChangeInput(event) {
     const element = event.target;
-    if(! utils.isValidUpdate(element)){
+    if ( ! utils.isValidUpdate(element) ) {
       event.preventDefault();
       return this.render();
     }
@@ -125,11 +203,11 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   _onMiniButtonClick(event) {
-    event.preventDefault()
-    const element = event.currentTarget
-    const dataset = element.dataset
+    event.preventDefault();
+    const element = event.currentTarget;
+    const dataset = element.dataset;
 
-    switch (dataset.action) {
+    switch ( dataset.action ) {
       case 'lock':
         const category = dataset.category;
         const toggle = this.locks[category];
@@ -163,14 +241,14 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   //utile ?
-  getStatElement(event){
+  getStatElement(event) {
     const element = event.currentTarget;
     return element.closest(".stat");
   }
 
   editItem(element) {
     const category = element.closest(".category").dataset.category;
-    if (category === 'attributes' || category === 'spheres') {
+    if ( category === 'attributes' || category === 'spheres' ) {
       const key = element.closest(".stat").dataset.key;
       //use a fakeItem dialog to edit attribute (or sphere)
       this.editFakeItem(category, key);
@@ -191,9 +269,9 @@ export default class M20eActorSheet extends ActorSheet {
    * @param {String} category  actor's property name either "attributes" or "spheres"
    * @param {String} key       category's propertyName (ie: 'stre', 'forc', 'spir' ...)
    */
-  async editFakeItem(category, key){
+  async editFakeItem(category, key) {
     //retrieve attribute (or sphere) name from paradigm item's lexicon if any
-    const lexiconEntry = this.actor._getLexiconEntry(`${category}.${key}`);
+    const lexiconEntry = this.actor.getLexiconEntry(`${category}.${key}`);
     //get systemDescription from compendium given category and key
     const packName = `mage-fr.${category}-desc`;
     const packItem = await utils.getCompendiumDocumentByName(packName, key);
@@ -201,6 +279,7 @@ export default class M20eActorSheet extends ActorSheet {
     const itemData = {
       category: category,
       key: key,
+      relativePath: `${category}.${key}`,
       type: game.i18n.localize(`M20E.category.${category}`),
       lexiconName: lexiconEntry || '',
       placeholderName : game.i18n.localize(`M20E.${category}.${key}`),

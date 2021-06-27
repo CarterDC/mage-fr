@@ -126,7 +126,38 @@
       "add": "Ajouter",
       "specialisation": "Utilisé uniquement à partir du rang 4.",
       "displayDescription": "Apparait souvent en info-bulle ou en 'linkant' dans le chat",
-      "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags."
+      "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags.",
+      "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
+      "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus."
+    },
+
+    "context": {
+      "linkInChat": "Envoyer vers le chat.",
+      "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès",
+      "editWillpowerMax": "Editer Volonté Max.",
+      "editHealthMax": "Editer Santé Max.",
+      "editHealthMalus": "Editer Malus Santé.",
+      "throwPublicRoll": "Lancer Public.",
+      "throwGmRoll": "Lancer pour le GM.",
+      "throwBlindRoll": "Lancer en Aveugle.",
+      "throwSelfRoll": "Lancer pour Moi.",
+      "throwStealthRoll": "Lancer Furtif."
+    },
+
+    "prompts": {
+      "newValue": "Entrez une nouvelle valeur pour <br><b>{name}</b> :",
+      "deleteTitle": "Suppression de {name}",
+      "deleteContent": "La suppression de '{name}' est <b>définitive</b>.<br>Confirmez-vous ?",
+      "lexiconTitle": "Lexique",
+      "lexiconContentAdd": "Ajout d'une nouvelle entrée de lexique à ce paradigme.",
+      "lexiconContentEdit": "Modification d'une entrée de lexique pour ce paradigme."
+    },
+
+    "notifications":{
+      "invalidFormat": "'{value}' n'a pas un format conforme !",
+      "nan": "'{value}' n'est pas un nombre !",
+      "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
+      "notLocalized" : "L'entrée '{path}' n'existe pas dans le fichier de localisation !"
     },
 
     "arete": "Entéléchie",
