@@ -35,9 +35,9 @@
   --highlightColor: #610d11; // var(--highlightColor)
   --hoverColor: #610d11; // var(--hoverColor)
   --titleFontFam: "Diablo"; // var(--titleFontFam)
-  --charNameFontSize : 24px; // var(--charNameFontSize)
+  --charNameFontSize : 22px; // var(--charNameFontSize)
   --itemNameFontSize : 20px; // var(--itemNameFontSize)
-  --navFontSize: 18px; // var(--navFontSize)
+  --navFontSize: 16px; // var(--navFontSize)
   --catFontSize: 18px; // var(--catFontSize)
   --mainFontFam: "signika", sans-serif; // var(--mainFontFam)
   --mainFontSize: 14px; // var(--mainFontSize)
@@ -53,7 +53,7 @@
 @import "./bullets.less";
 @import "./buttons.less";
 @import "./resources.less";
-@import "./stats.less";
+@import "./traits.less";
 @import "./paradigms.less";
 
 //everything that can be used outside the m20e scope goes here
@@ -84,7 +84,35 @@
   }
 }
 
+.m20e.dialog{
+  .dialog-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    p{
+      text-align: center;
+    }
+    input{
+      margin: 5px 0px;
+      width: 70%;
+    }
+  }
+  .dialog-buttons{
+    .dialog-button{
+      margin-top: 5px;
+      flex: 0 0 40%;
+    }
+  }
+}
+
 .m20e {
+
+  input:focus {
+    box-shadow: 0 0 2px 1px var(--highlightColor);
+  }
+  textarea:focus {
+    box-shadow: 0 0 2px 1px var(--highlightColor);
+  }
 
   .hidden-field {
     display: none;

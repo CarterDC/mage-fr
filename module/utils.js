@@ -1,8 +1,10 @@
 export async function preloadHandlebarsTemplates() {
   const templatesPaths = [
+    "systems/mage-fr/templates/actor/parts/header-cat.hbs",
     "systems/mage-fr/templates/actor/parts/cat-banner.hbs",
     "systems/mage-fr/templates/actor/parts/attributes-cat.hbs",
-    "systems/mage-fr/templates/actor/parts/header-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/abilities-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/spheres-cat.hbs",
     "systems/mage-fr/templates/item/parts/header-block.hbs",
     "systems/mage-fr/templates/item/parts/nav-block.hbs",
     "systems/mage-fr/templates/item/parts/description-block.hbs"
@@ -22,12 +24,16 @@ export const consoleLog = args =>
 export function log(args) {
   return consoleTrace(args);
 }
+export function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
 
 export function canSeeParadox() {
   return game.settings.get("m20e", "playersCanSeeParadoxPoints") || game.user.isGM;
 }
 
 export function isValidUpdate(element) {
+  if ( element === null ) { return false; }
   let isValid = true;
   if ( element.type === 'text' && element.dataset.dtype === 'Number' ) {
     if ( isNaN( element.value ) || element.value === '') {
@@ -50,6 +56,49 @@ export function isValidUpdate(element) {
     }
   }
   return isValid;
+}
+
+export async function promptNewValue(promptData) {
+  const {title, name, currentValue, min = '', max = ''} = promptData;
+  log({title, name, currentValue, min, max});
+  let dtype = 'String';
+  let minmax = '';
+  if ( isNumeric(currentValue) ) {
+    dtype = 'Number';
+    minmax += min !== '' ? ` min="${promptData.min}"` : '';
+    minmax += max !== '' ? ` max="${promptData.max}"` : '';
+  }
+  const content =  `${game.i18n.format("M20E.prompts.newValue", {name : name})}  
+    <input type='text' value='${currentValue}' data-dtype='${dtype}' ${minmax}/>`;
+
+  return await Dialog.prompt({
+    options: {classes: ['dialog', 'm20e']},
+    title: title,
+    content: content,
+    rejectClose: false,
+    callback: (html) => { return html.find('input')[0]; }
+  })
+
+  /*
+  // newValue can either be a Number (max values) or a String in the case of malusList
+  if ( newValue === null || newValue === '' ) { return; }
+  if ( newValue !== promptData.currentValue ) {
+    //TODO !!!: check for nan against type of current value (easier ^^)
+    if ( ! isNaN(newValue) ) {
+      newValue = parseInt(newValue);
+      //validate against min and max (0 -10)
+      if ( newValue < 0 || 10 < newValue ) {
+        ui.notifications.error(game.i18n.format("M20E.notifications.outtaBounds",
+        {
+          value: newValue,
+          min: 0,
+          max: 10
+        }));
+        return;
+      }
+    }
+  }*/
+
 }
 
 export async function getCompendiumDocumentByName(packName, documentName) {

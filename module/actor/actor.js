@@ -30,8 +30,7 @@ import {log} from '../utils.js'
   getLexiconEntry(relativePath) {
     const paraItem = this.paradigm;
     if ( !paraItem ) {
-      //todo : localize the shit out of this ! 
-      ui.notifications.warning('This character does not appear to have a paradigm item.')
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
       return;
     }
     return paraItem.getLexiconEntry(relativePath);
@@ -40,8 +39,7 @@ import {log} from '../utils.js'
   async setLexiconEntry(relativePath, newValue){
     const paraItem = this.paradigm;
     if ( !paraItem ) {
-      //todo : localize the shit out of this ! 
-      ui.notifications.warning('This character does not have a paradigm item.')
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
       return;
     }
     return await paraItem.setLexiconEntry(relativePath, newValue);
@@ -49,7 +47,6 @@ import {log} from '../utils.js'
 
   /** Reevaluates secondary health stats 'status' and 'malus'
    * according to health values and the list of maluses
-   * 
    */
   _updateHealthStats() {
     let health = this.data.data.health;
@@ -69,7 +66,7 @@ import {log} from '../utils.js'
    * "if value is a number, parseInt it just to be on the 'safe' side"
    * assumes the value as already been checked against min & max
    */
-  async _safeUpdateProperty(relativePath, newValue){
+  async safeUpdateProperty(relativePath, newValue){
     //beware of floats !!!
     const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
     let obj = {};
@@ -77,7 +74,7 @@ import {log} from '../utils.js'
     return await this.update(obj);
   }
 
-  _increaseMagepower(index){
+  increaseMagepower(index){
     if( ! utils.canSeeParadox() ) { return; }
     const base1Index = index += 1;
     let {quintessence, paradox} = this.data.data.magepower;
@@ -85,16 +82,16 @@ import {log} from '../utils.js'
     //adding quint and/or removing paradox
     if ( (20 - paradox) < base1Index ) { //paradox in the box, remove it
       paradox -= 1;
-      this._safeUpdateProperty('magepower', {paradox});
+      this.safeUpdateProperty('magepower', {paradox});
     } else {//add a quint point (according to index)
       if ( quintessence < base1Index ) {
         quintessence += 1;
-        this._safeUpdateProperty('magepower', {quintessence});
+        this.safeUpdateProperty('magepower', {quintessence});
       }
     }
   }
 
-  _decreaseMagepower(index){
+  decreaseMagepower(index){
     if ( ! utils.canSeeParadox() ) { return; }
     const base1Index = index += 1;
     let {quintessence, paradox} = this.data.data.magepower;
@@ -102,54 +99,54 @@ import {log} from '../utils.js'
     //adding paradox and/or removing quintessence
     if ( (quintessence) >= base1Index ) { //quint in the box, remove it
       quintessence -= 1;
-      this._safeUpdateProperty('magepower', {quintessence});
+      this.safeUpdateProperty('magepower', {quintessence});
     } else {//add a paradox point (according to index)
       if ( (20 - paradox) >= base1Index ) {
         paradox += 1;
-        this._safeUpdateProperty('magepower', {paradox});
+        this.safeUpdateProperty('magepower', {paradox});
       }
     }
   }
 
   //health & willpower
-  _decreaseResource(resourceName, index) {
+  decreaseResource(resourceName, index) {
     const base1Index = index += 1; // cuz sometimes you're just too tired to think in base0
     let {max, value, lethal, aggravated} = this.data.data[resourceName];
 
     //decrease main value first(bashing), then lethal, then aggravated
     if ( (max - value) < base1Index ) {
       value -= 1;
-      this._safeUpdateProperty(resourceName, {value});
+      this.safeUpdateProperty(resourceName, {value});
     } else {
       if ( (max - lethal) < base1Index ) {
         lethal -= 1;
-        this._safeUpdateProperty(resourceName, {lethal});
+        this.safeUpdateProperty(resourceName, {lethal});
       } else {
         if ( (max - aggravated) < base1Index ) {
           aggravated -= 1;
-          this._safeUpdateProperty(resourceName, {aggravated});
+          this.safeUpdateProperty(resourceName, {aggravated});
         }
       }
     }
   }
 
   //health & willpower
-  _increaseResource(resourceName, index) {
+  increaseResource(resourceName, index) {
     const base1Index = index += 1;
     let {max, value, lethal, aggravated} = this.data.data[resourceName];
 
     //increase aggravated first, then lethal, then main value(bashing)
     if ( (max - aggravated) >= base1Index ) {
       aggravated += 1;
-      this._safeUpdateProperty(resourceName, {aggravated});
+      this.safeUpdateProperty(resourceName, {aggravated});
     } else {
       if ( (max - lethal) >= base1Index ) {
         lethal += 1;
-        this._safeUpdateProperty(resourceName, {lethal});
+        this.safeUpdateProperty(resourceName, {lethal});
       } else {
         if ( (max - value) >= base1Index ) {
           value += 1;
-          this._safeUpdateProperty(resourceName, {value});
+          this.safeUpdateProperty(resourceName, {value});
         }
       }
     }
@@ -160,7 +157,7 @@ import {log} from '../utils.js'
     let newValue = quintessence + parseInt(mod);
     if ( newValue < 0 ) { newValue = 0; }
     if ( newValue + paradox > 20 ) { newValue = 20 - paradox; }
-    return this._safeUpdateProperty('magepower.quintessence', newValue);
+    return this.safeUpdateProperty('magepower.quintessence', newValue);
   }
 
   async modParadox(mod) {
@@ -169,7 +166,7 @@ import {log} from '../utils.js'
     if ( newValue < 0 ) { newValue = 0; }
     if ( newValue + quintessence > 20 ) { newValue = 20 - quintessence; }
     //TODO : maybe add whisp to GM on certain paradox values
-    return this._safeUpdateProperty('magepower.paradox', newValue);
+    return this.safeUpdateProperty('magepower.paradox', newValue);
   }
 
 /*  async addWound(amount, woundType = '', overhead = false) {

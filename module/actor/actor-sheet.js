@@ -30,7 +30,7 @@ export default class M20eActorSheet extends ActorSheet {
       template: 'systems/mage-fr/templates/actor/actor-sheet.hbs',
       width: 500,
       height: 720,
-      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'stats' }],
+      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'traits' }],
       dragDrop: [{ dragSelector: ".dice-button" }]
     })
   }
@@ -62,8 +62,8 @@ export default class M20eActorSheet extends ActorSheet {
   activateListeners(html) {
 
     //actions for everyone
-    //(dice thows & stat link)
-    html.find('a.stat-label').click(this._onstatLabelClick.bind(this));
+    //(dice thows & trait link)
+    html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
 
     //editable only (roughly equals 'isOwner')
     if ( this.isEditable ) {
@@ -88,7 +88,7 @@ export default class M20eActorSheet extends ActorSheet {
       name: game.i18n.localize('M20E.context.editWillpowerMax'),
       icon: '<i class="fas fa-pencil-alt"></i>',
       callback: element => {
-        this.editResource({
+        this._editResource({
           relativePath: 'willpower.max',
           currentValue: getProperty(this.actor.data.data, 'willpower.max'),
           name: `${game.i18n.localize('M20E.willpower')} Max`
@@ -102,7 +102,7 @@ export default class M20eActorSheet extends ActorSheet {
       name: game.i18n.localize('M20E.context.editHealthMax'),
       icon: '<i class="fas fa-pencil-alt"></i>',
       callback: element => {
-        this.editResource({
+        this._editResource({
           relativePath: 'health.max',
           currentValue: getProperty(this.actor.data.data, 'health.max'),
           name: `${game.i18n.localize('M20E.health')} Max`
@@ -116,7 +116,7 @@ export default class M20eActorSheet extends ActorSheet {
       name: game.i18n.localize('M20E.context.editHealthMalus'),
       icon: '<i class="fas fa-pencil-alt"></i>',
       callback: element => {
-        this.editResource({
+        this._editResource({
           relativePath: 'health.malusList',
           currentValue: getProperty(this.actor.data.data, 'health.malusList'),
           name: `Malus ${game.i18n.localize("M20E.health")}`
@@ -128,37 +128,20 @@ export default class M20eActorSheet extends ActorSheet {
     }
   ]
 
-  async editResource(promptData) {
-// todo : redo with format
-    let newValue = await Dialog.prompt({
-      title: promptData.name,
-      content: `<p style='text-align:center;'>
-        ${game.i18n.format("M20E.prompts.newValue", {name : promptData.name})}</p>
-        <input type='text' value='${promptData.currentValue}'/><br><br>`,
-      rejectClose: false,
-      callback: (html) => html.find('input').val()
-    })
-    // newValue can either be a Number (max values) or a String in the case of malusList
-    if ( newValue === null || newValue === '' ) { return; }
-    if ( newValue !== promptData.currentValue ) {
-      //TODO !!!: check for nan against type of current value (easier ^^)
-      if ( ! isNaN(newValue) ) {
-        newValue = parseInt(newValue);
-        //validate against min and max (0 -10)
-        if ( newValue < 0 || 10 < newValue ) {
-          ui.notifications.error(game.i18n.format("M20E.notifications.outtaBounds",
-          {
-            value: newValue,
-            min: 0,
-            max: 10
-          }));
-          return;
-        }
+  async _editResource(promptData) {
+    if( utils.isNumeric(promptData.currentValue)){
+      promptData.min = 0;
+      promptData.max = 10;
+    }
+    const inputElement = await utils.promptNewValue(promptData);
+    if ( utils.isValidUpdate(inputElement) ) {
+      const newValue = isNaN(promptData.currentValue) ? inputElement.value : parseInt(inputElement.value);
+      //only update if it's actually a different value
+      if ( newValue !== promptData.currentValue ) {
+        await this.actor.safeUpdateProperty(promptData.relativePath, newValue);
       }
-      return await this.actor._safeUpdateProperty(promptData.relativePath, newValue);
     }
   }
-
 
   _onResourceBoxClick(event) {
     event.preventDefault();
@@ -169,16 +152,16 @@ export default class M20eActorSheet extends ActorSheet {
     switch ( event.which ) {
       case 1://left button
         if ( resourceName === 'magepower' ) {
-          this.actor._increaseMagepower(index);
+          this.actor.increaseMagepower(index);
         } else {
-          this.actor._decreaseResource(resourceName, index);
+          this.actor.decreaseResource(resourceName, index);
         }
         break;
       case 3://right button
         if ( resourceName === 'magepower' ){
-          this.actor._decreaseMagepower(index);
+          this.actor.decreaseMagepower(index);
         } else {
-          this.actor._increaseResource(resourceName, index);
+          this.actor.increaseResource(resourceName, index);
         }
         break;
       default:
@@ -195,11 +178,11 @@ export default class M20eActorSheet extends ActorSheet {
     super._onChangeInput(event);
   }
 
-  _onstatLabelClick(event) {
+  _onTraitLabelClick(event) {
     event.preventDefault()
-    const statElement = this.getStatElement(event);
-    const toggle = (statElement.dataset.active === 'true');
-    statElement.dataset.active = !toggle;
+    const traitElement = this._getTraitElement(event);
+    const toggle = (traitElement.dataset.active === 'true');
+    traitElement.dataset.active = !toggle;
   }
 
   _onMiniButtonClick(event) {
@@ -212,49 +195,47 @@ export default class M20eActorSheet extends ActorSheet {
         const category = dataset.category;
         const toggle = this.locks[category];
         this.locks[category] = !toggle;
-        //enable / disable drag&drop for this specific category
-        //this.dragDropManager(category);
         this.render();
         break;
 
       case 'add':
-        //this.addItem(element, dataset);
+        //this._addItem(element, dataset);
         break;
 
       case 'edit':
-        this.editItem(element);
+        this._editItem(element);
         break;
 
       case 'remove':
-        //let itemId = element.closest(".stat").dataset.itemId;
-        //this.removeItem(itemId);
+        //let itemId = element.closest(".trait").dataset.itemId;
+        //this._removeItem(itemId);
         break;
 
       case 'roll':
-        this.rollItem(element, dataset);
+        
         break;
 
       case 'expand':
-        this.expandDescription(element);
+        
         break;
     }
   }
 
   //utile ?
-  getStatElement(event) {
+  _getTraitElement(event) {
     const element = event.currentTarget;
-    return element.closest(".stat");
+    return element.closest(".trait");
   }
 
-  editItem(element) {
+  _editItem(element) {
     const category = element.closest(".category").dataset.category;
     if ( category === 'attributes' || category === 'spheres' ) {
-      const key = element.closest(".stat").dataset.key;
+      const key = element.closest(".trait").dataset.key;
       //use a fakeItem dialog to edit attribute (or sphere)
-      this.editFakeItem(category, key);
+      this._editFakeItem(category, key);
     } else {
       // regular item edit
-      let itemId = element.closest(".stat").dataset.itemId;
+      let itemId = element.closest(".trait").dataset.itemId;
       let item = this.actor.items.get(itemId);
       item.sheet.render(true);
     }
@@ -269,7 +250,7 @@ export default class M20eActorSheet extends ActorSheet {
    * @param {String} category  actor's property name either "attributes" or "spheres"
    * @param {String} key       category's propertyName (ie: 'stre', 'forc', 'spir' ...)
    */
-  async editFakeItem(category, key) {
+  async _editFakeItem(category, key) {
     //retrieve attribute (or sphere) name from paradigm item's lexicon if any
     const lexiconEntry = this.actor.getLexiconEntry(`${category}.${key}`);
     //get systemDescription from compendium given category and key

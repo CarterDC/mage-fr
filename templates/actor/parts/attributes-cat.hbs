@@ -6,8 +6,8 @@
     <label class="column-header">{{locadigm ../paraData "attributes.social"}}</label>
     <label class="column-header">{{locadigm ../paraData "attributes.mental"}}</label>                
     {{#each data.attributes as |attribute key|}}
-    <div class="stat attribute" data-key="{{key}}" data-active= "false">
-      <a class="stat-label tooltip">
+    <div class="trait attribute" data-key="{{key}}" data-active= "false">
+      <a class="trait-label tooltip">
         {{locadigm ../paraData "attributes." key}}
         {{#if attribute.specialisation}}
         <span class="righttooltiptext">{{localize "M20E.labels.spe"}} : {{attribute.specialisation}}</span>
