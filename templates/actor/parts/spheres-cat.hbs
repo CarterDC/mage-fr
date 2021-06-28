@@ -1,0 +1,46 @@
+<section class="category arete" data-category="arete">
+  {{!-- arete --}}
+  <div class="category-banner">
+      <label>{{locadigm paraData "categories." "arete"}}</label>
+  </div>
+  <div class="trait arete" data-active= "false">
+    <a class="trait-label">
+      {{locadigm paraData "arete"}}
+    </a>
+    <div class="ligne"></div>
+    <div class="edit-bar" data-locked="{{locks.spheres}}">
+      <input name="data.arete" type="text" value="{{data.arete}}" data-dtype="Number" min="0" max="10"/>
+    </div>
+    <div class="bullet-display" data-locked="{{locks.spheres}}">                        
+      {{#forLoop 10}}
+      <span class="bullet" data-index="{{this}}" data-state="{{bulletState ../data.arete this}}"></span>
+      {{/forLoop}}
+    </div>
+  </div>
+</section>
+<section class="category spheres" data-category="spheres">
+  {{!-- spheres --}}
+  {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" paraData = paraData category="spheres" lock = locks.spheres}}
+  <div class="grid three-col">
+    {{#each data.spheres as |sphere key|}}
+    <div class="trait sphere" data-key="{{key}}" data-active= "false">
+      <a class="trait-label tooltip">
+        {{locadigm ../paraData "spheres." key}}
+        {{#if sphere.specialisation}}
+        <span class="righttooltiptext">{{localize "M20E.labels.spe"}} : {{sphere.specialisation}}</span>
+        {{/if}}
+      </a>
+      <div class="ligne"></div>
+      <div class="edit-bar" data-locked="{{../locks.spheres}}">
+        <input name="data.spheres.{{key}}.value" type="text" value="{{sphere.value}}" data-dtype="Number" min="0" max="10"/>
+        <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a> 
+      </div>
+      <div class="bullet-display" data-locked="{{../locks.spheres}}">                        
+        {{#forLoop 5}}
+        <span class="bullet" data-index="{{this}}" data-state="{{bulletState sphere.value this}}"></span>
+        {{/forLoop}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</section>

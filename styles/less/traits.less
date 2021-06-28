@@ -1,6 +1,6 @@
-//stats
+//traits
 .m20e{
-  .stat{
+  .trait{
     position: relative;
     display: flex;
     flex-direction: row;
@@ -8,14 +8,14 @@
     align-items: center;
     justify-content: space-between;
     
-    .stat-extra{//TODO : sould be in abilities
+    .trait-extra{//TODO : sould be in abilities
       font-size: 18px;
       font-weight: bolder; 
       padding-bottom: 2px;
       padding-right: 1px;
     }
     
-    .stat-label:hover {//TODO : not all stat labels should behave like that
+    .trait-label:hover {//TODO : not all trait labels should behave like that
       text-shadow: 0 0 1px var(--hoverColor);
     }
     
@@ -50,18 +50,18 @@
       cursor: pointer; 
     }
   }
-  .stat[data-active='true'] .stat-label{
+  .trait[data-active='true'] .trait-label{
     color: var(--highlightColor);
     text-shadow: 0 0 1px var(--m20e-darkGrey);
   }
 
-  .stat.attribute,
-  .stat.sphere{
+  .trait.attribute,
+  .trait.sphere{
       height: 20px;
       margin: 3px 0; 
   }
 
-  .stat.lexicon{
+  .trait.lexicon{
     input{
       height: 24px;
       margin: 3px 10px 3px 0;
@@ -74,7 +74,7 @@
       margin: 3px 10px 3px 0;
     }
   }
-  .stat.lexicon:nth-child(even){
+  .trait.lexicon:nth-child(even){
     background-color: rgba(0,0,0,0.1);
   }
 

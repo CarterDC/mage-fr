@@ -6,24 +6,28 @@
   {{> "systems/mage-fr/templates/actor/parts/header-cat.hbs"}}
 
   <nav class="sheet-tabs tabs" data-group="primary">
-    <a data-tab="stats"><label>{{localize "M20E.navtabs.stats"}}</label></a>
+    <a data-tab="traits"><label>{{localize "M20E.navtabs.traits"}}</label></a>
     <a data-tab="magye"><label>{{localize "M20E.navtabs.magye"}}</label></a>
     <a data-tab="bio"><label>{{localize "M20E.navtabs.bio"}}</label></a>
     <a data-tab="stuff"><label>{{localize "M20E.navtabs.stuff"}}</label></a>
+    <a data-tab="extra"><label>{{localize "M20E.navtabs.extra"}}</label></a>
   </nav>
 
   <section class="sheet-body">
 
-    <section class="tab" data-group="primary" data-tab="stats">
+    <section class="tab" data-group="primary" data-tab="traits">
       {{> "systems/mage-fr/templates/actor/parts/attributes-cat.hbs"}}
-<textarea name="data.misc.description">{{data.misc.description}}</textarea>
+      {{> "systems/mage-fr/templates/actor/parts/abilities-cat.hbs"}}
     </section>
-
-    <section class="tab" data-group="primary" data-tab="magye"></section>
+    <section class="tab" data-group="primary" data-tab="magye">
+      {{> "systems/mage-fr/templates/actor/parts/spheres-cat.hbs"}}
+    </section>
 
     <section class="tab" data-group="primary" data-tab="bio"></section>
 
     <section class="tab" data-group="primary" data-tab="stuff"></section>
+
+    <section class="tab" data-group="primary" data-tab="extra"></section>
   </section>
 </div>
 </form>

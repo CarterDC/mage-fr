@@ -55,11 +55,11 @@ export default class M20eParadigmSheet extends M20eItemSheet {
         break;
 
       case 'edit':
-        this.editItem(buttonElement.closest(".stat").dataset.key);
+        this.editItem(buttonElement.closest(".trait").dataset.key);
         break;
 
       case 'remove':
-        this.removeItem(buttonElement.closest(".stat").dataset.key);
+        this.removeItem(buttonElement.closest(".trait").dataset.key);
         break;
     }
   }

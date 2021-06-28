@@ -1,70 +1,10 @@
 {
-  "ACTOR.TypeCharMage": "Perso Mage",
-  "ITEM.TypeParadigm": "Paradigme",
-  "ITEM.TypeAbility": "Capacité",
-  "ITEM.TypeRote": "Routine",
-  "ITEM.TypeBackground": "Historique",
-  "ITEM.TypeMeritflaw": "Atout & Handicap",
-  "ITEM.TypeMeritflawAlt": "Atout /<br>Handicap",
-  "ITEM.TypeEvent": "Evènement de Chronique",
-  "ITEM.TypeEventAlt": "Chronique :<br>Evènement",
-  "ITEM.TypeContact": "Contact",
-  "ITEM.TypeConsumable": "Consommable",
-
   "M20E": {
-
-    "healthStatus": {
-      "0": "En pleine forme.",
-      "1": "Contusion.",
-      "2": "Blessure Légère",
-      "3": "Blessure Medium",
-      "4": "Blessure  Grave",
-      "5": "Handicap",
-      "6": "Infirmité",
-      "7": "Invalidité"
-    },
-
-    "navtabs": {
-      "stats": "STATS",
-      "magye": "MAGYE",
-      "bio": "BIO",
-      "stuff": "STUFF",
-      "detail": "DETAIL",
-      "description": "DESCRIPTION",
-      "lexicon": "LEXIQUE"
-    },
-
-    "categories": {
-      "attributes": "ATTRIBUTS",
-      "abilities": "CAPACITES",
-      "spheres": "SPHERES",
-      "arete": "ENTELECHIE",
-      "rotes": "ROUTINES",
-      "description": "DESCRIPTION",
-      "backgrounds": "HISTORIQUES",
-      "meritsflaws": "ATOUTS & HANDICAPS",
-      "chronic": "CHRONIQUE",
-      "story": "BACKGROUND",
-      "contacts": "CONTACTS",
-      "equipement": "EQUIPEMENT"
-    },
-
-    "category":{
-      "attributes": "Attribut",
-      "spheres": "Sphère",
-      "arete": "Entéléchie",
-      "willpower": "Volonté",
-      "abilities": "Capacité",
-      "rotes": "Routine",
-      "description": "Description",
-      "backgrounds": "Historique",
-      "meritsflaws": "Atout & Handicap",
-      "chronic": "Evènement",
-      "story": "Background",
-      "contacts": "Contact",
-      "equipement": "Equipement"
-    },
-
+    
+    "arete": "Arété",
+    "willpower": "Volonté",
+    "health": "Santé",
+    
     "attributes": {
       "physical": "Physique",
       "social": "Social",
@@ -79,32 +19,73 @@
       "inte": "Intelligence",
       "wits": "Astuce"
     },
-
-    "spheres": {
-      "corr": "Corresp.",
-      "entr": "Entropie",
-      "spir": "Esprit",
-      "forc": "Forces",
-      "matt": "Matière",
-      "life": "Vie",
-      "mind": "Psyché",
-      "time": "Temps",
-      "prim": "Prime"
+    
+    "categories": {
+      "attributes": "ATTRIBUTS",
+      "abilities": "CAPACITES",
+      "spheres": "SPHERES",
+      "arete": "ARETE",
+      "rotes": "ROUTINES",
+      "description": "DESCRIPTION",
+      "backgrounds": "HISTORIQUES",
+      "meritsflaws": "ATOUTS & HANDICAPS",
+      "chronic": "CHRONIQUE",
+      "story": "BACKGROUND",
+      "contacts": "CONTACTS",
+      "equipement": "EQUIPEMENT"
     },
+    
+    "category":{
+      "attributes": "Attribut",
+      "spheres": "Sphère",
+      "arete": "Arété",
+      "willpower": "Volonté",
+      "abilities": "Capacité",
+      "rotes": "Routine",
+      "description": "Description",
+      "backgrounds": "Historique",
+      "meritsflaws": "Atout & Handicap",
+      "chronic": "Evènement",
+      "story": "Background",
+      "contacts": "Contact",
+      "equipement": "Equipement"
+    },  
+    
+    "context": {
+      "linkInChat": "Envoyer vers le chat.",
+      "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès",
+      "editWillpowerMax": "Editer Volonté Max.",
+      "editHealthMax": "Editer Santé Max.",
+      "editHealthMalus": "Editer Malus Santé.",
+      "throwPublicRoll": "Lancer Public.",
+      "throwGmRoll": "Lancer pour le GM.",
+      "throwBlindRoll": "Lancer en Aveugle.",
+      "throwSelfRoll": "Lancer pour Moi.",
+      "throwStealthRoll": "Lancer Furtif."
+    },  
 
-    "subType":{
-      "talent": "Talent",
-      "talents": "Talents",
-      "skill": "Compétence",
-      "skills": "Compétences",
-      "knowledge": "Connaissance",
-      "knowledges": "Connaissances",
-      "merit": "Atout",
-      "merits": "Atouts",
-      "flaw": "Handicap",
-      "flaws": "Handicaps"
+    "healthStatus": {
+      "0": "En pleine forme.",
+      "1": "Contusion.",
+      "2": "Blessure Légère",
+      "3": "Blessure Medium",
+      "4": "Blessure  Grave",
+      "5": "Handicap",
+      "6": "Infirmité",
+      "7": "Invalidité"
     },
-
+    
+    "hints": {
+      "edit": "Editer",
+      "remove": "Supprimer",
+      "add": "Ajouter",
+      "specialisation": "Utilisé uniquement à partir du rang 4.",
+      "displayDescription": "Apparait souvent en info-bulle ou en 'linkant' dans le chat",
+      "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags.",
+      "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
+      "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus."
+    },
+    
     "labels": {
       "type": "Type",
       "subType": "Sous-Type",
@@ -119,33 +100,28 @@
       "cssClass": "Classe CSS",
       "sheetLogo": "Logo fiche de perso"
     },
-
-    "hints": {
-      "edit": "Editer",
-      "remove": "Supprimer",
-      "add": "Ajouter",
-      "specialisation": "Utilisé uniquement à partir du rang 4.",
-      "displayDescription": "Apparait souvent en info-bulle ou en 'linkant' dans le chat",
-      "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags.",
-      "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
-      "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus."
+    
+    "navtabs": {
+      "traits": "TRAITS",
+      "magye": "MAGYE",
+      "bio": "BIO",
+      "stuff": "MATOS",
+      "extra": "EXTRA",
+      "detail": "DETAIL",
+      "description": "DESCRIPTION",
+      "lexicon": "LEXIQUE"
     },
 
-    "context": {
-      "linkInChat": "Envoyer vers le chat.",
-      "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès",
-      "editWillpowerMax": "Editer Volonté Max.",
-      "editHealthMax": "Editer Santé Max.",
-      "editHealthMalus": "Editer Malus Santé.",
-      "throwPublicRoll": "Lancer Public.",
-      "throwGmRoll": "Lancer pour le GM.",
-      "throwBlindRoll": "Lancer en Aveugle.",
-      "throwSelfRoll": "Lancer pour Moi.",
-      "throwStealthRoll": "Lancer Furtif."
+    "notifications":{
+      "missingParadigm": "Il semblerait que ce personnage n'ait pas de pradigme.",
+      "invalidFormat": "'{value}' n'a pas un format conforme !",
+      "nan": "'{value}' n'est pas un nombre !",
+      "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
+      "notLocalized" : "L'entrée '{path}' n'existe pas dans le fichier de localisation !"
     },
 
     "prompts": {
-      "newValue": "Entrez une nouvelle valeur pour <br><b>{name}</b> :",
+      "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>",
       "deleteTitle": "Suppression de {name}",
       "deleteContent": "La suppression de '{name}' est <b>définitive</b>.<br>Confirmez-vous ?",
       "lexiconTitle": "Lexique",
@@ -153,17 +129,44 @@
       "lexiconContentEdit": "Modification d'une entrée de lexique pour ce paradigme."
     },
 
-    "notifications":{
-      "invalidFormat": "'{value}' n'a pas un format conforme !",
-      "nan": "'{value}' n'est pas un nombre !",
-      "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
-      "notLocalized" : "L'entrée '{path}' n'existe pas dans le fichier de localisation !"
+    "spheres": {
+      "corr": "Corresp.",
+      "entr": "Entropie",
+      "spir": "Esprit",
+      "forc": "Forces",
+      "matt": "Matière",
+      "life": "Vie",
+      "mind": "Psyché",
+      "time": "Temps",
+      "prim": "Prime"
     },
 
-    "arete": "Entéléchie",
-    "willpower": "Volonté",
-    "health": "Santé"
+    "subTypes":{
+      "talent": "Talent",
+      "talents": "Talents",
+      "skill": "Compétence",
+      "skills": "Compétences",
+      "knowledge": "Connaissance",
+      "knowledges": "Connaissances",
+      "merit": "Atout",
+      "merits": "Atouts",
+      "flaw": "Handicap",
+      "flaws": "Handicaps"
+    }
+
   },
+
+  "ACTOR.TypeCharMage": "Perso Mage",
+  "ITEM.TypeParadigm": "Paradigme",
+  "ITEM.TypeAbility": "Capacité",
+  "ITEM.TypeRote": "Routine",
+  "ITEM.TypeBackground": "Historique",
+  "ITEM.TypeMeritflaw": "Atout & Handicap",
+  "ITEM.TypeMeritflawAlt": "Atout /<br>Handicap",
+  "ITEM.TypeEvent": "Evènement de Chronique",
+  "ITEM.TypeEventAlt": "Chronique :<br>Evènement",
+  "ITEM.TypeContact": "Contact",
+  "ITEM.TypeConsumable": "Consommable",
 
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
   "SETTINGS.playersCanSeeParadoxPoints": "Peut voir les points de Paradoxe.",

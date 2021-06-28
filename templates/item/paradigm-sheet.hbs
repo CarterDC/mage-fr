@@ -37,7 +37,7 @@
         <section class="tab" data-group="primary" data-tab="lexicon">
           <br>
           <div class="category grid one-col">
-            <div class="stat lexicon">
+            <div class="trait lexicon">
               <label>Clef</label>
               <label>Valeur</label>
               <div class="edit-bar" data-locked="{{locks.lexicon}}">
@@ -46,7 +46,7 @@
               </div>
             </div>
             {{#each lexicon as |entry key|}}
-            <div class="stat lexicon" data-key="{{key}}">
+            <div class="trait lexicon" data-key="{{key}}">
               <input class="lexicon-path" type="text" value="{{entry.path}}" data-dtype="String" disabled/>
               <input class="lexicon-value" type="text" value="{{entry.value}}" data-dtype="String" disabled/>
               <div class="edit-bar" data-locked="{{../locks.lexicon}}">

@@ -47,8 +47,8 @@ export class FakeItem extends FormApplication {
   getData() {
     const superData = super.getData();
     const actorData = this.actor.data.toObject(false);
-    const statData = getProperty(actorData, `data.${this.itemData.category}.${this.itemData.key}`);
-    const sheetData = {...superData, ...this.itemData, ...statData};
+    const traitData = getProperty(actorData, `data.${this.itemData.category}.${this.itemData.key}`);
+    const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
 
     log({sheetData : sheetData});

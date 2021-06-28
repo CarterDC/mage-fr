@@ -3,7 +3,7 @@
     "types": ["charMage"],
     "templates":{
       "playable":{
-        "characterCreationDone": false,
+        "creationDone": false,
         "currentXP": 0,
         "totalXP": 0,
         "studyPoints": "MAGE.defaults.studyPoints"
@@ -96,27 +96,12 @@
             "specialisation": "",
             "displayDescription":""
           },
-          "mind":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "matt":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "time":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
           "spir":{
             "value": 0,
             "specialisation": "",
             "displayDescription":""
           },
-          "life":{
+          "matt":{
             "value": 0,
             "specialisation": "",
             "displayDescription":""
@@ -130,8 +115,23 @@
             "value": 0,
             "specialisation": "",
             "displayDescription":""
+          },
+          "life":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription":""
+          },
+          "time":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription":""
+          },
+          "mind":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription":""
           }
-        }  
+        }
       }
     },
     "charMage": {
@@ -218,8 +218,8 @@
       "ability"
     ],
     "templates":{
-      "virtualStat":{
-        "isVirtualStat": true,
+      "virtualTrait":{
+        "isTrait": true,
         "value": 0
       },
       "rollableItem":{
@@ -233,7 +233,7 @@
     },
     "background":{
       "templates":[
-        "virtualStat"
+        "virtualTrait"
       ],
       "systemDescription": "",
       "displayDescription":"",
@@ -242,7 +242,7 @@
     },
     "ability":{
       "templates":[
-        "virtualStat"
+        "virtualTrait"
       ],
       "subType": "talent",
       "specialisation": "",
