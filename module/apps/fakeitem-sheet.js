@@ -1,5 +1,6 @@
-import {log} from "../utils.js";
-import * as utils from '../utils.js'
+// Import Helpers
+import * as utils from '..//utils/utils.js'
+import { log } from "../utils/utils.js";
 
 //TODO : mettre les meme sécurités d'édition que sur une fiche normale
 // (pas de modif de la valeur apès la créa)
@@ -47,7 +48,7 @@ export class FakeItem extends FormApplication {
   getData() {
     const superData = super.getData();
     const actorData = this.actor.data.toObject(false);
-    const traitData = getProperty(actorData, `data.${this.itemData.category}.${this.itemData.key}`);
+    const traitData = foundry.utils.getProperty(actorData, `data.${this.itemData.category}.${this.itemData.key}`);
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
 

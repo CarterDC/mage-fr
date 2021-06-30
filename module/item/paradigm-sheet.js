@@ -1,6 +1,8 @@
+// Import Documents
 import M20eItemSheet from './baseitem-sheet.js'
-import {log} from "../utils.js";
-import * as utils from '../utils.js'
+// Import Helpers
+import * as utils from '../utils/utils.js'
+import { log } from "../utils/utils.js";
 
 /**
  * Implements M20eParadigmSheet as an extension of the M20eItemSheet class

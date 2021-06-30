@@ -1,5 +1,6 @@
-import * as utils from '../utils.js'
-import {log} from '../utils.js'
+// Import Helpers
+import * as utils from '../utils/utils.js'
+import { log } from "../utils/utils.js";
 
 /**
  * Implements M20eActor as an extension of the Actor class
@@ -12,6 +13,47 @@ import {log} from '../utils.js'
   constructor(...args) {
     //might need to do stuff in here
     super(...args);
+  }
+
+  async _preCreate(data, options, user) {
+    await super._preCreate(data, options, user);
+    
+    //get the default abilities from either config or compendium if any
+    const defaultAbilities = await this._getDefaultAbilities();
+
+    //get some other items
+
+    //do some stuff depending on actor type (char or npc..)
+    if ( this.data.isPlayable === true ) {
+      this.data.token.update({actorLink: true});
+    }
+
+    //merge all items together
+    const items = [...defaultAbilities];
+    //update everything
+    this.data.update({items});
+  }
+
+  //TODO : create form compendium if any
+
+  async _getDefaultAbilities() {
+    //prepare default abilities
+    const defaultAbilities = Object.entries(CONFIG.M20E.defaultAbilities)
+      .map(([key, value]) => {
+        return {
+          type: 'ability',
+          img: '',
+          name: game.i18n.localize(`M20E.defaultAbilities.${key}`),
+          data: {
+            subType: value,
+            //todo : add localization for specific item types
+            systemDescription: ''
+          }
+        };
+    });
+    //alpha sort now that it's localized
+    defaultAbilities.sort(utils.alphaSort());
+    return defaultAbilities;
   }
 
   /** @override */
@@ -172,7 +214,7 @@ import {log} from '../utils.js'
 /*  async addWound(amount, woundType = '', overhead = false) {
     const health = duplicate(this.data.data.health);
     woundType = woundType === '' ? 'value' : woundType;
-    const current = getProperty(health, woundType);
+    const current = foundry.utils.getProperty(health, woundType);
     //log(current);
     if ( amount > current ) {
       if  (overhead ){

@@ -20,7 +20,7 @@
 </section>
 <section class="category spheres" data-category="spheres">
   {{!-- spheres --}}
-  {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" paraData = paraData category="spheres" lock = locks.spheres}}
+  {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="spheres" lock = locks.spheres}}
   <div class="grid three-col">
     {{#each data.spheres as |sphere key|}}
     <div class="trait sphere" data-key="{{key}}" data-active= "false">

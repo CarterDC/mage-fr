@@ -1,5 +1,37 @@
 <section class="category abilities" data-category="abilities">
   {{!-- Abilities --}}
-  {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" paraData = paraData category="abilities" lock = locks.abilities}}
-
+  {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="abilities" lock = locks.abilities}}
+  <div class="grid three-col">
+    {{#each data.abilities as |abilitygroup key|}}
+    <div class="grid one-col">
+      <div class="mini-banner">
+        <a class="mini-button decoy" data-locked="{{../locks.abilities}}"></a>
+        <label class="column-header">{{localize (concat "M20E.subTypes." key)}}</label>
+        <a class="mini-button" data-sub-type = "{{key}}" data-action="add" data-locked="{{../locks.abilities}}"><i class="fas fa-plus"></i></a>
+      </div>
+      {{#each abilitygroup as |ability key|}}
+      <div class="trait ability" data-item-id="{{ability._id}}" data-active= "false"> 
+        <div class="trait-extra">{{ability.data.extra}}</div>
+        <a class="trait-label tooltip" data-item-id="{{ability._id}}">
+          {{ability.name}}
+          {{#if ability.data.specialisation}}
+            <span class="righttooltiptext">{{localize "M20E.labels.spe"}} : {{ability.data.specialisation}}</span>
+          {{/if}}
+        </a>
+        <div class="ligne"></div>
+        <div class="edit-bar" data-locked="{{../../locks.abilities}}">
+          <input class="inline-edit" type="text" value="{{ability.data.value}}" data-dtype="Number" min="0" max="5"/>   
+          <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
+          <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
+        </div>
+        <div class="bullet-display" data-locked="{{../../locks.abilities}}">                        
+          {{#forLoop 5}}
+          <span class="bullet" data-index="{{this}}" data-state="{{bulletState ability.value this}}"></span>
+          {{/forLoop}}
+        </div>
+      </div>
+      {{/each}}
+    </div>
+    {{/each}}
+  </div>
 </section>

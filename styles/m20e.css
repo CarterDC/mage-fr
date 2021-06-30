@@ -509,6 +509,27 @@
   height: 20px;
   margin: 3px 0;
 }
+.m20e .trait.ability {
+  height: 20px;
+  margin: 2px 0;
+  font-size: var(--smallFontSize);
+}
+.m20e .trait.ability .bullet {
+  height: 13px;
+  width: 10px;
+}
+.m20e .trait.ability input {
+  padding: 1px 0 0;
+}
+.m20e .trait.arete {
+  height: 20px;
+  margin: 3px 0;
+  align-items: center;
+  justify-content: center;
+}
+.m20e .trait.arete .ligne {
+  flex: 0 0 15px;
+}
 .m20e .trait.lexicon input {
   height: 24px;
   margin: 3px 10px 3px 0;

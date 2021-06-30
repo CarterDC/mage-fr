@@ -1,5 +1,6 @@
-import {log} from "../utils.js";
-import * as utils from '../utils.js'
+// Import Helpers
+import * as utils from '../utils/utils.js'
+import { log } from "../utils/utils.js";
 
 /**
  * Implements M20eItemSheet as an extension of the ItemSheet class
@@ -47,7 +48,8 @@ export default class M20eItemSheet extends ItemSheet {
     sheetData.item = itemData;
     sheetData.data = itemData.data;
 
-    //usefull data
+    //other usefull data
+    sheetData.config = CONFIG.M20E;
     sheetData.isGM = game.user.isGM;
 
     return sheetData;

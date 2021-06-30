@@ -1,15 +1,32 @@
+/**************************************************************
+ * The Mage-Fr game system for Foundry Virtual Tabletop       
+ * A system for playing the 20th anniversary edition of Mage  
+ * This is NOT official World of Darkness material.           
+ * Author: Carter_DC                                          
+ * Software License: MIT                                      
+ * Content License: https://www.worldofdarkness.com/dark-pack 
+ * Repository: https://github.com/CarterDC/mage-fr            
+ */
 
 // Import Modules
-import * as utils from './module/utils.js'
-import { log } from "./module/utils.js";
 import { M20E } from './module/config.js'
 import { registerSystemSettings } from "./module/settings.js";
+// Import Documents
 import M20eActor from './module/actor/actor.js'
-import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItem from './module/item/item.js'
+// Import Applications
+import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItemSheet from './module/item/baseitem-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
+// Import Helpers
+import * as utils from './module/utils/utils.js'
+import { log } from "./module/utils/utils.js";
+import { registerHandlebarsHelpers } from "./module/utils/hb-helpers.js";
+import { preloadHandlebarsTemplates } from "./module/utils/hb-templates.js";
 
+/* -------------------------------------------- */
+/*  Foundry VTT Initialization                  */
+/* -------------------------------------------- */
 Hooks.once('init', async function () {
   log('Initialisation du système');
 
@@ -38,25 +55,9 @@ Hooks.once('init', async function () {
     makeDefault: true
   });
 
-  // Register System Settings
   registerSystemSettings();
-
-  utils.preloadHandlebarsTemplates();
-  utils.RegisterHandlebarsHelpers();
-})
-
-Hooks.on('createActor', async function (actor, options, userID) {
-  //todo :  maybe use precreate or something ?
-  //check current user is the one that triggered the création
-  //(don't add abilities to the actor multiple times)
-  if ( userID != game.user.id ) { return;}
+  registerHandlebarsHelpers();
+  preloadHandlebarsTemplates();
 
 })
 
-Hooks.on('createItem', async function (item, options, userID) {
-
-  //check current user is the one that triggered the création
-  if ( userID != game.user.id ) { return; }
-
-
-})

@@ -1,6 +1,9 @@
-import {log} from "../utils.js"
-import * as utils from '../utils.js'
+// Import Applications
 import { FakeItem } from '../apps/fakeitem-sheet.js'
+// Import Helpers
+import * as utils from '../utils/utils.js'
+import { log } from "../utils/utils.js";
+
 
 /**
  * Implements M20eActorSheet as an extension of the ActorSheet class
@@ -29,7 +32,7 @@ export default class M20eActorSheet extends ActorSheet {
       classes: ['m20e', 'sheet', 'actor'],
       template: 'systems/mage-fr/templates/actor/actor-sheet.hbs',
       width: 500,
-      height: 720,
+      height: 700,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'traits' }],
       dragDrop: [{ dragSelector: ".dice-button" }]
     })
@@ -44,8 +47,17 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.actor = actorData;
     sheetData.data = actorData.data;
 
+    //dispatch items into categories and subtypes
+    //Abilities
+    sheetData.data.abilities = { talents: {}, skills: {}, knowledges: {} };
+    sheetData.data.abilities.talents = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "talent") });
+    sheetData.data.abilities.skills = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "skill") });
+    sheetData.data.abilities.knowledges = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "knowledge") });
+    
+
     //other usefull data
     sheetData.isGM = game.user.isGM;
+    sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
     sheetData.canSeeParadox = utils.canSeeParadox();
 
@@ -54,7 +66,7 @@ export default class M20eActorSheet extends ActorSheet {
       sheetData.paraData = paradigm.data.data;
     }
 
-    //log({actor : sheetData.actor.name, sheetData : sheetData});
+    log({actor : sheetData.actor.name, sheetData : sheetData});
     return sheetData;
   }
 
@@ -90,7 +102,7 @@ export default class M20eActorSheet extends ActorSheet {
       callback: element => {
         this._editResource({
           relativePath: 'willpower.max',
-          currentValue: getProperty(this.actor.data.data, 'willpower.max'),
+          currentValue: foundry.utils.getProperty(this.actor.data.data, 'willpower.max'),
           name: `${game.i18n.localize('M20E.willpower')} Max`
         });
       },
@@ -104,7 +116,7 @@ export default class M20eActorSheet extends ActorSheet {
       callback: element => {
         this._editResource({
           relativePath: 'health.max',
-          currentValue: getProperty(this.actor.data.data, 'health.max'),
+          currentValue: foundry.utils.getProperty(this.actor.data.data, 'health.max'),
           name: `${game.i18n.localize('M20E.health')} Max`
         });
       },
@@ -118,7 +130,7 @@ export default class M20eActorSheet extends ActorSheet {
       callback: element => {
         this._editResource({
           relativePath: 'health.malusList',
-          currentValue: getProperty(this.actor.data.data, 'health.malusList'),
+          currentValue: foundry.utils.getProperty(this.actor.data.data, 'health.malusList'),
           name: `Malus ${game.i18n.localize("M20E.health")}`
         });
       },
