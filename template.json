@@ -3,6 +3,7 @@
     "types": ["charMage"],
     "templates":{
       "playable":{
+        "isPlayable": true,
         "creationDone": false,
         "currentXP": 0,
         "totalXP": 0,
@@ -213,9 +214,9 @@
 
   "Item": {
     "types": [
-      "paradigm",
+      "ability",
       "background",
-      "ability"
+      "paradigm"
     ],
     "templates":{
       "virtualTrait":{
@@ -229,7 +230,9 @@
     "paradigm":{
       "lexicon": {},
       "sheetLogo": "",
-      "cssClass": "mage"
+      "opacity": 0.2,
+      "cssClass": "",
+      "descCompendium": ""
     },
     "background":{
       "templates":[

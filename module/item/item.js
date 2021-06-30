@@ -1,3 +1,7 @@
+// Import Helpers
+import * as utils from '../utils/utils.js'
+import { log } from "../utils/utils.js";
+
 /**
  * Implements M20eItem as an extension of the Item class
  * Adds new methods for all items and for specific item types.
@@ -10,9 +14,13 @@ export default class M20eItem extends Item {
     super(...args);
   }
 
+  async _preCreate(data, options, user) {
+    log('ça avance !');
+  }
+
   getLexiconEntry(relativePath) {
     if ( this.type !== 'paradigm' ) { return; }
-    return getProperty(this.data.data.lexicon, relativePath);
+    return foundry.utils.getProperty(this.data.data.lexicon, relativePath);
   }
 
   async setLexiconEntry(relativePath, newValue) {
