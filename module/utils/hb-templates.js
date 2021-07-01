@@ -15,5 +15,8 @@
     "systems/mage-fr/templates/item/parts/header-block.hbs",
     "systems/mage-fr/templates/item/parts/nav-block.hbs",
     "systems/mage-fr/templates/item/parts/description-block.hbs"
+    // Chat Partials
+    /*"systems/mage-fr/templates/chat/trait-card.hbs",
+    "systems/mage-fr/templates/chat/trait-flavor.hbs"*/
   ]);
 }

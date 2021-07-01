@@ -76,6 +76,7 @@ export default class M20eActorSheet extends ActorSheet {
     //actions for everyone
     //(dice thows & trait link)
     html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
+    new ContextMenu(html, '.trait', this._itemContextMenu);
 
     //editable only (roughly equals 'isOwner')
     if ( this.isEditable ) {
@@ -92,8 +93,18 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /* -------------------------------------------- */
-  /*  Event Handlers                              */
+  /*  Context Menus                               */
   /* -------------------------------------------- */
+
+  _itemContextMenu = [
+    {
+      name: game.i18n.localize('M20E.context.linkInChat'),
+      icon: '<i class="fas fa-share"></i>',
+      callback: element => {
+        this.linkInChat(element[0]);
+      }//TODO : Maybe add condition that element is linkable ? 
+    }
+  ]
 
   _resourceContextMenu = [
     {
@@ -139,6 +150,66 @@ export default class M20eActorSheet extends ActorSheet {
       }
     }
   ]
+
+  /* -------------------------------------------- */
+  /*  Event Handlers                              */
+  /* -------------------------------------------- */
+
+  async linkInChat(traitElement){
+    const category = traitElement.closest(".category").dataset.category;
+    const itemId = traitElement?.dataset.itemId;
+    const key = traitElement?.dataset.key;
+    let item = {};
+
+    if ( itemId ) {
+      //trait is actually a real item
+      item = this.actor.items.get(itemId);
+    } else {
+      //trait is an attribute or sphere, treat it like a fake item
+
+      //retrieve attribute (or sphere) name from paradigm item's lexicon if any
+      const lexiconEntry = this.actor.getLexiconEntry(`${category}.${key}`);
+      //get systemDescription from compendium given category and key
+      const packName = `mage-fr.${category}-desc`;
+      const packItem = await utils.getCompendiumDocumentByName(packName, key);
+
+      item = {
+        type: game.i18n.localize(`M20E.category.${category}`),
+        name: game.i18n.localize(`M20E.${category}.${key}`),
+        data: {
+          data: foundry.utils.getProperty(this.actor.data, `data.${category}.${key}`)
+        }
+      };
+      item.data.data.displayName = lexiconEntry || '';
+      item.data.data.systemDescription = packItem ? packItem.data.content : '';
+    }
+    this.displayCard({
+      category : category,
+      itemId: itemId,
+      key: key,
+      item: item
+    });
+  }
+
+  //TODO : ranger ça ailleurs genre dans chat !
+  async displayCard(templateData) {
+    const flavorTemplate = "systems/mage-fr/templates/chat/trait-flavor.hbs";
+    const contentTemplate = "systems/mage-fr/templates/chat/trait-card.hbs";
+    const htmlFlavor = await renderTemplate(flavorTemplate, templateData);
+    const htmlContent = await renderTemplate(contentTemplate, templateData);
+
+    const chatData = {
+      user: game.user.id,
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      content: htmlContent,
+      flavor: htmlFlavor,
+      speaker: ChatMessage.getSpeaker({actor: this.actor})
+    };
+
+    ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
+    return ChatMessage.create(chatData);
+  }
+
 
   async _editResource(promptData) {
     if( utils.isNumeric(promptData.currentValue)){
@@ -268,7 +339,7 @@ export default class M20eActorSheet extends ActorSheet {
     //get systemDescription from compendium given category and key
     const packName = `mage-fr.${category}-desc`;
     const packItem = await utils.getCompendiumDocumentByName(packName, key);
- 
+
     const itemData = {
       category: category,
       key: key,

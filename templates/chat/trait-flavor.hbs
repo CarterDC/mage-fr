@@ -1,0 +1,53 @@
+<section class="m20e">
+<div class="trait chat-flavor">
+  <div class="trait-label">
+    {{#if item.data.data.displayName}}
+      {{item.data.data.displayName}}
+    {{else}}
+      {{item.name}}
+    {{/if}}
+  </div>
+  <div class="ligne"></div>
+  {{#if (in item.type 'event' 'rote')}}
+  {{else}}
+    {{#if (eq item.type 'meritflaw')}}
+      <div class="trait-label">
+      {{#if (eq item.data.data.subType "flaw")}}
+          {{sign item.data.data.value "-"}}
+      {{else}}
+          {{sign item.data.data.value}}
+      {{/if}}
+      </div>
+    {{else}}
+      <div class="bullet-display" data-value="{{item.data.data.value}}">
+        {{#forLoop 5}}
+        <span class="bullet" data-index="{{this}}" data-state="{{bulletState ../item.data.data.value this}}"></span>
+        {{/forLoop}}
+      </div>
+    {{/if}}
+  {{/if}}
+
+</div>
+{{#if item.data.data.specialisation}}
+<div class="trait chat-flavor">
+  <div class="trait-label">
+    &nbsp;&nbsp;⮱ {{localize "M20E.labels.spe"}} : {{item.data.data.specialisation}}
+  </div>
+</div>
+{{/if}}
+{{#if item.data.data.magyeEffects}}
+  {{#each item.data.data.magyeEffects as |effect index|}}
+    <div class="trait chat-flavor">
+      <label class="trait-label">
+        &nbsp;&nbsp;⮱ {{localize (concat "M20E.spheres." effect.key)}}
+      </label>
+      <div class="ligne"></div>
+      <div class="bullet-display">                        
+        {{#forLoop 5}}
+        <span class="bullet" data-index="{{this}}" data-state="{{bulletState effect.value this}}"></span>
+        {{/forLoop}}
+      </div>
+    </div>
+  {{/each}}
+{{/if}}
+</section>

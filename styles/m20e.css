@@ -22,8 +22,13 @@
   --m20e-goodGreen: #18520b;
   --m20e-goodGreenAlpha: #18520b80;
   --m20e-darkGrey: #191813;
-  --m20e-midGrey: #4b4a44;
+  --m20e-midGrey: #56544e;
   --m20e-lightGrey: #7a7971;
+  --m20e-superLightGrey: #b5b3a4;
+  --m20e-mainFontSize: 14px;
+  --m20e-senderFontFam: "Diablo";
+  --m20e-senderFontSize: 16px;
+  --m20e-descFontSize: 12px;
 }
 .m20e {
   --titleColor: #610d11;
@@ -465,12 +470,6 @@
   align-items: center;
   justify-content: space-between;
 }
-.m20e .trait .trait-extra {
-  font-size: 18px;
-  font-weight: bolder;
-  padding-bottom: 2px;
-  padding-right: 1px;
-}
 .m20e .trait .trait-label:hover {
   text-shadow: 0 0 1px var(--hoverColor);
 }
@@ -514,12 +513,39 @@
   margin: 2px 0;
   font-size: var(--smallFontSize);
 }
+.m20e .trait.ability .trait-extra {
+  font-size: 18px;
+  font-weight: bolder;
+  padding-bottom: 2px;
+  padding-right: 1px;
+}
 .m20e .trait.ability .bullet {
   height: 13px;
   width: 10px;
 }
 .m20e .trait.ability input {
   padding: 1px 0 0;
+}
+.m20e .trait.chat-flavor {
+  height: 20px;
+  margin: 3px 0;
+  padding: 0px 25px;
+  color: var(--m20e-midGrey);
+}
+.m20e .trait.chat-flavor .ligne {
+  border-color: var(--m20e-midGrey);
+}
+.m20e .trait.chat-flavor .bullet-display {
+  border-color: var(--m20e-midGrey);
+}
+.m20e .trait.chat-flavor .trait-label {
+  font-weight: bold;
+}
+.m20e .trait.chat-flavor .bullet-display[data-value="0"] {
+  border-color: var(--m20e-badRed);
+}
+.m20e .trait.chat-flavor .bullet[data-state='active'] {
+  background: var(--m20e-lightGrey);
 }
 .m20e .trait.arete {
   height: 20px;
@@ -581,6 +607,67 @@
   border-radius: 3px;
   padding-left: 3px;
 }
+li.chat-message .message-header {
+  color: var(--m20e-midGrey);
+}
+li.chat-message .message-header .message-sender {
+  font-family: var(--m20e-senderFontFam);
+  font-size: var(--m20e-senderFontSize);
+  font-weight: bold;
+  margin: 0px 0px 5px 0px;
+}
+li.chat-message .message-header .flavor-text {
+  flex: 0 0 100%;
+  position: relative;
+  margin: 0 0 5px;
+  line-height: 24px;
+  font-size: var(--m20e-mainFontSize);
+  color: var(--m20e-darkGrey);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--m20e-lightGrey);
+  border-radius: 3px;
+  box-shadow: 0 0 2px #FFF inset;
+  word-break: break-all;
+}
+li.chat-message .card .card-header {
+  display: flex;
+  border-bottom: 2px groove var(--m20e-superLightGrey);
+}
+li.chat-message .card .card-tooltip {
+  display: none;
+}
+li.chat-message .card .card-tooltip .tooltip-part {
+  font-size: var(--m20e-descFontSize);
+  color: var(--m20e-midGrey);
+}
+li.chat-message .card .card-tooltip .tooltip-part.item-ddesc {
+  margin: 5px 0px 10px;
+  padding: 0px 2px 5px;
+  border-bottom: 1px solid var(--titleColor);
+}
+li.chat-message .card .card-footer {
+  display: flex;
+  border-top: 2px ridge var(--m20e-superLightGrey);
+}
+li.chat-message .card .card-footer .item-type {
+  height: 25px;
+  color: var(--m20e-midGrey);
+  border-radius: 3px;
+  border-top: 1px solid;
+  border-right: 1px solid;
+  padding: 3px;
+  margin-top: 5px;
+}
+li.chat-message .card .card-footer .item-img {
+  border-radius: 3px;
+  border-bottom: none;
+  border-right: none;
+  height: 25px;
+  width: 25px;
+  margin: 5px 0 0 5px;
+  background-image: radial-gradient(rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
+}
 .tech {
   --titleColor: #6d90c7;
   --highlightColor: #67957f;
@@ -589,10 +676,20 @@
 }
 .systemDescription {
   padding: 0px 2px;
-  line-height: 14px;
-  font-size: 12px;
+  line-height: calc(var(--m20e-descFontSize) + 2px);
+  font-size: var(--m20e-descFontSize);
 }
 .systemDescription .descHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+  line-height: 1.5em;
+  border-radius: 2px;
+  padding: 3px 10px;
+}
+.systemDescription .descContent {
   margin: 5px 0px 10px;
   text-align: justify;
 }
@@ -603,10 +700,10 @@
   margin: 5px 0px;
 }
 .systemDescription .level-description .bullets {
-  font-size: 14px;
+  font-size: calc(var(--m20e-descFontSize) + 2px);
   font-weight: bold;
   float: left;
-  width: 53px;
+  width: 48px;
 }
 .systemDescription .level-description .level {
   float: left;

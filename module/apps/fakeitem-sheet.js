@@ -52,7 +52,6 @@ export class FakeItem extends FormApplication {
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
 
-    log({sheetData : sheetData});
     return sheetData;
   }
 

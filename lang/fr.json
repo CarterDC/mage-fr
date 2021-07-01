@@ -1,10 +1,10 @@
 {
   "M20E": {
-    
+
     "arete": "Arété",
     "willpower": "Volonté",
     "health": "Santé",
-    
+
     "attributes": {
       "physical": "Physique",
       "social": "Social",
@@ -19,7 +19,7 @@
       "inte": "Intelligence",
       "wits": "Astuce"
     },
-    
+
     "categories": {
       "attributes": "ATTRIBUTS",
       "abilities": "CAPACITES",
@@ -34,7 +34,7 @@
       "contacts": "CONTACTS",
       "equipement": "EQUIPEMENT"
     },
-    
+
     "category":{
       "attributes": "Attribut",
       "spheres": "Sphère",
@@ -49,8 +49,8 @@
       "story": "Background",
       "contacts": "Contact",
       "equipement": "Equipement"
-    },  
-    
+    },
+
     "context": {
       "linkInChat": "Envoyer vers le chat.",
       "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès",
@@ -62,7 +62,7 @@
       "throwBlindRoll": "Lancer en Aveugle.",
       "throwSelfRoll": "Lancer pour Moi.",
       "throwStealthRoll": "Lancer Furtif."
-    },  
+    },
 
     "defaultAbilities": {
       "alertness": "Vigilance",
@@ -100,6 +100,10 @@
       "science": "Sciences"
     },
 
+    "defaultDescriptions": {
+      "attribute": ""
+    },
+
     "healthStatus": {
       "0": "En pleine forme.",
       "1": "Contusion.",
@@ -110,7 +114,7 @@
       "6": "Infirmité",
       "7": "Invalidité"
     },
-    
+
     "hints": {
       "edit": "Editer",
       "remove": "Supprimer",
@@ -121,7 +125,7 @@
       "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
       "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus."
     },
-    
+
     "labels": {
       "type": "Type",
       "subType": "Sous-Type",
@@ -136,7 +140,7 @@
       "cssClass": "Classe CSS",
       "sheetLogo": "Logo fiche de perso"
     },
-    
+
     "navtabs": {
       "traits": "TRAITS",
       "magye": "MAGYE",
@@ -177,7 +181,7 @@
       "prim": "Prime"
     },
 
-    "subTypes":{
+    "subType":{
       "talent": "Talent",
       "talents": "Talents",
       "skill": "Compétence",

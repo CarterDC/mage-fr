@@ -22,26 +22,31 @@
 ***************/
 
 :root { //for selectors outside the m20e scope
-  --m20e-badRed:#610d11; // var(--m20e-badRed)
-  --m20e-badRedAlpha:#610d11b2; // var(--m20e-badRedAlpha)
-  --m20e-goodGreen: #18520b; // var(--m20e-goodGreen)
-  --m20e-goodGreenAlpha: #18520b80; // var(--m20e-goodGreenAlpha)
-  --m20e-darkGrey: #191813; // var(--m20e-darkGrey)
-  --m20e-midGrey: #4b4a44; // var(--m20e-midGrey)
-  --m20e-lightGrey: #7a7971; // var(--m20e-lightGrey)
+  --m20e-badRed:#610d11; // var(--m20e-badRed);
+  --m20e-badRedAlpha:#610d11b2; // var(--m20e-badRedAlpha);
+  --m20e-goodGreen: #18520b; // var(--m20e-goodGreen);
+  --m20e-goodGreenAlpha: #18520b80; // var(--m20e-goodGreenAlpha);
+  --m20e-darkGrey: #191813; // var(--m20e-darkGrey);
+  --m20e-midGrey: #56544e; // var(--m20e-midGrey);
+  --m20e-lightGrey: #7a7971; // var(--m20e-lightGrey);
+  --m20e-superLightGrey: #b5b3a4; // var(--m20e-superLightGrey);
+  --m20e-mainFontSize: 14px; // var(--m20e-mainFontSize);
+  --m20e-senderFontFam: "Diablo"; // var(--m20e-senderFontFam);
+  --m20e-senderFontSize: 16px; // var(--m20e-senderFontSize);
+  --m20e-descFontSize: 12px; // var(--m20e-descFontSize);
 }
 .m20e{
-  --titleColor: #610d11; // var(--titleColor)
-  --highlightColor: #610d11; // var(--highlightColor)
-  --hoverColor: #610d11; // var(--hoverColor)
-  --titleFontFam: "Diablo"; // var(--titleFontFam)
-  --charNameFontSize : 22px; // var(--charNameFontSize)
-  --itemNameFontSize : 20px; // var(--itemNameFontSize)
-  --navFontSize: 16px; // var(--navFontSize)
-  --catFontSize: 18px; // var(--catFontSize)
-  --mainFontFam: "signika", sans-serif; // var(--mainFontFam)
-  --mainFontSize: 14px; // var(--mainFontSize)
-  --smallFontSize: 12px; // var(--smallFontSize)
+  --titleColor: #610d11; // var(--titleColor);
+  --highlightColor: #610d11; // var(--highlightColor);
+  --hoverColor: #610d11; // var(--hoverColor);
+  --titleFontFam: "Diablo"; // var(--titleFontFam);
+  --charNameFontSize : 22px; // var(--charNameFontSize);
+  --itemNameFontSize : 20px; // var(--itemNameFontSize);
+  --navFontSize: 16px; // var(--navFontSize);
+  --catFontSize: 18px; // var(--catFontSize);
+  --mainFontFam: "signika", sans-serif; // var(--mainFontFam);
+  --mainFontSize: 14px; // var(--mainFontSize);
+  --smallFontSize: 12px; // var(--smallFontSize);
 }
 
 /************
@@ -54,14 +59,25 @@
 @import "./buttons.less";
 @import "./resources.less";
 @import "./traits.less";
+@import "./chat.less";
 @import "./paradigms.less";
 
 //everything that can be used outside the m20e scope goes here
-.systemDescription{  
+.systemDescription{
   padding: 0px 2px;
-  line-height: 14px;
-  font-size: 12px;
+  line-height: calc(var(--m20e-descFontSize) + 2px);
+  font-size: var(--m20e-descFontSize);
   .descHeader{
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background-color: rgba(0,0,0,0.1);
+    font-weight: bold;
+    line-height: 1.5em;
+    border-radius: 2px;
+    padding: 3px 10px;
+  }
+  .descContent{
     margin: 5px 0px 10px;
     text-align: justify;
   }
@@ -71,10 +87,10 @@
   .level-description{
     margin: 5px 0px;
     .bullets{
-        font-size: 14px;
+        font-size: calc(var(--m20e-descFontSize) + 2px);
         font-weight: bold;
         float: left;
-        width: 53px;
+        width: 48px;
     }
     .level{
         float: left;
