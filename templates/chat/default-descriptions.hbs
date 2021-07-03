@@ -1,0 +1,19 @@
+<div class="systemDescription">
+  <div class="descHeader">
+    <div class="book">{{book}}</div>
+    <div class="page">{{page}}</div>
+  </div>
+  <div class="descContent">
+    {{{content}}}
+  </div>
+  {{#each levels as |level key|}}
+  <div class="level-description">
+    <div class="bullets">{{level.bullets}}</div>
+    <div class="level">{{level.level}}</div>
+    {{level.description}}
+  </div>
+  {{/each}}
+  <div class="descFooter">
+    {{{footer}}}
+  </div>
+</div>

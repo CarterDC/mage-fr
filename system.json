@@ -1,7 +1,7 @@
 {
   "name": "mage-fr",
   "title": "Mage-fr M20e",
-  "description": "[Unofficial] Mage l'Ascension - 20e, système pour Foundry VTT.<br>[FR][EN].<br>Developped for Foundry 0.8.x.",
+  "description": "[Unofficial] Mage l'Ascension - 20e, système pour Foundry VTT.<br>[FR][EN].<br>Developped for Foundry 0.8.x and over.",
   "author": "Carter_DC",
   
   "version": "0.0.11",
@@ -12,23 +12,6 @@
   "esmodules": ["m20e.js"],
 
   "styles": ["styles/m20e.css"],
-
-  "packs": [
-    {
-      "name": "attributes-desc",
-      "label": "Attributes Descriptions",
-      "system": "mage-fr",
-      "path": "./packs/attributes-desc.db",
-      "entity": "JournalEntry"
-    },
-    {
-      "name": "spheres-desc",
-      "label": "Spheres Descriptions",
-      "system": "mage-fr",
-      "path": "./packs/spheres-desc.db",
-      "entity": "JournalEntry"
-    }
-  ],
 
   "languages": [
     {
@@ -51,5 +34,5 @@
   "url": "https://github.com/CarterDC/mage-fr",
   "manifest": "https://raw.githubusercontent.com/CarterDC/mage-fr/main/system.json",
   "download": "https://github.com/CarterDC/mage-fr/archive/refs/heads/main.zip",
-  "license": "LICENSE.txt"
+  "license": "LICENSE"
 }

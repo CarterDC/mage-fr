@@ -62,5 +62,10 @@ Hooks.once('init', async function () {
 
 })
 
+/* -------------------------------------------- */
+/*  Other usefull Hooks                         */
+/* -------------------------------------------- */
+
+
 Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html));
 

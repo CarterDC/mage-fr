@@ -28,8 +28,6 @@
       },
       "resourceMagePower":{
         "magepower":{
-          "max": 0,
-          "value": 0,
           "quintessence": 0,
           "paradox": 0
         }
@@ -208,6 +206,7 @@
       },
 
       "aliases": [],
+      "ref": "",
       "extra" : ""
     }
   },

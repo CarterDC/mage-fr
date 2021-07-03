@@ -101,7 +101,42 @@
     },
 
     "defaultDescriptions": {
-      "attribute": ""
+      "attributes": {
+        "book": "Livre Aucun.",
+        "page": "p 000",
+        "content": "<p>Sauf cas exceptionnel, la majorité des gens se situe entre 1 et 3</p><p>Le maximum humain est à 5.</p>",
+        "level0":{
+          "bullets": "🞫",
+          "level": "Terrible :",
+          "description": "Vous souffrez d'un handicap sévère."
+        },
+        "level1":{
+          "bullets": "●",
+          "level": "Faible :",
+          "description": "Vous êtes vraiment mauvais, ça ne vaut presque pas la peine d'essayer."
+        },
+        "level2":{
+          "bullets": "●●",
+          "level": "Moyen :",
+          "description": "Etre dans la moyenne c'est bien, ça veut dire qu'il y a des gens plus mauvais que vous."
+        },
+        "level3":{
+          "bullets": "●●●",
+          "level": "Bon :",
+          "description": "Vous pouvez aisément 'vous la pêter' en soirée dans les bars."
+        },
+        "level4":{
+          "bullets": "●●●●",
+          "level": "Remarquable :",
+          "description": "Vous n'avez rien à envier aux héros de la littérature ou du cinéma."
+        },
+        "level5":{
+          "bullets": "●●●●●",
+          "level": "Extra-ordinaire :",
+          "description": "Si personne ne vous reconnait dans la rue, c'est que vous le voulez ainsi."
+        },
+        "footer": "<p><strong>Spécialités :</strong> Aucunes</p>"
+      }
     },
 
     "healthStatus": {
@@ -209,6 +244,8 @@
   "ITEM.TypeConsumable": "Consommable",
 
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
+  "SETTINGS.compendiumScope": "Nom du module de Compendiums.",
+  "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",
   "SETTINGS.playersCanSeeParadoxPoints": "Peut voir les points de Paradoxe.",
   "SETTINGS.playersCanSeeParadoxPointsHint": "Les joueurs ne voient pas leur Paradoxe (⚠ ils ne pourront plus interagir avec leur 'barre de puissance').",
   "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés."

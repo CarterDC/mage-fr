@@ -594,7 +594,7 @@
   height: 200px;
   border: 1px solid var(--m20e-lightGrey);
   border-radius: 3px;
-  padding-left: 3px;
+  padding: 3px 3px 0px;
 }
 .m20e .field .fake-editor {
   margin-top: 3px;
@@ -605,7 +605,7 @@
   min-height: 20px;
   border: 1px solid var(--m20e-lightGrey);
   border-radius: 3px;
-  padding-left: 3px;
+  padding: 3px 3px 0px;
 }
 li.chat-message .message-header {
   color: var(--m20e-midGrey);

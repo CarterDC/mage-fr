@@ -170,9 +170,8 @@ export default class M20eActorSheet extends ActorSheet {
       //retrieve attribute (or sphere) name from paradigm item's lexicon if any
       const lexiconEntry = this.actor.getLexiconEntry(`${category}.${key}`);
       //get systemDescription from compendium given category and key
-      const packName = `mage-fr.${category}-desc`;
-      const packItem = await utils.getCompendiumDocumentByName(packName, key);
-
+      const sysDesc = await utils.getSystemDescription(category, key);
+      //build our fake item
       item = {
         type: game.i18n.localize(`M20E.category.${category}`),
         name: game.i18n.localize(`M20E.${category}.${key}`),
@@ -181,7 +180,7 @@ export default class M20eActorSheet extends ActorSheet {
         }
       };
       item.data.data.displayName = lexiconEntry || '';
-      item.data.data.systemDescription = packItem ? packItem.data.content : '';
+      item.data.data.systemDescription = sysDesc;
     }
     this.displayCard({
       category : category,
@@ -262,8 +261,10 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   _onTraitLabelClick(event) {
-    event.preventDefault()
-    const traitElement = this._getTraitElement(event);
+    event.preventDefault();
+    const element = event.currentTarget;
+    const traitElement = element.closest(".trait");
+    //just toggle the active status
     const toggle = (traitElement.dataset.active === 'true');
     traitElement.dataset.active = !toggle;
   }
@@ -286,11 +287,12 @@ export default class M20eActorSheet extends ActorSheet {
         break;
 
       case 'edit':
-        this._editItem(element);
+        const traitElement = element.closest(".trait");
+        this._editItem(traitElement);
         break;
 
       case 'remove':
-        //let itemId = element.closest(".trait").dataset.itemId;
+        //const itemId = element.closest(".trait").dataset.itemId;
         //this._removeItem(itemId);
         break;
 
@@ -304,21 +306,15 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
-  //utile ?
-  _getTraitElement(event) {
-    const element = event.currentTarget;
-    return element.closest(".trait");
-  }
-
-  _editItem(element) {
-    const category = element.closest(".category").dataset.category;
+  _editItem(traitElement) {
+    const category = traitElement.closest(".category").dataset.category;
     if ( category === 'attributes' || category === 'spheres' ) {
-      const key = element.closest(".trait").dataset.key;
+      const key = traitElement.dataset.key;
       //use a fakeItem dialog to edit attribute (or sphere)
       this._editFakeItem(category, key);
     } else {
       // regular item edit
-      let itemId = element.closest(".trait").dataset.itemId;
+      let itemId = traitElement.dataset.itemId;
       let item = this.actor.items.get(itemId);
       item.sheet.render(true);
     }
@@ -336,9 +332,8 @@ export default class M20eActorSheet extends ActorSheet {
   async _editFakeItem(category, key) {
     //retrieve attribute (or sphere) name from paradigm item's lexicon if any
     const lexiconEntry = this.actor.getLexiconEntry(`${category}.${key}`);
-    //get systemDescription from compendium given category and key
-    const packName = `mage-fr.${category}-desc`;
-    const packItem = await utils.getCompendiumDocumentByName(packName, key);
+    //get systemDescription from compendium or localization given category and key
+    const sysDesc = await utils.getSystemDescription(category, key);
 
     const itemData = {
       category: category,
@@ -347,11 +342,10 @@ export default class M20eActorSheet extends ActorSheet {
       type: game.i18n.localize(`M20E.category.${category}`),
       lexiconName: lexiconEntry || '',
       placeholderName : game.i18n.localize(`M20E.${category}.${key}`),
-      systemDescription: packItem ? packItem.data.content : game.i18n.localize(`M20E.errors.missingContent`)
+      systemDescription: sysDesc
     }
     //display fake sheet
     const fakeItem = new FakeItem(this.actor, itemData);
     fakeItem.render(true);
   }
-
 }
