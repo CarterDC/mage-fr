@@ -1,4 +1,5 @@
 //traits
+
 .m20e{
   .trait{
     position: relative;
@@ -7,25 +8,16 @@
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    
-    .trait-extra{//TODO : sould be in abilities
-      font-size: 18px;
-      font-weight: bolder; 
-      padding-bottom: 2px;
-      padding-right: 1px;
-    }
-    
+
     .trait-label:hover {//TODO : not all trait labels should behave like that
       text-shadow: 0 0 1px var(--hoverColor);
     }
-    
     .ligne{
       flex: 10 10;
       height: 1em;
       margin: 0 2px 2px;
       border-bottom: 1px solid var(--m20e-lightGrey);
     }
-    
     .edit-bar{
       display: flex;
       flex: 0 0;
@@ -58,13 +50,19 @@
   .trait.attribute,
   .trait.sphere{
       height: 20px;
-      margin: 3px 0; 
+      margin: 3px 0;
   }
 
   .trait.ability{
     height: 20px;
     margin: 2px 0;
     font-size: var(--smallFontSize);
+    .trait-extra{
+      font-size: 18px;
+      font-weight: bolder;
+      padding-bottom: 2px;
+      padding-right: 1px;
+    }
     .bullet{
         height: 13px;
         width: 10px;
@@ -73,7 +71,28 @@
         padding: 1px 0 0; 
     }
   }
+  .trait.chat-flavor{
+    height: 20px;
+    margin: 3px 0;
+    padding: 0px 25px;
+    color: var(--m20e-midGrey);
+    .ligne{
+      border-color:var(--m20e-midGrey);
+    }
+    .bullet-display{
+      border-color:var(--m20e-midGrey);
+    }
+    .trait-label{
+      font-weight: bold;
+    }
+    .bullet-display[data-value="0"]{
+      border-color: var(--m20e-badRed);
+    }
+    .bullet[data-state='active']{
+      background: var(--m20e-lightGrey); 
+    }
 
+  }
   .trait.arete{
     height: 20px;
     margin: 3px 0;
@@ -120,14 +139,13 @@
         font-style: oblique;
         color: var(--m20e-darkGrey);
     }
-
     .editor{
       font-size: 14px;
       font-weight: normal;
       height: 200px;
       border: 1px solid var(--m20e-lightGrey);
       border-radius: 3px;
-      padding-left: 3px;
+      padding: 3px 3px 0px;
     }
     .fake-editor{
       margin-top: 3px;
@@ -138,7 +156,7 @@
       min-height: 20px;
       border: 1px solid var(--m20e-lightGrey);
       border-radius: 3px;
-      padding-left: 3px;
+      padding: 3px 3px 0px;
     }
   }
 }

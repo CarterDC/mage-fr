@@ -15,10 +15,10 @@ export function log(args) {
 
 /**
  * Whether the passed variable is actually instanciated,
- * is not a primitive and is not an array type object
+ * is not a primitive and is not an array-type object
  * @param {*} myVariable
  * 
- * @returns {boolean}  whetter myVariable is an object or not
+ * @returns {boolean}  whether myVariable is an object or not
  */
 export const isObject = myVariable =>
   myVariable && typeof myVariable === 'object' && !Array.isArray(myVariable);
@@ -33,7 +33,13 @@ export const isObject = myVariable =>
 export const isNumeric = myVariable =>
   !isNaN(parseFloat(myVariable));
 
-
+/**
+ * For use in array.sort()
+ * implements a basic alpha sorting on the property passed in argument
+ * @param {string} key optionnal
+ * 
+ * @returns {function} the actual sorting function with correct property
+ */
 export function alphaSort(key = 'name') {
   return function(a, b) {
     const aKey = a[key].toUpperCase();
@@ -42,12 +48,19 @@ export function alphaSort(key = 'name') {
   }
 }
 
+/**
+ * Whether current user can see/interract with his paradox points
+ */
 export function canSeeParadox() {
-  return game.settings.get("m20e", "playersCanSeeParadoxPoints") || game.user.isGM;
+  return game.settings.get("mage-fr", "playersCanSeeParadoxPoints") || game.user.isGM;
 }
 
 /**
- * @param  {} element
+ * upon update event (mostly from _onChangeInput) 
+ * validate planned update against d-type and min/max values if number.
+ * @param {object} element the html element that triggered the update event
+ * 
+ * @returns {boolean}  Whether it's deemed valid or not
  */
 export function isValidUpdate(element) {
   if ( element === null ) { return false; }
@@ -75,9 +88,15 @@ export function isValidUpdate(element) {
   return isValid;
 }
 
+/**
+ * renders a Dialog.prompt tailored to the promptData passed in argument.
+ * The lone input is tagged with d-type (and min/max if needed) to be used by isValidUpdate()
+ * @param {object} promptData {title, name, currentValue, min = '', max = ''}
+ * 
+ * @returns {object} the HTML input element or null if prompt was closed/escaped
+ */
 export async function promptNewValue(promptData) {
   const {title, name, currentValue, min = '', max = ''} = promptData;
-  log({title, name, currentValue, min, max});
   let dtype = 'String';
   let minmax = '';
   if ( isNumeric(currentValue) ) {
@@ -85,6 +104,7 @@ export async function promptNewValue(promptData) {
     minmax += min !== '' ? ` min="${promptData.min}"` : '';
     minmax += max !== '' ? ` max="${promptData.max}"` : '';
   }
+  //configure the prompt message and the input element
   const content =  `${game.i18n.format("M20E.prompts.newValue", {name : name})}  
     <input type='text' value='${currentValue}' data-dtype='${dtype}' ${minmax}/>`;
 
@@ -92,36 +112,109 @@ export async function promptNewValue(promptData) {
     options: {classes: ['dialog', 'm20e']},
     title: title,
     content: content,
-    rejectClose: false,
+    rejectClose: false, // escaping or closing returns null (does not trigger an error)
     callback: (html) => { return html.find('input')[0]; }
   })
 }
 
-export async function getCompendiumDocumentByName(packName, documentName) {
-  /* const pack = game.packs.get(compendiumName);
-const index = pack.index.getName(itemName);
-const item = await pack.getDocument(index._id);
-return game.items.fromCompendium(item);*/
-
-  const pack = game.packs.get( packName );
-  if ( !pack ) {
-    ui.notifications.error( `MAGE | ${packName} pack not found !` );
-    return Promise.reject();
+/**
+ * gets a systemDescription given the category and name (key) of a trait/item.
+ * checks for a compendium given the category
+ * check for the journal entry given the key and returns its content
+ * otherwise get a default description from getDefaultDescription()
+ * @param {string} category can also be a subtype in some cases (talents, skills etc..)
+ * @param {string} key the specific name of the journal entry
+ * 
+ * @returns {string} the resquested description (most usually containing html)
+ */
+export async function getSystemDescription(category, key) {
+  //get the compendium module 'name' from the settings
+  const scope = game.settings.get("mage-fr", "compendiumScope");
+  const packName = `${scope}.${category}-desc`;
+  const pack = game.packs.get(packName);
+  try {
+    //get the systemDescription from Journal Entry compendium if any
+    const index = pack.index.getName(key);
+    const packItem = await pack.getDocument(index._id);
+    return packItem.data.content;
+  } catch (e) {
+    //otherwise get a generic description for that category
+    return await getDefaultDescription(category);
   }
-  const indexEntry = pack.index.find(entry => entry.name === documentName);
-  if ( !indexEntry ) {
-    ui.notifications.error( `MAGE | ${documentName} not found in pack ${packName} !` );
-    return Promise.reject();
-  }
-  return await pack.getDocument(indexEntry._id);
 }
 
+/**
+ * Returns a rendered Template populated with localized info given the category of a trait/item.
+ * 
+ * @param {string} category can also be a subtype in some cases (talents, skills etc..)
+ * 
+ * @returns {string} the resquested systemDescription
+ */
+export async function getDefaultDescription(category) {
+  const descTemplate = "systems/mage-fr/templates/chat/default-descriptions.hbs";
+  const path = `M20E.defaultDescriptions.${category}`;
+  const templateData = {
+    book: "", //game.i18n.localize(`${path}.book`),
+    page: "", //game.i18n.localize(`${path}.page`),
+    content: game.i18n.localize(`${path}.content`),
+    footer: game.i18n.localize(`${path}.footer`),
+    levels: {}
+  };
+  //build an array for all 6 levels
+  for (let i=0; i<=5; i++) {
+    let propName = `level${i}`;
+    templateData.levels[propName] = {
+      bullets: game.i18n.localize(`${path}.${propName}.bullets`),
+      level: game.i18n.localize(`${path}.${propName}.level`),
+      description: game.i18n.localize(`${path}.${propName}.description`)
+    };
+  }
+  return await renderTemplate(descTemplate, templateData);
+}
+
+/**
+ * might not even be used anymore ?
+ * TODO : Localize the shit out of this ! 
+ * 
+ * @param {string} packName a full packname also containing the pack scope
+ * @param {string} documentName the name of the requested document inside the compendium
+ * 
+ * @returns {document} the resquested document
+ */
+export async function getCompendiumDocumentByName(packName, documentName) {
+
+  const pack = game.packs.get(packName);
+  if ( !pack ) {
+    ui.notifications.error(`MAGE | ${packName} pack not found !`);
+    return Promise.reject();
+  }
+  const index = pack.index.getName(documentName);
+  if ( !index ) {
+    ui.notifications.error(`MAGE | ${documentName} not found in pack ${packName} !`);
+    return Promise.reject();
+  }
+  return await pack.getDocument(index._id);
+}
+
+/**
+ * concatenates an object property chain by inserting a '.'
+ * used only by propertiesToArray
+ */
 const addDelimiter = (a, b) =>
   a ? `${a}.${b}` : b;
 
+/**
+ * Recursive function that creates an array of {fullPath: value} pairs
+ * given an object (with nested properties, obviously)
+ * found on the internet and tweaked moderately
+ * 
+ * @param {object} obj the object to 'deconstruct'
+ * @param {string} prevPath used by the recursion to dive deeper into the object
+ * 
+ * @returns {array} an array of {fullPath: value} pairs
+ */
 export function propertiesToArray(obj = {}, prevPath = '') {
-  //found on the internet and tweaked a bit
-  return Object.entries( obj )
+  return Object.entries(obj)
     .reduce((acc, [key, value]) => 
       {
         let path = addDelimiter(prevPath, key);

@@ -23,6 +23,7 @@ import * as utils from './module/utils/utils.js'
 import { log } from "./module/utils/utils.js";
 import { registerHandlebarsHelpers } from "./module/utils/hb-helpers.js";
 import { preloadHandlebarsTemplates } from "./module/utils/hb-templates.js";
+import * as chat from "./module/chat.js";
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -60,4 +61,11 @@ Hooks.once('init', async function () {
   preloadHandlebarsTemplates();
 
 })
+
+/* -------------------------------------------- */
+/*  Other usefull Hooks                         */
+/* -------------------------------------------- */
+
+
+Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html));
 
