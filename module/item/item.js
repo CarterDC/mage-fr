@@ -15,7 +15,9 @@ export default class M20eItem extends Item {
   }
 
   async _preCreate(data, options, user) {
-    log('ça avance !');
+    //deal with img against type/subType
+    //deal with systemDescription
+    log({"_preCreate Data": data});
   }
 
   getLexiconEntry(relativePath) {

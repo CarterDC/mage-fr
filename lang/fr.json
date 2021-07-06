@@ -154,11 +154,18 @@
       "edit": "Editer",
       "remove": "Supprimer",
       "add": "Ajouter",
+      "value0to5": "Une valeur généralement entre 0 et 5",
+      "extra": "Inutile et variable.",
       "specialisation": "Utilisé uniquement à partir du rang 4.",
       "displayDescription": "Apparait souvent en info-bulle ou en 'linkant' dans le chat",
       "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags.",
       "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
-      "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus."
+      "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus.",
+      "compendiumEdit": "Editable uniquement via Compendium.",
+      "nonEditable": "Non-éditable.",
+      "name": "Nom du trait ou de l'objet",
+      "displayName": "Apparaît automatiquement à la place du nom d'origine.",
+      "systemName": "Sert de référence, éditable par un GM."
     },
 
     "labels": {
@@ -187,18 +194,43 @@
       "lexicon": "LEXIQUE"
     },
 
+    "new": {
+      "default": "Nvel Item",
+      "ability": {
+        "talent": "Nv Talent",
+        "skill": "Nvelle Compétence",
+        "knowledge": "Nvelle Connaissance"
+      },
+      "meritflaw": {
+        "merit": "Nvel Atout",
+        "flaw": "Nv Handicap"
+      },
+      "background": "Nvel Historique",
+      "event": "Nvel Evènement",
+      "contact": "Nv Contact",
+      "rote": "Nvelle Routine",
+      "consumable": "Nv Consommable"
+    },
+
     "notifications":{
-      "missingParadigm": "Il semblerait que ce personnage n'ait pas de pradigme.",
+      "duplicateName": "Il existe déjà un item de ce type nommé '{name}'",
+      "missingParadigm": "Il semblerait que ce personnage n'ait pas de pradigme !",
       "invalidFormat": "'{value}' n'a pas un format conforme !",
       "nan": "'{value}' n'est pas un nombre !",
       "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
-      "notLocalized" : "L'entrée '{path}' n'existe pas dans le fichier de localisation !"
+      "notLocalized": "L'entrée '{path}' n'existe pas dans le fichier de localisation !",
+      "packNotFound": "Le compendium '{packName}' n'est pas trouvable !",
+      "itemNotFoundInCompendium": "L'item '{documentName}' n'est pas trouvable dans le compendium '{packName}' !"
     },
 
     "prompts": {
+      "editTitle": "Edition de {name}.",
       "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>",
+      "addItemTitle": "Ajout d'un nouvel Item.",
+      "addItemContent": "<p>Saisissez un nom pour <br><b>{name}</b> :</p>",
+      "addItemWarning": "<p>⚠ Les noms sont susceptibles d'être référencés par des règles <br> et ne peuvent, par conséquent, être modifiés <strong>que par un GM</strong>.</p>",
       "deleteTitle": "Suppression de {name}",
-      "deleteContent": "La suppression de '{name}' est <b>définitive</b>.<br>Confirmez-vous ?",
+      "deleteContent": "<p>La suppression de '{name}' est <b>définitive</b>.<br>Confirmez-vous ?</p>",
       "lexiconTitle": "Lexique",
       "lexiconContentAdd": "Ajout d'une nouvelle entrée de lexique à ce paradigme.",
       "lexiconContentEdit": "Modification d'une entrée de lexique pour ce paradigme."

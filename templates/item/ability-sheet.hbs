@@ -1,5 +1,5 @@
 <form class="{{cssClass}}" autocomplete="off">
-  {{> "systems/mage-fr/templates/item/parts/header-block.hbs" itemImg = '' itemType = "ITEM.TypeAbility"}}
+  {{> "systems/mage-fr/templates/item/parts/header-block.hbs" useDisplayName = 'true' itemImg = '' itemType = "ITEM.TypeAbility"}}
 
   {{> "systems/mage-fr/templates/item/parts/nav-block.hbs"}}
 
@@ -16,7 +16,7 @@
                       {{/select}}
                   </select>
               </div>
-              <div class= "field">
+              <div class= "field" title="{{localize 'M20E.hints.value0to5'}}">
                   <label for="data.value">{{localize "M20E.labels.value"}} : </label>
                   <input name="data.value" type="text" value="{{data.value}}" data-dtype="Number" min="0" max="5"/>
               </div>

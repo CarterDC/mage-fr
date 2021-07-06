@@ -6,7 +6,11 @@
     {{/if}}
     <div class="header-column">
         <div class="header-row">
-            <input class = "name" name="name" type="text" value="{{item.name}}" data-dtype="String"/>
+            {{#if useDisplayName}}
+            <input class = "name" name="data.displayName" type="text" value="{{data.displayName}}" data-dtype="String" placeholder="{{item.name}}" title="{{localize 'M20E.hints.displayName'}}"/>
+            {{else}}
+            <input class = "name" name="name" type="text" value="{{item.name}}" data-dtype="String" title="{{localize 'M20E.hints.name'}}"/>
+            {{/if}}
             <span class="item-type">{{{localize itemType}}}</span>
         </div>
     </div>

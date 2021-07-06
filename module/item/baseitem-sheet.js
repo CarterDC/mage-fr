@@ -25,7 +25,7 @@ export default class M20eItemSheet extends ItemSheet {
   }
 
   /** @override */
-  static get defaultOptions () {
+  static get defaultOptions() {
     return mergeObject( super.defaultOptions, {
      classes: ['m20e', 'sheet', 'item'],
      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'detail' }]
@@ -33,7 +33,7 @@ export default class M20eItemSheet extends ItemSheet {
   }
 
    /** @override */
-   get template () {
+   get template() {
     return `systems/mage-fr/templates/item/${this.item.data.type}-sheet.hbs`;
   }
 

@@ -34,7 +34,7 @@ import { log } from "../utils/utils.js";
     this.data.update({items});
   }
 
-  //TODO : create form compendium if any
+  //TODO : create from compendium if any
 
   async _getDefaultAbilities() {
     //prepare default abilities
@@ -49,7 +49,7 @@ import { log } from "../utils/utils.js";
             //todo : add localization for specific item types
             systemDescription: ''
           }
-        };
+        }
     });
     //alpha sort now that it's localized
     defaultAbilities.sort(utils.alphaSort());
