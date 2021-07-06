@@ -1,3 +1,4 @@
+import { Trait, PromptData } from "./classes.js";
 
 //loging & tracing
 const consoleTrace = args => {
@@ -11,7 +12,6 @@ export const consoleLog = args =>
 export function log(args) {
   return consoleTrace(args);
 }
-
 
 /**
  * Whether the passed variable is actually instanciated,
@@ -91,12 +91,12 @@ export function isValidUpdate(element) {
 /**
  * renders a Dialog.prompt tailored to the promptData passed in argument.
  * The lone input is tagged with d-type (and min/max if needed) to be used by isValidUpdate()
- * @param {object} promptData {title, name, currentValue, min = '', max = ''}
+ * @param {PromptData} promptData
  * 
  * @returns {object} the HTML input element or null if prompt was closed/escaped
- */
+*/
 export async function promptNewValue(promptData) {
-  const {title, name, currentValue, min = '', max = ''} = promptData;
+  const {currentValue, min = '', max = ''} = promptData;
   let dtype = 'String';
   let minmax = '';
   if ( isNumeric(currentValue) ) {
@@ -104,13 +104,17 @@ export async function promptNewValue(promptData) {
     minmax += min !== '' ? ` min="${promptData.min}"` : '';
     minmax += max !== '' ? ` max="${promptData.max}"` : '';
   }
-  //configure the prompt message and the input element
-  const content =  `${game.i18n.format("M20E.prompts.newValue", {name : name})}  
-    <input type='text' value='${currentValue}' data-dtype='${dtype}' ${minmax}/>`;
+  
+  //configure the prompt message and add the input element
+  let content = promptData.promptContent
+  content += `<input type='text' value='${currentValue}'
+    data-dtype='${dtype}'
+    placeholder='${promptData.placeHolder}'
+    ${minmax}/>`;
 
   return await Dialog.prompt({
     options: {classes: ['dialog', 'm20e']},
-    title: title,
+    title: promptData.title,
     content: content,
     rejectClose: false, // escaping or closing returns null (does not trigger an error)
     callback: (html) => { return html.find('input')[0]; }
@@ -154,8 +158,8 @@ export async function getDefaultDescription(category) {
   const descTemplate = "systems/mage-fr/templates/chat/default-descriptions.hbs";
   const path = `M20E.defaultDescriptions.${category}`;
   const templateData = {
-    book: "", //game.i18n.localize(`${path}.book`),
-    page: "", //game.i18n.localize(`${path}.page`),
+    book: game.i18n.localize(`${path}.book`),
+    page: game.i18n.localize(`${path}.page`),
     content: game.i18n.localize(`${path}.content`),
     footer: game.i18n.localize(`${path}.footer`),
     levels: {}
@@ -173,8 +177,8 @@ export async function getDefaultDescription(category) {
 }
 
 /**
- * might not even be used anymore ?
- * TODO : Localize the shit out of this ! 
+ * Returns a document from a compendium given packName and documentName
+ * might not even be used anymore
  * 
  * @param {string} packName a full packname also containing the pack scope
  * @param {string} documentName the name of the requested document inside the compendium
@@ -182,15 +186,14 @@ export async function getDefaultDescription(category) {
  * @returns {document} the resquested document
  */
 export async function getCompendiumDocumentByName(packName, documentName) {
-
   const pack = game.packs.get(packName);
   if ( !pack ) {
-    ui.notifications.error(`MAGE | ${packName} pack not found !`);
+    ui.notifications.error(game.i18n.format("M20E.notifications.packNotFound", { packName: packName }));
     return Promise.reject();
   }
   const index = pack.index.getName(documentName);
   if ( !index ) {
-    ui.notifications.error(`MAGE | ${documentName} not found in pack ${packName} !`);
+    ui.notifications.error(game.i18n.format("M20E.notifications.itemNotFoundInCompendium", { packName: packName, documentName: documentName }));
     return Promise.reject();
   }
   return await pack.getDocument(index._id);

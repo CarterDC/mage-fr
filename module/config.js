@@ -6,10 +6,11 @@ M20E.WOUND_TYPE_LETHAL = 2;
 M20E.WOUND_TYPE_AGGRAVATED = 3;
 
 M20E.abilitySubTypes = {
-    talent: "M20E.subTypes.talent",
-    skill: "M20E.subTypes.skill",
-    knowledge: "M20E.subTypes.knowledge"
+    talent: "M20E.subType.talent",
+    skill: "M20E.subType.skill",
+    knowledge: "M20E.subType.knowledge"
 }
+
 
 M20E.categoriesWithLocks = [
   "attributes",
@@ -24,17 +25,18 @@ M20E.categoriesWithLocks = [
   "equipement"
 ]
 
-M20E.extraDecorations = {//whatever the name, only the value is stored anyway
-  extra0: "",
-  extra1: "⮱",
-  extra2: "⮚",
-  extra3: "⮩",
-  extra4: "♆",
-  extra5: "⚠",
-  extra6: "✠",
-  extra7: "🗸",
-  extra8: "⛧",
-  extra9: "⛥"
+M20E.categoryToType ={
+  "abilities": "ability",
+  "talents": "talent",
+  "skills": "skill",
+  "knowledges": "knowledge",
+  "rotes": "rote",
+  "backgrounds" : "background",
+  "meritsflaws": "meritflaw",
+  "merits": "merit",
+  "flaws": "flaw",
+  "chronic": "event",
+  "contacts": "contact"
 }
 
 M20E.defaultAbilities = {
@@ -71,6 +73,28 @@ M20E.defaultAbilities = {
   occult: 'knowledge',
   politics: 'knowledge',
   science: 'knowledge'
+}
+
+M20E.dragDropCategories = [
+  "abilities",
+  "backgrounds",
+  "meritsflaws",
+  "chronic",
+  "contacts",
+  "rotes"
+]
+
+M20E.extraDecorations = {//whatever the name, only the value is stored anyway
+  extra0: "",
+  extra1: "⮱",
+  extra2: "⮚",
+  extra3: "⮩",
+  extra4: "♆",
+  extra5: "⚠",
+  extra6: "✠",
+  extra7: "🗸",
+  extra8: "⛧",
+  extra9: "⛥"
 }
 
 M20E.itemSheetOptions = {
