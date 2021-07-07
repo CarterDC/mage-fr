@@ -23,13 +23,13 @@ export class FakeItem extends FormApplication {
     this.itemData = itemData;
 
     const  itemSheetOptions = CONFIG.M20E.itemSheetOptions['fakeitem'];
-    if(itemSheetOptions){
+    if ( itemSheetOptions ) {
       this.options.width = this.position.width = itemSheetOptions.width;
       this.options.height = this.position.height = itemSheetOptions.height;
     }
     //add the paradigm css class if any to the default options.
     const paraItem = this.actor.paradigm;
-    if(paraItem){
+    if ( paraItem ) {
       this.options.classes.push(paraItem.data.data.cssClass);
     }
   }
@@ -69,11 +69,11 @@ export class FakeItem extends FormApplication {
   /** @override */
   async _onChangeInput(event) {
     const element = event.target;
-    if(! utils.isValidUpdate(element)){
+    if ( ! utils.isValidUpdate(element) ) {
       event.preventDefault();
       return this.render();
     }
-    if(element.name === 'lexiconName'){
+    if ( element.name === 'lexiconName' ) {
       this._onChangeLexiconName(element);
     } else {
       super._onChangeInput(event);
@@ -82,7 +82,7 @@ export class FakeItem extends FormApplication {
 
   async _onChangeLexiconName(inputElement) {
     const inputValue = inputElement.value;
-    if(inputValue === ''){ // TODO : get rid of this if empty string to remove is implemented
+    if ( inputValue === '' ) { // TODO : get rid of this if empty string to remove is implemented
       return this.render();
     }
     //update our fakeitem's name (to be rerendered)
@@ -95,7 +95,7 @@ export class FakeItem extends FormApplication {
     const html = $(this.element);
     const newValue = html.find(".name")[0].value;
     const lexiconEntry = this.actor.getLexiconEntry(this.itemData.relativePath);
-    if( newValue !== lexiconEntry ){
+    if ( newValue !== lexiconEntry ) {
       //last update before closing
       this.actor.setLexiconEntry(this.itemData.relativePath, newValue);
     }

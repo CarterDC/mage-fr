@@ -15,9 +15,18 @@ export default class M20eItem extends Item {
   }
 
   async _preCreate(data, options, user) {
-    //deal with img against type/subType
+    await super._preCreate(data, options, user);
+    //get specific type (subtype if any otherwise base type)
+    const specificType = this.data.data.subType || this.data.type;
+
+    const obj = {data: {}};
+    //deal with default image
+    obj.img = CONFIG.M20E.defaultImg[specificType] || '';
     //deal with systemDescription
-    log({"_preCreate Data": data});
+    if ( this.data.data.systemDescription === '') {
+      obj.data.systemDescription = await utils.getDefaultDescription(specificType);
+    }
+    this.data.update( obj );
   }
 
   getLexiconEntry(relativePath) {

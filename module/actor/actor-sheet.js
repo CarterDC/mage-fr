@@ -83,6 +83,7 @@ export default class M20eActorSheet extends ActorSheet {
     //editable only (roughly equals 'isOwner')
     if ( this.isEditable ) {
       //interactions & editions
+      new ContextMenu(html, '.header-row.charname', this._nameContextMenu);
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       html.find('.resource-panel .box[data-clickable="true"]').mousedown(this._onResourceBoxClick.bind(this));
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
@@ -98,6 +99,31 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   /*  Context Menus                               */
   /* -------------------------------------------- */
+
+  _nameContextMenu = [
+    {
+      name: game.i18n.localize('M20E.context.editParadigm'),
+      icon: '<i class="fas fa-pencil-alt"></i>',
+      callback: element => {
+        const paradigm = this.actor.paradigm;
+        paradigm.sheet.render(true);
+      },
+      condition: () => {
+        return this.actor.paradigm; 
+      }
+    },
+    {
+      name: game.i18n.localize('M20E.context.removeParadigm'),
+      icon: '<i class="fas fa-trash"></i>',
+      callback: element => {
+        const paradigm = this.actor.paradigm;
+        this._removeItem(paradigm);
+      },
+      condition: () => {
+        return this.actor.paradigm; 
+      }
+    }
+  ]
 
   _itemContextMenu = [
     {
@@ -271,7 +297,8 @@ export default class M20eActorSheet extends ActorSheet {
       
       case 'remove':
         const itemId = buttonElement.closest(".trait").dataset.itemId;
-        this._removeItem(itemId);
+        const item = this.actor.items.get(itemId);
+        this._removeItem(item);
         break;
       
       case 'roll':
@@ -462,15 +489,14 @@ export default class M20eActorSheet extends ActorSheet {
     
   }
 
-  async _removeItem(itemId) {
-    const item = this.actor.items.get(itemId);
+  async _removeItem(item) {
     const confirmation = await Dialog.confirm({
       options: {classes: ['dialog', 'm20e']},
       title: game.i18n.format("M20E.prompts.deleteTitle", {name: item.name}),
       content: game.i18n.format("M20E.prompts.deleteContent", {name: item.name})
     });
     if ( confirmation ) {
-      this.actor.deleteEmbeddedDocuments('Item', [itemId]);
+      this.actor.deleteEmbeddedDocuments('Item', [item.id]);
     }
   }
 
@@ -519,7 +545,7 @@ export default class M20eActorSheet extends ActorSheet {
 
   /** @override */
   _onDrop(event) {
-    log(event);
+    //might be usefull at some point ?
     super._onDrop(event);
   }
 }

@@ -15,6 +15,32 @@ import { log } from "../utils/utils.js";
     super(...args);
   }
 
+  async dropOnSheet(data) {
+    //TODO : maybe move to sheet's _onDrop 
+    if ( data.type === 'Item' ) {
+      const item = await Item.implementation.fromDropData(data);
+      if ( item.data.type === 'paradigm' ) {
+        const currentParadigm = this.paradigm;
+        if ( currentParadigm ) {
+          const confirmation = await Dialog.confirm({
+            options: {classes: ['dialog', 'm20e']},
+            title: this.name,
+            content: game.i18n.localize("M20E.prompts.dropParadigm")
+          });
+          if ( !confirmation ) { return false; }
+          //delete current paradigm before accepting the dropped one
+          await this.deleteEmbeddedDocuments('Item', [currentParadigm.id]);
+        }
+        ui.notifications.warn(game.i18n.localize('M20E.notifications.newParadigm'));
+        const itemData = item.data;
+        itemData.name = `Paradigme de ${this.name}`;
+        await this.createEmbeddedDocuments('Item', [itemData]);
+        return false;
+      }
+    }
+    return true;
+  }
+
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     
@@ -37,6 +63,13 @@ import { log } from "../utils/utils.js";
   //TODO : create from compendium if any
 
   async _getDefaultAbilities() {
+    //get default descriptions for all 3 ability types
+    //(since we gonna use them 11 times each)
+    const defaultDescriptions = {};
+    defaultDescriptions.talent = await utils.getDefaultDescription('talent');
+    defaultDescriptions.skill = await utils.getDefaultDescription('skill');
+    defaultDescriptions.knowledge = await utils.getDefaultDescription('knowledge');
+
     //prepare default abilities
     const defaultAbilities = Object.entries(CONFIG.M20E.defaultAbilities)
       .map(([key, value]) => {
@@ -47,7 +80,7 @@ import { log } from "../utils/utils.js";
           data: {
             subType: value,
             //todo : add localization for specific item types
-            systemDescription: ''
+            systemDescription: defaultDescriptions[value]
           }
         }
     });
@@ -61,7 +94,7 @@ import { log } from "../utils/utils.js";
     super.prepareData();
     const actorData = this.data;
 
-    this._updateHealthStats();    
+    this._updateHealthStats();
     //this.updateMagePower(actorData);
   }
 
@@ -72,7 +105,7 @@ import { log } from "../utils/utils.js";
   getLexiconEntry(relativePath) {
     const paraItem = this.paradigm;
     if ( !paraItem ) {
-      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
+      //ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
       return;
     }
     return paraItem.getLexiconEntry(relativePath);
@@ -81,7 +114,7 @@ import { log } from "../utils/utils.js";
   async setLexiconEntry(relativePath, newValue){
     const paraItem = this.paradigm;
     if ( !paraItem ) {
-      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
+      //ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
       return;
     }
     return await paraItem.setLexiconEntry(relativePath, newValue);

@@ -18,9 +18,13 @@ export default class M20eItemSheet extends ItemSheet {
     if( itemSheetOptions ) {
       this.options.width = this.position.width = itemSheetOptions.width;
       this.options.height = this.position.height = itemSheetOptions.height;
-      //todo : replace with para class if owned item
-      //this.options.classes.push(itemSheetOptions.classes);//pas faire comme ça !
-      //todo : other things for sure
+    }
+    if ( this.item.isOwned ) {
+      //add the paradigm css class if any to the default options.
+      const paraItem = this.item.actor.paradigm;
+      if ( paraItem ) {
+        this.options.classes.push(paraItem.data.data.cssClass);
+      }
     }
   }
 
@@ -76,8 +80,11 @@ export default class M20eItemSheet extends ItemSheet {
   }
 
   async _onInputChange(event) {
-    const element = event.currentTarget;
-    const dataset = element.dataset;
-    event.preventDefault();
+    const element = event.target;
+    if ( ! utils.isValidUpdate(element) ) {
+      event.preventDefault();
+      return this.render();
+    }
+    super._onChangeInput(event);
   }
 }

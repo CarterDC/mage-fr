@@ -249,6 +249,7 @@
   width: 50px;
   margin: 0 0;
   cursor: pointer;
+  background-image: radial-gradient(rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
   box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.7);
 }
 .m20e.item .sheet-header .name {
@@ -470,6 +471,13 @@
   align-items: center;
   justify-content: space-between;
 }
+.m20e .trait .trait-img {
+  border: none;
+  height: 25px;
+  width: 25px;
+  margin: 0 5px;
+  background-image: radial-gradient(rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
+}
 .m20e .trait .trait-label:hover {
   text-shadow: 0 0 1px var(--hoverColor);
 }
@@ -591,7 +599,7 @@
 .m20e .field .editor {
   font-size: 14px;
   font-weight: normal;
-  height: 200px;
+  height: 250px;
   border: 1px solid var(--m20e-lightGrey);
   border-radius: 3px;
   padding: 3px 3px 0px;
@@ -678,6 +686,12 @@ li.chat-message .card .card-footer .item-img {
   padding: 0px 2px;
   line-height: calc(var(--m20e-descFontSize) + 2px);
   font-size: var(--m20e-descFontSize);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+.systemDescription p {
+  margin: 0px;
 }
 .systemDescription .descHeader {
   display: flex;
@@ -690,14 +704,14 @@ li.chat-message .card .card-footer .item-img {
   padding: 3px 10px;
 }
 .systemDescription .descContent {
-  margin: 5px 0px 10px;
+  margin: 5px 0px;
   text-align: justify;
 }
 .systemDescription .descFooter {
-  margin: 10px 0px 5px;
+  margin: 5px 0px;
 }
 .systemDescription .level-description {
-  margin: 5px 0px;
+  margin: 2px 0px 3px;
 }
 .systemDescription .level-description .bullets {
   font-size: calc(var(--m20e-descFontSize) + 2px);
@@ -705,7 +719,7 @@ li.chat-message .card .card-footer .item-img {
   float: left;
   width: 48px;
 }
-.systemDescription .level-description .level {
+.systemDescription .level-description .title {
   float: left;
   font-weight: bold;
   padding-right: 3px;
