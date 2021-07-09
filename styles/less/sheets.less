@@ -14,10 +14,23 @@
   }
 
   .context-items{
-    font-family: "signika", sans-serif;
-    font-size: 12px;
+    font-family: var(--mainFontFam);
+    font-size: var(--smallFontSize);
     font-weight:lighter;
 
+  }
+
+  .entity-link{
+    border: none;
+    background: none;
+    i.fas{
+      color:dodgerblue;
+    }
+  }
+  .entity-link[data-id='']{
+    i.fas{
+      color:#7a7971;
+    }
   }
 
   form{
@@ -198,12 +211,26 @@
 .m20e.actor{
 
   .sheet-header{
+    .name-wrapper{
+      position:relative;
+      flex:1;
+    }
     .name{
+      text-overflow: ellipsis;
       margin-top: -5px;
       height:30px;
       color: var(--m20e-darkGrey);
       font-size: var(--charNameFontSize);
     }
+    .personnal-je{
+      visibility: hidden;
+      position: absolute;
+      right: 0px;
+    }
+    .name-wrapper:hover .personnal-je{
+      visibility:visible;
+    }
+
     img{
       margin: 5px 0;
       padding: 3px;
@@ -231,9 +258,11 @@
         width: 50px;
         margin: 0 0; 
         cursor: pointer;
+        background-image: radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));
         box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.7);
     }    
     .name{
+      text-overflow: ellipsis;
       margin: 0px 0px 5px;
       align-self: center;
       height:26px;

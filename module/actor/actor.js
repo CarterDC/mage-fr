@@ -37,6 +37,13 @@ import { log } from "../utils/utils.js";
   //TODO : create from compendium if any
 
   async _getDefaultAbilities() {
+    //get default descriptions for all 3 ability types
+    //(since we gonna use them 11 times each)
+    const defaultDescriptions = {};
+    defaultDescriptions.talent = await utils.getDefaultDescription('talent');
+    defaultDescriptions.skill = await utils.getDefaultDescription('skill');
+    defaultDescriptions.knowledge = await utils.getDefaultDescription('knowledge');
+
     //prepare default abilities
     const defaultAbilities = Object.entries(CONFIG.M20E.defaultAbilities)
       .map(([key, value]) => {
@@ -47,7 +54,7 @@ import { log } from "../utils/utils.js";
           data: {
             subType: value,
             //todo : add localization for specific item types
-            systemDescription: ''
+            systemDescription: defaultDescriptions[value]
           }
         }
     });
@@ -61,7 +68,7 @@ import { log } from "../utils/utils.js";
     super.prepareData();
     const actorData = this.data;
 
-    this._updateHealthStats();    
+    this._updateHealthStats();
     //this.updateMagePower(actorData);
   }
 
@@ -72,7 +79,7 @@ import { log } from "../utils/utils.js";
   getLexiconEntry(relativePath) {
     const paraItem = this.paradigm;
     if ( !paraItem ) {
-      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
+      //ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
       return;
     }
     return paraItem.getLexiconEntry(relativePath);
@@ -81,7 +88,7 @@ import { log } from "../utils/utils.js";
   async setLexiconEntry(relativePath, newValue){
     const paraItem = this.paradigm;
     if ( !paraItem ) {
-      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
+      //ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
       return;
     }
     return await paraItem.setLexiconEntry(relativePath, newValue);

@@ -67,6 +67,12 @@
   padding: 0px 2px;
   line-height: calc(var(--m20e-descFontSize) + 2px);
   font-size: var(--m20e-descFontSize);
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  p{
+    margin: 0px;
+  }
   .descHeader{
     display:flex;
     flex-direction: row;
@@ -78,21 +84,21 @@
     padding: 3px 10px;
   }
   .descContent{
-    margin: 5px 0px 10px;
+    margin: 5px 0px;
     text-align: justify;
   }
   .descFooter{
-    margin: 10px 0px 5px;
+    margin: 5px 0px;
   }
   .level-description{
-    margin: 5px 0px;
+    margin: 2px 0px 3px;
     .bullets{
         font-size: calc(var(--m20e-descFontSize) + 2px);
         font-weight: bold;
         float: left;
         width: 48px;
     }
-    .level{
+    .title{
         float: left;
         font-weight: bold;
         padding-right: 3px;

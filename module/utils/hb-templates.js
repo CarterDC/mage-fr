@@ -11,6 +11,9 @@
     "systems/mage-fr/templates/actor/parts/attributes-cat.hbs",
     "systems/mage-fr/templates/actor/parts/abilities-cat.hbs",
     "systems/mage-fr/templates/actor/parts/spheres-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/bio-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/bg-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/mf-cat.hbs",
     // Item Sheet Partials
     "systems/mage-fr/templates/item/parts/header-block.hbs",
     "systems/mage-fr/templates/item/parts/nav-block.hbs",

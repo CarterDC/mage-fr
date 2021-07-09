@@ -3,8 +3,11 @@
        <img src="{{actor.img}}" data-edit="img" title="{{localize "M20E.hints.imgClick"}}" alt="{{actor.name}} - Image"/>
     </div>
     <div class="header-column">
-        <div class="header-row">
+        <div class="header-row charname">
+            <div class="name-wrapper">
             <input class = "name" name="name" type="text" value="{{actor.name}}" data-dtype="String"/>
+            <a class="entity-link personnal-je" data-entity="{{data.link.type}}" data-pack="{{data.link.pack}}" data-id="{{data.link.id}}" title="{{localize "M20E.hints.openJE"}}"><i class="fas fa-info-circle"></i></a>
+            </div>
             <div class="dice-button" data-action = "dice-button"></div>
         </div>
         <div class="header-row">

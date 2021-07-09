@@ -20,6 +20,22 @@
       "wits": "Astuce"
     },
 
+    "bio": {
+      "faction": "Faction",
+      "birthday": "Date de<br>Naissance",
+      "mentor": "Mentor",
+      "apparentAge": "Age<br>apparent",
+      "cabale": "Cabale",
+      "awakeningAge": "Age d'Eveil",
+      "essence": "Essence",
+      "gender": "Genre",
+      "nature": "Nature",
+      "height": "Taille",
+      "attitude": "Attitude",
+      "weight": "Poids",
+      "appearance": "Apparence"
+    },
+
     "categories": {
       "attributes": "ATTRIBUTS",
       "abilities": "CAPACITES",
@@ -52,6 +68,9 @@
     },
 
     "context": {
+      "addJournal": "Créer un journal personnel.",
+      "editParadigm": "Editer le paradigme.",
+      "removeParadigm": "Supprimer la paradigme actuel.",
       "linkInChat": "Envoyer vers le chat.",
       "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès",
       "editWillpowerMax": "Editer Volonté Max.",
@@ -101,41 +120,223 @@
     },
 
     "defaultDescriptions": {
+      "default": {
+        "book": "Livre",
+        "page": "Page",
+        "content": "<p>Description par défaut.</p><p>Template a éditer de préférence en mode HTML.</p>",
+        "levels": {
+          "level1":{
+            "bullets": "🞫",
+            "title": "Titre 1 :",
+            "description": "La description revient entièrement à la ligne si elle est trop longue."
+          },
+          "level2":{
+            "bullets": "●",
+            "title": "Titre 2 :",
+            "description": "On peut mettre autant de niveaux qu'on veut."
+          },
+          "level3":{
+            "bullets": "♥♥♥♥♥",
+            "title": "Titre 3 :",
+            "description": "Et les puces que l'on souhaite, aussi."
+          },
+          "level4":{
+            "bullets": "⚠⚠",
+            "title": "Titre 4 :",
+            "description": "Il suffit de bien respecter le template HTML,"
+          },
+          "level5":{
+            "bullets": "★★★",
+            "title": "Titre 5 :",
+            "description": "ou bien de tout effacer et d'écrire ce qu'on veut à la place ^^."
+          }
+        },
+        "footer": "<p><strong>Note :</strong> Bas de page</p>"
+      },
       "attributes": {
-        "book": "Livre Aucun.",
+        "book": "Attributs.",
         "page": "p 000",
-        "content": "<p>Sauf cas exceptionnel, la majorité des gens se situe entre 1 et 3</p><p>Le maximum humain est à 5.</p>",
-        "level0":{
-          "bullets": "🞫",
-          "level": "Terrible :",
-          "description": "Vous souffrez d'un handicap sévère."
+        "content": "<p>Sauf cas exceptionnel, les attributs de la majorité des gens se situent entre 1 et 3.</p><p>Le maximum humain est à 5.</p>",
+        "levels": {
+          "level0":{
+            "bullets": "🞫",
+            "title": "Terrible :",
+            "description": "Vous souffrez d'un handicap sévère."
+          },
+          "level1":{
+            "bullets": "●",
+            "title": "Faible :",
+            "description": "Vous êtes vraiment mauvais, ça ne vaut presque pas la peine d'essayer."
+          },
+          "level2":{
+            "bullets": "●●",
+            "title": "Moyen :",
+            "description": "Etre dans la moyenne c'est bien, ça veut dire qu'il y a des gens plus mauvais que vous."
+          },
+          "level3":{
+            "bullets": "●●●",
+            "title": "Bon :",
+            "description": "Vous pouvez aisément 'vous la pêter' en soirée dans les bars."
+          },
+          "level4":{
+            "bullets": "●●●●",
+            "title": "Remarquable :",
+            "description": "Vous n'avez rien à envier aux héros de la littérature ou du cinéma."
+          },
+          "level5":{
+            "bullets": "●●●●●",
+            "title": "Extra-ordinaire :",
+            "description": "Si personne ne vous reconnait dans la rue, c'est que vous le voulez ainsi."
+          }
         },
-        "level1":{
-          "bullets": "●",
-          "level": "Faible :",
-          "description": "Vous êtes vraiment mauvais, ça ne vaut presque pas la peine d'essayer."
+        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+      },
+      "spheres": {
+        "book": "Sphères.",
+        "page": "p 000",
+        "content": "<p>Description générale des sphères</p><p>Les maîtres ont 5.</p>",
+        "levels": {
+          "level1":{
+            "bullets": "●",
+            "title": "Initié :",
+            "description": "Perceptions."
+          },
+          "level2":{
+            "bullets": "●●",
+            "title": "Apprenti :",
+            "description": "Modifications."
+          },
+          "level3":{
+            "bullets": "●●●",
+            "title": "Disciple :",
+            "description": "Création (Prime 2)."
+          },
+          "level4":{
+            "bullets": "●●●●",
+            "title": "Adepte :",
+            "description": "sdfsqdfsdffds"
+          },
+          "level5":{
+            "bullets": "●●●●●",
+            "title": "Maître :",
+            "description": "fgdfsfds."
+          }
         },
-        "level2":{
-          "bullets": "●●",
-          "level": "Moyen :",
-          "description": "Etre dans la moyenne c'est bien, ça veut dire qu'il y a des gens plus mauvais que vous."
+        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+      },
+      "talent": {
+        "book": "Talents.",
+        "page": "p 000",
+        "content": "<p>Les talents ont une base innée, cependant, cette prédisposition naturelle ne compense pas, à elle seule, un entraînement rigoureux, une pratique assidue ou l'application de techniques éprouvées.</p><p>Leur nature innée justifie un malus réduit leur de jets « non-entraînés »</p>",
+        "levels": {
+          "level0":{
+            "bullets": "🞫",
+            "title": "Nul :",
+            "description": "Plop."
+          },
+          "level1":{
+            "bullets": "●",
+            "title": "Médiocre :",
+            "description": "Plop."
+          },
+          "level2":{
+            "bullets": "●●",
+            "title": "Décent :",
+            "description": "Plop."
+          },
+          "level3":{
+            "bullets": "●●●",
+            "title": "Doué :",
+            "description": "Plop."
+          },
+          "level4":{
+            "bullets": "●●●●",
+            "title": "Talentueux :",
+            "description": "Plop."
+          },
+          "level5":{
+            "bullets": "●●●●●",
+            "title": "Prodigieux :",
+            "description": "Plop."
+          }
         },
-        "level3":{
-          "bullets": "●●●",
-          "level": "Bon :",
-          "description": "Vous pouvez aisément 'vous la pêter' en soirée dans les bars."
+        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+      },
+      "skill": {
+        "book": "Compétences.",
+        "page": "p 000",
+        "content": "<p></p>",
+        "levels": {
+          "level0":{
+            "bullets": "🞫",
+            "title": "Inapte :",
+            "description": "Plop."
+          },
+          "level1":{
+            "bullets": "●",
+            "title": "Novice :",
+            "description": "Plop."
+          },
+          "level2":{
+            "bullets": "●●",
+            "title": "Amateur :",
+            "description": "Plop."
+          },
+          "level3":{
+            "bullets": "●●●",
+            "title": "Professionnel :",
+            "description": "Plop."
+          },
+          "level4":{
+            "bullets": "●●●●",
+            "title": "Spécialiste :",
+            "description": "Plop."
+          },
+          "level5":{
+            "bullets": "●●●●●",
+            "title": "Elite :",
+            "description": "Plop."
+          }
         },
-        "level4":{
-          "bullets": "●●●●",
-          "level": "Remarquable :",
-          "description": "Vous n'avez rien à envier aux héros de la littérature ou du cinéma."
+        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+      },
+      "knowledge": {
+        "book": "Connaissances.",
+        "page": "p 000",
+        "content": "<p></p>",
+        "levels": {
+          "level0":{
+            "bullets": "🞫",
+            "title": "Ignorant :",
+            "description": "Plop."
+          },
+          "level1":{
+            "bullets": "●",
+            "title": "Néophyte :",
+            "description": "Plop."
+          },
+          "level2":{
+            "bullets": "●●",
+            "title": "Étudiant :",
+            "description": "Plop."
+          },
+          "level3":{
+            "bullets": "●●●",
+            "title": "Enseignant :",
+            "description": "Plop."
+          },
+          "level4":{
+            "bullets": "●●●●",
+            "title": "Docteur :",
+            "description": "Plop."
+          },
+          "level5":{
+            "bullets": "●●●●●",
+            "title": "Éminent spécialiste :",
+            "description": "Plop."
+          }
         },
-        "level5":{
-          "bullets": "●●●●●",
-          "level": "Extra-ordinaire :",
-          "description": "Si personne ne vous reconnait dans la rue, c'est que vous le voulez ainsi."
-        },
-        "footer": "<p><strong>Spécialités :</strong> Aucunes</p>"
+        "footer": "<p><strong>Spécialités :</strong> ...</p>"
       }
     },
 
@@ -165,7 +366,9 @@
       "nonEditable": "Non-éditable.",
       "name": "Nom du trait ou de l'objet",
       "displayName": "Apparaît automatiquement à la place du nom d'origine.",
-      "systemName": "Sert de référence, éditable par un GM."
+      "systemName": "Sert de référence, éditable par un GM.",
+      "openJE": "Voir/Editer le journal de ce perso.",
+      "createJE": "Créer un journal pour ce perso."
     },
 
     "labels": {
@@ -189,7 +392,7 @@
       "bio": "BIO",
       "stuff": "MATOS",
       "extra": "EXTRA",
-      "detail": "DETAIL",
+      "detail": "DETAILS",
       "description": "DESCRIPTION",
       "lexicon": "LEXIQUE"
     },
@@ -213,14 +416,18 @@
     },
 
     "notifications":{
-      "duplicateName": "Il existe déjà un item de ce type nommé '{name}'",
+      "gmPermissionNeeded": "Vous devez demander à un GM de faire celà !",
+      "duplicateName": "Il existe déjà un item de ce type nommé '{name}' !",
       "missingParadigm": "Il semblerait que ce personnage n'ait pas de pradigme !",
+      "newParadigm": "Les modifications de CSS dûes au paradigme ne seront visibles qu'après un refresh (F5).",
       "invalidFormat": "'{value}' n'a pas un format conforme !",
       "nan": "'{value}' n'est pas un nombre !",
       "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
       "notLocalized": "L'entrée '{path}' n'existe pas dans le fichier de localisation !",
       "packNotFound": "Le compendium '{packName}' n'est pas trouvable !",
-      "itemNotFoundInCompendium": "L'item '{documentName}' n'est pas trouvable dans le compendium '{packName}' !"
+      "itemNotFoundInCompendium": "L'item '{documentName}' n'est pas trouvable dans le compendium '{packName}' !",
+      "noJournal": "Aucun lien vers un Journal !",
+      "journalLinked": "Journal de {name} créé et lié au personnage."
     },
 
     "prompts": {
@@ -231,6 +438,7 @@
       "addItemWarning": "<p>⚠ Les noms sont susceptibles d'être référencés par des règles <br> et ne peuvent, par conséquent, être modifiés <strong>que par un GM</strong>.</p>",
       "deleteTitle": "Suppression de {name}",
       "deleteContent": "<p>La suppression de '{name}' est <b>définitive</b>.<br>Confirmez-vous ?</p>",
+      "dropParadigm": "<p>Ecraser le paradigme existant ?</p>",
       "lexiconTitle": "Lexique",
       "lexiconContentAdd": "Ajout d'une nouvelle entrée de lexique à ce paradigme.",
       "lexiconContentEdit": "Modification d'une entrée de lexique pour ce paradigme."

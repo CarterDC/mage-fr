@@ -24,6 +24,7 @@ export async function displayCard(actor, templateData) {
     type: CONST.CHAT_MESSAGE_TYPES.OTHER,
     content: htmlContent,
     flavor: htmlFlavor,
+    //todo : look into getSpeaker !
     speaker: ChatMessage.getSpeaker({actor: actor})
   };
   

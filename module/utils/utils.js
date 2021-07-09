@@ -156,24 +156,13 @@ export async function getSystemDescription(category, key) {
  */
 export async function getDefaultDescription(category) {
   const descTemplate = "systems/mage-fr/templates/chat/default-descriptions.hbs";
-  const path = `M20E.defaultDescriptions.${category}`;
-  const templateData = {
-    book: game.i18n.localize(`${path}.book`),
-    page: game.i18n.localize(`${path}.page`),
-    content: game.i18n.localize(`${path}.content`),
-    footer: game.i18n.localize(`${path}.footer`),
-    levels: {}
-  };
-  //build an array for all 6 levels
-  for (let i=0; i<=5; i++) {
-    let propName = `level${i}`;
-    templateData.levels[propName] = {
-      bullets: game.i18n.localize(`${path}.${propName}.bullets`),
-      level: game.i18n.localize(`${path}.${propName}.level`),
-      description: game.i18n.localize(`${path}.${propName}.description`)
-    };
-  }
-  return await renderTemplate(descTemplate, templateData);
+  //check whether there's an entry for that category, otherwise use 'default'
+  const path = game.i18n.has(`M20E.defaultDescriptions.${category}`) ?
+    `M20E.defaultDescriptions.${category}` :
+    `M20E.defaultDescriptions.default`;
+  //grab the whole node and let handlebars deal with each field 
+  const fullDescription = game.i18n.localize(path);
+  return await renderTemplate(descTemplate, fullDescription);
 }
 
 /**
