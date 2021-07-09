@@ -21,7 +21,7 @@ export default class M20eItem extends Item {
 
     const obj = {data: {}};
     //deal with default image
-    obj.img = CONFIG.M20E.defaultImg[specificType] || '';
+    obj.img = CONFIG.M20E.defaultImg[specificType] || CONFIG.M20E.defaultImg[this.data.type] || CONFIG.M20E.defaultImg['default'];
     //deal with systemDescription
     if ( this.data.data.systemDescription === '') {
       obj.data.systemDescription = await utils.getDefaultDescription(specificType);

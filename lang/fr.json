@@ -20,6 +20,22 @@
       "wits": "Astuce"
     },
 
+    "bio": {
+      "faction": "Faction",
+      "birthday": "Date de<br>Naissance",
+      "mentor": "Mentor",
+      "apparentAge": "Age<br>apparent",
+      "cabale": "Cabale",
+      "awakeningAge": "Age d'Eveil",
+      "essence": "Essence",
+      "gender": "Genre",
+      "nature": "Nature",
+      "height": "Taille",
+      "attitude": "Attitude",
+      "weight": "Poids",
+      "appearance": "Apparence"
+    },
+
     "categories": {
       "attributes": "ATTRIBUTS",
       "abilities": "CAPACITES",
@@ -52,6 +68,7 @@
     },
 
     "context": {
+      "addJournal": "Créer un journal personnel.",
       "editParadigm": "Editer le paradigme.",
       "removeParadigm": "Supprimer la paradigme actuel.",
       "linkInChat": "Envoyer vers le chat.",
@@ -349,7 +366,9 @@
       "nonEditable": "Non-éditable.",
       "name": "Nom du trait ou de l'objet",
       "displayName": "Apparaît automatiquement à la place du nom d'origine.",
-      "systemName": "Sert de référence, éditable par un GM."
+      "systemName": "Sert de référence, éditable par un GM.",
+      "openJE": "Voir/Editer le journal de ce perso.",
+      "createJE": "Créer un journal pour ce perso."
     },
 
     "labels": {
@@ -373,7 +392,7 @@
       "bio": "BIO",
       "stuff": "MATOS",
       "extra": "EXTRA",
-      "detail": "DETAIL",
+      "detail": "DETAILS",
       "description": "DESCRIPTION",
       "lexicon": "LEXIQUE"
     },
@@ -397,7 +416,8 @@
     },
 
     "notifications":{
-      "duplicateName": "Il existe déjà un item de ce type nommé '{name}'",
+      "gmPermissionNeeded": "Vous devez demander à un GM de faire celà !",
+      "duplicateName": "Il existe déjà un item de ce type nommé '{name}' !",
       "missingParadigm": "Il semblerait que ce personnage n'ait pas de pradigme !",
       "newParadigm": "Les modifications de CSS dûes au paradigme ne seront visibles qu'après un refresh (F5).",
       "invalidFormat": "'{value}' n'a pas un format conforme !",
@@ -405,7 +425,9 @@
       "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
       "notLocalized": "L'entrée '{path}' n'existe pas dans le fichier de localisation !",
       "packNotFound": "Le compendium '{packName}' n'est pas trouvable !",
-      "itemNotFoundInCompendium": "L'item '{documentName}' n'est pas trouvable dans le compendium '{packName}' !"
+      "itemNotFoundInCompendium": "L'item '{documentName}' n'est pas trouvable dans le compendium '{packName}' !",
+      "noJournal": "Aucun lien vers un Journal !",
+      "journalLinked": "Journal de {name} créé et lié au personnage."
     },
 
     "prompts": {

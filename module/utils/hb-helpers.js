@@ -55,6 +55,10 @@ export const registerHandlebarsHelpers = function() {
     return forceNegative ? `-${num}` : `+${num}`;
   })
 
+  Handlebars.registerHelper('disabled', function(modifyValues) {
+    return modifyValues ? '' : 'disabled';
+  })
+
   Handlebars.registerHelper("clickableBullet", function(list, key, index) {
     if(!list){return;}
     //indexes are base 0

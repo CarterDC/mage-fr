@@ -39,6 +39,23 @@ export default class M20eActorSheet extends ActorSheet {
     })
   }
 
+  /** @inheritdoc */
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+
+    // Toggle character-creation lock
+    const icon = this.actor.data.data.creationDone ? 'fas fa-lock' : 'fas fa-unlock-alt';
+    buttons = [
+      {
+        class: "toggle-creation-mode",
+        icon: icon,
+        onclick: ev => this._onToggleCreationMode(ev)
+      }
+    ].concat(buttons);
+
+    return buttons;
+  }
+
   /** @override */
   getData(options) {
     const sheetData = super.getData(options);
@@ -61,6 +78,7 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.isGM = game.user.isGM;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
+    sheetData.modifyValues = ( game.user.isGM || ! actorData.data.creationDone );
     sheetData.canSeeParadox = utils.canSeeParadox();
     
     const paradigm = this.actor.paradigm;
@@ -87,6 +105,7 @@ export default class M20eActorSheet extends ActorSheet {
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       html.find('.resource-panel .box[data-clickable="true"]').mousedown(this._onResourceBoxClick.bind(this));
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
+      html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
     }
     
     if ( game.user.isGM ) {
@@ -104,7 +123,7 @@ export default class M20eActorSheet extends ActorSheet {
     {
       name: game.i18n.localize('M20E.context.editParadigm'),
       icon: '<i class="fas fa-pencil-alt"></i>',
-      callback: element => {
+      callback: () => {
         const paradigm = this.actor.paradigm;
         paradigm.sheet.render(true);
       },
@@ -115,7 +134,7 @@ export default class M20eActorSheet extends ActorSheet {
     {
       name: game.i18n.localize('M20E.context.removeParadigm'),
       icon: '<i class="fas fa-trash"></i>',
-      callback: element => {
+      callback: () => {
         const paradigm = this.actor.paradigm;
         this._removeItem(paradigm);
       },
@@ -183,6 +202,35 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   /*  Event Handlers                              */
   /* -------------------------------------------- */
+
+  async _onToggleCreationMode(event) {
+    if ( ! game.user.isGM ) { 
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
+      return;
+    }
+
+    const buttonElement = event.currentTarget;
+    const iElement = $(buttonElement).find('.fas'); 
+    log(iElement);
+    const toggle = this.actor.data.data.creationDone === true;
+
+    let obj={};
+    obj['data.creationDone'] = !toggle;
+    await this.actor.update(obj);
+
+    let classToRemove, classToAdd = '';
+    
+    if ( toggle ) {
+      classToRemove = 'fa-lock';
+      classToAdd = 'fa-unlock-alt';
+    } else {
+      classToRemove = 'fa-unlock-alt';
+      classToAdd = 'fa-lock';
+    }
+    iElement[0].classList.remove(classToRemove);
+    iElement[0].classList.add(classToAdd);
+
+  }
 
   /**
   * Toggles the active state of a trait element when it's label has been clicked.
@@ -270,6 +318,20 @@ export default class M20eActorSheet extends ActorSheet {
     super._onChangeInput(event);
   }
 
+  _onEntityLinkClick(event){
+    const linkElement = event.currentTarget;
+    const dataset = linkElement.dataset;
+    const id = dataset.id;
+    if ( !id ) {
+      event.preventDefault();
+      event.stopPropagation();
+      ui.notifications.warn(game.i18n.localize(`M20E.notifications.noJournal`));
+      if ( linkElement.classList.contains('personnal-je') ) {
+        this._createPersonnalJE();
+      }
+    }
+  }
+
   /**
   * Dispatches mini-buttons clicks according to their dataset.action
   * 
@@ -286,6 +348,7 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       
       case 'add':
+        if ( dataset.enabled === 'false' ) { return; }
         const itemType = CONFIG.M20E.categoryToType[dataset.category];
         const itemSubtype = CONFIG.M20E.categoryToType[dataset.subCategory];
         this._addItem(itemType, itemSubtype);
@@ -383,6 +446,33 @@ export default class M20eActorSheet extends ActorSheet {
       key: key,
       item: item
     });
+  }
+
+  /**
+  * Create a new Journal Entry and link it to the actor.
+  * new journal is created with same permissions as the actor.
+  * so any player owner the the actor is also owner of the journal.
+  * Needs GM permission level in order to create
+  */
+  async _createPersonnalJE() {
+    if ( !game.user.isGM ) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
+      return;
+    }
+    if ( !this.actor.hasPlayerOwner ) {
+      //todo : add prompt
+    }
+    const perms = this.actor.data.permission;
+    const personnalJE = await JournalEntry.create({
+      name: this.actor.name,
+      content: 'Blabla',
+      permission: perms
+    }, { renderSheet: true });
+
+    let obj = {};
+    obj[`data.link`] = {type:'JournalEntry', pack: '', id: personnalJE.id};
+    this.actor.update(obj);
+    ui.notifications.info(game.i18n.format(`M20E.notifications.journalLinked`,{name: this.actor.name}));
   }
 
   /* -------------------------------------------- */
@@ -489,6 +579,11 @@ export default class M20eActorSheet extends ActorSheet {
     
   }
 
+  /**
+  * Prompts user for confirmation before deleting the item from this.actor embedded collection
+   * 
+  * @param {Item} item an item with a name an id, to be deleted
+  */
   async _removeItem(item) {
     const confirmation = await Dialog.confirm({
       options: {classes: ['dialog', 'm20e']},
@@ -543,9 +638,79 @@ export default class M20eActorSheet extends ActorSheet {
     super._onDragStart(event);
   }
 
-  /** @override */
-  _onDrop(event) {
-    //might be usefull at some point ?
-    super._onDrop(event);
+  /**
+   * added Journal Entry management
+   *  @override */
+  async _onDrop(event) {
+
+    // Try to extract the data
+    let data;
+    try {
+      data = JSON.parse(event.dataTransfer.getData('text/plain'));
+    } catch (err) {
+      return false;
+    }
+
+    // Handle different data types
+    switch ( data.type ) {
+      case "ActiveEffect":
+        return super._onDropActiveEffect(event, data);
+      case "Actor":
+        return super._onDropActor(event, data);
+      case "Item":
+        return this._onDropItem(event, data);
+      case "JournalEntry":
+        return this._onDropJE(event, data);
+      case "Folder":
+        return super._onDropFolder(event, data);      
+    }
+  }
+
+  /**
+   * added paradigm item management
+   *  @override */
+  async _onDropItem(event, data) {
+    if ( !this.actor.isOwner ) return false;
+    const item = await Item.implementation.fromDropData(data);
+    const itemData = item.toObject();
+    
+    //special handling for paradigm items
+    if ( itemData.type === 'paradigm' ) {
+      return this._onDropParadigmItem(itemData);
+    }
+    // Handle item sorting within the same Actor
+    const actor = this.actor;
+    let sameActor = (data.actorId === actor.id) || (actor.isToken && (data.tokenId === actor.token.id));
+    if (sameActor) return this._onSortItem(event, itemData);
+
+    // Create the owned item
+    return super._onDropItemCreate(itemData);
+  }
+
+  async _onDropParadigmItem(itemData) {
+    //prompts for overwriting current Paradigm if any
+    const actor = this.actor;
+    const currentParadigm = actor.paradigm;
+    if ( currentParadigm ) {
+      const confirmation = await Dialog.confirm({
+        options: {classes: ['dialog', 'm20e']},
+        title: actor.name,
+        content: game.i18n.localize("M20E.prompts.dropParadigm")
+      });
+      if ( !confirmation ) { return false; }
+      //delete current paradigm before accepting the dropped one
+      await actor.deleteEmbeddedDocuments('Item', [currentParadigm.id]);
+    }
+    //create new paradigm on the actor
+    //warn about refreshing for css modifications to show
+    ui.notifications.warn(game.i18n.localize('M20E.notifications.newParadigm'));
+    //todo : i18n.format
+    itemData.name = `Paradigme de ${actor.name}`;
+    return actor.createEmbeddedDocuments('Item', [itemData]);
+  }
+
+  async _onDropJE(event, data) {
+    if ( !this.actor.isOwner ) return false;
+    log({event, data});
   }
 }

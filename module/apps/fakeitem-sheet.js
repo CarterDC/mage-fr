@@ -49,8 +49,11 @@ export class FakeItem extends FormApplication {
     const superData = super.getData();
     const actorData = this.actor.data.toObject(false);
     const traitData = foundry.utils.getProperty(actorData, `data.${this.itemData.category}.${this.itemData.key}`);
+
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
+    sheetData.modifyValues = ( game.user.isGM || ! actorData.data.creationDone );
+
 
     return sheetData;
   }

@@ -2,12 +2,18 @@
   "Actor": {
     "types": ["charMage"],
     "templates":{
+      "explanations": {
+        "__comment1__": "attributes entries are ordered to be AUTO populated in 3 columns",
+        "__comment2__": "spheres entries are ordered to be AUTO populated in 3 columns",
+        "__comment3__": "bio entries are ordered to be AUTO populated in 2 columns",
+        "__comment4__": "the 'ligne-sep' values instruct the display to insert a line for aesthetic purposes only"
+      },
       "playable":{
         "isPlayable": true,
         "creationDone": false,
         "currentXP": 0,
         "totalXP": 0,
-        "studyPoints": "MAGE.defaults.studyPoints"
+        "studyPoints": ""
       },
       "resourceHealth":{
         "health":{
@@ -31,8 +37,7 @@
           "quintessence": 0,
           "paradox": 0
         }
-      },
-      "__comment1__": "attributes entries are ordered to be AUTO populated in 3 columns",
+      },      
       "attributes":{
         "attributes":{
           "stre":{
@@ -80,9 +85,8 @@
             "specialisation": "",
             "displayDescription":""
           }
-        }        
+        }
       },
-      "__comment2__": "spheres entries are ordered to be AUTO populated in 3 columns",
       "spheres":{
         "spheres":{
           "forc":{
@@ -145,28 +149,26 @@
 
       "arete": 1,
 
-      "__comment3__": "bio entries are ordered to be AUTO populated in 2 columns",
-      "__comment4__": "the 'ligne-sep' values instruct the display to insert a line for aesthetic purposes only",
       "bio":{
-        "tradition":{
-          "displayValue": "MAGE.defaults.TBDf",
-          "ref": ""
+        "faction":{
+          "displayValue": "",
+          "link": {}
         },
         "birthday":{
-          "displayValue": "MAGE.defaults.TBDf"
+          "displayValue": ""
         },
         "mentor":{
-          "displayValue": "MAGE.defaults.TBDm",
-          "ref": ""
+          "displayValue": "",
+          "link": {}
         },
         "apparentAge":{
-          "displayValue": "MAGE.defaults.TBDm"
+          "displayValue": ""
         },
         "cabale":{
-          "displayValue": "MAGE.defaults.TBDf"
+          "displayValue": ""
         },
         "awakeningAge":{
-          "displayValue": "MAGE.defaults.TBDm"
+          "displayValue": ""
         },
         "sep1":{
           "displayValue": "ligne-sep"
@@ -175,38 +177,34 @@
           "displayValue": "ligne-sep"
         },
         "essence":{
-          "displayValue": "MAGE.defaults.TBDf",
-          "ref": ""
+          "displayValue": "",
+          "link": {}
         },
         "gender":{
-          "displayValue": "MAGE.defaults.TBDm"
+          "displayValue": ""
         },
         "nature":{
-          "displayValue": "MAGE.defaults.TBDf",
-          "ref": ""
+          "displayValue": "",
+          "link": {}
         },
         "height":{
-          "displayValue": "MAGE.defaults.TBDf"
+          "displayValue": ""
         },
         "attitude":{
-          "displayValue": "MAGE.defaults.TBDf",
-          "ref": ""
+          "displayValue": "",
+          "link": {}
         },
         "weight": {
-          "displayValue": "MAGE.defaults.TBDm"
+          "displayValue": ""
         }
       },
 
-      "misc": {
-        "description":"MAGE.defaults.description",
-        "fullBackground": "MAGE.defaults.fullBackground",
-
-        "possessedStuff":"MAGE.defaults.possessedStuff",
-        "carriedStuff":"MAGE.defaults.carriedStuff"
-      },
+      "description":"",
+      "possessedStuff":"",
+      "carriedStuff":"",
 
       "aliases": [],
-      "ref": "",
+      "link": {},
       "extra" : ""
     }
   },

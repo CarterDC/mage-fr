@@ -75,7 +75,9 @@ M20E.defaultAbilities = {
   science: 'knowledge'
 }
 
-M20E.defaultImg = { // todo : find suitable svgs and add default for caterogies
+M20E.defaultImg = { // todo : find suitable svgs and add default for categories
+  ability: "systems/mage-fr/assets/icons/auto-repair.svg",
+  paradigm: "systems/mage-fr/assets/icons/abstract-013.svg",
   merit: "icons/svg/upgrade.svg",
   flaw: "icons/svg/downgrade.svg",
   background: "icons/svg/hanging-sign.svg",

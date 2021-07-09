@@ -15,32 +15,6 @@ import { log } from "../utils/utils.js";
     super(...args);
   }
 
-  async dropOnSheet(data) {
-    //TODO : maybe move to sheet's _onDrop 
-    if ( data.type === 'Item' ) {
-      const item = await Item.implementation.fromDropData(data);
-      if ( item.data.type === 'paradigm' ) {
-        const currentParadigm = this.paradigm;
-        if ( currentParadigm ) {
-          const confirmation = await Dialog.confirm({
-            options: {classes: ['dialog', 'm20e']},
-            title: this.name,
-            content: game.i18n.localize("M20E.prompts.dropParadigm")
-          });
-          if ( !confirmation ) { return false; }
-          //delete current paradigm before accepting the dropped one
-          await this.deleteEmbeddedDocuments('Item', [currentParadigm.id]);
-        }
-        ui.notifications.warn(game.i18n.localize('M20E.notifications.newParadigm'));
-        const itemData = item.data;
-        itemData.name = `Paradigme de ${this.name}`;
-        await this.createEmbeddedDocuments('Item', [itemData]);
-        return false;
-      }
-    }
-    return true;
-  }
-
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     

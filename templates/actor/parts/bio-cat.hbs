@@ -1,0 +1,29 @@
+<section class="category description" data-category="description">
+  {{!-- DESCRIPTION --}}
+  {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="description" lock = locks.description}}
+  <div class="grid two-col">
+      {{#each data.bio as |bio key|}}
+          {{#if (eq bio.displayValue "ligne-sep")}}
+          <div class="trait description" style="height:16px;"> 
+              <div class="ligne"></div>
+          </div>
+          {{else}}
+          <div class="trait description"> 
+              <label class="trait-label" title="">{{{localize (concat "M20E.bio." key)}}}</label>
+              <label class="colon">:</label>
+              <div class="edit-bar" data-locked="{{../locks.description}}">
+                  <input  name="data.bio.{{key}}.displayValue" type="text" value="{{bio.displayValue}}" data-dtype="String"/>
+          </div>
+              <div class="bullet-display" data-locked="{{../locks.description}}">                        
+                  <label>{{bio.displayValue}}</label>
+              </div>
+          </div>
+          {{/if}}
+      {{/each}}
+  </div>
+  <div class="trait description" style="height:16px;">
+      <div class="ligne"></div>
+  </div>
+  {{!-- todo: add label for that or not ?--}}
+<textarea name="data.misc.description" {{#if data.locks.description}}readonly{{/if}}>{{data.misc.description}}</textarea>
+</section>

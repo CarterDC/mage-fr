@@ -15,7 +15,12 @@
     border: 1px solid var(--m20e-lightGrey);
     border-radius: 3px;
   }
-  .mini-button:hover {
+  .mini-button[data-enabled='false']{
+    color: var(--m20e-lightGrey);
+    border: none;
+    cursor:default;
+  }
+  .mini-button[data-enabled='true']:hover {
     color: var(--m20e-darkGrey);
     text-shadow: none;
     box-shadow: 0 0 2px 1px var(--hoverColor);

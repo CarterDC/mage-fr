@@ -69,7 +69,4 @@ Hooks.once('init', async function () {
 
 Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html));
 
-Hooks.on('dropActorSheetData', async function (actor, sheet, data) {
-  return await actor.dropOnSheet(data);
-})
 

@@ -4,7 +4,6 @@
   {{/if}}
   <div style="position:relative;">
   {{> "systems/mage-fr/templates/actor/parts/header-cat.hbs"}}
-  <a class="entity-link" draggable="true" data-pack="mage-fr.attributes-desc" data-id="fLsewNA1rREJOrfk"><i class="fas fa-info-circle"></i></a>
   <nav class="sheet-tabs tabs" data-group="primary">
     <a data-tab="traits"><label>{{localize "M20E.navtabs.traits"}}</label></a>
     <a data-tab="magye"><label>{{localize "M20E.navtabs.magye"}}</label></a>
@@ -24,7 +23,9 @@
     </section>
 
     <section class="tab" data-group="primary" data-tab="bio"></section>
-
+{{> "systems/mage-fr/templates/actor/parts/bio-cat.hbs"}}
+      {{> "systems/mage-fr/templates/actor/parts/bg-cat.hbs"}}
+      {{> "systems/mage-fr/templates/actor/parts/mf-cat.hbs"}}
     <section class="tab" data-group="primary" data-tab="stuff"></section>
 
     <section class="tab" data-group="primary" data-tab="extra"></section>
