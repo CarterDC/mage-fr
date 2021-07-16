@@ -43,7 +43,8 @@ Hooks.once('init', async function () {
   CONFIG.M20E = M20E;
   CONFIG.Actor.documentClass = M20eActor;
   CONFIG.Item.documentClass = M20eItem;
-  //add references to subclasses for use in the generic constructor
+  //add references to subclasses for use in the M20eItem constructor
+  //proprty names must be valid item types
   CONFIG.Item.documentClasses = {"paradigm": M20eParadigmItem};
 
   // Register sheet application classes
