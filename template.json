@@ -165,7 +165,8 @@
           "displayValue": ""
         },
         "cabale":{
-          "displayValue": ""
+          "displayValue": "",
+          "link": {}
         },
         "awakeningAge":{
           "displayValue": ""

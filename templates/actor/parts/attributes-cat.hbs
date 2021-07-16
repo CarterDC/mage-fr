@@ -6,7 +6,7 @@
     <label class="column-header">{{locadigm ../paraData "attributes.social"}}</label>
     <label class="column-header">{{locadigm ../paraData "attributes.mental"}}</label>                
     {{#each data.attributes as |attribute key|}}
-    <div class="trait attribute" data-key="{{key}}" data-active= "false">
+    <div class="trait attribute linkable" data-key="{{key}}" data-active= "false">
       <a class="trait-label tooltip">
         {{locadigm ../paraData "attributes." key}}
         {{#if attribute.specialisation}}

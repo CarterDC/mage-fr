@@ -1,4 +1,4 @@
-<section class="category description" data-category="description">
+<section class="category description" data-category="bio">
   {{!-- DESCRIPTION --}}
   {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="description" lock = locks.description}}
   <div class="grid two-col">
@@ -8,7 +8,7 @@
               <div class="ligne"></div>
           </div>
           {{else}}
-          <div class="trait description" data-key="{{key}}"> 
+          <div class="trait description" data-key="{{key}}" data-link-id="{{bio.link.id}}"> 
               <label class="trait-label" title="">{{{locadigm ../paraData "bio." key}}}</label>
               <label class="colon">:</label>
               <div class="edit-wrapper" data-locked="{{../locks.description}}">

@@ -96,7 +96,7 @@ export default class M20eActorSheet extends ActorSheet {
     //actions for everyone
     //(dice thows & trait link)
     html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
-    new ContextMenu(html, '.trait', this._getItemContextOptions());
+    new ContextMenu(html, '.trait', this._getTraitContextOptions());
     
     //editable only (roughly equals 'isOwner')
     if ( this.isEditable ) {
@@ -146,14 +146,27 @@ export default class M20eActorSheet extends ActorSheet {
     ];
   }
 
-  _getItemContextOptions() {
+  _getTraitContextOptions() {
     return [
       {
         name: game.i18n.localize('M20E.context.linkInChat'),
         icon: '<i class="fas fa-share"></i>',
         callback: element => {
-          this.linkInChat(new Trait(element[0]));
-        }//TODO : Maybe add condition that element is linkable ? 
+          this._linkInChat(new Trait(element[0]));
+        },
+        condition: element => {
+          return element[0].classList.contains('linkable');
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.removeLink'),
+        icon: '<i class="fas fa-trash"></i>',
+        callback: element => {
+          this._removeJELink(new Trait(element[0]));
+        },
+        condition: element => {
+          return element[0].dataset.linkId;
+        }
       }
     ];
   }
@@ -217,7 +230,7 @@ export default class M20eActorSheet extends ActorSheet {
   * @param {object} event the event that triggered (from header button '.toggle-creation-mode')
   */
   async _onToggleCreationMode(event) {
-    if ( ! game.user.isGM ) { 
+    if ( ! game.user.isGM ) {
       ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
       return;
     }
@@ -230,7 +243,7 @@ export default class M20eActorSheet extends ActorSheet {
     obj['data.creationDone'] = !toggle;
     await this.actor.update(obj);
 
-    let classToRemove, classToAdd = '';    
+    let classToRemove, classToAdd = '';
     if ( toggle ) {
       classToRemove = 'fa-lock';
       classToAdd = 'fa-unlock-alt';
@@ -429,7 +442,7 @@ export default class M20eActorSheet extends ActorSheet {
   * 
   * @param {Trait} trait  the Trait to be displayed in chat
   */
-  async linkInChat(trait){
+  async _linkInChat(trait){
     const {category, itemId, key } = trait;
     let item = {};
     
@@ -461,6 +474,25 @@ export default class M20eActorSheet extends ActorSheet {
       key: key,
       item: item
     });
+  }
+
+
+  /**
+  * Removes link parameters from a specific trait
+  * Called in response to a contextMenu click on a '.trait' that has an active link
+  * 
+  * @param {Trait} trait  the Trait the link should be removed from
+  */
+  async _removeJELink(trait){
+    const {category, key } = trait;
+    //prepare the update object
+    let obj = {};
+    const relativePath = `data.${category}.${key}.link`;
+    obj[`${relativePath}.-=type`] = null;
+    obj[`${relativePath}.-=pack`] = null;
+    obj[`${relativePath}.-=id`] = null;
+
+    return this.actor.update(obj);
   }
 
   /* -------------------------------------------- */

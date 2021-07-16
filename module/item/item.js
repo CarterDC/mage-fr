@@ -10,8 +10,18 @@ import { log } from "../utils/utils.js";
 export default class M20eItem extends Item {
 
   /** @override */
-  constructor(...args) {
-    super(...args);
+  constructor(data, context) {
+    switch (data.type) {
+      case 'paradigm':
+        if ( context?.isSubClassed ) {
+          super(data, context);
+        } else {
+          return new CONFIG.Item.documentClasses['paradigm'](data,{...{isSubClassed: true}, ...context});
+        }
+        break;
+      default:
+        super(data, context);
+    }
   }
 
   async _preCreate(data, options, user) {
@@ -28,7 +38,7 @@ export default class M20eItem extends Item {
     }
     this.data.update( obj );
   }
-
+/*
   getLexiconEntry(relativePath) {
     if ( this.type !== 'paradigm' ) { return; }
     return foundry.utils.getProperty(this.data.data.lexicon, relativePath);
@@ -40,6 +50,6 @@ export default class M20eItem extends Item {
     let obj = {};
     obj[`data.lexicon.${relativePath}`] = newValue;
     return await this.update(obj);
-  }
+  }*/
 }
 
