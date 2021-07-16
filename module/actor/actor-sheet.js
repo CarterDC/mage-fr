@@ -96,12 +96,12 @@ export default class M20eActorSheet extends ActorSheet {
     //actions for everyone
     //(dice thows & trait link)
     html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
-    new ContextMenu(html, '.trait', this._itemContextMenu);
+    new ContextMenu(html, '.trait', this._getItemContextOptions());
     
     //editable only (roughly equals 'isOwner')
     if ( this.isEditable ) {
       //interactions & editions
-      new ContextMenu(html, '.header-row.charname', this._nameContextMenu);
+      new ContextMenu(html, '.header-row.charname', this._getNameContextOptions());
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       html.find('.resource-panel .box[data-clickable="true"]').mousedown(this._onResourceBoxClick.bind(this));
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
@@ -109,7 +109,7 @@ export default class M20eActorSheet extends ActorSheet {
     }
     
     if ( game.user.isGM ) {
-      new ContextMenu(html, '.resource-context', this._resourceContextMenu);
+      new ContextMenu(html, '.resource-context', this._getResourceContextOptions());
     }
     
     super.activateListeners(html);
@@ -119,90 +119,103 @@ export default class M20eActorSheet extends ActorSheet {
   /*  Context Menus                               */
   /* -------------------------------------------- */
 
-  _nameContextMenu = [
-    {
-      name: game.i18n.localize('M20E.context.editParadigm'),
-      icon: '<i class="fas fa-pencil-alt"></i>',
-      callback: () => {
-        const paradigm = this.actor.paradigm;
-        paradigm.sheet.render(true);
+  _getNameContextOptions() {
+    return [
+      {
+        name: game.i18n.localize('M20E.context.editParadigm'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          const paradigm = this.actor.paradigm;
+          paradigm.sheet.render(true);
+        },
+        condition: () => {
+          return this.actor.paradigm; 
+        }
       },
-      condition: () => {
-        return this.actor.paradigm; 
+      {
+        name: game.i18n.localize('M20E.context.removeParadigm'),
+        icon: '<i class="fas fa-trash"></i>',
+        callback: () => {
+          const paradigm = this.actor.paradigm;
+          this._removeItem(paradigm);
+        },
+        condition: () => {
+          return this.actor.paradigm; 
+        }
       }
-    },
-    {
-      name: game.i18n.localize('M20E.context.removeParadigm'),
-      icon: '<i class="fas fa-trash"></i>',
-      callback: () => {
-        const paradigm = this.actor.paradigm;
-        this._removeItem(paradigm);
-      },
-      condition: () => {
-        return this.actor.paradigm; 
-      }
-    }
-  ]
+    ];
+  }
 
-  _itemContextMenu = [
-    {
-      name: game.i18n.localize('M20E.context.linkInChat'),
-      icon: '<i class="fas fa-share"></i>',
-      callback: element => {
-        this.linkInChat(new Trait(element[0]));
-      }//TODO : Maybe add condition that element is linkable ? 
-    }
-  ]
+  _getItemContextOptions() {
+    return [
+      {
+        name: game.i18n.localize('M20E.context.linkInChat'),
+        icon: '<i class="fas fa-share"></i>',
+        callback: element => {
+          this.linkInChat(new Trait(element[0]));
+        }//TODO : Maybe add condition that element is linkable ? 
+      }
+    ];
+  }
 
-  _resourceContextMenu = [
-    {
-      name: game.i18n.localize('M20E.context.editWillpowerMax'),
-      icon: '<i class="fas fa-pencil-alt"></i>',
-      callback: () => {
-        this._editResource({
-          relativePath: 'willpower.max',
-          currentValue: foundry.utils.getProperty(this.actor.data.data, 'willpower.max'),
-          name: `${game.i18n.localize('M20E.willpower')} Max`
-        });
+  _getResourceContextOptions() {
+    return [
+      {
+        name: game.i18n.localize('M20E.context.editWillpowerMax'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          this._editResource({
+            relativePath: 'willpower.max',
+            currentValue: foundry.utils.getProperty(this.actor.data.data, 'willpower.max'),
+            name: `${game.i18n.localize('M20E.willpower')} Max`
+          });
+        },
+        condition: element => {
+          return (element[0].dataset.resource === 'willpower');
+        }
       },
-      condition: element => {
-        return (element[0].dataset.resource === 'willpower');
-      }
-    },
-    {
-      name: game.i18n.localize('M20E.context.editHealthMax'),
-      icon: '<i class="fas fa-pencil-alt"></i>',
-      callback: () => {
-        this._editResource({
-          relativePath: 'health.max',
-          currentValue: foundry.utils.getProperty(this.actor.data.data, 'health.max'),
-          name: `${game.i18n.localize('M20E.health')} Max`
-        });
+      {
+        name: game.i18n.localize('M20E.context.editHealthMax'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          this._editResource({
+            relativePath: 'health.max',
+            currentValue: foundry.utils.getProperty(this.actor.data.data, 'health.max'),
+            name: `${game.i18n.localize('M20E.health')} Max`
+          });
+        },
+        condition: element => {
+          return (element[0].dataset.resource === 'health');
+        }
       },
-      condition: element => {
-        return (element[0].dataset.resource === 'health');
+      {
+        name: game.i18n.localize('M20E.context.editHealthMalus'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          this._editResource({
+            relativePath: 'health.malusList',
+            currentValue: foundry.utils.getProperty(this.actor.data.data, 'health.malusList'),
+            name: `Malus ${game.i18n.localize("M20E.health")}`
+          });
+        },
+        condition: element => {
+          return (element[0].dataset.resource === 'health');
+        }
       }
-    },
-    {
-      name: game.i18n.localize('M20E.context.editHealthMalus'),
-      icon: '<i class="fas fa-pencil-alt"></i>',
-      callback: () => {
-        this._editResource({
-          relativePath: 'health.malusList',
-          currentValue: foundry.utils.getProperty(this.actor.data.data, 'health.malusList'),
-          name: `Malus ${game.i18n.localize("M20E.health")}`
-        });
-      },
-      condition: element => {
-        return (element[0].dataset.resource === 'health');
-      }
-    }
-  ]
+    ];
+  } 
 
   /* -------------------------------------------- */
   /*  Event Handlers                              */
   /* -------------------------------------------- */
 
+  /**
+  * Updates actor with a toggled value for data.creationDone.
+  * thus enabling/preventing edition of certain values
+  * also changes the header button icon accordingly
+  * 
+  * @param {object} event the event that triggered (from header button '.toggle-creation-mode')
+  */
   async _onToggleCreationMode(event) {
     if ( ! game.user.isGM ) { 
       ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
@@ -211,15 +224,13 @@ export default class M20eActorSheet extends ActorSheet {
 
     const buttonElement = event.currentTarget;
     const iElement = $(buttonElement).find('.fas'); 
-    log(iElement);
     const toggle = this.actor.data.data.creationDone === true;
 
     let obj={};
     obj['data.creationDone'] = !toggle;
     await this.actor.update(obj);
 
-    let classToRemove, classToAdd = '';
-    
+    let classToRemove, classToAdd = '';    
     if ( toggle ) {
       classToRemove = 'fa-lock';
       classToAdd = 'fa-unlock-alt';
@@ -227,9 +238,9 @@ export default class M20eActorSheet extends ActorSheet {
       classToRemove = 'fa-unlock-alt';
       classToAdd = 'fa-lock';
     }
+    //todo : add localized title property to the button
     iElement[0].classList.remove(classToRemove);
     iElement[0].classList.add(classToAdd);
-
   }
 
   /**
@@ -285,10 +296,9 @@ export default class M20eActorSheet extends ActorSheet {
 
   /**
   * Updates an owned item's data.value from within the character sheet.
+  * validates input value against dtype min max before updating
   * 
   * @param {object} event the event that triggered (from an input '.inline-input')
-  * 
-  * @returns 
   */
   async _onInlineEditChange(event) {
     event.preventDefault();
@@ -296,7 +306,7 @@ export default class M20eActorSheet extends ActorSheet {
     if ( ! utils.isValidUpdate(element) ) {
       return this.render();
     }
-    //valuehas been validated => update the item
+    //value has been validated => update the item
     const itemId = element.closest(".trait").dataset.itemId;
     const item = this.actor.items.get(itemId);
     return await item.update({"data.value": element.value});
@@ -318,6 +328,11 @@ export default class M20eActorSheet extends ActorSheet {
     super._onChangeInput(event);
   }
 
+  /**
+  *  @override
+  * displays a waring upon clicking an empty link
+  * triggers the creation of personnal JE upon clicking an empty link for that specific one
+  */
   _onEntityLinkClick(event){
     const linkElement = event.currentTarget;
     const dataset = linkElement.dataset;
@@ -448,13 +463,17 @@ export default class M20eActorSheet extends ActorSheet {
     });
   }
 
+  /* -------------------------------------------- */
+  /*  Implementation                              */
+  /* -------------------------------------------- */
+
   /**
   * Create a new Journal Entry and link it to the actor.
   * new journal is created with same permissions as the actor.
   * so any player owner the the actor is also owner of the journal.
   * Needs GM permission level in order to create
   */
-  async _createPersonnalJE() {
+   async _createPersonnalJE() {
     if ( !game.user.isGM ) {
       ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
       return;
@@ -476,9 +495,14 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /* -------------------------------------------- */
-  /*  Implementation                              */
-  /* -------------------------------------------- */
 
+  /**
+  * Locks/Unlocks a category for edition - Only one cat is open a a time
+  * opening a category, closes all the other ones (cleaner that way)
+  * Adds a dragDrop upon unlocking a cat / removes it when locking
+  * 
+  * @param {string} category  the category to toggle
+  */
   _toggleCategoryLock(category) {
     if ( this.locks[category] === false ) {
       //category' open atm, close it
@@ -630,6 +654,7 @@ export default class M20eActorSheet extends ActorSheet {
 
   /** @override */
   _canDragDrop(selector) {
+    log(selector);
     //might be usefull at some point ?
     return super._canDragDrop(selector);
   }
@@ -640,7 +665,8 @@ export default class M20eActorSheet extends ActorSheet {
 
   /**
    * added Journal Entry management
-   *  @override */
+   *  @override
+   */
   async _onDrop(event) {
 
     // Try to extract the data
@@ -656,19 +682,20 @@ export default class M20eActorSheet extends ActorSheet {
       case "ActiveEffect":
         return super._onDropActiveEffect(event, data);
       case "Actor":
-        return super._onDropActor(event, data);
+        return super._onDropActor(event, data);//TODO : override for mentor/contact linking
       case "Item":
         return this._onDropItem(event, data);
       case "JournalEntry":
         return this._onDropJE(event, data);
       case "Folder":
-        return super._onDropFolder(event, data);      
+        return super._onDropFolder(event, data);
     }
   }
 
   /**
    * added paradigm item management
-   *  @override */
+   *  @override
+   */
   async _onDropItem(event, data) {
     if ( !this.actor.isOwner ) return false;
     const item = await Item.implementation.fromDropData(data);
@@ -709,8 +736,35 @@ export default class M20eActorSheet extends ActorSheet {
     return actor.createEmbeddedDocuments('Item', [itemData]);
   }
 
+  /**
+  * Manages drops of JournalEntries on the actor sheet.
+  * when dropped on a '.link-drop' selector, link to the JE is recorded
+  * along with it's name
+  * 
+  * @param {Event} event the event that triggered the drop
+  * @param {Object} data contains the dropped JounralEntry type, pack & id
+  */
   async _onDropJE(event, data) {
     if ( !this.actor.isOwner ) return false;
-    log({event, data});
+    const element = event.target;
+    if ( element.classList.contains('link-drop') ) {
+      const key = element.closest(".trait").dataset.key;
+      //create the update object with dropData
+      let obj = {}
+      obj[`data.bio.${key}.link`] = data;
+      //retrieve journal name
+      if ( data.pack ) {
+        const pack = game.packs.get(data.pack);
+        const indexEntry = pack.index.get(data.id);
+        obj[`data.bio.${key}.displayValue`] = indexEntry.name;
+      } else {
+        const journalEntry = game.journal.get(data.id);
+        obj[`data.bio.${key}.displayValue`] = journalEntry.name;
+      }
+      return this.actor.update(obj);
+
+    } else {
+      return ui.notifications.warn(game.i18n.localize('M20E.notifications.cantDrop'));
+    }
   }
 }

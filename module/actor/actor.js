@@ -53,7 +53,6 @@ import { log } from "../utils/utils.js";
           name: game.i18n.localize(`M20E.defaultAbilities.${key}`),
           data: {
             subType: value,
-            //todo : add localization for specific item types
             systemDescription: defaultDescriptions[value]
           }
         }

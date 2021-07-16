@@ -227,22 +227,22 @@
       "talent": {
         "book": "Talents.",
         "page": "p 000",
-        "content": "<p>Les talents ont une base innée, cependant, cette prédisposition naturelle ne compense pas, à elle seule, un entraînement rigoureux, une pratique assidue ou l'application de techniques éprouvées.</p><p>Leur nature innée justifie un malus réduit leur de jets « non-entraînés »</p>",
+        "content": "<p>Les talents ont clairement une part de prédisposition naturelle ; cela ne compense cependant pas un entraînement rigoureux, une pratique assidue ou l'application de techniques éprouvées.</p><p>Leur nature innée justifie un malus réduit sur leur jets « non-entraînés » pour les Talents.</p>",
         "levels": {
           "level0":{
             "bullets": "🞫",
             "title": "Nul :",
-            "description": "Plop."
+            "description": "Vous ne pouvez guère compter que sur la 'chance du débutant'."
           },
           "level1":{
             "bullets": "●",
             "title": "Médiocre :",
-            "description": "Plop."
+            "description": "Il y a des gamins de 10 ans qui sont 'naturellement' plus doués que vous."
           },
           "level2":{
             "bullets": "●●",
             "title": "Décent :",
-            "description": "Plop."
+            "description": "Soit vous avez une bonne idée de ce que vous faites, soit c'est juste du talent, et dans ce cas, c'est honteux de ne pas l'exploiter mieux."
           },
           "level3":{
             "bullets": "●●●",
@@ -252,12 +252,12 @@
           "level4":{
             "bullets": "●●●●",
             "title": "Talentueux :",
-            "description": "Plop."
+            "description": "L'expérience ne fait pas tout, à ce niveau là, il y a clairement du talent."
           },
           "level5":{
             "bullets": "●●●●●",
             "title": "Prodigieux :",
-            "description": "Plop."
+            "description": ""
           }
         },
         "footer": "<p><strong>Spécialités :</strong> ...</p>"
@@ -368,7 +368,10 @@
       "displayName": "Apparaît automatiquement à la place du nom d'origine.",
       "systemName": "Sert de référence, éditable par un GM.",
       "openJE": "Voir/Editer le journal de ce perso.",
-      "createJE": "Créer un journal pour ce perso."
+      "createJE": "Créer un journal pour ce perso.",
+      "magepower": {
+        
+      }
     },
 
     "labels": {
