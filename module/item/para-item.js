@@ -5,7 +5,7 @@ import M20eItem from './item.js'
 
 /**
  * Implements M20eParadigmItem as an extension of the M20eItem class
- * Adds specific methods for paradigm items only.:
+ * Adds specific methods for paradigm items only.
  * @extends {M20eItem}
  */
 export default class M20eParadigmItem extends M20eItem {

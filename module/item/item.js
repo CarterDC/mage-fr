@@ -11,15 +11,21 @@ export default class M20eItem extends Item {
 
   /** @override */
   constructor(data, context) {
+    //useless but cool
+    //creates a derived class for specific item types
     switch (data.type) {
       case 'paradigm':
         if ( context?.isSubClassed ) {
           super(data, context);
         } else {
+          //specify our custom item class here
+          //when the constructor for the new class calls it's super(), the isSubClassed flag will be true
+          //thus by passing this whole process and just calling for super (which is Item)
           return new CONFIG.Item.documentClasses['paradigm'](data,{...{isSubClassed: true}, ...context});
         }
         break;
       default:
+        //default behavior, just call super.
         super(data, context);
     }
   }
@@ -38,7 +44,9 @@ export default class M20eItem extends Item {
     }
     this.data.update( obj );
   }
-/*
+
+  /* theses functions are now in the class specific file para-item.js
+  
   getLexiconEntry(relativePath) {
     if ( this.type !== 'paradigm' ) { return; }
     return foundry.utils.getProperty(this.data.data.lexicon, relativePath);
