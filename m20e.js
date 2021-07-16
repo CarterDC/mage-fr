@@ -60,6 +60,9 @@ Hooks.once('init', async function () {
   registerHandlebarsHelpers();
   preloadHandlebarsTemplates();
 
+  //test shit here !
+
+
 })
 
 /* -------------------------------------------- */

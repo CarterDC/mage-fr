@@ -4,18 +4,28 @@
   <div class="grid two-col">
       {{#each data.bio as |bio key|}}
           {{#if (eq bio.displayValue "ligne-sep")}}
-          <div class="trait description" style="height:16px;"> 
+          <div class="trait description" style="height:16px;">
               <div class="ligne"></div>
           </div>
           {{else}}
-          <div class="trait description"> 
-              <label class="trait-label" title="">{{{localize (concat "M20E.bio." key)}}}</label>
+          <div class="trait description" data-key="{{key}}"> 
+              <label class="trait-label" title="">{{{locadigm ../paraData "bio." key}}}</label>
               <label class="colon">:</label>
-              <div class="edit-bar" data-locked="{{../locks.description}}">
-                  <input  name="data.bio.{{key}}.displayValue" type="text" value="{{bio.displayValue}}" data-dtype="String"/>
-          </div>
-              <div class="bullet-display" data-locked="{{../locks.description}}">                        
+              <div class="edit-wrapper" data-locked="{{../locks.description}}">
+                  <input {{#if bio.link}} class="link-drop"{{/if}} name="data.bio.{{key}}.displayValue" type="text" value="{{bio.displayValue}}" data-dtype="String"/>
+                  {{#if bio.link}}
+                  <a class="entity-link bio-link" data-entity="{{bio.link.type}}" data-pack="{{bio.link.pack}}" data-id="{{bio.link.id}}" title="{{localize "M20E.hints.openJE"}}">
+                    <i class="fas fa-info-circle"></i>
+                  </a>
+                  {{/if}}
+              </div>
+              <div class="lock-wrapper" data-locked="{{../locks.description}}">                        
                   <label>{{bio.displayValue}}</label>
+                  {{#if bio.link}}
+                  <a class="entity-link bio-link" data-entity="{{bio.link.type}}" data-pack="{{bio.link.pack}}" data-id="{{bio.link.id}}" title="{{localize "M20E.hints.openJE"}}">
+                    <i class="fas fa-info-circle"></i>
+                  </a>
+                  {{/if}}
               </div>
           </div>
           {{/if}}
@@ -25,5 +35,5 @@
       <div class="ligne"></div>
   </div>
   {{!-- todo: add label for that or not ?--}}
-<textarea name="data.misc.description" {{#if data.locks.description}}readonly{{/if}}>{{data.misc.description}}</textarea>
+<textarea name="data.misc.description" {{#if locks.description}}readonly{{/if}}>{{data.misc.description}}</textarea>
 </section>

@@ -101,7 +101,7 @@
     }
 
   }
-  .trait.arete{
+  .trait.arete{//todo : do better
     height: 20px;
     margin: 3px 0;
     align-items: center;
@@ -111,7 +111,7 @@
     }
   } 
 
-  .trait.description{
+  .trait.description{// todo : most certainly some cleaning to do
     flex-wrap: nowrap;
     height : 22px;
     margin: 3px 0;
@@ -124,7 +124,8 @@
       text-align: right;
       padding-right: 5px;
     }
-    .edit-bar{
+    .edit-wrapper{
+      position: relative;
       flex: 0 0 65%;
       justify-content: left;
       input{
@@ -132,7 +133,8 @@
         padding: 3px 0;
       }
     }
-    .bullet-display{
+    .lock-wrapper{
+      position: relative;
       height: 23px;
       background: rgba(0, 0, 0, 0.05);
       border-radius: 3px;
@@ -143,6 +145,23 @@
     .ligne{
       margin: 0 15px 12px; 
       border-color: var(--titleColor);
+    }
+    .edit-wrapper[data-locked='true']{
+      display: none;
+    }
+    .lock-wrapper[data-locked='false']{
+      display: none;
+    }
+    .bio-link{
+      visibility: hidden;
+      position: absolute;
+      right: 0px;
+    }
+    .lock-wrapper:hover .bio-link{
+      visibility: visible;
+    }
+    .edit-wrapper:hover .bio-link{
+      visibility: visible;
     }
   }
 
