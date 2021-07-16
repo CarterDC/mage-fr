@@ -23,7 +23,7 @@
   {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="spheres" lock = locks.spheres}}
   <div class="grid three-col">
     {{#each data.spheres as |sphere key|}}
-    <div class="trait sphere" data-key="{{key}}" data-active= "false">
+    <div class="trait sphere linkable" data-key="{{key}}" data-active= "false">
       <a class="trait-label tooltip">
         {{locadigm ../paraData "spheres." key}}
         {{#if sphere.specialisation}}

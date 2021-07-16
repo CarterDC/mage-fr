@@ -72,6 +72,7 @@
       "editParadigm": "Editer le paradigme.",
       "removeParadigm": "Supprimer la paradigme actuel.",
       "linkInChat": "Envoyer vers le chat.",
+      "removeLink": "Supprimer le lien vers ce Journal.",
       "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès",
       "editWillpowerMax": "Editer Volonté Max.",
       "editHealthMax": "Editer Santé Max.",
@@ -154,8 +155,8 @@
         "footer": "<p><strong>Note :</strong> Bas de page</p>"
       },
       "attributes": {
-        "book": "Attributs.",
-        "page": "p 000",
+        "book": "MLA-20e.",
+        "page": "p 273",
         "content": "<p>Sauf cas exceptionnel, les attributs de la majorité des gens se situent entre 1 et 3.</p><p>Le maximum humain est à 5.</p>",
         "levels": {
           "level0":{
@@ -189,44 +190,44 @@
             "description": "Si personne ne vous reconnait dans la rue, c'est que vous le voulez ainsi."
           }
         },
-        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué.</p>"
       },
       "spheres": {
-        "book": "Sphères.",
-        "page": "p 000",
-        "content": "<p>Description générale des sphères</p><p>Les maîtres ont 5.</p>",
+        "book": "MLA-20e.",
+        "page": "p 512",
+        "content": "<p>Même si les sphères ont des points communs dans leur niveux de maîtrise (notamment les sphères motivales), il serait impossible de tout résumer de façon générique.</p><p>Aussi, référez vous à la page 512 du manuel ou utilisez des Compendium de descriptions contenant des informations plus précises.</p>",
         "levels": {
           "level1":{
             "bullets": "●",
             "title": "Initié :",
-            "description": "Perceptions."
+            "description": "..."
           },
           "level2":{
             "bullets": "●●",
             "title": "Apprenti :",
-            "description": "Modifications."
+            "description": "..."
           },
           "level3":{
             "bullets": "●●●",
             "title": "Disciple :",
-            "description": "Création (Prime 2)."
+            "description": "..."
           },
           "level4":{
             "bullets": "●●●●",
             "title": "Adepte :",
-            "description": "sdfsqdfsdffds"
+            "description": "..."
           },
           "level5":{
             "bullets": "●●●●●",
             "title": "Maître :",
-            "description": "fgdfsfds."
+            "description": "..."
           }
         },
         "footer": "<p><strong>Spécialités :</strong> ...</p>"
       },
       "talent": {
-        "book": "Talents.",
-        "page": "p 000",
+        "book": "MLA-20e.",
+        "page": "p 275",
         "content": "<p>Les talents ont clairement une part de prédisposition naturelle ; cela ne compense cependant pas un entraînement rigoureux, une pratique assidue ou l'application de techniques éprouvées.</p><p>Leur nature innée justifie un malus réduit sur leur jets « non-entraînés » pour les Talents.</p>",
         "levels": {
           "level0":{
@@ -263,8 +264,8 @@
         "footer": "<p><strong>Spécialités :</strong> ...</p>"
       },
       "skill": {
-        "book": "Compétences.",
-        "page": "p 000",
+        "book": "MLA-20e.",
+        "page": "p 279",
         "content": "<p></p>",
         "levels": {
           "level0":{

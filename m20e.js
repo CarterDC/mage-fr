@@ -14,6 +14,7 @@ import { registerSystemSettings } from "./module/settings.js";
 // Import Documents
 import M20eActor from './module/actor/actor.js'
 import M20eItem from './module/item/item.js'
+import M20eParadigmItem from './module/item/para-item.js'
 // Import Applications
 import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItemSheet from './module/item/baseitem-sheet.js'
@@ -42,6 +43,7 @@ Hooks.once('init', async function () {
   CONFIG.M20E = M20E;
   CONFIG.Actor.documentClass = M20eActor;
   CONFIG.Item.documentClass = M20eItem;
+  CONFIG.Item.documentClasses = {"paradigm": M20eParadigmItem};
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet);

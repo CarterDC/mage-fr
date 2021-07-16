@@ -10,7 +10,7 @@
           <a class="mini-button" data-enabled="{{../modifyValues}}" data-category="abilities" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.abilities}}"><i class="fas fa-plus"></i></a>
         </div>
         {{#each abilitygroup as |ability key|}}
-        <div class="trait ability" data-item-id="{{ability._id}}" data-active= "false"> 
+        <div class="trait ability linkable" data-item-id="{{ability._id}}" data-active= "false"> 
           <div class="trait-extra">{{ability.data.extra}}</div>
           <a class="trait-label tooltip" data-item-id="{{ability._id}}">
             {{#if ability.data.displayName}}

@@ -10,9 +10,9 @@ import { log } from "../utils/utils.js";
  export default class M20eActor extends Actor {
 
   /** @override */
-  constructor(...args) {
+  constructor(data, context) {
     //might need to do stuff in here
-    super(...args);
+    super(data, context);
   }
 
   async _preCreate(data, options, user) {
