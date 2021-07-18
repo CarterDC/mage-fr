@@ -26,32 +26,18 @@ export default class M20eItem extends Item {
 
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
+    const itemData = this.data;
     //get specific type (subtype if any otherwise base type)
-    const specificType = this.data.data.subType || this.data.type;
+    const specificType = itemData.data.subType || itemData.type;
 
-    const obj = {data: {}};
+    const updateData = {data: {}};
     //deal with default image
-    obj.img = CONFIG.M20E.defaultImg[specificType] || CONFIG.M20E.defaultImg[this.data.type] || CONFIG.M20E.defaultImg['default'];
+    updateData.img = CONFIG.M20E.defaultImg[specificType] || CONFIG.M20E.defaultImg[itemData.type] || CONFIG.M20E.defaultImg['default'];
     //deal with systemDescription
-    if ( this.data.data.systemDescription === '') {
-      obj.data.systemDescription = await utils.getDefaultDescription(specificType);
+    if ( itemData.data.systemDescription === '') {
+      updateData.data.systemDescription = await utils.getDefaultDescription(specificType);
     }
-    this.data.update( obj );
+    itemData.update( updateData );
   }
-
-  /* theses functions are now in the class specific file para-item.js
-
-  getLexiconEntry(relativePath) {
-    if ( this.type !== 'paradigm' ) { return; }
-    return foundry.utils.getProperty(this.data.data.lexicon, relativePath);
-  }
-
-  async setLexiconEntry(relativePath, newValue) {
-    if ( this.type !== 'paradigm') { return; }
-    if ( newValue === '' ) { return; } // TODO ; maybe implement removal on empty string ? 
-    let obj = {};
-    obj[`data.lexicon.${relativePath}`] = newValue;
-    return await this.update(obj);
-  }*/
 }
 

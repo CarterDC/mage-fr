@@ -7,7 +7,7 @@ import { log } from "../utils/utils.js";
  * atm only used by the charMage actor-type.
  * @extends {Actor}
  */
- export default class M20eActor extends Actor {
+export default class M20eActor extends Actor {
 
   /** @override */
   constructor(data, context) {
@@ -15,27 +15,87 @@ import { log } from "../utils/utils.js";
     super(data, context);
   }
 
+  /** @override */
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
-    
-    //get the default abilities from either config or compendium if any
-    const defaultAbilities = await this._getDefaultAbilities();
-
-    //get some other items
+    const actorData = this.data;
 
     //do some stuff depending on actor type (char or npc..)
-    if ( this.data.isPlayable === true ) {
-      this.data.token.update({actorLink: true});
+    if ( actorData.data.isPlayable === true ) {
+      actorData.token.update({actorLink: true});
     }
 
-    //merge all items together
-    const items = [...defaultAbilities];
+    //check if actor already has items (ie actor from compendium or other import)
+    if ( actorData.items.size > 0 ) { return; }
+    //actor is brand new (ie not imported with it's own items)
+
+    //get baseAbilities from compendium if any or defaultAbilities from config
+    const baseAbilities = await this._getBaseAbilities();
+    
+    //get some other items
+    const otherBaseItems = [];
+    //add paradigm item
+    otherBaseItems.push ({
+      type: 'paradigm',
+      img: '',
+      name: game.i18n.format(`M20E.paradigmName`, {name: actorData.name})
+    });
+
+    //merge all the items together
+    const items = [...baseAbilities, ...otherBaseItems];
     //update everything
-    this.data.update({items});
+    actorData.update({items});
   }
 
-  //TODO : create from compendium if any
+  /**
+   * returns base abilities from pack if any,
+   * otherwise default abilities from config
+   */
+  async _getBaseAbilities() {
+    //get the compendium module 'name' from the settings
+    const scope = game.settings.get("mage-fr", "compendiumScope");
+    //Todo : Maybe get packname from settings as well in the case of multiple compendium for different mage versions
+    const packName = `${scope}.base-abilities`;
+    const pack = game.packs.get(packName);
+    const baseAbilities = pack ? 
+      await this._getAbilitiesFromPack(pack) :
+      await this._getDefaultAbilities();
+    
+    //alpha sort the abilities now that they're localized
+    baseAbilities.sort(utils.alphaSort());
+    //add the sort property so that later user-added abilities will display on top
+    //Foundry does the same thing, but only after the first drag/drop
+    return baseAbilities.map((itemData, i) => {
+      return {...itemData, ...{sort: (i+1) * CONST.SORT_INTEGER_DENSITY}};
+    });
+  }
 
+  /**
+   * Gets base abilities from a valid pack 
+   * maps them to itemData objects (mostly for uniformity with _getDefaultAbilities())
+   * @param  {CompendiumCollection} pack a valid base.abilities CompendiumCollection
+   * @return {Array} an array of 'pseudo' itemData objects
+  */
+  async _getAbilitiesFromPack(pack) {
+    return await pack.getDocuments()
+      .then(myDocs => {
+        //return myDocs.map(packItem => packItem.data.toObject());
+        return myDocs.map(packItem => {
+          return {
+            type: 'ability',
+            img: '',
+            name: packItem.name,
+            data: packItem.data.data
+          };
+        });
+      });
+  }
+
+  /**
+   * Gets base abilities from config + localization 
+   * get subType description from html template + localization file
+   * @return {Array} an array of 'pseudo' itemData objects
+  */
   async _getDefaultAbilities() {
     //get default descriptions for all 3 ability types
     //(since we gonna use them 11 times each)
@@ -44,8 +104,8 @@ import { log } from "../utils/utils.js";
     defaultDescriptions.skill = await utils.getDefaultDescription('skill');
     defaultDescriptions.knowledge = await utils.getDefaultDescription('knowledge');
 
-    //prepare default abilities
-    const defaultAbilities = Object.entries(CONFIG.M20E.defaultAbilities)
+    //prepare default abilities from config object that's the form {abilityKey: abilitySubtype}
+    return Object.entries(CONFIG.M20E.defaultAbilities)
       .map(([key, value]) => {
         return {
           type: 'ability',
@@ -55,11 +115,8 @@ import { log } from "../utils/utils.js";
             subType: value,
             systemDescription: defaultDescriptions[value]
           }
-        }
+        };
     });
-    //alpha sort now that it's localized
-    defaultAbilities.sort(utils.alphaSort());
-    return defaultAbilities;
   }
 
   /** @override */
@@ -67,8 +124,8 @@ import { log } from "../utils/utils.js";
     super.prepareData();
     const actorData = this.data;
 
-    this._updateHealthStats();
-    //this.updateMagePower(actorData);
+    this._extendHealthStats();
+    //this._extendMagePower();
   }
 
   get paradigm() {
@@ -96,7 +153,7 @@ import { log } from "../utils/utils.js";
   /** Reevaluates secondary health stats 'status' and 'malus'
    * according to health values and the list of maluses
    */
-  _updateHealthStats() {
+  _extendHealthStats() {
     let health = this.data.data.health;
     //prepare an array of negative integers from the comma separated string
     const maluses = health.malusList.split(',').map(v => (-1 * parseInt(v)));
@@ -117,9 +174,7 @@ import { log } from "../utils/utils.js";
   async safeUpdateProperty(relativePath, newValue){
     //beware of floats !!!
     const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
-    let obj = {};
-    obj[`data.${relativePath}`] = propertyValue;
-    return await this.update(obj);
+    return await this.update({[`data.${relativePath}`]: propertyValue});
   }
 
   increaseMagepower(index){

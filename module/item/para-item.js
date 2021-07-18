@@ -17,7 +17,7 @@ export default class M20eParadigmItem extends M20eItem {
 
   /** @override */
   async _preCreate(data, options, user){
-    log("Je suis un item de paradigme !");
+    log(this.constructor.name);
     await super._preCreate(data, options, user);
   }
 
@@ -29,8 +29,6 @@ export default class M20eParadigmItem extends M20eItem {
   async setLexiconEntry(relativePath, newValue) {
     if ( this.type !== 'paradigm') { return; }
     if ( newValue === '' ) { return; } // TODO ; maybe implement removal on empty string ? 
-    let obj = {};
-    obj[`data.lexicon.${relativePath}`] = newValue;
-    return await this.update(obj);
+    return await this.update({[`data.lexicon.${relativePath}`]: newValue});
   }
 }

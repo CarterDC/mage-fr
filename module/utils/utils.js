@@ -55,6 +55,12 @@ export function canSeeParadox() {
   return game.settings.get("mage-fr", "playersCanSeeParadoxPoints") || game.user.isGM;
 }
 
+export function dsnActive() {
+  const dsnModule = game.modules.get('dice-so-nice');
+  const dsnActive = dsnModule ? dsnModule.active : false;
+  return dsnActive;
+}
+
 /**
  * upon update event (mostly from _onChangeInput) 
  * validate planned update against d-type and min/max values if number.
