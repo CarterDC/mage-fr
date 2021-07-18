@@ -18,7 +18,7 @@ export default class M20eActorSheet extends ActorSheet {
     super(...args);
     //create the 'locks' object like {attributes: true, abilities: true, ...} from an array of categories
     this.locks = CONFIG.M20E.categoriesWithLocks.reduce((acc, cur) =>
-    ({...acc, [cur]: true}),{});
+      ({...acc, [cur]: true}),{});
     
     //add the paradigm css class if any to the default options.
     const paraItem = this.actor.paradigm;
@@ -94,6 +94,7 @@ export default class M20eActorSheet extends ActorSheet {
   activateListeners(html) {
     
     //actions for everyone
+    // todo : maybe put that under editable at some point ?
     //(dice thows & trait link)
     html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
     new ContextMenu(html, '.trait', this._getTraitContextOptions());
@@ -763,8 +764,8 @@ export default class M20eActorSheet extends ActorSheet {
     //create new paradigm on the actor
     //warn about refreshing for css modifications to show
     ui.notifications.warn(game.i18n.localize('M20E.notifications.newParadigm'));
-    //todo : i18n.format
-    itemData.name = `Paradigme de ${actor.name}`;
+    //rename before embedding
+    itemData.name = game.i18n.format(`M20E.paradigmName`, {name: actor.name});
     return actor.createEmbeddedDocuments('Item', [itemData]);
   }
 

@@ -4,6 +4,7 @@
     "arete": "Arété",
     "willpower": "Volonté",
     "health": "Santé",
+    "paradigmName": "Paradigme de {name}",
 
     "attributes": {
       "physical": "Physique",
@@ -223,12 +224,12 @@
             "description": "..."
           }
         },
-        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué."
       },
       "talent": {
         "book": "MLA-20e.",
         "page": "p 275",
-        "content": "<p>Les talents ont clairement une part de prédisposition naturelle ; cela ne compense cependant pas un entraînement rigoureux, une pratique assidue ou l'application de techniques éprouvées.</p><p>Leur nature innée justifie un malus réduit sur leur jets « non-entraînés » pour les Talents.</p>",
+        "content": "<p>Les talents ont clairement une part de prédisposition naturelle ; cela ne compense cependant pas un entraînement rigoureux, une pratique assidue ou l'application de techniques éprouvées.</p><p>Leur nature innée justifie un malus réduit sur leur jets « non-entraînés ».</p>",
         "levels": {
           "level0":{
             "bullets": "🞫",
@@ -261,7 +262,7 @@
             "description": ""
           }
         },
-        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué."
       },
       "skill": {
         "book": "MLA-20e.",
@@ -299,17 +300,17 @@
             "description": "Plop."
           }
         },
-        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué."
       },
       "knowledge": {
-        "book": "Connaissances.",
-        "page": "p 000",
+        "book": "MLA-20e.",
+        "page": "p 282",
         "content": "<p></p>",
         "levels": {
           "level0":{
             "bullets": "🞫",
             "title": "Ignorant :",
-            "description": "Plop."
+            "description": "Le pire (ou le mieux) c'est que vous ignorez jusqu'à l'étendue même de votre ignorance."
           },
           "level1":{
             "bullets": "●",
@@ -337,7 +338,7 @@
             "description": "Plop."
           }
         },
-        "footer": "<p><strong>Spécialités :</strong> ...</p>"
+        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué."
       }
     },
 
@@ -371,7 +372,9 @@
       "openJE": "Voir/Editer le journal de ce perso.",
       "createJE": "Créer un journal pour ce perso.",
       "magepower": {
-        
+        "0": "🖱️ Gauche : Ajouter Quintessence, 🖱️ Droite : Ajouter Paradoxe.",
+        "1": "🖱️ Droite : Retirer Quintessence.",
+        "2": "🖱️ Gauche : Retirer Paradoxe."
       }
     },
 

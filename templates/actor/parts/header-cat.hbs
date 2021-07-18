@@ -5,8 +5,8 @@
     <div class="header-column">
         <div class="header-row charname">
             <div class="name-wrapper">
-            <input class = "name" name="name" type="text" value="{{actor.name}}" data-dtype="String"/>
-            <a class="entity-link personnal-je" data-entity="{{data.link.type}}" data-pack="{{data.link.pack}}" data-id="{{data.link.id}}" title="{{localize "M20E.hints.openJE"}}"><i class="fas fa-info-circle"></i></a>
+              <input class = "name" name="name" type="text" value="{{actor.name}}" data-dtype="String"/>
+              <a class="entity-link personnal-je" data-entity="{{data.link.type}}" data-pack="{{data.link.pack}}" data-id="{{data.link.id}}" title="{{localize "M20E.hints.openJE"}}"><i class="fas fa-info-circle"></i></a>
             </div>
             <div class="dice-button" data-action = "dice-button"></div>
         </div>
@@ -42,7 +42,7 @@
             <div class="resource-panel magepower" data-resource="magepower">
                 <div class="boxes" style="justify-content: space-between;">
                     {{#forLoop 20}}
-                        <div class="box" data-clickable = "{{../canSeeParadox}}" data-index="{{this}}" data-state="{{magepower ../data.magepower this}}"></div>
+                    {{{magepowerBox ../data.magepower this}}}
                     {{/forLoop}}
                 </div>
             </div>

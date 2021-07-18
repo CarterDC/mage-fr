@@ -79,17 +79,44 @@ export const registerHandlebarsHelpers = function() {
 
   //
   Handlebars.registerHelper('res', function(resource, index) {
-    if((resource.max - resource.aggravated) > index){ return 3;}
-    if((resource.max - resource.lethal) > index){ return 2;}
-    if((resource.max - resource.value) > index){ return 1;}
+    if ( (resource.max - resource.aggravated) > index ) { return 3; }
+    if ( (resource.max - resource.lethal) > index ) { return 2; }
+    if ( (resource.max - resource.value) > index ) { return 1; }
     return 0;
   })
 
-  Handlebars.registerHelper('magepower', function(magepower, index) {
+  //not used anymore
+  /*Handlebars.registerHelper('magepower', function(magepower, index) {
     let returnValue = 0;
-    if(magepower.quintessence > index) return 1;
-    if(utils.canSeeParadox() && (20 - magepower.paradox) <= index) return 2;
+    if ( magepower.quintessence > index ) { return 1; }
+    if ( utils.canSeeParadox() && (20 - magepower.paradox) <= index ) { return 2; }
     return returnValue;
+  })*/
+
+  Handlebars.registerHelper('magepowerBox', function(magepower, index) {
+    const templateData = {
+      canSeeParadox: utils.canSeeParadox(),
+      dataState: 0,
+      title: ""
+    };
+    //get the state value (for css rules)
+    if ( magepower.quintessence > index ) {
+      templateData.dataState = 1;
+    } else if ( templateData.canSeeParadox && (20 - magepower.paradox) <= index ) {
+      templateData.dataState = 2;
+    }
+    //get the title
+    if ( templateData.canSeeParadox ) {
+      //box will be clickable => get a title according to state
+      templateData.title = game.i18n.localize(`M20E.hints.magepower.${templateData.dataState}`);
+    }
+    const template = `<div class="box"
+     data-clickable = "${templateData.canSeeParadox}" 
+     data-index="${index}" 
+     data-state="${templateData.dataState}" 
+     title="${templateData.title}"
+     ></div>`
+    return template;
   })
 
 }
