@@ -4,7 +4,7 @@
  * it's key (if referencing a trait from actor's template)
  * or itemId (if referencing a trait that's actually an item)
  */
- export class Trait {
+export class Trait {
 
   constructor(obj) {
     const dataset = obj.dataset;
@@ -22,6 +22,36 @@
 
   get isItem() {
     return this.category !== '' && this.itemId !== '' && this.key === '';
+  }
+}
+
+export class ExtendedTrait extends Trait {
+
+  constructor(obj) {
+    super(obj?.trait || obj);
+    this._name = obj.name || '';
+    this._displayName = obj.displayName || '';
+    this._specName = obj.specName || '';
+    this.value = obj.value;
+    this.valueMax = obj.value;
+    this._useSpec = obj.useSpec || false;
+  }
+
+  get canUseSpec() {
+    return this.value >= 4 && this._specName !== '';
+  }
+
+  get useSpec() {
+    return this.canUseSpec && this._useSpec;
+  }
+
+  get name() {
+    return this.useSpec ? this._specName : 
+      this._displayName ? this._displayName : this._name;
+  }
+
+  get specName() {
+    return this.useSpec ? this._name : this._specName;
   }
 }
 

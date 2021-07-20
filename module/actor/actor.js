@@ -1,9 +1,11 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
+import { Trait, ExtendedTrait } from "../utils/classes.js";
 
 /**
  * Implements M20eActor as an extension of the Actor class
+ * adds system specific functions as well as some overrides
  * atm only used by the charMage actor-type.
  * @extends {Actor}
  */
@@ -20,8 +22,9 @@ export default class M20eActor extends Actor {
     await super._preCreate(data, options, user);
     const actorData = this.data;
 
-    //do some stuff depending on actor type (char or npc..)
     if ( actorData.data.isPlayable === true ) {
+      //auto link tokens in case of player character
+      //todo : maybe move that in sub class _preCreate if needed
       actorData.token.update({actorLink: true});
     }
 
@@ -48,8 +51,9 @@ export default class M20eActor extends Actor {
   }
 
   /**
-   * returns base abilities from pack if any,
-   * otherwise default abilities from config
+   * returns base abilities from pack if any, otherwise default abilities from config
+   * also sorts abilities alphabetically and adds values to the `sort`property
+   * @return {Array} alpha sorted array of item data
    */
   async _getBaseAbilities() {
     //get the compendium module 'name' from the settings
@@ -63,8 +67,8 @@ export default class M20eActor extends Actor {
     
     //alpha sort the abilities now that they're localized
     baseAbilities.sort(utils.alphaSort());
-    //add the sort property so that later user-added abilities will display on top
-    //Foundry does the same thing, but only after the first drag/drop
+    //defines the sort property so that later user-added abilities will display on top
+    //note : Foundry does the same thing, but only after the first 'same actor' drag/drop
     return baseAbilities.map((itemData, i) => {
       return {...itemData, ...{sort: (i+1) * CONST.SORT_INTEGER_DENSITY}};
     });
@@ -74,7 +78,7 @@ export default class M20eActor extends Actor {
    * Gets base abilities from a valid pack 
    * maps them to itemData objects (mostly for uniformity with _getDefaultAbilities())
    * @param  {CompendiumCollection} pack a valid base.abilities CompendiumCollection
-   * @return {Array} an array of 'pseudo' itemData objects
+   * @return {Array} an array of item data objects
   */
   async _getAbilitiesFromPack(pack) {
     return await pack.getDocuments()
@@ -94,8 +98,8 @@ export default class M20eActor extends Actor {
   /**
    * Gets base abilities from config + localization 
    * get subType description from html template + localization file
-   * @return {Array} an array of 'pseudo' itemData objects
-  */
+   * @return {Array} an array of item data objects
+   */
   async _getDefaultAbilities() {
     //get default descriptions for all 3 ability types
     //(since we gonna use them 11 times each)
@@ -128,29 +132,46 @@ export default class M20eActor extends Actor {
     //this._extendMagePower();
   }
 
+  /**
+   * Gets the sole paradigm item from this actor
+   * Note : class might actually be M20eParadigmItem if I kept the useless subclass system for the items
+   * @return {M20eItem|undefined} 
+   */
   get paradigm() {
     return this.items.filter(item => item.type === "paradigm")[0];
   }
 
+  /**
+   * Get the user overridden translation for the specific path in the translation file
+   * Ask the paradigm item for that specific lexicon entry
+   * Mostly called by the locadigm HB helper
+   * 
+   * @return {String|undefined} the text the user chose for this translation path 
+   */
   getLexiconEntry(relativePath) {
     const paraItem = this.paradigm;
     if ( !paraItem ) {
-      //ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
       return;
     }
     return paraItem.getLexiconEntry(relativePath);
   }
 
+  /**
+   * Sets a user overridden translation for a specific path in the translation file
+   * get the paradigm item to store that as a specific lexicon entry
+   */
   async setLexiconEntry(relativePath, newValue){
     const paraItem = this.paradigm;
     if ( !paraItem ) {
-      //ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
       return;
     }
     return await paraItem.setLexiconEntry(relativePath, newValue);
   }
 
-  /** Reevaluates secondary health stats 'status' and 'malus'
+  /** 
+   * Reevaluates secondary health stats 'status' and 'malus'
    * according to health values and the list of maluses
    */
   _extendHealthStats() {
@@ -167,7 +188,22 @@ export default class M20eActor extends Actor {
     }
   }
 
-  /** 'Safe' update as in 
+  getExtendedTraitData(trait) {
+    const {category, key= ''} = trait;
+    const relativePath = key ? `${category}.${key}` : `${category}`;
+    const actorData = this.data;
+    //todo : add special case of willpower where valueMax is used instead of value
+    return {
+      name: game.i18n.localize(`M20E.${relativePath}`),
+      displayName: this.getLexiconEntry(relativePath),
+      value: foundry.utils.getProperty(actorData,`data.${relativePath}.value`),
+      specName: foundry.utils.getProperty(actorData,`data.${relativePath}.specialisation`)
+    }
+  }
+
+  /** 
+   * Might be pretty useless ?
+   *  'Safe' update as in 
    * "if value is a number, parseInt it just to be on the 'safe' side"
    * assumes the value as already been checked against min & max
    */

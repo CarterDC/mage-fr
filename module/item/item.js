@@ -2,6 +2,7 @@
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
+
 /**
  * Implements M20eItem as an extension of the Item class
  * Adds new methods for all items and for specific item types.
@@ -38,6 +39,16 @@ export default class M20eItem extends Item {
       updateData.data.systemDescription = await utils.getDefaultDescription(specificType);
     }
     itemData.update( updateData );
+  }
+
+  getExtendedTraitData() {
+    //todo : add check for virtualTrait and or RollableItems
+    return {
+      name: this.name,
+      displayName: this.data.data.displayName,
+      value: this.data.data.value,
+      specName:  this.data.data.specialisation
+    }
   }
 }
 

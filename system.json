@@ -3,8 +3,13 @@
   "title": "Mage-fr M20e",
   "description": "[Unofficial] Mage l'Ascension - 20e, système pour Foundry VTT.<br>[FR][EN].<br>Developped for Foundry 0.8.x.",
   "author": "Carter_DC",
-  
-  "version": "0.0.16",
+  "authors": [
+    {
+      "name": "Carter_DC",
+      "discord": "Carter_DC#1097"
+    }
+  ],  
+  "version": "0.0.18",
   "templateVersion": "1",
   "minimumCoreVersion": "0.8.3",
   "compatibleCoreVersion": "0.8.8",

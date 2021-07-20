@@ -342,6 +342,13 @@
       }
     },
 
+    "diceThrows": {
+      "diceThrows": "Jets de Dés",
+      "freeThrow": "Jet Libre",
+      "mixedThrow": "Jet Mixte",
+      "throwFor": "Jet de {stat}"
+    },
+
     "healthStatus": {
       "0": "En pleine forme.",
       "1": "Contusion.",
@@ -375,6 +382,19 @@
         "0": "🖱️ Gauche : Ajouter Quintessence, 🖱️ Droite : Ajouter Paradoxe.",
         "1": "🖱️ Droite : Retirer Quintessence.",
         "2": "🖱️ Gauche : Retirer Paradoxe."
+      },
+      "dicePool": "Si le pool de dé tombe à 0, un dé irréductible sera lancé.",
+      "removeFromThrow": "Supprimer pour ce jet.",
+      "useSpecialisation": "Utiliser la spécialisation.",
+      "addDice": "Ajouter un Dé.",
+      "removeDice": "Supprimer un Dé.",
+      "threshold": "Les bonus/malus ne peuvent pas changer la difficulté au delà de +3/-3.",
+      "keepOpen": "Garder cette fenêtre ouverte.",
+      "untrained": "Non Entrainé !",
+      "throwSettings":{
+        "1": "Les '1' ne font rien de spécial.",
+        "2": "Chaque '1' retire un succès.",
+        "3": "Chaque '1' retire un succès. + Chaque '10' rajoute un succès supplémentaire."
       }
     },
 
@@ -390,7 +410,12 @@
       "spe": "Spé",
       "extra": "Extra",
       "cssClass": "Classe CSS",
-      "sheetLogo": "Logo fiche de perso"
+      "sheetLogo": "Logo fiche de perso",
+      "dicePool": "Grpt. de Dés",
+      "threshold": "Difficulté",
+      "throw": "LANCER",
+      "pool": "Grpt.",
+      "thrsh": "Diff."
     },
 
     "navtabs": {
@@ -495,6 +520,24 @@
   "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",
   "SETTINGS.playersCanSeeParadoxPoints": "Peut voir les points de Paradoxe.",
   "SETTINGS.playersCanSeeParadoxPointsHint": "Les joueurs ne voient pas leur Paradoxe (⚠ ils ne pourront plus interagir avec leur 'barre de puissance').",
-  "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés."
+  "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",
+  "SETTINGS.useHealthMalus": "Malus de santé au pool de dés.",
+  "SETTINGS.useHealthMalusHint": "Applique automatiquement le malus au pool de dés (défini par la liste éditable en clic droit sur la santé).",
+  "SETTINGS.untrainedMalus": "Malus de capacité non-entraînée.",
+  "SETTINGS.untrainedMalusHint": "Applique différents Malus au POOL DE DES pour les Talents, Compétences et Connaissances non entraînées.",
+  "SETTINGS.untrMalusNone": "Talent :  0, Comp. :  0, Conn. :  0",
+  "SETTINGS.untrMalusSoft": "Talent :  0, Comp. :  0, Conn. : -1",
+  "SETTINGS.untrMalusBalanced": "Talent :  0, Comp. : -1, Conn. : -2",
+  "SETTINGS.untrMalusMed": "Talent : -1, Comp. : -1, Conn. : -1",
+  "SETTINGS.untrMalusHard": "Talent : -1, Comp. : -2, Conn. : -3",
+  "SETTINGS.specialisationRule": "Jets avec Spécialisation.",
+  "SETTINGS.specialisationRuleHint": "Les 10 donnent un succès supplémentaire lors de l'utilisation d'une Spé.",
+  "SETTINGS.roteRule": "Jet des Routines.",
+  "SETTINGS.roteRuleHint": "Les 10 donnent un succès supplémentaire lors de l'utilisation d'une Routine.",
+  "SETTINGS.defaultThrowSettings": "Mode de lancer par défaut.",
+  "SETTINGS.defaultThrowSettingsHint": "Option par défaut dans le panneau des Jets pour la gestion des 1.",
+  "SETTINGS.throwSettingsBlandRoll": "Les 1 ne font rien de spécial.",
+  "SETTINGS.throwSettingsDeductFailure": "Chaque 1 retire un succès.",
+  "SETTINGS.throwSettingsDFXS": "'1' => -1 succès. + '10' => +1 succès."
 
 }

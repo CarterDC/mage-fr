@@ -774,6 +774,142 @@ li.chat-message .card .card-footer .item-img {
   --hoverColor: #d69806;
   --titleFontFam: "signika", sans-serif;
 }
+.m20e.dialogue .flavor {
+  margin-bottom: 6px;
+  padding: 0 5px;
+  white-space: pre-warp;
+}
+.m20e.dialogue .dialog-block {
+  width: 100%;
+  margin: 0;
+  padding: 3px 5px;
+  border-bottom: 1px solid var(--titleColor);
+}
+.m20e.dialogue .skill-list {
+  width: 100%;
+}
+.m20e.dialogue .red-thingy {
+  color: var(--m20e-badRed);
+}
+.m20e.dialogue .green-thingy {
+  color: var(--m20e-goodGreen);
+}
+.m20e.dialogue .trait.dice {
+  height: 20px;
+  margin: 3px 0;
+}
+.m20e.dialogue .trait.dice .trait-label[data-value="0"] {
+  color: var(--m20e-badRed);
+}
+.m20e.dialogue .trait.dice .trait-label:hover {
+  text-shadow: none;
+}
+.m20e.dialogue .trait.dice .mini-button[data-action="remove"] {
+  color: var(--m20e-badRed);
+  margin-right: 10px;
+}
+.m20e.dialogue .trait.dice .mini-button.spe {
+  width: 50px;
+  margin-left: 10px;
+}
+.m20e.dialogue .trait.dice .mini-button.spe[data-active='true'] {
+  color: var(--highlightColor);
+  text-shadow: none;
+}
+.m20e.dialogue .dialog-block.dice-pool {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 10px;
+}
+.m20e.dialogue .dialog-block.dice-pool label {
+  width: 60px;
+}
+.m20e.dialogue .dialog-block.dice-pool input {
+  height: 32px;
+  width: 40px;
+  margin: 0 0 0 0;
+  font-family: "Diablo";
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+}
+.m20e.dialogue .radio-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  font-family: "Diablo";
+  font-weight: bold;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
+  font-size: 18px;
+  text-align: center;
+}
+.m20e.dialogue .radio-group div {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.m20e.dialogue .radio-group div input {
+  display: none;
+}
+.m20e.dialogue .radio-group div label {
+  width: 100%;
+  flex-grow: 1;
+  margin: 5px 1px;
+  color: #585858;
+  background: #bdb9b2;
+  border: 1px solid #bdb9b2;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.m20e.dialogue .radio-group div label:hover {
+  color: #303030;
+  text-shadow: 0 0 1px #aa0011;
+}
+.m20e.dialogue .radio-group div input[type="radio"]:checked + label {
+  color: var(--highlightColor);
+  background: rgba(0, 0, 0, 0.05);
+  border-color: #7a7971;
+}
+.m20e.dialogue .mini-button.dice-throw {
+  justify-content: space-evenly;
+  height: 32px;
+  width: 70%;
+  font-family: "Diablo";
+  font-weight: bold;
+  font-size: 18px;
+  margin: 10px 6px 5px 6px;
+}
+.m20e.dialogue .mini-button.keep {
+  height: 32px;
+  width: 32px;
+  font-size: 18px;
+  margin: 0 0 0 0;
+  position: relative;
+  top: 2px;
+}
+.m20e.dialogue .mini-button.keep[data-active='true'] {
+  color: var(--highlightColor);
+}
+.m20e.dialogue .mini-button.throw-settings {
+  color: var(--m20e-midGrey);
+  height: 32px;
+  width: 32px;
+  font-size: 18px;
+  margin: 0 0 0 0;
+  position: relative;
+  top: 2px;
+}
+.m20e.dialogue .mini-button.throw-settings[data-settings="2"] {
+  color: var(--m20e-goodGreen);
+}
+.m20e.dialogue .mini-button.throw-settings[data-settings="3"] {
+  color: var(--m20e-badRed);
+}
 .systemDescription {
   padding: 0px 2px;
   line-height: calc(var(--m20e-descFontSize) + 2px);

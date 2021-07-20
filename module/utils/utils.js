@@ -194,7 +194,7 @@ export async function getCompendiumDocumentByName(packName, documentName) {
   return await pack.getDocument(index._id);
 }
 
-/**
+/** TODO : maybe could go in paradigm item ?
  * concatenates an object property chain by inserting a '.'
  * used only by propertiesToArray
  */
