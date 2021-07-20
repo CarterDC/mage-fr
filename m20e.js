@@ -19,6 +19,8 @@ import M20eParadigmItem from './module/item/para-item.js'
 import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItemSheet from './module/item/baseitem-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
+import DiceDialogue from './module/apps/dice-throw-dialog.js'
+
 // Import Helpers
 import * as utils from './module/utils/utils.js'
 import { log } from "./module/utils/utils.js";
@@ -59,6 +61,8 @@ Hooks.once('init', async function () {
     types: ["paradigm"],
     makeDefault: true
   });
+  // 'register' dice throwing app
+  CONFIG.M20E.diceThrowApp = DiceDialogue;
 
   registerSystemSettings();
   registerHandlebarsHelpers();

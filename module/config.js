@@ -39,6 +39,16 @@ M20E.categoryToType ={
   "contacts": "contact"
 }
 
+M20E.rollableCategories = [
+  "attribute",
+  "ability",
+  "sphere",
+  "willpower",
+  "arete",
+  "background",
+  "contact"
+]
+
 M20E.defaultAbilities = {
   alertness: 'talent',
   art: 'talent',

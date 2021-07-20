@@ -52,7 +52,7 @@ export class FakeItem extends FormApplication {
 
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
-    sheetData.modifyValues = ( game.user.isGM || ! actorData.data.creationDone );
+    sheetData.canModifyValues = ( game.user.isGM || ! actorData.data.creationDone );
 
 
     return sheetData;

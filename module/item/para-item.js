@@ -22,12 +22,10 @@ export default class M20eParadigmItem extends M20eItem {
   }
 
   getLexiconEntry(relativePath) {
-    if ( this.type !== 'paradigm' ) { return; }
     return foundry.utils.getProperty(this.data.data.lexicon, relativePath);
   }
 
   async setLexiconEntry(relativePath, newValue) {
-    if ( this.type !== 'paradigm') { return; }
     if ( newValue === '' ) { return; } // TODO ; maybe implement removal on empty string ? 
     return await this.update({[`data.lexicon.${relativePath}`]: newValue});
   }

@@ -1,5 +1,6 @@
 // Import Applications
 import { FakeItem } from '../apps/fakeitem-sheet.js'
+import { DiceThrow } from '../apps/dice-throw.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
@@ -76,10 +77,10 @@ export default class M20eActorSheet extends ActorSheet {
     
     //other usefull data
     sheetData.isGM = game.user.isGM;
+    sheetData.isOwner = this.actor.isOwner;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
-    sheetData.modifyValues = ( game.user.isGM || ! actorData.data.creationDone );
-    sheetData.canSeeParadox = utils.canSeeParadox();
+    sheetData.canModifyValues = ( game.user.isGM || ! actorData.data.creationDone );
     
     const paradigm = this.actor.paradigm;
     if( paradigm ) {
@@ -97,6 +98,7 @@ export default class M20eActorSheet extends ActorSheet {
     // todo : maybe put that under editable at some point ?
     //(dice thows & trait link)
     html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
+    html.find('.dice-button').click(this._onDiceClick.bind(this));
     new ContextMenu(html, '.trait', this._getTraitContextOptions());
     
     //editable only (roughly equals 'isOwner')
@@ -222,6 +224,39 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   /*  Event Handlers                              */
   /* -------------------------------------------- */
+
+  async _onDiceClick(event) {
+    //todo : add diceThrows in array on actor for render on update
+    event.preventDefault()
+    //retrieve traits to roll
+    const traitsToRoll = this.getTraitsToRoll();
+    const diceThrow = new DiceThrow({document: this.actor, traitsToRoll: traitsToRoll});
+    if ( event.shiftKey ) {
+      //throw right away
+    } else {
+      //display dice throw dialog
+      diceThrow.render(true);
+    }
+  }
+
+  /**
+  * Check all rollable categories for highlighted elements (ie data-active="true")
+  * return said elements as Trait objects for later consumption by Throw app.
+  * also toggle the active status of highlighted elements after we got them
+  * 
+  * @return {Array} an Array of Traits objects that correspond to the previously highlighted elements
+  */
+  getTraitsToRoll() { 
+    //overly complicated statement that could be easily understood if coded with twice the lines
+    return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
+      const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
+      return elementList.length === 0 ? acc : 
+        [...acc, ...elementList.toArray().map(traitElement => {
+          traitElement.dataset.active = false;
+          return new Trait(traitElement);
+        })];
+    }, []);
+  }
 
   /**
   * Updates actor with a toggled value for data.creationDone.
