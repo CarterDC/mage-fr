@@ -47,12 +47,13 @@ export const registerHandlebarsHelpers = function() {
 
  /**
  * Adds a '+' sign in from of a positive value (no need for negative ones, obviously)
- * @param {number} num the number to be concatenated
- * @param {boolean} forceNegative forces a negative sign before a positive value
+ * @param {Number} num the number to be concatenated
+ * @param {Optional} forcePrefix forces a prefix before a positive value
  */
-  Handlebars.registerHelper('sign', function(num, forceNegative = false) {
+  Handlebars.registerHelper('sign', function(num) {
     if ( num < 0 ) { return num; }
-    return forceNegative ? `-${num}` : `+${num}`;
+    const forcePrefix = arguments[arguments.length - 2];
+    return forcePrefix !== num ? `${forcePrefix}${num}` : `+${num}`;
   })
 
   Handlebars.registerHelper('disabled', function(canModifyValues) {
@@ -111,12 +112,12 @@ export const registerHandlebarsHelpers = function() {
       templateData.title = game.i18n.localize(`M20E.hints.magepower.${templateData.dataState}`);
     }
     const template = `<div class="box"
-     data-clickable = "${templateData.canSeeParadox}" 
-     data-index="${index}" 
-     data-state="${templateData.dataState}" 
-     title="${templateData.title}"
-     ></div>`
-    return template;
+      data-clickable = "${templateData.canSeeParadox}" 
+      data-index="${index}" 
+      data-state="${templateData.dataState}" 
+      title="${templateData.title}"
+      ></div>`
+    return new Handlebars.SafeString(template);
   })
 
 }

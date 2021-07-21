@@ -79,6 +79,30 @@
         padding: 1px 0 0; 
     }
   }
+  .trait.dice{
+    height:20px;
+    margin: 3px 0;
+
+    .trait-label[data-value="0"]{
+      color: var(--m20e-badRed);
+    }
+    .trait-label:hover{
+        text-shadow: none;
+    }
+
+    .mini-button[data-action="remove"]{
+        color: var(--m20e-badRed);
+        margin-right:10px;
+    }
+    .mini-button.spe {
+            width: 50px;
+            margin-left:10px;
+    }
+    .mini-button.spe[data-active='true'] {
+        color: var(--highlightColor); 
+        text-shadow: none;
+    }
+  }
   .trait.chat-flavor{
     height: 20px;
     margin: 3px 0;

@@ -2,48 +2,51 @@
   <div class="dialog-block flavor">
       
   </div>
+  {{#if traits.length}}
   <div class="dialog-block">
       {{#each traits as |trait key|}}
       <div class="trait dice" data-key="{{key}}">
           <a class="mini-button" title="{{localize 'M20E.hints.removeFromThrow'}}" data-action="remove"><i class="fas fa-times-circle"></i></a>
           <label class="trait-label tooltip" data-value ="{{trait.value}}" {{#if (eq trait.value 0)}} title="{{localize 'M20E.hints.untrained'}}"{{/if}}>
               {{trait.name}}
+              {{#if trait.canUseSpec}}
+              <span class="righttooltiptext">{{trait.specName}}</span>
+              {{/if}}
           </label>
           <div class="ligne"></div>
           <div class="bullet-display" data-locked="true">
               {{#forLoop 5}}
-              <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}"></span>
+              <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" data-clickable="{{gt trait.valueMax this}}"></span>
               {{/forLoop}}
           </div>
           {{#if trait.canUseSpec}}
               <a class="mini-button spe" title="{{localize 'M20E.hints.useSpecialisation'}}" data-action="spe" data-active = {{trait.useSpec}}>{{localize "M20E.labels.spe"}}</a>
           {{else}}
-              <div style="width:50px; margin-left:10px;"></div>
+              <div class="mini-button spe decoy"></div>
           {{/if}}
       </div>
       {{/each}}
   </div>
+  {{/if}}
   <div class="dialog-block dice-pool">
     <label style="text-align: center; margin-left:-6px;" title="{{localize 'M20E.hints.dicePool'}}">{{localize "M20E.labels.dicePool"}} :</label>
     <input name="dicePool" type="text" value="{{diceThrow.dicePoolBase}}" data-dtype="Number" disabled/>
-    {{#if (ne parameters.dicePoolMalus 0)}}
-    <input class= "red-thingy" name="dicePoolMalus" type="text" value="{{parameters.dicePoolMalus}}" data-dtype="Number" disabled/>
+    {{#if (ne diceThrow.dicePoolMalus 0)}}
+    <input class= "red-thingy" name="dicePoolMalus" type="text" value="{{sign diceThrow.dicePoolMalus}}" data-dtype="Number" disabled/>
     {{/if}}
     <div style="display: flex; flex-direction:row;">
         <div class="double-button" style="margin:0 5px;">
             <a class="mini-button" title="{{localize 'M20E.hints.addDice'}}" data-action="mod-plus"><i class="fas fa-plus"></i></a>
             <a class="mini-button" title="{{localize 'M20E.hints.removeDice'}}" data-action="mod-minus"><i class="fas fa-minus"></i></a>
         </div>
-        <input name="dicePoolMod" type="text" value="{{sign parameters.dicePoolMod}}" data-dtype="Number" disabled/>
+        <input name="dicePoolBonus" type="text" value="{{sign diceThrow.dicePoolBonus}}" data-dtype="Number" disabled/>
     </div>
     <i class="fas fa-equals" style ="font-size: 16px;" ></i>
-    <input name="dicePoolTotal" type="text" value="{{parameters.dicePoolTotal}}" data-dtype="Number" readonly/>
+    <input name="dicePoolTotal" type="text" value="{{diceThrow.dicePoolTotal}}" data-dtype="Number" readonly/>
   </div>
   <div class="dialog-block difficulty">
     <label title="{{localize 'M20E.hints.threshold'}}">{{localize "M20E.labels.threshold"}} :</label>
-    {{#if (ne parameters.thresholdBonus 0)}}
-    <label class="green-thingy">{{parameters.thresholdBonus}}</label>
-    {{/if}}
+    {{!--TODO : maybe add and display threshold mods  --}}
     <div class="radio-group">
         {{#each radioOptions as |radio key|}}
         <div>

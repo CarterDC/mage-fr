@@ -55,10 +55,22 @@ export function canSeeParadox() {
   return game.settings.get("mage-fr", "playersCanSeeParadoxPoints") || game.user.isGM;
 }
 
+/**
+ * @return {Boolean} Whether Dice So Nice module is actually present and active
+ */
 export function dsnActive() {
   const dsnModule = game.modules.get('dice-so-nice');
-  const dsnActive = dsnModule ? dsnModule.active : false;
-  return dsnActive;
+  return dsnModule ? dsnModule.active : false;
+}
+
+/**
+ * @return {Boolean} Whether 3D dice are actually avail to display for this user
+ */
+export function dsnUserActive() {
+  return dsnActive() ? 
+  game.settings.get('dice-so-nice','settings').enabled && 
+  !!game.user.getFlag('dice-so-nice','appearance') :
+  false;
 }
 
 /**
