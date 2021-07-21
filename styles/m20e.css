@@ -46,7 +46,8 @@
 /************
 ** Imports **
 *************/
-.m20e.sheet .paradigm-img {
+.m20e.sheet .paradigm-img,
+.m20e.dialogue .paradigm-img {
   position: absolute;
   border: none;
   margin-top: -10px;
@@ -57,39 +58,48 @@
   background-size: contain;
   background-repeat: repeat-y;
 }
-.m20e.sheet .context-items {
+.m20e.sheet .context-items,
+.m20e.dialogue .context-items {
   font-family: var(--mainFontFam);
   font-size: var(--smallFontSize);
   font-weight: lighter;
 }
-.m20e.sheet .entity-link {
+.m20e.sheet .entity-link,
+.m20e.dialogue .entity-link {
   border: none;
   background: none;
 }
-.m20e.sheet .entity-link i.fas {
+.m20e.sheet .entity-link i.fas,
+.m20e.dialogue .entity-link i.fas {
   color: dodgerblue;
 }
-.m20e.sheet .entity-link[data-id=''] i.fas {
+.m20e.sheet .entity-link[data-id=''] i.fas,
+.m20e.dialogue .entity-link[data-id=''] i.fas {
   color: #7a7971;
 }
-.m20e.sheet form {
+.m20e.sheet form,
+.m20e.dialogue form {
   font-family: var(--mainFontFam);
   font-size: var(--mainFontSize);
   font-weight: 600;
   color: var(--m20e-darkGrey);
 }
-.m20e.sheet .sheet-header {
+.m20e.sheet .sheet-header,
+.m20e.dialogue .sheet-header {
   flex-wrap: nowrap;
   align-items: flex-start;
 }
-.m20e.sheet .sheet-header .img-colunm {
+.m20e.sheet .sheet-header .img-colunm,
+.m20e.dialogue .sheet-header .img-colunm {
   flex: 0;
   flex-direction: column;
 }
-.m20e.sheet .sheet-header .header-column {
+.m20e.sheet .sheet-header .header-column,
+.m20e.dialogue .sheet-header .header-column {
   margin-left: 6px;
 }
-.m20e.sheet .sheet-header .header-row {
+.m20e.sheet .sheet-header .header-row,
+.m20e.dialogue .sheet-header .header-row {
   display: flex;
   width: 100%;
   flex-direction: row;
@@ -97,27 +107,31 @@
   justify-content: space-between;
   align-items: center;
 }
-.m20e.sheet .sheet-header img {
+.m20e.sheet .sheet-header img,
+.m20e.dialogue .sheet-header img {
   height: 100px;
   width: 100px;
   max-width: none;
   border: none;
   cursor: pointer;
 }
-.m20e.sheet .sheet-header .name {
+.m20e.sheet .sheet-header .name,
+.m20e.dialogue .sheet-header .name {
   font-family: var(--titleFontFam);
   font-weight: bold;
   border: none;
   border-bottom: 2px solid var(--titleColor);
   background: none;
 }
-.m20e.sheet .sheet-header .dice-button {
+.m20e.sheet .sheet-header .dice-button,
+.m20e.dialogue .sheet-header .dice-button {
   flex: 0 0 45px;
   align-self: flex-end;
   height: 45px;
   margin-left: 5px;
 }
-.m20e.sheet .sheet-tabs {
+.m20e.sheet .sheet-tabs,
+.m20e.dialogue .sheet-tabs {
   height: 32px;
   margin: 5px 0;
   border-bottom: 0px;
@@ -129,7 +143,8 @@
   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
   text-align: center;
 }
-.m20e.sheet .sheet-tabs a {
+.m20e.sheet .sheet-tabs a,
+.m20e.dialogue .sheet-tabs a {
   color: var(--m20e-darkGrey);
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--m20e-lightGrey);
@@ -139,22 +154,26 @@
   align-items: center;
   margin-top: 2px;
 }
-.m20e.sheet .sheet-tabs a label {
+.m20e.sheet .sheet-tabs a label,
+.m20e.dialogue .sheet-tabs a label {
   flex: 10 10;
   text-align: center;
 }
-.m20e.sheet .sheet-tabs a .mini-button {
+.m20e.sheet .sheet-tabs a .mini-button,
+.m20e.dialogue .sheet-tabs a .mini-button {
   height: 20px;
   width: 20px;
   display: none;
   text-shadow: none;
 }
-.m20e.sheet .sheet-tabs a .mini-button[data-hidden='false'] {
+.m20e.sheet .sheet-tabs a .mini-button[data-hidden='false'],
+.m20e.dialogue .sheet-tabs a .mini-button[data-hidden='false'] {
   height: 20px;
   width: 20px;
   display: inline-flex;
 }
-.m20e.sheet .sheet-tabs a.active {
+.m20e.sheet .sheet-tabs a.active,
+.m20e.dialogue .sheet-tabs a.active {
   font-size: calc(var(--navFontSize) + 2px);
   color: var(--titleColor);
   background: #bdb9b200;
@@ -163,18 +182,22 @@
   margin-top: 0px;
   padding-top: 3px;
 }
-.m20e.sheet .sheet-tabs a:hover {
+.m20e.sheet .sheet-tabs a:hover,
+.m20e.dialogue .sheet-tabs a:hover {
   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.7), 1px 1px 0 #f5f2d9;
 }
-.m20e.sheet .sheet-tabs a:hover .mini-button[data-action='lock'] {
+.m20e.sheet .sheet-tabs a:hover .mini-button[data-action='lock'],
+.m20e.dialogue .sheet-tabs a:hover .mini-button[data-action='lock'] {
   display: inline-flex;
 }
-.m20e.sheet .dice-button {
+.m20e.sheet .dice-button,
+.m20e.dialogue .dice-button {
   background: url("../assets/ui/ten-dice.png") no-repeat;
   background-size: contain;
   cursor: pointer;
 }
-.m20e.sheet .tooltip .righttooltiptext {
+.m20e.sheet .tooltip .righttooltiptext,
+.m20e.dialogue .tooltip .righttooltiptext {
   visibility: hidden;
   background: rgba(0, 0, 0, 0.8) url(../assets/ui/parchment-dark.jpg) repeat;
   text-align: center;
@@ -187,7 +210,8 @@
   margin: -5px 0px 0px 5px;
   z-index: 1;
 }
-.m20e.sheet .tooltip .righttooltiptext::after {
+.m20e.sheet .tooltip .righttooltiptext::after,
+.m20e.dialogue .tooltip .righttooltiptext::after {
   content: " ";
   position: absolute;
   top: 50%;
@@ -197,7 +221,8 @@
   border-style: solid;
   border-color: transparent var(--m20e-darkGrey) transparent transparent;
 }
-.m20e.sheet .tooltip .bottomtooltiptext {
+.m20e.sheet .tooltip .bottomtooltiptext,
+.m20e.dialogue .tooltip .bottomtooltiptext {
   visibility: hidden;
   background: rgba(0, 0, 0, 0.8) url(../assets/ui/parchment-dark.jpg) repeat;
   text-align: left;
@@ -215,7 +240,8 @@
   margin: 5px 0px 0px 0px;
   z-index: 1;
 }
-.m20e.sheet .tooltip .bottomtooltiptext::after {
+.m20e.sheet .tooltip .bottomtooltiptext::after,
+.m20e.dialogue .tooltip .bottomtooltiptext::after {
   content: " ";
   position: absolute;
   bottom: 100%;
@@ -225,10 +251,12 @@
   border-style: solid;
   border-color: transparent transparent var(--m20e-darkGrey) transparent;
 }
-.m20e.sheet .tooltip:hover .righttooltiptext {
+.m20e.sheet .tooltip:hover .righttooltiptext,
+.m20e.dialogue .tooltip:hover .righttooltiptext {
   visibility: visible;
 }
-.m20e.sheet .tooltip:hover .bottomtooltiptext {
+.m20e.sheet .tooltip:hover .bottomtooltiptext,
+.m20e.dialogue .tooltip:hover .bottomtooltiptext {
   visibility: visible;
 }
 .m20e.actor .sheet-header .name-wrapper {
@@ -563,6 +591,28 @@
 .m20e .trait.ability input {
   padding: 1px 0 0;
 }
+.m20e .trait.dice {
+  height: 20px;
+  margin: 3px 0;
+}
+.m20e .trait.dice .trait-label[data-value="0"] {
+  color: var(--m20e-badRed);
+}
+.m20e .trait.dice .trait-label:hover {
+  text-shadow: none;
+}
+.m20e .trait.dice .mini-button[data-action="remove"] {
+  color: var(--m20e-badRed);
+  margin-right: 10px;
+}
+.m20e .trait.dice .mini-button.spe {
+  width: 50px;
+  margin-left: 10px;
+}
+.m20e .trait.dice .mini-button.spe[data-active='true'] {
+  color: var(--highlightColor);
+  text-shadow: none;
+}
 .m20e .trait.chat-flavor {
   height: 20px;
   margin: 3px 0;
@@ -785,36 +835,11 @@ li.chat-message .card .card-footer .item-img {
   padding: 3px 5px;
   border-bottom: 1px solid var(--titleColor);
 }
-.m20e.dialogue .skill-list {
-  width: 100%;
-}
 .m20e.dialogue .red-thingy {
   color: var(--m20e-badRed);
 }
 .m20e.dialogue .green-thingy {
   color: var(--m20e-goodGreen);
-}
-.m20e.dialogue .trait.dice {
-  height: 20px;
-  margin: 3px 0;
-}
-.m20e.dialogue .trait.dice .trait-label[data-value="0"] {
-  color: var(--m20e-badRed);
-}
-.m20e.dialogue .trait.dice .trait-label:hover {
-  text-shadow: none;
-}
-.m20e.dialogue .trait.dice .mini-button[data-action="remove"] {
-  color: var(--m20e-badRed);
-  margin-right: 10px;
-}
-.m20e.dialogue .trait.dice .mini-button.spe {
-  width: 50px;
-  margin-left: 10px;
-}
-.m20e.dialogue .trait.dice .mini-button.spe[data-active='true'] {
-  color: var(--highlightColor);
-  text-shadow: none;
 }
 .m20e.dialogue .dialog-block.dice-pool {
   display: flex;

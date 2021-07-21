@@ -177,7 +177,7 @@ export default class M20eActor extends Actor {
   _extendHealthStats() {
     let health = this.data.data.health;
     //prepare an array of negative integers from the comma separated string
-    const maluses = health.malusList.split(',').map(v => (-1 * parseInt(v)));
+    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
     const wounds = health.max - health.value;
 
     health.status = game.i18n.localize(`M20E.healthStatus.${wounds}`);
@@ -188,15 +188,30 @@ export default class M20eActor extends Actor {
     }
   }
 
+  /**
+   * Extends an array of {@link Trait} with relevant values to Throw dices
+   * dispatch calls according to wether each Trait references an item or an actor property
+   * @return {Array} an array of {@link ExtendedTrait} 
+   */
+   extendTraits(traitsToRoll) {
+    return traitsToRoll.map(trait => {
+      const extendedData = trait.isItem ?
+        this.items.get(trait.itemId).getExtendedTraitData() :
+        this.getExtendedTraitData(trait);
+      
+      return new ExtendedTrait({trait, ...extendedData});
+    });
+  }
+
   getExtendedTraitData(trait) {
     const {category, key= ''} = trait;
     const relativePath = key ? `${category}.${key}` : `${category}`;
     const actorData = this.data;
-    //todo : add special case of willpower where valueMax is used instead of value
+    //todo : add special case of willpower AND arete
     return {
       name: game.i18n.localize(`M20E.${relativePath}`),
       displayName: this.getLexiconEntry(relativePath),
-      value: foundry.utils.getProperty(actorData,`data.${relativePath}.value`),
+      value: parseInt(foundry.utils.getProperty(actorData,`data.${relativePath}.value`)),
       specName: foundry.utils.getProperty(actorData,`data.${relativePath}.specialisation`)
     }
   }

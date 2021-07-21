@@ -46,7 +46,7 @@ export default class M20eItem extends Item {
     return {
       name: this.name,
       displayName: this.data.data.displayName,
-      value: this.data.data.value,
+      value: parseInt(this.data.data.value),
       specName:  this.data.data.specialisation
     }
   }

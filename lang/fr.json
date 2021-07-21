@@ -515,6 +515,7 @@
   "ITEM.TypeContact": "Contact",
   "ITEM.TypeConsumable": "Consommable",
 
+  "SETTINGS.None": "Vous n'avez pas les permissions nécessaires pour voir / modifier les options de ce système.",
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
   "SETTINGS.compendiumScope": "Nom du module de Compendiums.",
   "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",

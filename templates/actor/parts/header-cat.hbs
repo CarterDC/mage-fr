@@ -20,7 +20,7 @@
                 <div>
                     <label class="resource-context" data-resource="health">{{data.health.status}}</label>
                     {{#if (ne data.health.malus 0)}}
-                        <label>{{data.health.malus}}D</label>
+                        <label>{{sign data.health.malus "-"}}D</label>
                     {{/if}}
                 </div>
             </div>
@@ -42,7 +42,7 @@
             <div class="resource-panel magepower" data-resource="magepower">
                 <div class="boxes" style="justify-content: space-between;">
                     {{#forLoop 20}}
-                    {{{magepowerBox ../data.magepower this}}}
+                    {{magepowerBox ../data.magepower this}}
                     {{/forLoop}}
                 </div>
             </div>

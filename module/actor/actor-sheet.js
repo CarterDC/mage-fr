@@ -86,6 +86,7 @@ export default class M20eActorSheet extends ActorSheet {
     if( paradigm ) {
       sheetData.paraData = paradigm.data.data;
     }
+    sheetData.dsnUserActive = utils.dsnUserActive();
     
     log({actor : sheetData.actor.name, sheetData : sheetData});
     return sheetData;
@@ -95,20 +96,26 @@ export default class M20eActorSheet extends ActorSheet {
   activateListeners(html) {
     
     //actions for everyone
-    // todo : maybe put that under editable at some point ?
-    //(dice thows & trait link)
-    html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
-    html.find('.dice-button').click(this._onDiceClick.bind(this));
-    new ContextMenu(html, '.trait', this._getTraitContextOptions());
     
+
     //editable only (roughly equals 'isOwner')
     if ( this.isEditable ) {
-      //interactions & editions
-      new ContextMenu(html, '.header-row.charname', this._getNameContextOptions());
+      //highlighting of traits
+      html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
+      //every interraction with a button (except for the dice-button)
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
+      //left & right clicks on resource boxes
       html.find('.resource-panel .box[data-clickable="true"]').mousedown(this._onResourceBoxClick.bind(this));
+      //edition of item value when cat is unlocked
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
+      //click on the 'i' buttons (blue or grey)
       html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
+      //dice throwing
+      html.find('.dice-button').click(this._onDiceClick.bind(this));
+      //ctx menu on the character name (paradigm edition...)
+      new ContextMenu(html, '.header-row.charname', this._getNameContextOptions());
+      //ctx menu on traits (edition / link)
+      new ContextMenu(html, '.trait', this._getTraitContextOptions());
     }
     
     if ( game.user.isGM ) {
@@ -233,10 +240,28 @@ export default class M20eActorSheet extends ActorSheet {
     const diceThrow = new DiceThrow({document: this.actor, traitsToRoll: traitsToRoll});
     if ( event.shiftKey ) {
       //throw right away
+      this.testage(event.currentTarget);
+
     } else {
       //display dice throw dialog
       diceThrow.render(true);
     }
+  }
+
+  testage(canvas) {
+    const d3d = game.dice3d;
+    const options = { dimensions: { w: 45, h: 45 }, autoscale: false, scale: 35, boxType:"showcase" };
+    let diceFactory = d3d.box.dicefactory;
+    log(diceFactory);
+    //diceFactory.dice = {};
+    //diceFactory.dice.d10 = d3d.box.dicefactory.dice.d10;
+
+    const config = mergeObject(d3d.constructor.ALL_CONFIG(), options);
+
+    this.box = new d3d.box.constructor(canvas, diceFactory, config);
+    this.box.initialize().then(()=>{
+      this.box.showcase(config);
+    });
   }
 
   /**
