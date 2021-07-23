@@ -11,20 +11,14 @@
           <div class="trait description" data-key="{{key}}" data-link-id="{{bio.link.id}}"> 
               <label class="trait-label" title="">{{{locadigm ../paraData "bio." key}}}</label>
               <label class="colon">:</label>
-              <div class="edit-wrapper" data-locked="{{../locks.description}}">
-                  <input {{#if bio.link}} class="link-drop"{{/if}} name="data.bio.{{key}}.displayValue" type="text" value="{{bio.displayValue}}" data-dtype="String"/>
+              <div class="lock-wrapper" data-locked="{{../locks.description}}">
                   {{#if bio.link}}
+                  <input class="link-drop" name="data.bio.{{key}}.displayValue" type="text" value="{{bio.displayValue}}" data-dtype="String" {{disabled ../locks.description}} {{#if ../locks.description}}title="{{localize 'M20E.hints.unlockToEdit'}}"{{else}}title="{{localize 'M20E.hints.canDropJE'}}"{{/if}}/>
                   <a class="entity-link bio-link" data-entity="{{bio.link.type}}" data-pack="{{bio.link.pack}}" data-id="{{bio.link.id}}" title="{{localize "M20E.hints.openJE"}}">
                     <i class="fas fa-info-circle"></i>
                   </a>
-                  {{/if}}
-              </div>
-              <div class="lock-wrapper" data-locked="{{../locks.description}}">                        
-                  <label>{{bio.displayValue}}</label>
-                  {{#if bio.link}}
-                  <a class="entity-link bio-link" data-entity="{{bio.link.type}}" data-pack="{{bio.link.pack}}" data-id="{{bio.link.id}}" title="{{localize "M20E.hints.openJE"}}">
-                    <i class="fas fa-info-circle"></i>
-                  </a>
+                  {{else}}
+                  <input title="{{localize 'M20E.hints.unlockToEdit'}}" name="data.bio.{{key}}.displayValue" type="text" value="{{bio.displayValue}}" data-dtype="String" {{disabled ../locks.description}}/>
                   {{/if}}
               </div>
           </div>
@@ -35,5 +29,5 @@
       <div class="ligne"></div>
   </div>
   {{!-- todo: add label for that or not ?--}}
-<textarea name="data.misc.description" {{#if locks.description}}readonly{{/if}}>{{data.misc.description}}</textarea>
+<textarea name="data.misc.description" title="{{localize 'M20E.hints.unlockToEdit'}}" placeholder="{{localize 'M20E.placeholders.appearance'}}" {{#if locks.description}}readonly{{/if}}>{{data.misc.description}}</textarea>
 </section>

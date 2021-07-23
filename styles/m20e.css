@@ -657,16 +657,21 @@
   text-align: right;
   padding-right: 5px;
 }
-.m20e .trait.description .edit-wrapper {
+.m20e .trait.description .lock-wrapper {
   position: relative;
   flex: 0 0 65%;
   justify-content: left;
 }
-.m20e .trait.description .edit-wrapper input {
+.m20e .trait.description .lock-wrapper input {
   flex: 1 1;
   padding: 3px 0;
+  padding: 3px 5px;
 }
-.m20e .trait.description .lock-wrapper {
+.m20e .trait.description .lock-wrapper input:disabled {
+  border: none;
+  font-weight: bold;
+}
+.m20e .trait.description .bak {
   position: relative;
   height: 23px;
   background: rgba(0, 0, 0, 0.05);
@@ -679,21 +684,12 @@
   margin: 0 15px 12px;
   border-color: var(--titleColor);
 }
-.m20e .trait.description .edit-wrapper[data-locked='true'] {
-  display: none;
-}
-.m20e .trait.description .lock-wrapper[data-locked='false'] {
-  display: none;
-}
 .m20e .trait.description .bio-link {
   visibility: hidden;
   position: absolute;
   right: 0px;
 }
 .m20e .trait.description .lock-wrapper:hover .bio-link {
-  visibility: visible;
-}
-.m20e .trait.description .edit-wrapper:hover .bio-link {
   visibility: visible;
 }
 .m20e .description textarea {

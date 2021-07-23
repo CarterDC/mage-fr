@@ -80,7 +80,7 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.isOwner = this.actor.isOwner;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
-    sheetData.canModifyValues = ( game.user.isGM || ! actorData.data.creationDone );
+    sheetData.valuesEditLock = ( actorData.data.creationDone && !game.user.isGM );
     
     const paradigm = this.actor.paradigm;
     if( paradigm ) {
@@ -129,6 +129,10 @@ export default class M20eActorSheet extends ActorSheet {
   /*  Context Menus                               */
   /* -------------------------------------------- */
 
+  /**
+   * @return the context menu options for the '.header-row.charname' element
+   * atm only paradigm item stuff
+   */
   _getNameContextOptions() {
     return [
       {
@@ -156,6 +160,10 @@ export default class M20eActorSheet extends ActorSheet {
     ];
   }
 
+  /**
+   * @return the context menu options for the '.trait' elements
+   * link trait in chat, edit trait, remove JE link from trait that have one
+   */
   _getTraitContextOptions() {
     return [
       {
@@ -167,6 +175,13 @@ export default class M20eActorSheet extends ActorSheet {
         condition: element => {
           return element[0].classList.contains('linkable');
         }
+      },
+      {
+        name: game.i18n.localize('M20E.context.editTrait'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: element => {
+          this._editItem(new Trait(element[0]));
+        }//todo : maybe add a condition of some sort ?
       },
       {
         name: game.i18n.localize('M20E.context.removeLink'),
@@ -181,6 +196,10 @@ export default class M20eActorSheet extends ActorSheet {
     ];
   }
 
+ /**
+   * @return the context menu options for the '.resource-context' elements
+   * edit health max, edit heal malus list, edit willpower max.
+   */
   _getResourceContextOptions() {
     return [
       {
@@ -232,55 +251,20 @@ export default class M20eActorSheet extends ActorSheet {
   /*  Event Handlers                              */
   /* -------------------------------------------- */
 
-  async _onDiceClick(event) {
-    //todo : add diceThrows in array on actor for render on update
-    event.preventDefault()
+  _onDiceClick(event) {
     //retrieve traits to roll
     const traitsToRoll = this.getTraitsToRoll();
-    const diceThrow = new DiceThrow({document: this.actor, traitsToRoll: traitsToRoll});
+    const diceThrow = new DiceThrow({
+      document: this.actor,
+      traitsToRoll: traitsToRoll
+    });
     if ( event.shiftKey ) {
       //throw right away
-      this.testage(event.currentTarget);
-
+      diceThrow.throwDice();
     } else {
       //display dice throw dialog
       diceThrow.render(true);
     }
-  }
-
-  testage(canvas) {
-    const d3d = game.dice3d;
-    const options = { dimensions: { w: 45, h: 45 }, autoscale: false, scale: 35, boxType:"showcase" };
-    let diceFactory = d3d.box.dicefactory;
-    log(diceFactory);
-    //diceFactory.dice = {};
-    //diceFactory.dice.d10 = d3d.box.dicefactory.dice.d10;
-
-    const config = mergeObject(d3d.constructor.ALL_CONFIG(), options);
-
-    this.box = new d3d.box.constructor(canvas, diceFactory, config);
-    this.box.initialize().then(()=>{
-      this.box.showcase(config);
-    });
-  }
-
-  /**
-  * Check all rollable categories for highlighted elements (ie data-active="true")
-  * return said elements as Trait objects for later consumption by Throw app.
-  * also toggle the active status of highlighted elements after we got them
-  * 
-  * @return {Array} an Array of Traits objects that correspond to the previously highlighted elements
-  */
-  getTraitsToRoll() { 
-    //overly complicated statement that could be easily understood if coded with twice the lines
-    return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
-      const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
-      return elementList.length === 0 ? acc : 
-        [...acc, ...elementList.toArray().map(traitElement => {
-          traitElement.dataset.active = false;
-          return new Trait(traitElement);
-        })];
-    }, []);
   }
 
   /**
@@ -537,7 +521,6 @@ export default class M20eActorSheet extends ActorSheet {
     });
   }
 
-
   /**
   * Removes link parameters from a specific trait
   * Called in response to a contextMenu click on a '.trait' that has an active link
@@ -561,6 +544,25 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
+  * Check all rollable categories for highlighted elements (ie data-active="true")
+  * return said elements as Trait objects for later consumption by Throw app.
+  * also toggle the active status of highlighted elements after we got them
+  * 
+  * @return {Array} an Array of Traits objects that correspond to the previously highlighted elements
+  */
+   getTraitsToRoll() { 
+    //overly complicated statement that could be easily understood if coded with twice the lines
+    return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
+      const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
+      return elementList.length === 0 ? acc : 
+        [...acc, ...elementList.toArray().map(traitElement => {
+          traitElement.dataset.active = false;
+          return new Trait(traitElement);
+        })];
+    }, []);
+  }
+
+  /**
   * Create a new Journal Entry and link it to the actor.
   * new journal is created with same permissions as the actor.
   * so any player owner the the actor is also owner of the journal.
@@ -572,14 +574,15 @@ export default class M20eActorSheet extends ActorSheet {
       return;
     }
     if ( !this.actor.hasPlayerOwner ) {
-      //todo : add prompt
+      const confirmation = await Dialog.confirm({
+        options: {classes: ['dialog', 'm20e']},
+        title: `${game.i18n.localize('DOCUMENT.JournalEntry')} : ${this.actor.name}`,
+        content: game.i18n.format("M20E.prompts.actorHasNoOwner", {name: this.actor.name}),
+        rejectClose: false
+      });
+      if ( !confirmation ) { return; }
     }
-    const perms = this.actor.data.permission;
-    const personnalJE = await JournalEntry.create({
-      name: this.actor.name,
-      content: 'Blabla',
-      permission: perms
-    }, { renderSheet: true });
+    const personnalJE = await utils.createPersonnalJE(this.actor, { renderSheet: true });
 
     let obj = {};
     obj[`data.link`] = {type:'JournalEntry', pack: '', id: personnalJE.id};
@@ -859,5 +862,25 @@ export default class M20eActorSheet extends ActorSheet {
     } else {
       return ui.notifications.warn(game.i18n.localize('M20E.notifications.cantDrop'));
     }
+  }
+
+  /* -------------------------------------------- */
+  /*  TESTING AREA                                */
+  /* -------------------------------------------- */
+
+  testage(canvas) {
+    const d3d = game.dice3d;
+    const options = { dimensions: { w: 45, h: 45 }, autoscale: false, scale: 35, boxType:"showcase" };
+    let diceFactory = d3d.box.dicefactory;
+    log(diceFactory);
+    //diceFactory.dice = {};
+    //diceFactory.dice.d10 = d3d.box.dicefactory.dice.d10;
+
+    const config = mergeObject(d3d.constructor.ALL_CONFIG(), options);
+
+    this.box = new d3d.box.constructor(canvas, diceFactory, config);
+    this.box.initialize().then(()=>{
+      this.box.showcase(config);
+    });
   }
 }

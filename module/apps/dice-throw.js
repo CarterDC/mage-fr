@@ -22,14 +22,17 @@ export class DiceThrow {
     this._app = null;
     this._document = document;
     this._traitsToRoll = traitsToRoll;
-    this._options = options;
+    this.options = options;
     this.initialize();
   }
 
+  /**
+   * intitialises the DiceThrow with option values || default
+   */
   initialize() {
     //todo : use options to modify values / mods
     this.dicePoolMods = {
-      userMod: 0,
+      userMod: 0
     };
     this.thresholdBase = game.settings.get("mage-fr", "baseRollThreshold");
     this.thresholdMods = {//not so sure about that
@@ -38,10 +41,20 @@ export class DiceThrow {
     this.throwSettings = TROWSETTINGS_DEDUCTFAILURE;
     //todo : maybe have a success mods array + extended rolls
 
-    this._initTraits();
+    this.initTraits();
     this.prepareData();
   }
 
+  /**
+   * separate init for extended traits
+   */
+  initTraits() {
+    this.xTraitsToRoll = this._document.extendTraits(this._traitsToRoll);
+  }
+
+  /**
+   * Calculates and store some relevant data for display / roll
+   */
   prepareData() {
     this.dicePoolBase = this.getDicePoolBase();
     this.dicePoolMods.healthMod = this.getHealthMod(),
@@ -49,21 +62,15 @@ export class DiceThrow {
     this.dicePoolTotal = Math.max(this.dicePoolBase + this.dicePoolMod, 1);
   }
 
-  static fromMacro(macroParams) {
-    //todo : create new instance from macro parameters
+  update() {
+    //recalc shit
+    this.prepareData();
+    //render
+    this.render(true);
   }
 
-  getMacroParameters() {
-    //todo : return parameters needed to populate a macro
-  }
-
-
-  _initTraits() {
-    this.xTraitsToRoll = this._document.extendTraits(this._traitsToRoll);
-  }
-
-  get actor() {
-    return this._document.isEmbedded ? this._document.parent : this._document;
+  render(force=false) {
+    this.app.render(force);
   }
 
   get app() {
@@ -75,6 +82,20 @@ export class DiceThrow {
       });
     }
     return this._app;
+  }
+
+  static fromMacro(macroParams) {
+    //todo : create new instance from macro parameters
+  }
+
+  getMacroParameters() {
+    //todo : return parameters needed to populate a macro
+  }
+
+
+
+  get actor() {
+    return this._document.isEmbedded ? this._document.parent : this._document;
   }
 
   get dicePoolMalus() {
@@ -93,6 +114,12 @@ export class DiceThrow {
     return Object.values(this.dicePoolMods).reduce((acc, cur) => {
       return acc + cur;
     }, 0);
+  }
+
+  removeTrait(index){
+    this._traitsToRoll.splice(index, 1);
+    this.xTraitsToRoll.splice(index, 1);
+    this.update();
   }
 
   getDicePoolBase() {
@@ -162,21 +189,8 @@ export class DiceThrow {
 
   }
 
-  removeTrait(index){
-    this._traitsToRoll.splice(index, 1);
-    this.xTraitsToRoll.splice(index, 1);
-    this.update();
-  }
 
-  update() {
-    //recalc shit
-    this.prepareData();
-    //render
-    this.render(true);
-  }
 
-  render(force=false) {
-    this.app.render(force);
-  }
+
 
 }

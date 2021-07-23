@@ -77,6 +77,31 @@ Hooks.once('init', async function () {
 /*  Other usefull Hooks                         */
 /* -------------------------------------------- */
 
+Hooks.once('ready', async function () {
+
+  //display welcome message if needed
+  if ( !game.user.getFlag("mage-fr","welcomeMessageShown") ) {
+    const msgTemplate = "systems/mage-fr/templates/chat/welcome-message.hbs";
+    //prepare the template Data
+    const templateData = game.i18n.localize('M20E.welcomeMessage');
+    templateData.isGM = game.user.isGM;
+    const module = game.modules.get(game.settings.get("mage-fr", "compendiumScope"));
+    templateData.packModuleActivated = module && module.active;
+
+    const htmlContent =  await renderTemplate(msgTemplate, templateData);
+    //send message
+    ChatMessage.create({
+      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+      content: htmlContent,
+      flavor: templateData.welcome,
+      speaker: {alias: "Carter_DC"},
+      whisper:[game.user.id]
+    });
+    //flag the user
+    game.user.setFlag("mage-fr","welcomeMessageShown", true);
+  }
+});
+
 
 Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html));
 

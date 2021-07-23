@@ -1,8 +1,20 @@
+// Import Helpers
+import * as utils from './utils/utils.js'
+import { log } from "./utils/utils.js";
+
 
 export function addChatListeners(html) {
     html.on('click', '.m20e.card', onCardFooterClick);
+    html.on('click', '#linkToOptions', onLinkToOptionsClick);
 }
 
+async function onLinkToOptionsClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const sheet = game.settings.sheet;
+  sheet._tabs[0].active = 'system';
+  sheet.render(true);
+}
 
 function onCardFooterClick(event) {
   event.preventDefault();
@@ -18,17 +30,15 @@ export async function displayCard(actor, templateData) {
   const contentTemplate = "systems/mage-fr/templates/chat/trait-card.hbs";
   const htmlFlavor = await renderTemplate(flavorTemplate, templateData);
   const htmlContent = await renderTemplate(contentTemplate, templateData);
-  
-  const chatData = {
+  log(ChatMessage.getSpeaker());
+  return ChatMessage.create({
     user: game.user.id,
     type: CONST.CHAT_MESSAGE_TYPES.OTHER,
     content: htmlContent,
     flavor: htmlFlavor,
+    whisper:[game.user.id], //linked cards are self-whisperd by default
     //todo : look into getSpeaker !
     speaker: ChatMessage.getSpeaker({actor: actor})
-  };
-  
-  ChatMessage.applyRollMode(chatData, game.settings.get("core", "rollMode"));
-  return ChatMessage.create(chatData);
+  });
 }
 
