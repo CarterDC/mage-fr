@@ -18,7 +18,7 @@
               </div>
               <div class= "field" title="{{localize 'M20E.hints.value0to5'}}">
                   <label for="data.value">{{localize "M20E.labels.value"}} : </label>
-                  <input name="data.value" {{disabled canModifyValues}} type="text" value="{{data.value}}" data-dtype="Number" min="0" max="5"/>
+                  <input name="data.value" {{disabled valuesEditLock}} type="text" value="{{data.value}}" data-dtype="Number" min="0" max="5"/>
               </div>
               <div class= "field" title="{{localize 'M20E.hints.specialisation'}}">
                   <label for="data.specialisation">{{localize "M20E.labels.specialisation"}} : </label>

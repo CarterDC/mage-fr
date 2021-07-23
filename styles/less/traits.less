@@ -148,16 +148,22 @@
       text-align: right;
       padding-right: 5px;
     }
-    .edit-wrapper{
+    .lock-wrapper{
       position: relative;
       flex: 0 0 65%;
       justify-content: left;
       input{
         flex: 1 1;
         padding: 3px 0;
+        padding: 3px 5px;
+      }
+      input:disabled{
+        border: none;
+        font-weight: bold;
       }
     }
-    .lock-wrapper{
+
+    .bak{
       position: relative;
       height: 23px;
       background: rgba(0, 0, 0, 0.05);
@@ -170,21 +176,12 @@
       margin: 0 15px 12px; 
       border-color: var(--titleColor);
     }
-    .edit-wrapper[data-locked='true']{
-      display: none;
-    }
-    .lock-wrapper[data-locked='false']{
-      display: none;
-    }
     .bio-link{
       visibility: hidden;
       position: absolute;
       right: 0px;
     }
     .lock-wrapper:hover .bio-link{
-      visibility: visible;
-    }
-    .edit-wrapper:hover .bio-link{
       visibility: visible;
     }
   }

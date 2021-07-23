@@ -65,20 +65,6 @@ export const registerSystemSettings = function() {
     }
   });
 
-  game.settings.register("mage-fr", "defaultThrowSettings", {
-    name: "SETTINGS.defaultThrowSettings",
-    hint: "SETTINGS.defaultThrowSettingsHint",
-    scope: "world",
-    config: true,
-    default: 1,
-    type: Number,
-    choices: {
-      1 : "SETTINGS.throwSettingsBlandRoll",
-      2 : "SETTINGS.throwSettingsDeductFailure",
-      3 : "SETTINGS.throwSettingsDFXS"
-    }
-  });
-
   /**
    * Register wether players can see their paradox points setting
    */

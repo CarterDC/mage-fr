@@ -56,8 +56,8 @@ export const registerHandlebarsHelpers = function() {
     return forcePrefix !== num ? `${forcePrefix}${num}` : `+${num}`;
   })
 
-  Handlebars.registerHelper('disabled', function(canModifyValues) {
-    return canModifyValues ? '' : 'disabled';
+  Handlebars.registerHelper('disabled', function(locked) {
+    return locked ? 'disabled' : '';
   })
 
   Handlebars.registerHelper("clickableBullet", function(list, key, index) {

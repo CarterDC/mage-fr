@@ -1,0 +1,24 @@
+<section class="m20e card">
+    <header class="card-tooltip">
+        <div class="tooltip-part item-ddesc">
+          {{{header}}}
+        </div>
+        <div class="tooltip-part item-ddesc">
+          {{{licence}}}
+          <img class="item-img" src="systems/mage-fr/assets/images/darkpack_tranparent_logo.png"/>
+        </div>
+        {{#if isGM}}
+        {{#unless packModuleActivated}}
+        <div class="tooltip-part item-ddesc">
+          {{{noModule}}}
+        </div>
+        {{/unless}}
+        <div class="tooltip-part item-ddesc">
+          {{{settings}}}
+        </div>
+        {{/if}}
+    </header>
+    <header class="card-footer">
+        <span class="item-type">{{clickMe}}</span>
+    </header>
+</section>

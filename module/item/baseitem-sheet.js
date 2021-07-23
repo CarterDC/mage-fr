@@ -55,9 +55,9 @@ export default class M20eItemSheet extends ItemSheet {
     //other usefull data
     sheetData.config = CONFIG.M20E;
     sheetData.isGM = game.user.isGM;
-    sheetData.canModifyValues = this.item.isOwned ?
-      ( game.user.isGM || ! this.actor.data.data.creationDone ) :
-      true ;    
+    sheetData.valuesEditLock = this.item.isOwned ?
+      ( this.item.actor.data.data.creationDone && !game.user.isGM ) :
+      false;
 
     return sheetData;
   }

@@ -182,6 +182,30 @@ export async function getDefaultDescription(category) {
   const fullDescription = game.i18n.localize(path);
   return await renderTemplate(descTemplate, fullDescription);
 }
+/**
+ * creates a new JE for a specific actor.
+ * copy the actor's permissions onto the new journal
+ * creates new folder if doesn't exist
+ * todo : maybe create journal from flag ?
+ * todo : create description template
+ * @param  {M20eActor} actor
+ */
+export async function createPersonnalJE(actor, options) {
+  const folderName = game.i18n.localize('M20E.labels.personnalJEs');
+  let folder = game.folders.find(folder => {
+    return folder.name === folderName && folder.type === 'JournalEntry';
+  });
+  if ( !folder ) {
+    folder = await Folder.create({name: folderName, type: 'JournalEntry'});
+  }
+  const perms = actor.data.permission;
+  return await JournalEntry.create({
+    name: actor.name,
+    content: game.i18n.localize('M20E.blabla'),
+    permission: perms,
+    folder: folder.id
+  }, options);
+}
 
 /**
  * Returns a document from a compendium given packName and documentName
