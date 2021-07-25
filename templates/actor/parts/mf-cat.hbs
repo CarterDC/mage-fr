@@ -1,0 +1,45 @@
+<section class="category meritsflaws" data-category="meritsflaws">
+    {{!-- MERITS & FLAWS --}}
+    {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="meritsflaws" lock = locks.meritsflaws}}
+    <div class="grid two-col">
+        {{#each items.meritsflaws as |meritflawgroup key|}}
+        <div class="grid one-col">
+            <div class="mini-banner">
+                <a class="mini-button decoy" data-locked="{{../locks.meritsflaws}}"></a>
+                <label class="column-header">{{localize (concat "M20E.subType." key)}}</label>
+                <a class="mini-button" data-disabled="{{../valuesEditLock}}" data-category="meritsflaws" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.meritsflaws}}"><i class="fas fa-plus"></i></a>
+            </div>
+            {{#each meritflawgroup as |meritflaw key|}}
+            <div class="trait meritflaw linkable" data-item-id="{{meritflaw._id}}" data-active= "false"> 
+                <img class="trait-img" src="{{meritflaw.img}}"/>
+                <a class="trait-label tooltip" data-item-id="{{meritflaw._id}}">
+                    {{#if meritflaw.data.displayName}}
+                    {{meritflaw.data.displayName}}
+                    {{else}}
+                    {{meritflaw.name}}
+                    {{/if}}
+                    {{#if meritflaw.data.displayDescription}}
+                    <span class="bottomtooltiptext">{{{meritflaw.data.displayDescription}}}</span>
+                    {{/if}}
+                </a>
+                <div class="ligne"></div>
+                <div class="edit-bar" data-locked="{{../../locks.meritsflaws}}">
+                    <input class="inline-edit" type="text" value="{{meritflaw.data.value}}" {{disabled ../../valuesEditLock}} data-dtype="Number" min="0" max="5"/>
+                    <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
+                    <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
+                </div>
+                <div class="bullet-display" data-locked="{{../../locks.meritsflaws}}">
+                    <div class="meritflaw-value">
+                        {{#if (eq meritflaw.data.subType "flaw")}}
+                        {{sign meritflaw.data.value "-"}}
+                        {{else}}
+                        {{sign meritflaw.data.value}}
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        {{/each}}
+    </div>
+</section>

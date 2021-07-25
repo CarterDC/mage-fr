@@ -17,20 +17,20 @@ export default class M20eActor extends Actor {
     super(data, context);
   }
 
-  /** @override */
+  /**
+   * Adds base options/items to the actor (only if created from scratch !)
+   *  @override */
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     const actorData = this.data;
+    //check if actor is from existing actor (going in or out a compendium coll)
+    if ( actorData.flags.core?.sourceId ) { return; }
 
     if ( actorData.data.isPlayable === true ) {
       //auto link tokens in case of player character
       //todo : maybe move that in sub class _preCreate if needed
       actorData.token.update({actorLink: true});
     }
-
-    //check if actor already has items (ie actor from compendium or other import)
-    if ( actorData.items.size > 0 ) { return; }
-    //actor is brand new (ie not imported with it's own items)
 
     //get baseAbilities from compendium if any or defaultAbilities from config
     const baseAbilities = await this._getBaseAbilities();
@@ -305,7 +305,8 @@ export default class M20eActor extends Actor {
       }
     }
   }
-
+  
+/*
   async modQuintessence(mod) {
     const {quintessence, paradox}  = this.data.data.magepower;
     let newValue = quintessence + parseInt(mod);
@@ -323,7 +324,7 @@ export default class M20eActor extends Actor {
     return this.safeUpdateProperty('magepower.paradox', newValue);
   }
 
-/*  async addWound(amount, woundType = '', overhead = false) {
+  async addWound(amount, woundType = '', overhead = false) {
     const health = duplicate(this.data.data.health);
     woundType = woundType === '' ? 'value' : woundType;
     const current = foundry.utils.getProperty(health, woundType);

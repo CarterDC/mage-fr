@@ -70,6 +70,13 @@ export const registerHandlebarsHelpers = function() {
     return (value > index) ? "active" : "";
   })
 
+  Handlebars.registerHelper('throwresult', function (result) {
+    if(result == "?") return "?";
+    if(result == "0") return game.i18n.localize('M20E.throwresult.failure') + " !";
+    if(result > 0) return result + " " + game.i18n.localize('M20E.throwresult.success') + " !";
+    return game.i18n.localize('M20E.throwresult.critfailure') + " (" + result + ") !";
+  })
+
   Handlebars.registerHelper('in', function() {
     let entryToFind = arguments[0];
     for(let i = 1; i < arguments.length; i++){

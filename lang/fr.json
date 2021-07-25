@@ -1,4 +1,18 @@
 {
+  "ACTOR.TypeCharmage": "Perso Mage",
+  "ACTOR.TypeNpcmage": "PNJ Mage",
+  "ACTOR.TypeNpcsleeper": "PNJ Dormeur",
+  "ITEM.TypeParadigm": "Paradigme",
+  "ITEM.TypeAbility": "Capacité",
+  "ITEM.TypeRote": "Routine",
+  "ITEM.TypeBackground": "Historique",
+  "ITEM.TypeMeritflaw": "Atout & Handicap",
+  "ITEM.TypeMeritflawAlt": "Atout /<br>Handicap",
+  "ITEM.TypeEvent": "Évènement de Chronique",
+  "ITEM.TypeEventAlt": "Chronique :<br>Évènement",
+  "ITEM.TypeContact": "Contact",
+  "ITEM.TypeConsumable": "Consommable",
+
   "M20E": {
 
     "arete":        "Arété",
@@ -88,7 +102,7 @@
     },
 
     "defaultAbilities": {
-      "academics": "Érudition",
+      "academics": "Erudition",
       "alertness": "Vigilance",
       "art": "Art",
       "athletics": "Athlétisme",
@@ -99,9 +113,9 @@
       "crafts": "Artisanats",
       "drive": "Conduite",
       "empathy": "Empathie",
-      "enigmas": "Énigmes",
-      "esoterica": "Ésotérisme",
-      "etiquette": "Étiquette",
+      "enigmas": "Enigmes",
+      "esoterica": "Esotérisme",
+      "etiquette": "Etiquette",
       "expression": "Expression",
       "firearms": "Armes à feu",
       "intimidation": "Intimidation",
@@ -464,6 +478,7 @@
       "newParadigm": "Les modifications de CSS dûes au paradigme ne seront visibles qu'après un refresh (F5).",
       "noJournal": "Aucun lien vers un Journal !",
       "notLocalized": "L'entrée '{path}' n'existe pas dans le fichier de localisation !",
+      "notOutsideCreation": "Vous ne pouvez pas faire celà en dehors de la 'Création de perso' - demandez au GM.",
       "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
       "packNotFound": "Le compendium '{packName}' n'est pas trouvable !"
     },
@@ -512,6 +527,12 @@
       "talents": "Talents"
     },
 
+    "throwresult": {
+      "failure": "Echec",
+      "success": "Succès",
+      "critfailure": "Echec Critique"
+    },
+
     "welcomeMessage": {
       "welcome": "Bienvenue !",
       "header": "<p>Vous voyez ce message car c'est la première fois que vous vous connectez sur ce monde, alors, bienvenue !</p><p>J'espère que vous passerez de bons moments en utilisant mon système pour Mage M20e.</p>",
@@ -523,21 +544,11 @@
 
   },
 
-  "ACTOR.TypeCharMage": "Perso Mage",
-  "ITEM.TypeParadigm": "Paradigme",
-  "ITEM.TypeAbility": "Capacité",
-  "ITEM.TypeRote": "Routine",
-  "ITEM.TypeBackground": "Historique",
-  "ITEM.TypeMeritflaw": "Atout & Handicap",
-  "ITEM.TypeMeritflawAlt": "Atout /<br>Handicap",
-  "ITEM.TypeEvent": "Évènement de Chronique",
-  "ITEM.TypeEventAlt": "Chronique :<br>Évènement",
-  "ITEM.TypeContact": "Contact",
-  "ITEM.TypeConsumable": "Consommable",
-
   "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",
   "SETTINGS.compendiumScope": "Nom du module de Compendiums.",
   "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",
+  "SETTINGS.discordInvite": "Discord",
+  "SETTINGS.discordInviteHint": "Rejoindre le server discord 'Mage-Fr' (Carter_DC#1097 pour me contacter).",
   "SETTINGS.None": "Vous n'avez pas les permissions nécessaires pour voir / modifier les options de ce système.",
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
   "SETTINGS.playersCanSeeParadoxPoints": "Peut voir les points de Paradoxe.",

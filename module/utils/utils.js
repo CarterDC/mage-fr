@@ -188,7 +188,9 @@ export async function getDefaultDescription(category) {
  * creates new folder if doesn't exist
  * todo : maybe create journal from flag ?
  * todo : create description template
- * @param  {M20eActor} actor
+ * 
+ * @param {M20eActor} actor
+ * @param {Object} options
  */
 export async function createPersonnalJE(actor, options) {
   const folderName = game.i18n.localize('M20E.labels.personnalJEs');

@@ -92,8 +92,6 @@ export class DiceThrow {
     //todo : return parameters needed to populate a macro
   }
 
-
-
   get actor() {
     return this._document.isEmbedded ? this._document.parent : this._document;
   }
@@ -175,6 +173,10 @@ export class DiceThrow {
   }
 
   getExplodeSuccess(){
+    if ( this.throwSettings === TROWSETTINGS_DFXPLODESUCCESS ) { return true; }
+    return true;
+    /*
+    (this.throwSettings === TROWSETTINGS_DFXPLODESUCCESS)
     let xplodeSuccess = false;
     //xplodeSuccess = xplodeSuccess || (game.settings.get("mage-fr", "roteRule") && isRote);
     if(game.settings.get("mage-fr", "specialisationRule")){
@@ -182,15 +184,37 @@ export class DiceThrow {
           xplodeSuccess = xplodeSuccess || (xTrait.useSpec === true);
       })
     }
-    return xplodeSuccess;
+    return xplodeSuccess;*/
   }
 
   async throwDice() {
-
+    //change formula according to throwSettings
+    const deductFailures = (this.throwSettings === TROWSETTINGS_BLANDROLL) ? '' :  'df=1';
+    //check if rote or spé or throwSettings to apply xs modifier
+    const tenXplodeSuccess = this.getExplodeSuccess() ? "xs=10" : "";
+    //nicely pack everything we gonna need for our roll and our message
+    const rollData = {
+      documentId: this._document.id,
+      actorId: this.actor.id,
+      traitsToRoll: this._traitsToRoll,
+      option: this.options,
+      dicePoolBase: this.dicePoolBase,
+      dicePoolMods: this.dicePoolMods,
+      dicePoolTotal: this.dicePoolTotal,
+      thresholdBase: this.thresholdBase,
+      thresholdMods: this.thresholdMods,
+      thresholdTotal: this.thresholdBase,
+      flavor: '',
+      explodeSuccess: this.getExplodeSuccess() ? 'xs=10' : '',
+      deductFailures: (this.throwSettings === TROWSETTINGS_BLANDROLL) ? '' :  'df=1'
+    }
+    const rollMode = this.rollMode || game.settings.get("core", "rollMode");
+    const formula = `(@dicePoolTotal)d10${tenXplodeSuccess}cs>=(@thresholdTotal)${deductFailures}`;
+    const mageRoll = new CONFIG.Dice.MageRoll(formula, rollData, rollData);
+    //the async evaluation is gonna be done by the toMessage()
+    return await mageRoll.toMessage({
+      speaker : ChatMessage.getSpeaker({actor: this.actor}),
+      flavor : rollData.flavor
+    }, {rollMode});
   }
-
-
-
-
-
 }

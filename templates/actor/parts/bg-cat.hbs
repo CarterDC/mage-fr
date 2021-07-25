@@ -1,0 +1,32 @@
+<section class="category backgrounds" data-category="backgrounds">
+    {{!-- BACKGROUNDS --}}
+    {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="backgrounds" lock = locks.backgrounds addButton = true}}
+    <div class="grid two-col">
+        {{#each items.backgrounds as |background key|}}
+        <div class="trait background linkable" data-item-id="{{background._id}}" data-active= "false"> 
+            <img class="trait-img" src="{{background.img}}"/>
+            <a class="trait-label tooltip" data-item-id="{{background._id}}">
+                {{#if background.data.displayName}}
+                {{background.data.displayName}}
+                {{else}}
+                {{background.name}}
+                {{/if}}
+                {{#if background.data.displayDescription}}
+                <span class="bottomtooltiptext">{{{background.data.displayDescription}}}</span>
+                {{/if}}
+            </a>
+            <div class="ligne"></div>
+            <div class="edit-bar" data-locked="{{../locks.backgrounds}}">
+                <input class="inline-edit" type="text" value="{{background.data.value}}" data-dtype="Number" min="0" max="5"/>   
+                <a class="mini-button" data-action="edit"><i class="fas fa-pencil-alt"></i></a>
+                <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
+            </div>
+            <div class="bullet-display" data-locked="{{../locks.backgrounds}}">                        
+                {{#forLoop 5}}
+                <span class="bullet" data-index="{{this}}" data-state="{{bulletState background.data.value this}}"></span>
+                {{/forLoop}}
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</section>

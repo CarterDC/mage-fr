@@ -22,11 +22,11 @@ export class FakeItem extends FormApplication {
     this.actor = actor;
     this.itemData = itemData;
 
-    const  itemSheetOptions = CONFIG.M20E.itemSheetOptions['fakeitem'];
+    /*const  itemSheetOptions = CONFIG.M20E.itemSheetOptions['fakeitem'];
     if ( itemSheetOptions ) {
       this.options.width = this.position.width = itemSheetOptions.width;
       this.options.height = this.position.height = itemSheetOptions.height;
-    }
+    }*/
     //add the paradigm css class if any to the default options.
     const paraItem = this.actor.paradigm;
     if ( paraItem ) {
@@ -39,6 +39,8 @@ export class FakeItem extends FormApplication {
     return mergeObject(super.defaultOptions, {
       classes: ['m20e', 'sheet', 'item'],
       template: 'systems/mage-fr/templates/item/fakeitem-sheet.hbs',
+      width: 400,
+      height: 'auto',
       resizable: true,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'detail' }]
     });

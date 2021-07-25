@@ -1,0 +1,31 @@
+<div class="dice-tooltip">
+    {{#each parts as |part key|}}
+    <section class="tooltip-part">
+        <div class="dice">
+            {{#if part.options.isUpgraded}}
+            <header class="willpower-success">
+                <span >+ 1 Succès (Volonté)</span>
+            </header>
+            {{/if}}
+            <header class="part-header flexrow">
+                <div class="tooltip-infos">
+                    <span class="tooltip-info">
+                        {{localize "M20E.labels.pool"}} : {{part.options.dicePoolBase}}
+                    </span>
+                </div>
+                <div class="tooltip-infos">
+                    <span class="tooltip-info">
+                      {{localize "M20E.labels.thrsh"}} : {{part.options.thresholdBase}}
+                    </span>
+                </div>
+                <span class="part-total">{{part.total}}</span>
+            </header>
+            <ol class="dice-rolls">
+            {{#each part.rolls  as |roll key|}}
+                <li class="roll {{roll.classes}}">{{{roll.result}}}</li>
+            {{/each}}
+            </ol>
+        </div>
+    </section>
+    {{/each}}
+</div>
