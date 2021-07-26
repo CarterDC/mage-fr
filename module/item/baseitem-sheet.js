@@ -14,11 +14,11 @@ export default class M20eItemSheet extends ItemSheet {
   constructor(...args) {
     super(...args);
    
-    const itemSheetOptions = CONFIG.M20E.itemSheetOptions[this.object.data.type];
+    /*const itemSheetOptions = CONFIG.M20E.itemSheetOptions[this.object.data.type];
     if( itemSheetOptions ) {
       this.options.width = this.position.width = itemSheetOptions.width;
       this.options.height = this.position.height = itemSheetOptions.height;
-    }
+    }*/
     if ( this.item.isOwned ) {
       //add the paradigm css class if any to the default options.
       const paraItem = this.item.actor.paradigm;
@@ -32,6 +32,8 @@ export default class M20eItemSheet extends ItemSheet {
   static get defaultOptions() {
     return mergeObject( super.defaultOptions, {
      classes: ['m20e', 'sheet', 'item'],
+     width: 400,
+     height: 'auto',
      tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'detail' }]
    });
   }
@@ -55,10 +57,12 @@ export default class M20eItemSheet extends ItemSheet {
     //other usefull data
     sheetData.config = CONFIG.M20E;
     sheetData.isGM = game.user.isGM;
+    sheetData.isOwner = this.item.isOwner;
     sheetData.valuesEditLock = this.item.isOwned ?
       ( this.item.actor.data.data.creationDone && !game.user.isGM ) :
       false;
 
+    log({item : sheetData.item.name, sheetData : sheetData});
     return sheetData;
   }
 
@@ -66,15 +70,14 @@ export default class M20eItemSheet extends ItemSheet {
   /** @override */
   activateListeners(html) {
 
-
     if ( this.options.editable ) {
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
-      html.find('.listened-input').change(this._onInputChange.bind(this));
+      html.find('.meritflaw select').change(this._onSubtypeChange.bind(this));
+
     }
     if ( game.user.isGM ) {
       
     }
-
     super.activateListeners(html);
   }
 
@@ -82,12 +85,36 @@ export default class M20eItemSheet extends ItemSheet {
 
   }
 
-  async _onInputChange(event) {
+  /**
+  *  @override
+  * added validation against dtype and min max before updating
+  * re-renders the sheet to display the previous value if update is invalid
+  * note: though data are validated against dtype by foundry,
+  * updating a number with a string leaves the input blank
+  */
+  async _onChangeInput(event) {
     const element = event.target;
     if ( ! utils.isValidUpdate(element) ) {
       event.preventDefault();
       return this.render();
     }
     super._onChangeInput(event);
+  }
+
+  /**
+   * Changes a meritflaw img in accordance to the selected meritflaw subtype
+   * Since we're updating the image, might as well update the subtype as well in one call
+   * hence the 'stopPropagation'
+   * @param  {} event the event that triggered ('.meritflaw select')
+   */
+  async _onSubtypeChange(event) {
+    event.stopPropagation();
+    const element = event.currentTarget;
+    const newSubType = element.options[element.selectedIndex].value;
+    const newImg = CONFIG.M20E.defaultImg[newSubType];
+
+    let updateObj = {['img']: newImg};
+    updateObj['data.subType'] = newSubType;
+    return this.item.update(updateObj);
   }
 }

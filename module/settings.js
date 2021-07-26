@@ -1,8 +1,29 @@
+import { FakeItem } from './apps/fakeitem-sheet.js'
+
+class Dummy extends FormApplication {
+  render(){
+    window.open("https://discord.gg/er4TUtV", "_blank");
+  }
+}
 export const registerSystemSettings = function() {
+
+  /**
+   * Display button to open a link to Mage-fr discord server
+   * uses dummy formApp
+   */
+  game.settings.registerMenu("mage-fr", "discordInvite", {
+    name: "SETTINGS.discordInvite",
+    label: "SETTINGS.discordInvite",
+    hint: "SETTINGS.discordInviteHint",
+    icon: "fab fa-discord",
+    type: Dummy,
+    restricted: false
+  });
+
   /**
    * Register desired compendium module name (scope)
    */
-   game.settings.register("mage-fr", "compendiumScope", {
+  game.settings.register("mage-fr", "compendiumScope", {
     name: "SETTINGS.compendiumScope",
     hint: "SETTINGS.compendiumScopeHint",
     scope: "world",

@@ -28,6 +28,10 @@ export default class M20eItem extends Item {
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     const itemData = this.data;
+    
+    //check if item is from existing item (going in or out a compendium coll)
+    if ( itemData.flags.core?.sourceId ) { return; }
+
     //get specific type (subtype if any otherwise base type)
     const specificType = itemData.data.subType || itemData.type;
 

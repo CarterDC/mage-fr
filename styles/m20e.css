@@ -407,15 +407,18 @@
   border: 1px solid var(--m20e-lightGrey);
   border-radius: 3px;
 }
-.m20e .mini-button[data-enabled='false'] {
+.m20e .mini-button[data-disabled='true'] {
   color: var(--m20e-lightGrey);
   border: none;
   cursor: default;
 }
-.m20e .mini-button[data-enabled='true']:hover {
+.m20e .mini-button:hover {
   color: var(--m20e-darkGrey);
   text-shadow: none;
   box-shadow: 0 0 2px 1px var(--hoverColor);
+}
+.m20e .mini-button[data-disabled='true']:hover {
+  text-shadow: none;
 }
 .m20e .mini-button[data-locked='true'] {
   display: none;
@@ -532,7 +535,7 @@
   border: none;
   height: 25px;
   width: 25px;
-  margin: 0 5px;
+  margin: 0 5px 0 0;
   background-image: radial-gradient(rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
 }
 .m20e .trait .trait-label:hover {
@@ -671,17 +674,8 @@
   border: none;
   font-weight: bold;
 }
-.m20e .trait.description .bak {
-  position: relative;
-  height: 23px;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 3px;
-  flex: 0 0 65%;
-  justify-content: left;
-  padding: 3px 0 3px 5px;
-}
 .m20e .trait.description .ligne {
-  margin: 0 15px 12px;
+  margin: 0 25px 12px;
   border-color: var(--titleColor);
 }
 .m20e .trait.description .bio-link {
@@ -701,6 +695,19 @@
   font-weight: 400;
   font-style: oblique;
   color: #202020;
+}
+.m20e .trait.background {
+  margin: 2px 0px;
+}
+.m20e .trait.meritflaw {
+  margin: 2px 0px;
+}
+.m20e .trait.meritflaw .bullet-display {
+  flex: 0 0 65px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+  justify-content: left;
+  padding: 3px 0 3px 5px;
 }
 .m20e .trait.lexicon input {
   height: 24px;
@@ -814,11 +821,17 @@ li.chat-message .card .card-footer .item-img {
   margin: 5px 0 0 5px;
   background-image: radial-gradient(rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
 }
+.mage {
+  --titleColor: var(--titleColor);
+}
 .tech {
-  --titleColor: #6d90c7;
+  --titleColor: #3a537a;
   --highlightColor: #67957f;
   --hoverColor: #d69806;
   --titleFontFam: "signika", sans-serif;
+}
+.tech .window-content {
+  background: url(../assets/ui/parchment_b.jpg) repeat;
 }
 .m20e.dialogue .flavor {
   margin-bottom: 6px;
@@ -1029,8 +1042,12 @@ li.chat-message .card .card-footer .item-img {
 .m20e .two-col {
   grid-column: span 2 / span 2;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-left: 5px;
+  margin-right: 5px;
 }
 .m20e .three-col {
   grid-column: span 3 / span 3;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-left: 3px;
+  margin-right: 3px;
 }

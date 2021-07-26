@@ -70,7 +70,7 @@
     const traitElement = element.closest('.trait');
     
     switch (dataset.action){
-      case 'dice-throw':
+      case 'roll':
         this.diceThrow.throwDice();
         break;
       case 'remove':
@@ -96,11 +96,11 @@
         this.render();
         break;
       case 'settings': //cycle through throwSettings options. 
-        this.dialogOptions.throwSettings += 1;
+        /*this.dialogOptions.throwSettings += 1;
         if (this.dialogOptions.throwSettings > Dice.TROWSETTINGS_DFXPLODESUCCESS){
           this.dialogOptions.throwSettings = Dice.TROWSETTINGS_BLANDROLL;
         }
-        this.render();
+        this.render();*/
         break;
     };
   }

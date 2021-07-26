@@ -2,15 +2,17 @@
  * The Mage-Fr game system for Foundry Virtual Tabletop       
  * A system for playing the 20th anniversary edition of Mage  
  * This is NOT official World of Darkness material.           
- * Author: Carter_DC                                          
- * Software License: MIT                                      
+ * Author: Carter_DC - Discord @Carter_DC#1097                
+ * Discord server : https://discord.gg/6kB5wJaZTf             
  * Content License: https://www.worldofdarkness.com/dark-pack 
+ * Software License: MIT                                      
  * Repository: https://github.com/CarterDC/mage-fr            
  */
 
 // Import Modules
 import { M20E } from './module/config.js'
 import { registerSystemSettings } from "./module/settings.js";
+import * as dice from "./module/dice/dice.js";
 // Import Documents
 import M20eActor from './module/actor/actor.js'
 import M20eItem from './module/item/item.js'
@@ -19,7 +21,7 @@ import M20eParadigmItem from './module/item/para-item.js'
 import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItemSheet from './module/item/baseitem-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
-import DiceDialogue from './module/apps/dice-throw-dialog.js'
+import DiceDialogue from './module/dice/dice-throw-dialog.js'
 
 // Import Helpers
 import * as utils from './module/utils/utils.js'
@@ -54,19 +56,25 @@ Hooks.once('init', async function () {
   Actors.registerSheet('m20e', M20eActorSheet, { makeDefault: true });
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('m20e', M20eItemSheet, { 
-    types: ["ability", "background"], //todo , add all the other base item types
+    types: ["ability", "background", "meritflaw"], //todo , add all the other base item types
     makeDefault: true 
   });
   Items.registerSheet("m20e", M20eParadigmSheet, {
     types: ["paradigm"],
     makeDefault: true
   });
-  // 'register' dice throwing app
-  CONFIG.M20E.diceThrowApp = DiceDialogue;
 
   registerSystemSettings();
   registerHandlebarsHelpers();
   preloadHandlebarsTemplates();
+
+  //DICE thingies
+  CONFIG.Dice.MageRoll = dice.MageRoll;
+  CONFIG.Dice.rolls.push(dice.MageRoll);
+  CONFIG.M20E.diceThrowApp = DiceDialogue; //store class for later use
+  CONFIG.Dice.terms["s"] = dice.DieSuccess; //new dice term
+  dice.registerInitiative();
+  dice.registerDieModifier(); //adds the 'xs' (success on explode) modifier
 
   //test shit here !
 
@@ -101,7 +109,6 @@ Hooks.once('ready', async function () {
     game.user.setFlag("mage-fr","welcomeMessageShown", true);
   }
 });
-
 
 Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html));
 

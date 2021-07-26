@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": ["charMage"],
+    "types": ["charmage", "npcmage", "npcsleeper"],
     "templates":{
       "explanations": {
         "__comment1__": "attributes entries are ordered to be AUTO populated in 3 columns",
@@ -37,7 +37,7 @@
           "quintessence": 0,
           "paradox": 0
         }
-      },      
+      },
       "attributes":{
         "attributes":{
           "stre":{
@@ -137,7 +137,7 @@
         }
       }
     },
-    "charMage": {
+    "charmage": {
       "templates":[
         "playable",
         "resourceHealth",
@@ -206,14 +206,150 @@
 
       "aliases": [],
       "link": {},
-      "extra" : ""
+      "extra" : {}
+    },
+    "npcmage": {
+      "templates":[
+        "resourceHealth",
+        "resourceWillpower",
+        "resourceMagePower",
+        "attributes",
+        "spheres"
+      ],
+  
+      "arete": 1,
+  
+      "bio":{
+        "faction":{
+          "displayValue": "",
+          "link": {}
+        },
+        "birthday":{
+          "displayValue": ""
+        },
+        "mentor":{
+          "displayValue": "",
+          "link": {}
+        },
+        "apparentAge":{
+          "displayValue": ""
+        },
+        "cabale":{
+          "displayValue": "",
+          "link": {}
+        },
+        "awakeningAge":{
+          "displayValue": ""
+        },
+        "sep1":{
+          "displayValue": "ligne-sep"
+        },
+        "sep2": {
+          "displayValue": "ligne-sep"
+        },
+        "essence":{
+          "displayValue": "",
+          "link": {}
+        },
+        "gender":{
+          "displayValue": ""
+        },
+        "nature":{
+          "displayValue": "",
+          "link": {}
+        },
+        "height":{
+          "displayValue": ""
+        },
+        "attitude":{
+          "displayValue": "",
+          "link": {}
+        },
+        "weight": {
+          "displayValue": ""
+        }
+      },
+  
+      "description":"",
+      "possessedStuff":"",
+      "carriedStuff":"",
+  
+      "aliases": [],
+      "link": {},
+      "extra" : {}
+    },
+    "npcsleeper": {
+      "templates":[
+        "resourceHealth",
+        "resourceWillpower",
+        "attributes"
+      ],
+  
+      "bio":{
+        "faction":{
+          "displayValue": "",
+          "link": {}
+        },
+        "birthday":{
+          "displayValue": ""
+        },
+        "mentor":{
+          "displayValue": "",
+          "link": {}
+        },
+        "apparentAge":{
+          "displayValue": ""
+        },
+        "cabale":{
+          "displayValue": "",
+          "link": {}
+        },
+        "awakeningAge":{
+          "displayValue": ""
+        },
+        "sep1":{
+          "displayValue": "ligne-sep"
+        },
+        "sep2": {
+          "displayValue": "ligne-sep"
+        },
+        "essence":{
+          "displayValue": "",
+          "link": {}
+        },
+        "gender":{
+          "displayValue": ""
+        },
+        "nature":{
+          "displayValue": "",
+          "link": {}
+        },
+        "height":{
+          "displayValue": ""
+        },
+        "attitude":{
+          "displayValue": "",
+          "link": {}
+        },
+        "weight": {
+          "displayValue": ""
+        }
+      },
+  
+      "description":"",
+      "possessedStuff":"",
+      "carriedStuff":"",
+  
+      "aliases": [],
+      "link": {},
+      "extra" : {}
     }
   },
-
   "Item": {
     "types": [
       "ability",
       "background",
+      "meritflaw",
       "paradigm"
     ],
     "templates":{
@@ -236,9 +372,9 @@
       "templates":[
         "virtualTrait"
       ],
+      "displayName":"",
       "systemDescription": "",
       "displayDescription":"",
-      "extra": "",
       "effects":[]
     },
     "ability":{
@@ -251,6 +387,13 @@
       "systemDescription": "",
       "displayDescription":"",
       "extra": ""
+    },
+    "meritflaw":{
+      "subType": "merit",
+      "value": 0,
+      "displayName":"",
+      "systemDescription": "",
+      "displayDescription":""
     }
   }
 }

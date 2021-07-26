@@ -2,12 +2,12 @@
     {{!-- Abilities --}}
     {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="abilities" lock = locks.abilities}}
     <div class="grid three-col">
-      {{#each data.abilities as |abilitygroup key|}}
+      {{#each items.abilities as |abilitygroup key|}}
       <div class="grid one-col">
         <div class="mini-banner">
           <a class="mini-button decoy" data-locked="{{../locks.abilities}}"></a>
           <label class="column-header">{{localize (concat "M20E.subType." key)}}</label>
-          <a class="mini-button" data-enabled="{{../valuesEditLock}}" data-category="abilities" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.abilities}}"><i class="fas fa-plus"></i></a>
+          <a class="mini-button" data-disabled="{{../valuesEditLock}}" data-category="abilities" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.abilities}}"><i class="fas fa-plus"></i></a>
         </div>
         {{#each abilitygroup as |ability key|}}
         <div class="trait ability linkable" data-item-id="{{ability._id}}" data-active= "false"> 

@@ -1,6 +1,9 @@
 /**
  * Define a set of template paths to pre-load
  * Pre-loaded templates are compiled and cached for fast access when rendering
+ * 
+ * 'Partials' are actually partials referenced in other hbs files
+ * 'Templates' are just used by renderTemplate and listed here for convenience
  * @return {Promise}
  */
  export const preloadHandlebarsTemplates = async function () {
@@ -18,9 +21,9 @@
     "systems/mage-fr/templates/item/parts/header-block.hbs",
     "systems/mage-fr/templates/item/parts/nav-block.hbs",
     "systems/mage-fr/templates/item/parts/description-block.hbs",
-    //default descriptions partial
+    //default descriptions Template
     "systems/mage-fr/templates/chat/default-descriptions.hbs",
-    // Chat Partials
+    // Chat Templates
     "systems/mage-fr/templates/chat/trait-card.hbs",
     "systems/mage-fr/templates/chat/trait-flavor.hbs"
   ]);

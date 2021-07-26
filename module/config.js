@@ -1,7 +1,7 @@
 // Namespace
 export const M20E = {};
 
-M20E.WOUND_TYPE_BASHING = 1;
+M20E.WOUND_TYPE_BASHING = 1; //not used atm
 M20E.WOUND_TYPE_LETHAL = 2;
 M20E.WOUND_TYPE_AGGRAVATED = 3;
 
@@ -11,6 +11,10 @@ M20E.abilitySubTypes = {
     knowledge: "M20E.subType.knowledge"
 }
 
+M20E.meritflawSubTypes = {
+  merit: "M20E.subType.merit",
+  flaw: "M20E.subType.flaw"
+}
 
 M20E.categoriesWithLocks = [
   "attributes",
@@ -39,6 +43,7 @@ M20E.categoryToType ={
   "contacts": "contact"
 }
 
+//categories that are actively checked for highlighted traits for dice throw creation
 M20E.rollableCategories = [
   "attribute",
   "ability",
@@ -49,6 +54,17 @@ M20E.rollableCategories = [
   "contact"
 ]
 
+//categories that don't allow drop or addItem outside of char creation mode
+M20E.playModeLockedCat = [
+  "abilities",
+  "ability",
+  "backgrounds",
+  "background",
+  "meritsflaws",
+  "meritflaw"
+]
+
+//list of abilityKey/abilitySubtype for base abilities creation without CompendiumColl
 M20E.defaultAbilities = {
   alertness: 'talent',
   art: 'talent',
@@ -97,6 +113,7 @@ M20E.defaultImg = { // todo : find suitable svgs and add default for categories
   default: "icons/svg/item-bag.svg"
 }
 
+//categories that implement drag/drop when unloked
 M20E.dragDropCategories = [
   "abilities",
   "backgrounds",
@@ -106,6 +123,7 @@ M20E.dragDropCategories = [
   "rotes"
 ]
 
+//useless but fun
 M20E.extraDecorations = {//whatever the name, only the value is stored anyway
   extra0: "",
   extra1: "⮱",
@@ -119,21 +137,10 @@ M20E.extraDecorations = {//whatever the name, only the value is stored anyway
   extra9: "⛥"
 }
 
+// default options for itemSheets depending on itemType
 M20E.itemSheetOptions = {
   paradigm:{
     width: 400,
-    height: 500
-  },
-  ability:{
-    width: 400,
-    height: 415
-  },
-  fakeitem:{
-    width: 400,
-    height: 360
-  },
-  background:{
-    width: 400,
-    height: 310
+    height: 600
   }
 }

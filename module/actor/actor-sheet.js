@@ -1,6 +1,6 @@
 // Import Applications
 import { FakeItem } from '../apps/fakeitem-sheet.js'
-import { DiceThrow } from '../apps/dice-throw.js'
+import { DiceThrow } from '../dice/dice-throw.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
@@ -69,11 +69,16 @@ export default class M20eActorSheet extends ActorSheet {
     //dispatch items into categories and subtypes
     //sheetData.items is already sorted on item.sort in the super
     //Abilities
-    sheetData.data.abilities = { talents: {}, skills: {}, knowledges: {} };
-    sheetData.data.abilities.talents = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "talent") });
-    sheetData.data.abilities.skills = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "skill") });
-    sheetData.data.abilities.knowledges = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "knowledge") });
-    
+    sheetData.items.abilities = { talents: {}, skills: {}, knowledges: {} };
+    sheetData.items.abilities.talents = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "talent") });
+    sheetData.items.abilities.skills = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "skill") });
+    sheetData.items.abilities.knowledges = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "knowledge") });
+    //merits and flaws
+    sheetData.items.meritsflaws = { merits: {}, flaws: {} };
+    sheetData.items.meritsflaws.merits = sheetData.items.filter(function (item) { return (item.type === "meritflaw") && (item.data.subType === "merit") });
+    sheetData.items.meritsflaws.flaws = sheetData.items.filter(function (item) { return (item.type === "meritflaw") && (item.data.subType === "flaw") });
+    //the rest of the items
+    sheetData.items.backgrounds = sheetData.items.filter(function (item) { return item.type === "background" });
     
     //other usefull data
     sheetData.isGM = game.user.isGM;
@@ -180,8 +185,11 @@ export default class M20eActorSheet extends ActorSheet {
         name: game.i18n.localize('M20E.context.editTrait'),
         icon: '<i class="fas fa-pencil-alt"></i>',
         callback: element => {
-          this._editItem(new Trait(element[0]));
-        }//todo : maybe add a condition of some sort ?
+          this._editTrait(new Trait(element[0]));
+        },//todo : maybe find different condition ?
+        condition: element => {
+          return element[0].classList.contains('linkable');
+        }
       },
       {
         name: game.i18n.localize('M20E.context.removeLink'),
@@ -279,15 +287,13 @@ export default class M20eActorSheet extends ActorSheet {
       ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
       return;
     }
-
+    //update the actor status
     const buttonElement = event.currentTarget;
     const iElement = $(buttonElement).find('.fas'); 
     const toggle = this.actor.data.data.creationDone === true;
+    await this.actor.update({['data.creationDone']: !toggle});
 
-    let obj={};
-    obj['data.creationDone'] = !toggle;
-    await this.actor.update(obj);
-
+    //change the button icon
     let classToRemove, classToAdd = '';
     if ( toggle ) {
       classToRemove = 'fa-lock';
@@ -421,19 +427,32 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       
       case 'add':
-        if ( dataset.enabled === 'false' ) { return; }
         const itemType = CONFIG.M20E.categoryToType[dataset.category];
         const itemSubtype = CONFIG.M20E.categoryToType[dataset.subCategory];
+        //check wether we are allowed to add an item or not
+        if ( CONFIG.M20E.playModeLockedCat.includes(itemType) && 
+          this.actor.data.data.creationDone && 
+          !game.user.isGM ) {
+            ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
+            return;
+        }
         this._addItem(itemType, itemSubtype);
         break;
       
-      case 'edit':
-        this._editItem(new Trait(buttonElement));
+      case 'edit': //edit regular or virtual Trait (item)
+        this._editTrait(new Trait(buttonElement));
         break;
       
       case 'remove':
         const itemId = buttonElement.closest(".trait").dataset.itemId;
         const item = this.actor.items.get(itemId);
+        //check wether we are allowed to remove an item or not
+        if ( CONFIG.M20E.playModeLockedCat.includes(item.data.type) && 
+          this.actor.data.data.creationDone && 
+          !game.user.isGM ) {
+            ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
+            return false;
+        }
         this._removeItem(item);
         break;
       
@@ -530,13 +549,13 @@ export default class M20eActorSheet extends ActorSheet {
   async _removeJELink(trait){
     const {category, key } = trait;
     //prepare the update object
-    let obj = {};
+    let updateObj = {};
     const relativePath = `data.${category}.${key}.link`;
-    obj[`${relativePath}.-=type`] = null;
-    obj[`${relativePath}.-=pack`] = null;
-    obj[`${relativePath}.-=id`] = null;
+    updateObj[`${relativePath}.-=type`] = null;
+    updateObj[`${relativePath}.-=pack`] = null;
+    updateObj[`${relativePath}.-=id`] = null;
 
-    return this.actor.update(obj);
+    return this.actor.update(updateObj);
   }
 
   /* -------------------------------------------- */
@@ -582,11 +601,10 @@ export default class M20eActorSheet extends ActorSheet {
       });
       if ( !confirmation ) { return; }
     }
+    //create the Journal (creates a folder if needed)
     const personnalJE = await utils.createPersonnalJE(this.actor, { renderSheet: true });
-
-    let obj = {};
-    obj[`data.link`] = {type:'JournalEntry', pack: '', id: personnalJE.id};
-    this.actor.update(obj);
+    //update the actor with Journal Id
+    this.actor.update({[`data.link`]: {type:'JournalEntry', pack: '', id: personnalJE.id}});
     ui.notifications.info(game.i18n.format(`M20E.notifications.journalLinked`,{name: this.actor.name}));
   }
 
@@ -641,7 +659,7 @@ export default class M20eActorSheet extends ActorSheet {
   * 
   * @param {Trait} trait  the Trait to be edited
   */
-  _editItem(trait) {
+  _editTrait(trait) {
     const {category, key, itemId} = trait;
     if ( category === 'attributes' || category === 'spheres' ) {
       //use a fakeItem dialog to edit attribute (or sphere)
@@ -662,6 +680,7 @@ export default class M20eActorSheet extends ActorSheet {
   */
   async _addItem(itemType, itemSubtype = null) {
     if ( !itemType ) { return; }
+
     //prepare the promptData => prompt for the name of the item-to-be
     const placeHodlderName = itemSubtype ?
       game.i18n.localize(`M20E.new.${itemType}.${itemSubtype}`) :
@@ -705,6 +724,8 @@ export default class M20eActorSheet extends ActorSheet {
   * @param {Item} item an item with a name an id, to be deleted
   */
   async _removeItem(item) {
+    if ( !item ) { return; }
+
     const confirmation = await Dialog.confirm({
       options: {classes: ['dialog', 'm20e']},
       title: game.i18n.format("M20E.prompts.deleteTitle", {name: item.name}),
@@ -796,6 +817,13 @@ export default class M20eActorSheet extends ActorSheet {
     if ( !this.actor.isOwner ) return false;
     const item = await Item.implementation.fromDropData(data);
     const itemData = item.toObject();
+
+    if ( CONFIG.M20E.playModeLockedCat.includes(itemData.type) && 
+      this.actor.data.data.creationDone && 
+      !game.user.isGM ) {
+        ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
+        return false;
+    }
     
     //special handling for paradigm items
     if ( itemData.type === 'paradigm' ) {
@@ -846,18 +874,17 @@ export default class M20eActorSheet extends ActorSheet {
     if ( element.classList.contains('link-drop') ) {
       const key = element.closest(".trait").dataset.key;
       //create the update object with dropData
-      let obj = {}
-      obj[`data.bio.${key}.link`] = data;
+      let updateObj = {[`data.bio.${key}.link`]: data};
       //retrieve journal name
       if ( data.pack ) {
         const pack = game.packs.get(data.pack);
         const indexEntry = pack.index.get(data.id);
-        obj[`data.bio.${key}.displayValue`] = indexEntry.name;
+        updateObj[`data.bio.${key}.displayValue`] = indexEntry.name;
       } else {
         const journalEntry = game.journal.get(data.id);
-        obj[`data.bio.${key}.displayValue`] = journalEntry.name;
+        updateObj[`data.bio.${key}.displayValue`] = journalEntry.name;
       }
-      return this.actor.update(obj);
+      return this.actor.update(updateObj);
 
     } else {
       return ui.notifications.warn(game.i18n.localize('M20E.notifications.cantDrop'));
