@@ -9,21 +9,20 @@
  * Repository: https://github.com/CarterDC/mage-fr            
  */
 
-// Import Modules
-import { M20E } from './module/config.js'
-import { registerSystemSettings } from "./module/settings.js";
-import * as dice from "./module/dice/dice.js";
 // Import Documents
 import M20eActor from './module/actor/actor.js'
-import M20eItem from './module/item/item.js'
-import M20eParadigmItem from './module/item/para-item.js'
+import M20eItem from './module/item/baseitem.js'
+import M20eRoteItem from './module/item/rote-item.js'
 // Import Applications
 import M20eActorSheet from './module/actor/actor-sheet.js'
 import M20eItemSheet from './module/item/baseitem-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
+import M20eRoteSheet from './module/item/rote-sheet.js'
 import DiceDialogue from './module/dice/dice-throw-dialog.js'
-
-// Import Helpers
+// Other Imports
+import { M20E } from './module/config.js'
+import { registerSystemSettings } from "./module/settings.js";
+import * as dice from "./module/dice/dice.js";
 import * as utils from './module/utils/utils.js'
 import { log } from "./module/utils/utils.js";
 import { registerHandlebarsHelpers } from "./module/utils/hb-helpers.js";
@@ -49,7 +48,9 @@ Hooks.once('init', async function () {
   CONFIG.Item.documentClass = M20eItem;
   //add references to subclasses for use in the M20eItem constructor
   //proprty names must be valid item types
-  CONFIG.Item.documentClasses = {"paradigm": M20eParadigmItem};
+  CONFIG.Item.documentClasses = {
+    "rote": M20eRoteItem
+  };
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet);
@@ -61,6 +62,10 @@ Hooks.once('init', async function () {
   });
   Items.registerSheet("m20e", M20eParadigmSheet, {
     types: ["paradigm"],
+    makeDefault: true
+  });
+  Items.registerSheet("m20e", M20eRoteSheet, {
+    types: ["rote"],
     makeDefault: true
   });
 

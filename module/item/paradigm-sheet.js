@@ -5,8 +5,8 @@ import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
 /**
- * Implements M20eParadigmSheet as an extension of the M20eItemSheet class
- * used specifically by paradigm type items
+ * Implementation of M20eParadigmSheet as an extension of the M20eItemSheet class
+ * used exclusively by paradigm type items
  * @extends {M20eItemSheet}
  */
 export default class M20eParadigmSheet extends M20eItemSheet {
@@ -16,12 +16,6 @@ export default class M20eParadigmSheet extends M20eItemSheet {
     super(...args);
    
     this.locks = {lexicon: true};
-    this.lexicon =  utils.propertiesToArray(this.item.data.data.lexicon);
-  }
-
-   /** @override */
-   get template () {
-    return `systems/mage-fr/templates/item/paradigm-sheet.hbs`;
   }
 
   /* -------------------------------------------- */
@@ -30,43 +24,122 @@ export default class M20eParadigmSheet extends M20eItemSheet {
   getData(options) {
     const sheetData = super.getData(options);
     sheetData.locks = this.locks;
-    sheetData.lexicon = this.lexicon;
-    sheetData.lexicon.sort(function (a, b) {
-      let aName = a.path.toUpperCase();
-      let bName = b.path.toUpperCase();
-      return (aName < bName) ? -1 : ((aName > bName) ? 1 : 0);
-    });
+    //update our local version of the lexicon array
+    this.lexicon = utils.propertiesToArray(this.item.data.data.lexicon);
+    //alpha sort the lexicon array on the 'path' property
+    this.lexicon.sort(utils.alphaSort('path'));
+    sheetData.lexicon = this.lexicon
+
     return sheetData;
   }
 
-  _onMiniButtonClick(event) {
-    event.preventDefault();
-    const buttonElement = event.currentTarget;
-    const dataset = buttonElement.dataset;
+  /** @override */
+  activateListeners(html) {
 
-    switch (dataset.action) {
-      case 'lock':
-        let category = dataset.category;
-        let toggle = this.locks[category];
-        this.locks[category] = !toggle;
-        this.render();
-        break;
+    //editable only (roughly equals 'isOwner')
+    if ( this.options.editable ) {
+      //hack for a context menu on the image
+      html.find('.sheetLogo').mousedown(this._onImgMousedown.bind(this));
+    }
+    super.activateListeners(html);
+  }
 
-      case 'add':
-        this.editItem();//edit without parameter actually does a add
-        break;
-
-      case 'edit':
-        this.editItem(buttonElement.closest(".trait").dataset.key);
-        break;
-
-      case 'remove':
-        this.removeItem(buttonElement.closest(".trait").dataset.key);
-        break;
+  /**
+   * Forces a contextMenu on right mousebutton
+   * menu is relocated to the label for accessibility purposes 
+   * note : filepicker seems to prevent regular trigger of contextmenu
+   * @param  {Event} event the mousedown event that triggered (from '.sheetLogo')
+   */
+  _onImgMousedown(event) {
+    if ( event.which === 3 ) { //mouse right
+      const labelElement = event.currentTarget.previousElementSibling;
+      const menu = new ContextMenu($(this.element), '', this._getImgContextOptions());
+      menu.render($(labelElement));
     }
   }
 
-  async removeItem(key){
+  /* -------------------------------------------- */
+  /*  Context Menus                               */
+  /* -------------------------------------------- */
+
+  /**
+   * @return the context menu options for the '.sheetLogo' element
+   */
+  _getImgContextOptions() {
+    return [
+      {
+        name: game.i18n.localize('M20E.context.removeImage'),
+        icon: '<i class="fas fa-trash"></i>',
+        callback: () => {
+          this.item.update({['data.sheetLogo']: ''});
+        },
+        condition: () => {
+          return this.item.data.data.sheetLogo !== ''; 
+        }
+      }
+    ];
+  }
+
+  /* -------------------------------------------- */
+  /*  Event Handlers                              */
+  /* -------------------------------------------- */
+
+  /**
+   * Note : In this context 'Item' refers to a Lexicon Entry
+   *  @override
+   */
+  async addItem(buttonElement) {
+    //edit without parameter actually does an 'edit'
+    this._editLexiconEntry(null);
+  }
+
+  /**
+   * Note : In this context 'Item' refers to a Lexicon Entry
+   *  @override
+   */
+  async editItem(buttonElement) {
+    this._editLexiconEntry(buttonElement.closest(".trait").dataset.key);
+  }
+
+  /**
+   * Note : In this context 'Item' refers to a Lexicon Entry
+   *  @override
+   */
+  async removeItem(buttonElement) {
+    this._removeLexiconEntry(buttonElement.closest(".trait").dataset.key);
+  }
+
+  /* -------------------------------------------- */
+  /*  Implementation                              */
+  /* -------------------------------------------- */
+
+  /**
+   * Prompts the user for a new lexicon entry or the edition of its value
+   * Updates the item's lexicon with validated value
+   * refresh the all sheet
+   * If key is null prompt will ask for both path AND value
+   * @param  {Integer|null} key the index of the entry in the lexicon array
+   */
+  async _editLexiconEntry(key) {
+    const lexiconEntry = {path: '', value: ''};
+    if ( key ) {
+      lexiconEntry.path = this.lexicon[key].path;
+      lexiconEntry.value = this.lexicon[key].value;
+    }
+    //prompts for entry.value or entry.path AND .value
+    const newEntry = await this.lexiconPrompt(lexiconEntry);
+
+    //checks before updating
+    if ( !this._isValidEntry(lexiconEntry, newEntry) ) { return; }
+    await this.item.setLexiconEntry(newEntry.path, newEntry.value);
+  }
+
+  /**
+   * Prompts user for confirmation before removing a lexicon entry
+   *
+   * @param  {Integer|null} key the index of the entry in the lexicon array
+   */
+  async _removeLexiconEntry(key) {
     const path = this.lexicon[key].path;
 
     let confirmation = await Dialog.confirm({
@@ -76,57 +149,45 @@ export default class M20eParadigmSheet extends M20eItemSheet {
         </p>`
     });
     if ( confirmation ) {
-      //the following assumes that all entries in the lexicon are valid in the first place
-      let deletePath = "";
-      const keys = path.split(".");
-      const lexiconEntry = duplicate(this.item.data.data.lexicon[keys[0]]);
-      if ( Object.keys(lexiconEntry).length > 1 ) {
-        deletePath = `data.lexicon.${keys[0]}.-=${keys[1]}`;
-      } else {
-        deletePath = `data.lexicon.-=${keys[0]}`;
-      }
-
-      await this.item.update({[deletePath]: null},{render:false});
-
-      //populate array with updated values & refresh
-      this.lexicon =  utils.propertiesToArray(this.item.data.data.lexicon);
-      this.render();
+      await this.item.removeLexiconEntry(path);
     }
   }
 
-  async editItem(key) {
-    const lexiconEntry = {path: '', value: ''};
-    if ( key ) {
-      lexiconEntry.path = this.lexicon[key].path;
-      lexiconEntry.value = this.lexicon[key].value;
-    }
-    let newEntry = await this.lexiconPrompt(lexiconEntry);
-    const validEntry = this._getValidEntry(lexiconEntry, newEntry);
-
-    if ( validEntry === undefined ) { return; }
-    await this.item.setLexiconEntry(validEntry.path, validEntry.value);
-
-    this.lexicon =  utils.propertiesToArray(this.item.data.data.lexicon);
-    this.render();
-  }
-
-  _getValidEntry(currEntry, newEntry) {
-    if ( newEntry === null ) { return; }
-    if ( newEntry.path === '' || newEntry.value === '' ) { return; }
-    if ( newEntry.value === currEntry.value ) { return; }
+  /**
+   * Note that '' would be valid for newEntry.value since the paradigm item would remove the entry
+   * but we do have a remove button for that, that actually has a warning prompt ^^
+   * 
+   * @param  {Object} currEntry the current {path, value} pair
+   * @param  {Object} newEntry the new {path, value} pair to be checked
+   * 
+   * @return {Boolean} whether the entry has been validated against every checks or not
+   */
+  _isValidEntry(currEntry, newEntry) {
+    if ( newEntry === null ) { return false; } //prompt was escaped
+    if ( newEntry.path === '' || newEntry.value === '' ) { return false; }
+    if ( newEntry.value === currEntry.value ) { return false; }
     
     const translation = game.i18n.localize(`M20E.${newEntry.path}`);
     if ( translation === `M20E.${newEntry.path}` ) {
+      //if localize return the same thing that was passed to it in the first place, 
+      //then this entry does not exist in the localization file
       ui.notifications.error(game.i18n.format("M20E.notifications.notLocalized", {path: newEntry.path}));
-      return;
+      return false;
     }
-    return newEntry;
+    return true;
   }
 
-  //prompts for either edition of value or new path & value
+  /**
+   * Prompts for either edition of value or new path & value
+   * @param  {Object} lexiconEntry a {path, value} pair
+   * 
+   * @return {Object|null} the edited {path, value} pair
+   */
   async lexiconPrompt(lexiconEntry) {
     const editMode = (lexiconEntry.path !== '');
-    const prompt = editMode ? game.i18n.localize("M20E.prompts.lexiconContentEdit") : game.i18n.localize("M20E.prompts.lexiconContentAdd");
+    const prompt = editMode ? 
+      game.i18n.localize("M20E.prompts.lexiconContentEdit") :
+      game.i18n.localize("M20E.prompts.lexiconContentAdd");
     const disabled = editMode ? 'disabled' : '';
     
     return await Dialog.prompt({
@@ -140,7 +201,7 @@ export default class M20eParadigmSheet extends M20eItemSheet {
         const inputs = html.find('input');
         return {path: inputs[0].value, value: inputs[1].value};
       },
-      rejectClose: false
+      rejectClose: false //prompt will return 'null' if escaped
     })
   }
 }

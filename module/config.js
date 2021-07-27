@@ -16,6 +16,18 @@ M20E.meritflawSubTypes = {
   flaw: "M20E.subType.flaw"
 }
 
+M20E.spheres = [
+  "forc",
+  "matt",
+  "life",
+  "corr",
+  "entr",
+  "time",
+  "spir",
+  "prim",
+  "mind"
+]
+
 M20E.categoriesWithLocks = [
   "attributes",
   "abilities",

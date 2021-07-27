@@ -65,16 +65,7 @@ export class MageRoll extends Roll {
         content: this.total,
         sound: CONFIG.sounds.dice,
       }, messageData);
-      messageData.roll = this;
-      //
-      const explosions = messageData.roll.terms[0].explosions
-      if ( explosions > 0) {
-        messageData.roll.terms[0].results.splice(messageData.roll.terms[0].results.length - explosions, explosions);
-        //messageData.roll.terms[0].number -= explosions;
-        //create new term
-        const dieSuccess = new CONFIG.Dice.terms["s"]({number: explosions, autoSuccess: true});
-        messageData.roll.terms.push(dieSuccess);
-      }
+      messageData.roll = this.getRollForMessage();
       
       // Either create the message or just return the chat data
       const cls = getDocumentClass("ChatMessage");
@@ -86,21 +77,31 @@ export class MageRoll extends Roll {
       else return msg.data;
   }
 
+  getRollForMessage() {
+    const explosions = this.terms[0].explosions;
+    if ( !explosions ) { return this; }
+
+    const roll = this;
+    //remove results of exploded dice
+    roll.terms[0].results.splice(roll.terms[0].results.length - explosions, explosions);
+    //add success dieterm
+    roll.terms.push(new CONFIG.Dice.terms["s"]({
+      number: explosions,
+      autoSuccess: true}));
+    return roll;
+  }
+
   /**
    * Render the tooltip HTML for a Roll instance
    * @return {Promise<string>}      The rendered HTML tooltip as a string
    */
   async getTooltip() {
     const parts = this.dice.map(d => d.getTooltipData());
-    parts[0].options= this.options;
-    this.dice[0].results.forEach(function(result, index) {
-      if(result.autoSuccess === true){
-        parts[0].rolls[index].result = "S";
-        //parts[0].rolls[index].classes.replace('die', 'diesuccess');
-      }
-    })
-    
-    return renderTemplate(this.constructor.TOOLTIP_TEMPLATE, { parts });
+    const part = parts.reduce((acc, cur) => {
+        return {total: acc.total + cur.total, rolls: [...acc.rolls, ...cur.rolls]};
+      },{total: 0, rolls:[]});
+      part.options= this.options;
+    return renderTemplate(this.constructor.TOOLTIP_TEMPLATE, { part });
   }
 
   /**

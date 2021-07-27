@@ -207,7 +207,7 @@ export default class M20eActor extends Actor {
     const {category, key= ''} = trait;
     const relativePath = key ? `${category}.${key}` : `${category}`;
     const actorData = this.data;
-    //todo : add special case of willpower AND arete
+    //TODO : add special case of willpower AND arete !!!
     return {
       name: game.i18n.localize(`M20E.${relativePath}`),
       displayName: this.getLexiconEntry(relativePath),
@@ -227,6 +227,7 @@ export default class M20eActor extends Actor {
     const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
     return await this.update({[`data.${relativePath}`]: propertyValue});
   }
+
 
   increaseMagepower(index){
     if( ! utils.canSeeParadox() ) { return; }

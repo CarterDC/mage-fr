@@ -55,6 +55,15 @@ export class ExtendedTrait extends Trait {
   }
 }
 
+export class MageThrow {
+  constructor(obj={}) {
+    this.name = obj.name || '';
+    this.description = obj.description || '';
+    this.traitsToRoll = obj.traitsToRoll || [];
+    this.options = obj.options || {};
+  }
+}
+
 /**
  * 
  */

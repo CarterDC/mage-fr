@@ -20,7 +20,7 @@ export default class M20eItemSheet extends ItemSheet {
       this.options.height = this.position.height = itemSheetOptions.height;
     }*/
     if ( this.item.isOwned ) {
-      //add the paradigm css class if any to the default options.
+      //add the paradigm css class (if any) to the default options.
       const paraItem = this.item.actor.paradigm;
       if ( paraItem ) {
         this.options.classes.push(paraItem.data.data.cssClass);
@@ -69,7 +69,10 @@ export default class M20eItemSheet extends ItemSheet {
 
   /** @override */
   activateListeners(html) {
+    //actions for everyone
+    
 
+    //editable only (roughly equals 'isOwner')
     if ( this.options.editable ) {
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       html.find('.meritflaw select').change(this._onSubtypeChange.bind(this));
@@ -81,8 +84,50 @@ export default class M20eItemSheet extends ItemSheet {
     super.activateListeners(html);
   }
 
+  /**
+  * Dispatches mini-buttons clicks according to their dataset.action
+  * Note that base item sheets don't have mini-buttons
+  * But this used by all subClasses of M20eItemSheet which MUST override the add, edit and remove functions
+  * 
+  * @param {object} event the event that triggered (from div '.mini-button')
+  */
   _onMiniButtonClick(event) {
+    event.preventDefault();
+    const buttonElement = event.currentTarget;
+    const dataset = buttonElement.dataset;
 
+    switch (dataset.action) {
+      case 'lock':
+        let category = dataset.category;
+        let toggle = this.locks[category];
+        this.locks[category] = !toggle;
+        this.render();
+        break;
+
+      case 'add':
+        this.addItem(buttonElement);
+        break;
+
+      case 'edit':
+        this.editItem(buttonElement);
+        break;
+
+      case 'remove':
+        this.removeItem(buttonElement);
+        break;
+    }
+  }
+
+  async addItem(buttonElement) {
+    throw new Error("A subclass of M20eItemSheet must implement the 'addItem' method.");
+  }
+
+  async editItem(buttonElement) {
+    throw new Error("A subclass of M20eItemSheet must implement the 'editItem' method.");
+  }
+
+  async removeItem(buttonElement) {
+    throw new Error("A subclass of M20eItemSheet must implement the 'removeItem' method.");
   }
 
   /**
