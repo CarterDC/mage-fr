@@ -60,10 +60,11 @@ export const registerHandlebarsHelpers = function() {
     return locked ? 'disabled' : '';
   })
 
-  Handlebars.registerHelper("clickableBullet", function(list, key, index) {
-    if(!list){return;}
-    //indexes are base 0
-    return index < list[key].valueMax;
+  Handlebars.registerHelper("clickableBullet", function(availEffects, key) {
+    if ( !availEffects ) { return; }
+    const valueMax = availEffects.filter(effect => effect.key === key)[0].valueMax || 0;
+    //index of 'this' is base 0
+    return this < valueMax;
   })
   
   Handlebars.registerHelper("bulletState", function(value, index) {
@@ -71,9 +72,10 @@ export const registerHandlebarsHelpers = function() {
   })
 
   Handlebars.registerHelper('throwresult', function (result) {
-    if(result == "?") return "?";
-    if(result == "0") return game.i18n.localize('M20E.throwresult.failure') + " !";
-    if(result > 0) return result + " " + game.i18n.localize('M20E.throwresult.success') + " !";
+    //todo : upgrade with format or `${}`
+    if ( result == "?" ) { return "?"; }
+    if ( result == "0" ) { return game.i18n.localize('M20E.throwresult.failure') + " !"; }
+    if ( result > 0 ) { return result + " " + game.i18n.localize('M20E.throwresult.success') + " !"; }
     return game.i18n.localize('M20E.throwresult.critfailure') + " (" + result + ") !";
   })
 

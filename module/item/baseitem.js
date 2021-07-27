@@ -48,6 +48,12 @@ export default class M20eItem extends Item {
     }
     itemData.update( updateData );
   }
+
+  /**
+   * called at the end of actor._prepareData to deal with owned items whose data depend on the actor
+   */
+   _prepareOwnedItem() {}
+
   /**
    * 
    * @return {Object} data needed to populate an ExtendedTrait
@@ -65,7 +71,15 @@ export default class M20eItem extends Item {
   /* -------------------------------------------- */
   /*  Paradigm Item Specific                      */
   /* -------------------------------------------- */
-  // could have been in a subClass but it's just 3 functions anyway
+  // could have been in a subClass but it's just 4 functions anyway
+
+  /**
+   * @param  {String} relativePath a localization path relative to the M20E root.
+   */
+  locadigm(relativePath) {
+    const lexiconValue = this.getLexiconEntry(relativePath);
+    return lexiconValue ? lexiconValue : game.i18n.localize(`M20E.${relativePath}`);
+  }
 
   /**
    * @param  {String} relativePath a property path relative to the item's lexicon object
@@ -86,7 +100,7 @@ export default class M20eItem extends Item {
     } else {
       //we've been passed an empty string => remove entry from lexicon
       return await this.removeLexiconEntry(relativePath);
-    }
+    } 
   }
 
   /**

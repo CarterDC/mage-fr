@@ -285,6 +285,9 @@
   box-shadow: 3px 3px 4px 0 rgba(0, 0, 0, 0.7);
   transform: rotate(1deg);
 }
+.m20e.item {
+  min-height: 250px;
+}
 .m20e.item .sheet-header .item-type {
   margin: 0px 5px;
   height: 50px;
@@ -320,6 +323,18 @@
   min-height: 100px;
   height: auto;
   max-width: 100%;
+}
+.m20e.item .rote-effect-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.m20e.item .rote-effect-wrapper .grid {
+  width: 75%;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding-right: 31px;
+  min-height: 26px;
 }
 .m20e .category {
   margin: 5px 0;
@@ -367,6 +382,9 @@
   flex: 10 10;
   text-align: center;
 }
+.m20e .category.rotes .grid {
+  padding: 0 5px;
+}
 .bullet-display {
   display: flex;
   flex-direction: row;
@@ -385,6 +403,9 @@
   display: inline-block;
   border-radius: 50%;
   margin-right: 2px;
+}
+.bullet-display .bullet[data-clickable='true'] {
+  cursor: pointer;
 }
 .bullet-display .bullet[data-state='active'] {
   background: var(--m20e-midGrey);
@@ -523,6 +544,28 @@
 .m20e .magepower .box[data-state='2'] {
   background-image: radial-gradient(rgba(97, 13, 17, 0.9), rgba(10, 10, 10, 0.6), rgba(0, 0, 0, 0));
 }
+.m20e {
+  /* -------------------------------------------- */
+  /*  Generic traits                              */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /*  Category specific traits                    */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
+  /*  Fields                                      */
+  /* -------------------------------------------- */
+}
 .m20e .trait {
   position: relative;
   display: flex;
@@ -566,6 +609,39 @@
 }
 .m20e .trait .bullet[data-clickable='true'] {
   cursor: pointer;
+}
+.m20e .trait .vertical-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+}
+.m20e .trait .horizontal-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+.m20e .trait .one-liner-desc {
+  position: relative;
+  margin-top: 5px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 3px;
+  padding: 3px 6px;
+  height: 25px;
+  font-family: var(--mainFontFam);
+  font-size: var(--mainFontSize);
+  line-height: 20px;
+  font-weight: 400;
+  font-style: oblique;
+  color: var(--m20e-darkGrey);
+  overflow: hidden;
+}
+.m20e .trait .one-liner-desc .mini-button {
+  float: right;
+  margin: -1px -4px 0px 3px;
+  border: none;
+}
+.m20e .trait .one-liner-desc[data-expanded="true"] {
+  height: fit-content;
 }
 .m20e .trait[data-active='true'] .trait-label {
   color: var(--highlightColor);
@@ -709,6 +785,57 @@
   justify-content: left;
   padding: 3px 0 3px 5px;
 }
+.m20e .trait.rote {
+  margin-top: 3px;
+}
+.m20e .trait.rote div.item-img {
+  position: relative;
+  align-self: flex-start;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border: none;
+  height: 40px;
+  width: 40px;
+  margin: 3px 5px 0 0;
+}
+.m20e .trait.rote .trait-label {
+  margin-left: 5px;
+}
+.m20e .trait.rote .trait-dice {
+  visibility: hidden;
+  position: absolute;
+  border: none;
+  top: 12px;
+  left: 12px;
+  width: 30px;
+  height: 30px;
+  background-image: url("../assets/ui/ten-dice.png");
+  background-size: contain;
+  cursor: pointer;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1s;
+}
+.m20e .rote:hover .trait-dice {
+  visibility: visible;
+  opacity: 1;
+}
+.m20e .trait.rote-effect {
+  width: 100%;
+  justify-self: center;
+  height: 20px;
+  margin: 3px 0px 3px 0px;
+}
+.m20e .trait.rote-effect .trait-label {
+  padding-left: 3px;
+}
+.m20e .trait.rote-effect select {
+  height: 20px;
+}
+.m20e .trait.rote-effect .mini-button {
+  color: var(--m20e-badRed);
+  margin-right: 10px;
+}
 .m20e .trait.lexicon input {
   height: 24px;
   margin: 3px 10px 3px 0;
@@ -735,14 +862,14 @@
   border: none;
   min-height: 80px;
   height: 80px;
-  font-family: "signika", sans-serif;
-  font-size: 14px;
+  font-family: var(--mainFontFam);
+  font-size: var(--mainFontSize);
   font-weight: 400;
   font-style: oblique;
   color: var(--m20e-darkGrey);
 }
 .m20e .field .editor {
-  font-size: 14px;
+  font-size: var(--mainFontSize);
   font-weight: normal;
   height: 250px;
   border: 1px solid var(--m20e-lightGrey);
@@ -751,7 +878,7 @@
 }
 .m20e .field .fake-editor {
   margin-top: 3px;
-  font-size: 14px;
+  font-size: var(--mainFontSize);
   font-weight: normal;
   color: var(--m20e-darkGrey);
   background-color: rgba(0, 0, 0, 0.05);

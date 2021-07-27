@@ -1,6 +1,7 @@
-//traits
-
 .m20e{
+  /* -------------------------------------------- */
+  /*  Generic traits                              */
+  /* -------------------------------------------- */
   .trait{
     position: relative;
     display: flex;
@@ -15,9 +16,8 @@
       width: 25px;
       margin: 0 5px 0 0;
       background-image: radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));
-    } 
-
-    .trait-label:hover {//TODO : not all trait labels should behave like that
+    }
+    .trait-label:hover {//TODO : Maybe not all trait labels should behave like that ?
       text-shadow: 0 0 1px var(--hoverColor);
     }
     .ligne{
@@ -41,13 +41,44 @@
         text-align: center;
       }
     }
-    
     .edit-bar[data-locked='true']{
       display: none;
-    }
-    
+    }    
     .bullet[data-clickable='true']{
       cursor: pointer; 
+    }
+    .vertical-wrapper{//used instead of flexcol
+      display: flex;
+      flex-direction: column;
+      flex: 1 1;
+    }
+    .horizontal-wrapper{//used instead of flexrow 
+      display: flex;
+      flex-direction: row;
+    }
+    .one-liner-desc{
+      position: relative;
+      margin-top: 5px;
+      background-color: rgba(0, 0, 0, 0.05);
+      border: none;
+      border-radius: 3px;
+      padding: 3px 6px;
+      height: 25px;
+      font-family: var(--mainFontFam);
+      font-size: var(--mainFontSize);
+      line-height: 20px;
+      font-weight:400;
+      font-style: oblique;
+      color: var(--m20e-darkGrey);
+      overflow: hidden;
+      .mini-button{
+        float: right;
+        margin: -1px -4px 0px 3px; 
+        border: none;
+      }
+    }
+    .one-liner-desc[data-expanded="true"]{
+      height:fit-content;
     }
   }
   .trait[data-active='true'] .trait-label{
@@ -55,12 +86,16 @@
     text-shadow: 0 0 1px var(--m20e-darkGrey);
   }
 
+  /* -------------------------------------------- */
+  /*  Category specific traits                    */
+  /* -------------------------------------------- */
+
   .trait.attribute,
   .trait.sphere{
       height: 20px;
       margin: 3px 0;
   }
-
+/* -------------------------------------------- */
   .trait.ability{
     height: 20px;
     margin: 2px 0;
@@ -79,6 +114,7 @@
         padding: 1px 0 0; 
     }
   }
+/* -------------------------------------------- */
   .trait.dice{
     height:20px;
     margin: 3px 0;
@@ -89,7 +125,6 @@
     .trait-label:hover{
         text-shadow: none;
     }
-
     .mini-button[data-action="remove"]{
         color: var(--m20e-badRed);
         margin-right:10px;
@@ -103,6 +138,7 @@
         text-shadow: none;
     }
   }
+/* -------------------------------------------- */
   .trait.chat-flavor{
     height: 20px;
     margin: 3px 0;
@@ -123,8 +159,8 @@
     .bullet[data-state='active']{
       background: var(--m20e-lightGrey); 
     }
-
   }
+/* -------------------------------------------- */
   .trait.arete{//todo : do better
     height: 20px;
     margin: 3px 0;
@@ -134,7 +170,7 @@
       flex: 0 0 15px;
     }
   } 
-
+/* -------------------------------------------- */
   .trait.description{
     flex-wrap: nowrap;
     height : 22px;
@@ -175,8 +211,8 @@
       visibility: visible;
     }
   }
-
-  .description{
+/* -------------------------------------------- */
+  .description{ //TODO : should be in a trait !
     textarea{
       resize: none;
       border: none;
@@ -188,9 +224,11 @@
       color: #202020;
     }
   }
+/* -------------------------------------------- */
   .trait.background{
     margin: 2px 0px; 
   }
+/* -------------------------------------------- */
   .trait.meritflaw{
     margin: 2px 0px;
     .bullet-display{
@@ -201,8 +239,62 @@
       padding: 3px 0 3px 5px;
     }
   }
-
-  .trait.lexicon{
+/* -------------------------------------------- */
+  .trait.rote{
+    margin-top: 3px;
+    div.item-img{
+      position: relative;
+      align-self: flex-start;
+      background-size: contain;
+      background-repeat: no-repeat;
+      //background-color: radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));
+      border: none;
+      height: 40px;
+      width: 40px;
+      margin: 3px 5px 0 0;
+    }
+    .trait-label{
+      margin-left : 5px;
+    }
+    .trait-dice{
+      visibility: hidden;
+      position:absolute;
+      border:none;
+      top:12px;
+      left:12px;
+      width:30px;
+      height: 30px;
+      background-image: url("../assets/ui/ten-dice.png");
+      background-size: contain; 
+      cursor: pointer;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 1s;
+    }
+  }
+  .rote:hover .trait-dice{
+    visibility: visible;
+    opacity: 1;
+  }
+/* -------------------------------------------- */
+  .trait.rote-effect{
+    width:100%;
+    justify-self: center;
+    height: 20px;
+    margin: 3px 0px 3px 0px;
+    .trait-label{
+      padding-left: 3px;
+    }
+    select{
+      height:20px;
+    }
+    .mini-button{
+        color: var(--m20e-badRed);
+        margin-right:10px;
+    }
+  }
+/* -------------------------------------------- */
+  .trait.lexicon{ //todo : should use field instead !
     input{
       height: 24px;
       margin: 3px 10px 3px 0;
@@ -218,7 +310,10 @@
   .trait.lexicon:nth-child(even){
     background-color: rgba(0,0,0,0.1);
   }
-
+  /* -------------------------------------------- */
+  /*  Fields                                      */
+  /* -------------------------------------------- */
+  //fields are used exclusively by itemSheets
   .field{
     display: block;
     margin: 5px 5px;
@@ -226,20 +321,19 @@
     select{
         width: 100%;
     }
-
     textarea{
         resize: none;
         border: none;
         min-height: 80px;
         height: 80px;
-        font-family: "signika", sans-serif;
-        font-size: 14px;
+        font-family: var(--mainFontFam);
+        font-size: var(--mainFontSize);
         font-weight:400;
         font-style: oblique;
         color: var(--m20e-darkGrey);
     }
     .editor{
-      font-size: 14px;
+      font-size: var(--mainFontSize);
       font-weight: normal;
       height: 250px;
       border: 1px solid var(--m20e-lightGrey);
@@ -248,7 +342,7 @@
     }
     .fake-editor{
       margin-top: 3px;
-      font-size: 14px;
+      font-size: var(--mainFontSize);
       font-weight: normal;
       color: var(--m20e-darkGrey);
       background-color: rgba(0,0,0,0.05);

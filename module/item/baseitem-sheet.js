@@ -93,8 +93,8 @@ export default class M20eItemSheet extends ItemSheet {
   */
   _onMiniButtonClick(event) {
     event.preventDefault();
-    const buttonElement = event.currentTarget;
-    const dataset = buttonElement.dataset;
+    const buttonElem = event.currentTarget;
+    const dataset = buttonElem.dataset;
 
     switch (dataset.action) {
       case 'lock':
@@ -105,28 +105,28 @@ export default class M20eItemSheet extends ItemSheet {
         break;
 
       case 'add':
-        this.addItem(buttonElement);
+        this.addItem(buttonElem);
         break;
 
       case 'edit':
-        this.editItem(buttonElement);
+        this.editItem(buttonElem);
         break;
 
       case 'remove':
-        this.removeItem(buttonElement);
+        this.removeItem(buttonElem);
         break;
     }
   }
 
-  async addItem(buttonElement) {
+  async addItem(buttonElem) {
     throw new Error("A subclass of M20eItemSheet must implement the 'addItem' method.");
   }
 
-  async editItem(buttonElement) {
+  async editItem(buttonElem) {
     throw new Error("A subclass of M20eItemSheet must implement the 'editItem' method.");
   }
 
-  async removeItem(buttonElement) {
+  async removeItem(buttonElem) {
     throw new Error("A subclass of M20eItemSheet must implement the 'removeItem' method.");
   }
 

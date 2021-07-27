@@ -85,8 +85,8 @@ export class FakeItem extends FormApplication {
     }
   }
 
-  async _onChangeLexiconName(inputElement) {
-    const inputValue = inputElement.value;
+  async _onChangeLexiconName(inputElem) {
+    const inputValue = inputElem.value;
     //update our fakeitem's name (to be rerendered)
     this.itemData.lexiconName = inputValue;
     //change the name in the paradigm lexicon

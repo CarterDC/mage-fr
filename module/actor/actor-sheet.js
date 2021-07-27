@@ -79,7 +79,8 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.items.meritsflaws.flaws = sheetData.items.filter(function (item) { return (item.type === "meritflaw") && (item.data.subType === "flaw") });
     //the rest of the items
     sheetData.items.backgrounds = sheetData.items.filter(function (item) { return item.type === "background" });
-    
+    sheetData.items.rotes = sheetData.items.filter(function (item) { return item.type === "rote" });
+
     //other usefull data
     sheetData.isGM = game.user.isGM;
     sheetData.isOwner = this.actor.isOwner;
@@ -288,8 +289,8 @@ export default class M20eActorSheet extends ActorSheet {
       return;
     }
     //update the actor status
-    const buttonElement = event.currentTarget;
-    const iElement = $(buttonElement).find('.fas'); 
+    const buttonElem = event.currentTarget;
+    const iElem = $(buttonElem).find('.fas'); 
     const toggle = this.actor.data.data.creationDone === true;
     await this.actor.update({['data.creationDone']: !toggle});
 
@@ -303,8 +304,8 @@ export default class M20eActorSheet extends ActorSheet {
       classToAdd = 'fa-lock';
     }
     //todo : add localized title property to the button
-    iElement[0].classList.remove(classToRemove);
-    iElement[0].classList.add(classToAdd);
+    iElem[0].classList.remove(classToRemove);
+    iElem[0].classList.add(classToAdd);
   }
 
   /**
@@ -317,10 +318,10 @@ export default class M20eActorSheet extends ActorSheet {
   _onTraitLabelClick(event) {
     event.preventDefault();
     const element = event.currentTarget;
-    const traitElement = element.closest(".trait");
+    const traitElem = element.closest(".trait");
     //just toggle the active status
-    const toggle = (traitElement.dataset.active === 'true');
-    traitElement.dataset.active = !toggle;
+    const toggle = (traitElem.dataset.active === 'true');
+    traitElem.dataset.active = !toggle;
   }
 
   /**
@@ -398,14 +399,14 @@ export default class M20eActorSheet extends ActorSheet {
   * triggers the creation of personnal JE upon clicking an empty link for that specific one
   */
   _onEntityLinkClick(event){
-    const linkElement = event.currentTarget;
-    const dataset = linkElement.dataset;
+    const linkElem = event.currentTarget;
+    const dataset = linkElem.dataset;
     const id = dataset.id;
     if ( !id ) {
       event.preventDefault();
       event.stopPropagation();
       ui.notifications.warn(game.i18n.localize(`M20E.notifications.noJournal`));
-      if ( linkElement.classList.contains('personnal-je') ) {
+      if ( linkElem.classList.contains('personnal-je') ) {
         this._createPersonnalJE();
       }
     }
@@ -418,8 +419,8 @@ export default class M20eActorSheet extends ActorSheet {
   */
   _onMiniButtonClick(event) {
     event.preventDefault();
-    const buttonElement = event.currentTarget;
-    const dataset = buttonElement.dataset;
+    const buttonElem = event.currentTarget;
+    const dataset = buttonElem.dataset;
     
     switch ( dataset.action ) {
       case 'lock': //deal with locks & dragDrop
@@ -440,11 +441,11 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       
       case 'edit': //edit regular or virtual Trait (item)
-        this._editTrait(new Trait(buttonElement));
+        this._editTrait(new Trait(buttonElem));
         break;
       
       case 'remove':
-        const itemId = buttonElement.closest(".trait").dataset.itemId;
+        const itemId = buttonElem.closest(".trait").dataset.itemId;
         const item = this.actor.items.get(itemId);
         //check wether we are allowed to remove an item or not
         if ( CONFIG.M20E.playModeLockedCat.includes(item.data.type) && 
@@ -456,10 +457,11 @@ export default class M20eActorSheet extends ActorSheet {
         this._removeItem(item);
         break;
       
-      case 'roll':
+      case 'roll-item':
         break;
       
       case 'expand':
+        this._expandDescription(buttonElem);
         break;
     }
   }
@@ -489,10 +491,10 @@ export default class M20eActorSheet extends ActorSheet {
     }
 
     //prompt for new value
-    const inputElement = await utils.promptNewValue(promptData);
+    const inputElem = await utils.promptNewValue(promptData);
     //validate before updating
-    if ( utils.isValidUpdate(inputElement) ) {
-      const newValue = isNaN(currentValue) ? inputElement.value : parseInt(inputElement.value);
+    if ( utils.isValidUpdate(inputElem) ) {
+      const newValue = isNaN(currentValue) ? inputElem.value : parseInt(inputElem.value);
       //only update if it's actually a different value
       if ( newValue !== currentValue ) {
         await this.actor.safeUpdateProperty(relativePath, newValue);
@@ -569,14 +571,14 @@ export default class M20eActorSheet extends ActorSheet {
   * 
   * @return {Array} an Array of Traits objects that correspond to the previously highlighted elements
   */
-   getTraitsToRoll() { 
+  getTraitsToRoll() { 
     //overly complicated statement that could be easily understood if coded with twice the lines
     return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
       const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
       return elementList.length === 0 ? acc : 
-        [...acc, ...elementList.toArray().map(traitElement => {
-          traitElement.dataset.active = false;
-          return new Trait(traitElement);
+        [...acc, ...elementList.toArray().map(traitElem => {
+          traitElem.dataset.active = false;
+          return new Trait(traitElem);
         })];
     }, []);
   }
@@ -587,7 +589,7 @@ export default class M20eActorSheet extends ActorSheet {
   * so any player owner the the actor is also owner of the journal.
   * Needs GM permission level in order to create
   */
-   async _createPersonnalJE() {
+  async _createPersonnalJE() {
     if ( !game.user.isGM ) {
       ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
       return;
@@ -696,8 +698,8 @@ export default class M20eActorSheet extends ActorSheet {
       promptData._promptContent += game.i18n.localize(`M20E.prompts.addItemWarning`);
     }
 
-    const inputElement = await utils.promptNewValue(promptData);
-    const name = inputElement?.value;
+    const inputElem = await utils.promptNewValue(promptData);
+    const name = inputElem?.value;
     if ( !name ) { return; }
     //validate name against all names in same itemType
     const duplicates = this.actor.items.filter(function (item) {
@@ -763,6 +765,29 @@ export default class M20eActorSheet extends ActorSheet {
     //display fake sheet
     const fakeItem = new FakeItem(this.actor, itemData);
     fakeItem.render(true);
+  }
+
+  /**
+   * Expands and Collapses descriptions for certain items
+   * collapse previously expanded description element before expanding a new one
+   * just toggle dataset.expanded and let the css do the rest
+   * 
+   * @param  {Element} buttonElem the mini-button that triggered the event
+   */
+  _expandDescription(buttonElem) {
+    const desc = buttonElem.closest('.one-liner-desc');
+    if ( desc.dataset.expanded === 'true' ) {
+      //only one expanded and we clicked on it, collapse it
+      desc.dataset.expanded = false;
+    } else {
+      //collapses the expanded one (shouldn't be more than one actually)
+      const expandedOne = $(this.buttonElem).find('.one-liner-desc[data-expanded ="true"]');
+      if ( expandedOne.length !== 0 ) {
+        expandedOne[0].dataset.expanded = false;
+      }
+      //then expand the one we just clicked
+      desc.dataset.expanded = true;
+    }
   }
 
   /* -------------------------------------------- */

@@ -362,6 +362,9 @@
       "rollable":{
         "isRollable": true,
         "throws": []
+      },
+      "mageRestricted": {
+        "restricted" : ["charmage", "npcmage"]
       }
     },
     "paradigm":{
@@ -400,7 +403,8 @@
     },
     "rote": {
       "templates":[
-        "rollable"
+        "rollable",
+        "mageRestricted"
       ],
       "displayDescription":""
     }

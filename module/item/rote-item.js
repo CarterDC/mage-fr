@@ -25,7 +25,12 @@ export default class M20eRoteItem extends M20eItem {
     itemData.update({['data.throws']: throws});
   }
 
-  //todo : have a prepareData to add some nice values like isActuallyRollable
+  _prepareOwnedItem() {
+    super._prepareOwnedItem();
+    const itemData = this.data;
+    itemData.data.flavor = this._getFlavor();
+    itemData.data.isActuallyRollable = this._isActuallyRollable();
+  }
 
   /**
    * @override
@@ -35,8 +40,27 @@ export default class M20eRoteItem extends M20eItem {
     return {};
   }
 
+  get roteEffects() {
+    return this.data.data.throws[0].traitsToRoll.map(effect => effect.key);
+  }
+
+  _getFlavor() {
+    //check if actor is able to use this rote's effects
+    if ( !this.actor ) { return ''; }
+    return this.data.data.throws[0]?.traitsToRoll.map(effect => 
+      `${this.actor.locadigm(`spheres.${effect.key}`)} (${effect.value})`
+      ).join(' + ');
+  }
+
+  _isActuallyRollable() {
+    //check if actor is able to use this rote's effects
+    if ( !this.actor ) { return true; }
+    return true;
+  }
+
   async addEffect(availEffects) {
-    const firstKey = availEffects[0]?.key;
+    //get the first truly avail effect
+    const firstKey = availEffects.filter(effect => effect.disabled === '')[0]?.key;
     if ( !firstKey ) {
       ui.notifications.warn(game.i18n.localize('M20E.notifications.noMoreAvailEffects'));
       return;
@@ -48,11 +72,21 @@ export default class M20eRoteItem extends M20eItem {
     return await this.update({['data.throws']: throws});
   }
 
-  async removeEffect(index) {
-
+  async updateEffectValue(effectIndex, value) {
+    const throws = duplicate(this.data.data.throws);
+    throws[0].traitsToRoll[effectIndex].value = value;
+    return await this.update({['data.throws']: throws});
   }
 
-  async updateEffect(index, value) {
+  async updateEffectKey(effectIndex, key) {
+    const throws = duplicate(this.data.data.throws);
+    throws[0].traitsToRoll[effectIndex].key = key;
+    return await this.update({['data.throws']: throws});
+  }
 
+  async removeEffect(effectIndex) {
+    const throws = duplicate(this.data.data.throws);
+    throws[0].traitsToRoll.splice(effectIndex, 1);
+    return await this.update({['data.throws']: throws});
   }
 }
