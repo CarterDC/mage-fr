@@ -52,9 +52,9 @@ export default class M20eParadigmSheet extends M20eItemSheet {
    */
   _onImgMousedown(event) {
     if ( event.which === 3 ) { //mouse right
-      const labelElement = event.currentTarget.previousElementSibling;
+      const labelElem = event.currentTarget.previousElemSibling;
       const menu = new ContextMenu($(this.element), '', this._getImgContextOptions());
-      menu.render($(labelElement));
+      menu.render($(labelElem));
     }
   }
 
@@ -88,7 +88,7 @@ export default class M20eParadigmSheet extends M20eItemSheet {
    * Note : In this context 'Item' refers to a Lexicon Entry
    *  @override
    */
-  async addItem(buttonElement) {
+  async addItem(buttonElem) {
     //edit without parameter actually does an 'edit'
     this._editLexiconEntry(null);
   }
@@ -97,16 +97,16 @@ export default class M20eParadigmSheet extends M20eItemSheet {
    * Note : In this context 'Item' refers to a Lexicon Entry
    *  @override
    */
-  async editItem(buttonElement) {
-    this._editLexiconEntry(buttonElement.closest(".trait").dataset.key);
+  async editItem(buttonElem) {
+    this._editLexiconEntry(buttonElem.closest(".trait").dataset.key);
   }
 
   /**
    * Note : In this context 'Item' refers to a Lexicon Entry
    *  @override
    */
-  async removeItem(buttonElement) {
-    this._removeLexiconEntry(buttonElement.closest(".trait").dataset.key);
+  async removeItem(buttonElem) {
+    this._removeLexiconEntry(buttonElem.closest(".trait").dataset.key);
   }
 
   /* -------------------------------------------- */

@@ -130,6 +130,8 @@ export default class M20eActor extends Actor {
 
     this._extendHealthStats();
     //this._extendMagePower();
+
+    this.items.forEach(item => item._prepareOwnedItem());
   }
 
   /**
@@ -139,6 +141,19 @@ export default class M20eActor extends Actor {
    */
   get paradigm() {
     return this.items.filter(item => item.type === "paradigm")[0];
+  }
+
+  /**
+   * get the system translation for M20E.relativePath or user lexiconEntry if axists
+   * @param  {String} relativePath a localization path relative to the M20E root.
+   */
+  locadigm(relativePath) {
+    const paraItem = this.paradigm;
+    if ( !paraItem ) {
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.missingParadigm'));
+      return;
+    }
+    return paraItem.locadigm(relativePath);
   }
 
   /**

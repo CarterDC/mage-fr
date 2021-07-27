@@ -17,6 +17,7 @@
     "systems/mage-fr/templates/actor/parts/bio-cat.hbs",
     "systems/mage-fr/templates/actor/parts/bg-cat.hbs",
     "systems/mage-fr/templates/actor/parts/mf-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/rotes-cat.hbs",
     // Item Sheet Partials
     "systems/mage-fr/templates/item/parts/header-block.hbs",
     "systems/mage-fr/templates/item/parts/nav-block.hbs",

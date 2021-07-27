@@ -67,18 +67,18 @@
     event.preventDefault();
     const element = event.currentTarget;
     const dataset = element.dataset;
-    const traitElement = element.closest('.trait');
+    const traitElem = element.closest('.trait');
     
     switch (dataset.action){
       case 'roll':
         this.diceThrow.throwDice();
         break;
       case 'remove':
-        this.diceThrow.removeTrait(traitElement.dataset.key);
+        this.diceThrow.removeTrait(traitElem.dataset.key);
         break;
       case 'spe':
         const speToggle = (dataset.active === 'true');
-        this.diceThrow.xTraitsToRoll[traitElement.dataset.key]._useSpec = !speToggle;
+        this.diceThrow.xTraitsToRoll[traitElem.dataset.key]._useSpec = !speToggle;
         this.diceThrow.update();
         break;
       case 'mod-plus':

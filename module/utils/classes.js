@@ -9,10 +9,10 @@ export class Trait {
   constructor(obj) {
     const dataset = obj.dataset;
     if ( dataset ) {
-      const traitElement = obj.closest(".trait");
-      this.category = traitElement.closest(".category").dataset.category || '';
-      this.key = traitElement.dataset.key || '';
-      this.itemId = traitElement.dataset.itemId || '';
+      const traitElem = obj.closest(".trait");
+      this.category = traitElem.closest(".category").dataset.category || '';
+      this.key = traitElem.dataset.key || '';
+      this.itemId = traitElem.dataset.itemId || '';
     } else {
       this.category = obj.category || '';
       this.key = obj.key || '';

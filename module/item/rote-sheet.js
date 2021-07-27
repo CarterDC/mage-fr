@@ -32,7 +32,9 @@ export default class M20eRoteSheet extends M20eItemSheet {
   activateListeners(html) {
     //editable only (roughly equals 'isOwner')
     if ( this.options.editable ) {
-
+      html.find('select').change(this._onSelectChange.bind(this));
+      //html.find('.listened-input').change(this._onInputChange.bind(this));
+      html.find('.bullet[data-clickable="true"').click(this._onBulletClick.bind(this));
     }
     super.activateListeners(html);
   }
@@ -41,32 +43,52 @@ export default class M20eRoteSheet extends M20eItemSheet {
   /*  Event Handlers                              */
   /* -------------------------------------------- */
 
+  
   /**
-   * Note : In this context 'Item' refers to a Trait object
+   * @param  {} event
+   */
+  _onSelectChange(event) {
+    const selectElem = event.currentTarget;
+    const traitElem = selectElem.closest(".trait");
+    this.item.updateEffectKey(traitElem.dataset.index, selectElem.options[selectElem.selectedIndex].value);
+  }
+
+  /**
+   * @param  {} event
+   */
+  _onBulletClick(event) {
+    const bulletElem = event.currentTarget;
+    const traitElem = bulletElem.closest(".trait");
+    const newValue = parseInt(bulletElem.dataset.index) + 1; //bullet indexes are base 0 !
+    this.item.updateEffectValue(traitElem.dataset.index, newValue);
+  }
+
+  /**
+   * Note : In this context 'Item' refers to a magycal effect in the form of a Trait object
    * in itemData.data.throws[{traitsToRoll[]}]
    *  @override
    */
-  async addItem(buttonElement) {
+  async addItem(buttonElem) {
     this.item.addEffect(this.getAvailEffects());
   }
 
   /**
-   * Note : In this context 'Item' refers to a Trait object
+   * Note : In this context 'Item' refers to a magycal effect in the form of a Trait object
    * in itemData.data.throws[{traitsToRoll[]}]
    *  @override
    */
-  async editItem(buttonElement) {
-    //does nothing, there's not edit button on rote effects ^^
+  async editItem(buttonElem) {
+    //does nothing, there's no edit button on rote effects ^^
   }
 
   /**
-   * Note : In this context 'Item' refers to a Trait object
+   * Note : In this context 'Item' refers to a magycal effect in the form of a Trait object
    * in itemData.data.throws[{traitsToRoll[]}]
    *  @override
    */
-  async removeItem(buttonElement) {
+  async removeItem(buttonElem) {
     //no prompt, just do it ! 
-    this.item.removeEffect((buttonElement.closest(".trait").dataset.index))
+    this.item.removeEffect((buttonElem.closest(".trait").dataset.index))
   }
 
 
@@ -76,17 +98,51 @@ export default class M20eRoteSheet extends M20eItemSheet {
 
 
   /**
-   * returns a {{key{name, valueMax}},} object
+   * returns sorted and 'filtered' list of available sphere effects
+   * already chosen effects are 'filtered' aka disabled in the select
    * 
+   * @return {Array} [{key, name, valueMax, disabled},]
    */
   getAvailEffects() {
-    let sphereList = [];
-    //todo : filter already added spheres
-    sphereList = CONFIG.M20E.spheres.reduce((acc, cur) => 
-      ([...acc, {key: cur, name: game.i18n.localize(`M20E.spheres.${cur}`), valueMax : 5}]), []);
-
+    const sphereList = this.item.actor ? this.effectsFromActor() : this.effectsFromConfig();
+    //disable already chosen effects
+    const roteEffects = this.item.roteEffects;
+    sphereList.forEach(effect => {
+      effect.disabled = roteEffects.includes(effect.key) ? 'disabled' : '';
+    });
     sphereList.sort(utils.alphaSort());
     return sphereList;
-    ;
+  }
+
+  /**
+   * returns list of all sphere effects from config
+   * 
+   * @return {Array} [{key, name, valueMax},]
+   */
+  effectsFromConfig() {
+    return CONFIG.M20E.spheres.map( key => (
+      {
+        key: key,
+        name: game.i18n.localize(`M20E.spheres.${key}`),
+        valueMax : 5
+      }
+    ));
+  }
+
+  /**
+   * returns list of actor's trained sphere effects
+   * 
+   * @return {Array} [{key, name, valueMax},]
+   */
+  effectsFromActor() {
+    const spheres = this.actor.data.data.spheres
+    return Object.entries(spheres).reduce((acc, [key, sphere]) => {
+      return sphere.value === 0 ? acc : 
+      [...acc, {
+        key: key,
+        name: this.actor.locadigm(`spheres.${key}`),
+        valueMax : sphere.value
+      }];
+    }, []);
   }
 }
