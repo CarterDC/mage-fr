@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": ["charmage", "npcmage", "npcsleeper"],
+    "types": ["charmage"],
     "templates":{
       "explanations": {
         "__comment1__": "attributes entries are ordered to be AUTO populated in 3 columns",
@@ -206,6 +206,7 @@
 
       "aliases": [],
       "link": {},
+      "permanent": {},
       "extra" : {}
     },
     "npcmage": {
@@ -350,15 +351,17 @@
       "ability",
       "background",
       "meritflaw",
-      "paradigm"
+      "paradigm",
+      "rote"
     ],
     "templates":{
       "virtualTrait":{
         "isTrait": true,
         "value": 0
       },
-      "rollableItem":{
-        "isRollable": true
+      "rollable":{
+        "isRollable": true,
+        "throws": []
       }
     },
     "paradigm":{
@@ -393,6 +396,12 @@
       "value": 0,
       "displayName":"",
       "systemDescription": "",
+      "displayDescription":""
+    },
+    "rote": {
+      "templates":[
+        "rollable"
+      ],
       "displayDescription":""
     }
   }
