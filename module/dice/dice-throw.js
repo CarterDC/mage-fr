@@ -3,9 +3,9 @@ import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 import { Trait, ExtendedTrait } from "../utils/classes.js";
 
-const TROWSETTINGS_BLANDROLL = 1;
-const TROWSETTINGS_DEDUCTFAILURE = 2;
-const TROWSETTINGS_DFXPLODESUCCESS = 3;
+export const TROWSETTINGS_BLANDROLL = 1;
+export const TROWSETTINGS_DEDUCTFAILURE = 2;
+export const TROWSETTINGS_DFXPLODESUCCESS = 3;
 
 /**
  * 
@@ -30,15 +30,17 @@ export class DiceThrow {
    * intitialises the DiceThrow with option values || default
    */
   initialize() {
+    this.isItemThrow = this._document.isEmbedded === true;
+
     //todo : use options to modify values / mods
     this.dicePoolMods = {
       userMod: 0
     };
-    this.thresholdBase = game.settings.get("mage-fr", "baseRollThreshold");
+    this.thresholdBase = this.options.thresholdBase || game.settings.get("mage-fr", "baseRollThreshold");
     this.thresholdMods = {//not so sure about that
       userMod: 0,
     };
-    this.throwSettings = TROWSETTINGS_DEDUCTFAILURE;
+    this.throwSettings = this.options.throwSettings || TROWSETTINGS_DEDUCTFAILURE;
     //todo : maybe have a success mods array + extended rolls
 
     this.initTraits();
@@ -56,10 +58,12 @@ export class DiceThrow {
    * Calculates and store some relevant data for display / roll
    */
   prepareData() {
+    this.isEffectRoll = this.getIsEffectRoll();
     this.dicePoolBase = this.getDicePoolBase();
     this.dicePoolMods.healthMod = this.getHealthMod(),
     this.dicePoolMods.untrainedMMod = this.getUntrainedMod()
     this.dicePoolTotal = Math.max(this.dicePoolBase + this.dicePoolMod, 1);
+    this.flavor = this.getFlavor();
   }
 
   update() {
@@ -96,6 +100,10 @@ export class DiceThrow {
     return this._document.isEmbedded ? this._document.parent : this._document;
   }
 
+  get isWonderThrow() {
+    return this.isItemThrow && this._document.data.data.arete;
+  }
+
   get dicePoolMalus() {
     return Object.values(this.dicePoolMods).reduce((acc, cur) => {
       return acc + ( cur < 0 ? cur : 0);
@@ -121,9 +129,10 @@ export class DiceThrow {
   }
 
   getDicePoolBase() {
-    if ( this.isEffectRoll() ) {
+    if ( this.isEffectRoll ) {
       //dice pool base is just arete
-      return this._document.data.data.arete;
+      //items might have an arete score (ie Wonders, Talismans...)
+      return this._document.data.data.arete || this.actor.data.data.arete;
     } else {
       //dice pool base is sum of all values
       return this.xTraitsToRoll.reduce((acc, cur) => {
@@ -133,8 +142,17 @@ export class DiceThrow {
   }
 
   getHealthMod() {
-    return game.settings.get("mage-fr", "useHealthMalus") ?
-      (this.actor.data.data.health.malus * -1) : 0;
+    if ( this.isWonderThrow ) { return 0;} //wonders don't have a health malus
+    let healthMod = 0;
+    if ( game.settings.get("mage-fr", "useHealthMalus") ) {
+      if ( this.isEffectRoll ) {
+        healthMod = game.settings.get("mage-fr", "useHealthMalusForMagic") ? 
+          this.actor.data.data.health.malus * -1 : 0;
+      } else {
+        healthMod = this.actor.data.data.health.malus * -1;
+      }
+    }
+    return healthMod;
   }
 
   getUntrainedMod() {
@@ -158,15 +176,46 @@ export class DiceThrow {
     return untrainedMalus;
   }
 
-  get flavor() {
-    return this._getFlavor(true);
+  rotateSetting(mod) {
+    this.throwSettings += mod;
+    if ( this.throwSettings < TROWSETTINGS_BLANDROLL ) {
+      this.throwSettings = TROWSETTINGS_DFXPLODESUCCESS;
+    } else if ( this.throwSettings > TROWSETTINGS_DFXPLODESUCCESS ) {
+      this.throwSettings = TROWSETTINGS_BLANDROLL;
+    }
+    this.render(true);
   }
 
-  _getFlavor(useParadigm = false) {
+  getFlavor(useParadigm = false) {
     //ⓈⓊ🅢🅤
+    if ( this.isItemThrow ) {
+      return this._document.getThrowFlavor(this.xTraitsToRoll);
+    }
+    if ( this.isEffectRoll ) {
+      const throwEffect = this.xTraitsToRoll.map(effect => 
+        `${this.actor.locadigm(`spheres.${effect.key}`)} (${effect.value})`
+        ).join(' + ');
+      return `${this.actor.locadigm('diceThrows.areteThrow')} :<br>
+        ${game.i18n.format('M20E.diceThrows.effect', {effect: throwEffect})}.`
+    }
+    switch ( this.xTraitsToRoll.length ) {
+      case 0: //no trait was selected
+        return `${game.i18n.localize("M20E.diceThrows.freeThrow")}.`;
+        break;
+      case 1: //only one trait roll
+      case 2: //classic (or not) 2 traits
+        const throwTrait = this.xTraitsToRoll.map(trait => {
+          return trait.useSpec ? `${trait.name}(S)` :
+            ( trait.value === 0 ? `<span class= "red-thingy">${trait.name}</span>` : trait.name) ;
+        }).join(' + ');
+        return `${game.i18n.format("M20E.diceThrows.throwFor", {trait: throwTrait})}.`;
+        break;
+      default: //too many traits => don't bother
+        return `${game.i18n.localize("M20E.diceThrows.mixedThrow")}.`;
+    }
   }
 
-  isEffectRoll(){
+  getIsEffectRoll() {
     return this._traitsToRoll.length !== 0 && this._traitsToRoll.reduce((acc, cur) => {
       return acc && cur.category === 'spheres'
     }, true);
@@ -174,44 +223,35 @@ export class DiceThrow {
 
   getExplodeSuccess(){
     if ( this.throwSettings === TROWSETTINGS_DFXPLODESUCCESS ) { return true; }
-    return true;
-    /*
-    (this.throwSettings === TROWSETTINGS_DFXPLODESUCCESS)
-    let xplodeSuccess = false;
-    //xplodeSuccess = xplodeSuccess || (game.settings.get("mage-fr", "roteRule") && isRote);
-    if(game.settings.get("mage-fr", "specialisationRule")){
-      this.xTraitsToRoll.forEach(function (xTrait) {
-          xplodeSuccess = xplodeSuccess || (xTrait.useSpec === true);
-      })
-    }
-    return xplodeSuccess;*/
+    if ( this._document.type === 'rote' && game.settings.get("mage-fr", "roteRule")) { return true; }
+    return game.settings.get("mage-fr", "specialisationRule") && 
+      this.xTraitsToRoll.length !== 0 &&
+      this.xTraitsToRoll.reduce((acc, cur) => (acc || cur.useSpec), false);
   }
 
   async throwDice() {
-    //change formula according to throwSettings
-    const deductFailures = (this.throwSettings === TROWSETTINGS_BLANDROLL) ? '' :  'df=1';
-    //check if rote or spé or throwSettings to apply xs modifier
-    const tenXplodeSuccess = this.getExplodeSuccess() ? "xs=10" : "";
     //nicely pack everything we gonna need for our roll and our message
     const rollData = {
       documentId: this._document.id,
       actorId: this.actor.id,
       traitsToRoll: this._traitsToRoll,
-      option: this.options,
+      options: this.options,
+      deductFailures: (this.throwSettings === TROWSETTINGS_BLANDROLL) ? '' :  'df=1',
+      tenXplodeSuccess: this.getExplodeSuccess() ? "xs=10" : "",
       dicePoolBase: this.dicePoolBase,
       dicePoolMods: this.dicePoolMods,
       dicePoolTotal: this.dicePoolTotal,
       thresholdBase: this.thresholdBase,
       thresholdMods: this.thresholdMods,
-      thresholdTotal: this.thresholdBase,
-      flavor: '',
-      explodeSuccess: this.getExplodeSuccess() ? 'xs=10' : '',
-      deductFailures: (this.throwSettings === TROWSETTINGS_BLANDROLL) ? '' :  'df=1'
+      thresholdTotal: this.thresholdBase,//todo : change if ever needed
+      flavor: this.flavor
     }
     const rollMode = this.rollMode || game.settings.get("core", "rollMode");
-    const formula = `(@dicePoolTotal)d10${tenXplodeSuccess}cs>=(@thresholdTotal)${deductFailures}`;
+    const formula = `(@dicePoolTotal)d10${rollData.tenXplodeSuccess}cs>=(@thresholdTotal)${rollData.deductFailures}`;
     const mageRoll = new CONFIG.Dice.MageRoll(formula, rollData, rollData);
+
     //the async evaluation is gonna be done by the toMessage()
+    //todo : use wonder's name as alias if relevant
     return await mageRoll.toMessage({
       speaker : ChatMessage.getSpeaker({actor: this.actor}),
       flavor : rollData.flavor

@@ -439,7 +439,9 @@
   box-shadow: 0 0 2px 1px var(--hoverColor);
 }
 .m20e .mini-button[data-disabled='true']:hover {
+  color: var(--m20e-lightGrey);
   text-shadow: none;
+  box-shadow: none;
 }
 .m20e .mini-button[data-locked='true'] {
   display: none;
@@ -670,25 +672,30 @@
 .m20e .trait.ability input {
   padding: 1px 0 0;
 }
-.m20e .trait.dice {
+.m20e .trait.throw {
   height: 20px;
   margin: 3px 0;
 }
-.m20e .trait.dice .trait-label[data-value="0"] {
+.m20e .trait.throw .trait-label[data-value="0"] {
   color: var(--m20e-badRed);
 }
-.m20e .trait.dice .trait-label:hover {
+.m20e .trait.throw .trait-label:hover {
   text-shadow: none;
 }
-.m20e .trait.dice .mini-button[data-action="remove"] {
+.m20e .trait.throw .mini-button[data-action="remove"] {
   color: var(--m20e-badRed);
   margin-right: 10px;
 }
-.m20e .trait.dice .mini-button.spe {
+.m20e .trait.throw .mini-button[data-disabled='true'] {
+  color: var(--m20e-lightGrey);
+  border: none;
+  cursor: default;
+}
+.m20e .trait.throw .mini-button.spe {
   width: 50px;
   margin-left: 10px;
 }
-.m20e .trait.dice .mini-button.spe[data-active='true'] {
+.m20e .trait.throw .mini-button.spe[data-active='true'] {
   color: var(--highlightColor);
   text-shadow: none;
 }
@@ -1045,7 +1052,7 @@ li.chat-message .card .card-footer .item-img {
   font-size: 18px;
   margin: 10px 6px 5px 6px;
 }
-.m20e.dialogue .mini-button.keep {
+.m20e.dialogue .mini-button.auto-close {
   height: 32px;
   width: 32px;
   font-size: 18px;
@@ -1053,7 +1060,7 @@ li.chat-message .card .card-footer .item-img {
   position: relative;
   top: 2px;
 }
-.m20e.dialogue .mini-button.keep[data-active='true'] {
+.m20e.dialogue .mini-button.auto-close[data-active='true'] {
   color: var(--highlightColor);
 }
 .m20e.dialogue .mini-button.throw-settings {

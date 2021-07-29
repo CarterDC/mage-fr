@@ -135,6 +135,40 @@ export default class M20eActor extends Actor {
   }
 
   /**
+   * check whether dropped item can be 'safely' created on this actor
+   * @param  {M20eItem} item item being dropped
+   */
+  isDropAllowed(item) {
+    const itemData = item.data;
+    //check name against all names in same itemType
+    const duplicates = this.items.filter(item => (item.type === itemData.type) && (item.name === itemData.name));
+    if ( duplicates.length ) {
+      ui.notifications.error(game.i18n.format(`M20E.notifications.duplicateName`, {name: itemData.name}));
+      return;
+    }
+    //check against 'creation mode'
+    if ( CONFIG.M20E.playModeLockedCat.includes(itemData.type) && 
+      this.data.data.creationDone && !game.user.isGM ) {
+        ui.notifications.error(game.i18n.localize('M20E.notifications.notOutsideCreation'));
+        return false;
+    }
+    //check against restricted
+    if ( itemData.data.restricted && !itemData.data.restricted.includes(this.data.type) ) {
+      const itemType = game.i18n.localize(`ITEM.Type${item.type.capitalize()}`);
+      ui.notifications.error(game.i18n.format('M20E.notifications.restrictedItem',
+        {actorName:this.name, itemType: itemType}));
+      return false;
+    }
+    //check against spheres levels
+    if ( itemData.type === 'rote' && !item._isActuallyRollable(this) ){
+      ui.notifications.error(game.i18n.format('M20E.notifications.unrollableRote',
+        {actorName:this.name, itemName: item.name}));
+      return false;
+    }
+    return true;
+  }
+
+  /**
    * Gets the sole paradigm item from this actor
    * Note : class might actually be M20eParadigmItem if I kept the useless subclass system for the items
    * @return {M20eItem|undefined} 

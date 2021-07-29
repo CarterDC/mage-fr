@@ -350,7 +350,9 @@
     "types": [
       "ability",
       "background",
+      "event",
       "meritflaw",
+      "misc",
       "paradigm",
       "rote"
     ],
@@ -367,22 +369,6 @@
         "restricted" : ["charmage", "npcmage"]
       }
     },
-    "paradigm":{
-      "lexicon": {},
-      "sheetLogo": "",
-      "opacity": 0.2,
-      "cssClass": "",
-      "spheresDesc": ""
-    },
-    "background":{
-      "templates":[
-        "virtualTrait"
-      ],
-      "displayName":"",
-      "systemDescription": "",
-      "displayDescription":"",
-      "effects":[]
-    },
     "ability":{
       "templates":[
         "virtualTrait"
@@ -394,12 +380,37 @@
       "displayDescription":"",
       "extra": ""
     },
+    "background":{
+      "templates":[
+        "virtualTrait"
+      ],
+      "displayName":"",
+      "systemDescription": "",
+      "displayDescription":"",
+      "effects":[]
+    },
+    "event": {
+      "displayDescription": "",
+      "date": "",
+      "extra": {}
+    },
     "meritflaw":{
       "subType": "merit",
       "value": 0,
       "displayName":"",
       "systemDescription": "",
       "displayDescription":""
+    },
+    "misc": {
+      "displayDescription": "",
+      "extra": {}
+    },
+    "paradigm":{
+      "lexicon": {},
+      "sheetLogo": "",
+      "opacity": 0.2,
+      "cssClass": "",
+      "spheresDesc": ""
     },
     "rote": {
       "templates":[

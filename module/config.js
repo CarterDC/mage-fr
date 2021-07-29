@@ -35,7 +35,7 @@ M20E.categoriesWithLocks = [
   "description",
   "backgrounds",
   "meritsflaws",
-  "chronic",
+  "events",
   "contacts",
   "rotes",
   "equipement"
@@ -51,7 +51,7 @@ M20E.categoryToType ={
   "meritsflaws": "meritflaw",
   "merits": "merit",
   "flaws": "flaw",
-  "chronic": "event",
+  "events": "event",
   "contacts": "contact"
 }
 

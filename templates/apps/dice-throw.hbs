@@ -1,71 +1,71 @@
 <form class="{{cssClass}}" autocomplete="off" style="display:block;">
-  <div class="dialog-block flavor">
-      
-  </div>
-  {{#if traits.length}}
-  <div class="dialog-block">
-      {{#each traits as |trait key|}}
-      <div class="trait dice" data-key="{{key}}">
-          <a class="mini-button" title="{{localize 'M20E.hints.removeFromThrow'}}" data-action="remove"><i class="fas fa-times-circle"></i></a>
-          <label class="trait-label tooltip" data-value ="{{trait.value}}" {{#if (eq trait.value 0)}} title="{{localize 'M20E.hints.untrained'}}"{{/if}}>
-              {{trait.name}}
-              {{#if trait.canUseSpec}}
-              <span class="righttooltiptext">{{trait.specName}}</span>
-              {{/if}}
-          </label>
-          <div class="ligne"></div>
-          <div class="bullet-display" data-locked="true">
-              {{#forLoop 5}}
-              <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" data-clickable="{{gt trait.valueMax this}}"></span>
-              {{/forLoop}}
-          </div>
-          {{#if trait.canUseSpec}}
-              <a class="mini-button spe" title="{{localize 'M20E.hints.useSpecialisation'}}" data-action="spe" data-active = {{trait.useSpec}}>{{localize "M20E.labels.spe"}}</a>
-          {{else}}
-              <div class="mini-button spe decoy"></div>
-          {{/if}}
-      </div>
-      {{/each}}
-  </div>
-  {{/if}}
-  <div class="dialog-block dice-pool">
-    <label style="text-align: center; margin-left:-6px;" title="{{localize 'M20E.hints.dicePool'}}">{{localize "M20E.labels.dicePool"}} :</label>
-    <input name="dicePool" type="text" value="{{diceThrow.dicePoolBase}}" data-dtype="Number" disabled/>
-    {{#if (ne diceThrow.dicePoolMalus 0)}}
-    <input class= "red-thingy" name="dicePoolMalus" type="text" value="{{sign diceThrow.dicePoolMalus}}" data-dtype="Number" disabled/>
-    {{/if}}
-    <div style="display: flex; flex-direction:row;">
-        <div class="double-button" style="margin:0 5px;">
-            <a class="mini-button" title="{{localize 'M20E.hints.addDice'}}" data-action="mod-plus"><i class="fas fa-plus"></i></a>
-            <a class="mini-button" title="{{localize 'M20E.hints.removeDice'}}" data-action="mod-minus"><i class="fas fa-minus"></i></a>
-        </div>
-        <input name="dicePoolBonus" type="text" value="{{sign diceThrow.dicePoolBonus}}" data-dtype="Number" disabled/>
+    <div class="dialog-block flavor">
+        {{{diceThrow.flavor}}}
     </div>
-    <i class="fas fa-equals" style ="font-size: 16px;" ></i>
-    <input name="dicePoolTotal" type="text" value="{{diceThrow.dicePoolTotal}}" data-dtype="Number" readonly/>
-  </div>
-  <div class="dialog-block difficulty">
-    <label title="{{localize 'M20E.hints.threshold'}}">{{localize "M20E.labels.threshold"}} :</label>
-    {{!--TODO : maybe add and display threshold mods  --}}
-    <div class="radio-group">
-        {{#each radioOptions as |radio key|}}
-        <div>
-            <input id="rad{{radio.value}}" type="radio" name="threshold" value="{{radio.value}}" {{radio.checked}}/>
-            <label class= "radio-label" for="rad{{radio.value}}">{{radio.value}}</label>
+    {{#if traits.length}}
+    <div class="dialog-block">
+        {{#each traits as |trait key|}}
+        <div class="trait throw" data-key="{{key}}">
+            <a class="mini-button" title="{{localize 'M20E.hints.removeFromThrow'}}" data-action="remove" data-disabled="{{../diceThrow.isItemThrow}}"><i class="fas fa-times-circle"></i></a>
+            <label class="trait-label tooltip" data-value ="{{trait.value}}" {{#if (eq trait.value 0)}} title="{{localize 'M20E.hints.untrained'}}"{{/if}}>
+                {{trait.name}}
+                {{#if trait.canUseSpec}}
+                <span class="righttooltiptext">{{trait.specName}}</span>
+                {{/if}}
+            </label>
+            <div class="ligne"></div>
+            <div class="bullet-display" data-locked="true">
+                {{#if (and ../diceThrow.isEffectRoll (not ../diceThrow.isItemThrow))}}
+                {{#forLoop 5}}
+                <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" data-clickable="{{gt trait.valueMax this}}"></span>
+                {{/forLoop}}
+                {{else}}
+                {{#forLoop 5}}
+                <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" data-clickable="false"></span>
+                {{/forLoop}}
+                {{/if}}
+            </div>
+            {{#if trait.canUseSpec}}
+                <a class="mini-button spe" title="{{localize 'M20E.hints.useSpecialisation'}}" data-action="spe" data-active = {{trait.useSpec}}>{{localize "M20E.labels.spe"}}</a>
+            {{else}}
+                <div class="mini-button spe decoy"></div>
+            {{/if}}
         </div>
         {{/each}}
     </div>
-  </div>
+    {{/if}}
+    <div class="dialog-block dice-pool">
+        <label style="text-align: center; margin-left:-6px;" title="{{localize 'M20E.hints.dicePool'}}">{{localize "M20E.labels.dicePool"}} :</label>
+        <input name="dicePool" type="text" value="{{diceThrow.dicePoolBase}}" data-dtype="Number" disabled/>
+        {{#if (ne diceThrow.dicePoolMalus 0)}}
+        <input class= "red-thingy" name="dicePoolMalus" type="text" value="{{sign diceThrow.dicePoolMalus}}" data-dtype="Number" disabled/>
+        {{/if}}
+        <div style="display: flex; flex-direction:row;">
+            <div class="double-button" style="margin:0 5px;">
+                <a class="mini-button" title="{{localize 'M20E.hints.addDice'}}" data-action="mod-plus"><i class="fas fa-plus"></i></a>
+                <a class="mini-button" title="{{localize 'M20E.hints.removeDice'}}" data-action="mod-minus"><i class="fas fa-minus"></i></a>
+            </div>
+            <input name="dicePoolBonus" type="text" value="{{sign diceThrow.dicePoolBonus}}" data-dtype="Number" disabled/>
+        </div>
+        <i class="fas fa-equals" style ="font-size: 16px;" ></i>
+        <input name="dicePoolTotal" type="text" value="{{diceThrow.dicePoolTotal}}" data-dtype="Number" readonly/>
+    </div>
+    <div class="dialog-block difficulty">
+        <label title="{{localize 'M20E.hints.threshold'}}">{{localize "M20E.labels.threshold"}} :</label>
+        {{!--TODO : maybe add and display threshold mods  --}}
+        <div class="radio-group">
+            {{#each radioOptions as |radio key|}}
+            <div>
+                <input id="rad{{radio.value}}" type="radio" name="threshold" value="{{radio.value}}" {{radio.checked}}/>
+                <label class= "radio-label" for="rad{{radio.value}}">{{radio.value}}</label>
+            </div>
+            {{/each}}
+        </div>
+    </div>
 
-  <a class="mini-button throw-settings" title="{{localize (concat 'M20E.hints.throwSettings.' parameters.throwSettings)}}" data-action="settings" data-settings="{{parameters.throwSettings}}"><i class="fas fa-dice-d20"></i></a>
-  <a class="mini-button dice-throw" data-action="roll">
-    <span>{{localize "M20E.labels.throw"}} <i class="fas fa-dice"></i></span> <i class=""></i>
-  </a>
-  {{#if keepOpen}}
-      <a class="mini-button keep" title="{{localize 'M20E.hints.keepOpen'}}" data-action="keep" data-active="true"><i class="fas fa-ellipsis-h"></i></a>
-  {{else}}
-      <a class="mini-button keep" title="{{localize 'M20E.hints.keepOpen'}}" data-action="keep" data-active="false"><i class="fas fa-ellipsis-h"></i></a>
-  {{/if}}
-
-
+    <a class="mini-button throw-settings" title="{{localize (concat 'M20E.hints.throwSettings.' diceThrow.throwSettings)}}" data-action="settings" data-settings="{{diceThrow.throwSettings}}"><i class="fas fa-dice-d20"></i></a>
+    <a class="mini-button dice-throw" data-action="roll">
+        <span>{{localize "M20E.labels.throw"}} <i class="fas fa-dice"></i></span> <i class=""></i>
+    </a>
+    <a class="mini-button auto-close" title="{{localize 'M20E.hints.toggleAutoClose'}}" data-action="auto-close" data-active="{{closeOnRoll}}"><i class="fas fa-ellipsis-h"></i></a>
 </form>

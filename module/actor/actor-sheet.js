@@ -36,7 +36,7 @@ export default class M20eActorSheet extends ActorSheet {
       width: 500,
       height: 700,
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'traits' }],
-      dragDrop: [{ dragSelector: ".dice-button" }]
+      dragDrop: [{ dragSelector: ".macro-ready" }]
     })
   }
 
@@ -80,6 +80,8 @@ export default class M20eActorSheet extends ActorSheet {
     //the rest of the items
     sheetData.items.backgrounds = sheetData.items.filter(function (item) { return item.type === "background" });
     sheetData.items.rotes = sheetData.items.filter(function (item) { return item.type === "rote" });
+    sheetData.items.events = sheetData.items.filter(function (item) { return item.type === "event" });
+    sheetData.items.miscellaneous = sheetData.items.filter(function (item) { return item.type === "misc" });
 
     //other usefull data
     sheetData.isGM = game.user.isGM;
@@ -102,10 +104,11 @@ export default class M20eActorSheet extends ActorSheet {
   activateListeners(html) {
     
     //actions for everyone
-    
 
     //editable only (roughly equals 'isOwner')
     if ( this.isEditable ) {
+      //dice throwing
+      html.find('.dice-button').click(this._onDiceClick.bind(this));
       //highlighting of traits
       html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
       //every interraction with a button (except for the dice-button)
@@ -116,8 +119,6 @@ export default class M20eActorSheet extends ActorSheet {
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
       //click on the 'i' buttons (blue or grey)
       html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
-      //dice throwing
-      html.find('.dice-button').click(this._onDiceClick.bind(this));
       //ctx menu on the character name (paradigm edition...)
       new ContextMenu(html, '.header-row.charname', this._getNameContextOptions());
       //ctx menu on traits (edition / link)
@@ -458,6 +459,7 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       
       case 'roll-item':
+        this._rollItem(buttonElem.closest(".trait").dataset.itemId, event.shiftKey);
         break;
       
       case 'expand':
@@ -716,7 +718,7 @@ export default class M20eActorSheet extends ActorSheet {
     }
     //send the itemData to be created on the actor
     //and let the item._preCreate() deal with the specifics
-    this.actor.createEmbeddedDocuments('Item', [itemData], { renderSheet: true });
+    this.actor.createEmbeddedDocuments('Item', [itemData], {renderSheet: true, fromActorSheet: true });
     
   }
 
@@ -790,6 +792,24 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
+  _rollItem(itemId, shiftKey, throwIndex = 0) {
+      const item = this.actor.items.get(itemId);
+      //retrieve traits to roll
+      const traitsToRoll = item.getTraitsToRoll(throwIndex);
+      const diceThrow = new DiceThrow({
+        document: item,
+        traitsToRoll: traitsToRoll
+      });
+      if ( shiftKey ) {
+        //throw right away
+        diceThrow.throwDice();
+      } else {
+        //display dice throw dialog
+        diceThrow.render(true);
+      }
+
+  }
+
   /* -------------------------------------------- */
   /*  Drag n Drop                                 */
   /* -------------------------------------------- */
@@ -843,13 +863,6 @@ export default class M20eActorSheet extends ActorSheet {
     const item = await Item.implementation.fromDropData(data);
     const itemData = item.toObject();
 
-    if ( CONFIG.M20E.playModeLockedCat.includes(itemData.type) && 
-      this.actor.data.data.creationDone && 
-      !game.user.isGM ) {
-        ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
-        return false;
-    }
-    
     //special handling for paradigm items
     if ( itemData.type === 'paradigm' ) {
       return this._onDropParadigmItem(itemData);
@@ -859,6 +872,8 @@ export default class M20eActorSheet extends ActorSheet {
     let sameActor = (data.actorId === actor.id) || (actor.isToken && (data.tokenId === actor.token.id));
     if (sameActor) return this._onSortItem(event, itemData);
 
+    //check if drop is allowed
+    if ( !await this.actor.isDropAllowed(item) ) { return false; }
     // Create the owned item
     return super._onDropItemCreate(itemData);
   }

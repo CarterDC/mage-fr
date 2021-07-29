@@ -1,0 +1,21 @@
+<form class="{{cssClass}}" autocomplete="off">
+  {{> "systems/mage-fr/templates/item/parts/header-block.hbs" useDisplayName=false itemImg=item.img itemType="ITEM.TypeEventAlt"}}
+
+  {{> "systems/mage-fr/templates/item/parts/nav-block.hbs" secondTab='none'}}
+
+  <section class="sheet-body">
+      <section class="tab" data-group="primary" data-tab="detail">
+          <div class="grid two-col">
+              <div class= "field" title="{{localize 'M20E.hints.date'}}">
+                  <label for="data.date">{{localize "M20E.labels.date"}} : </label>
+                  <input name="data.date" type="text" value="{{data.date}}" data-dtype="String"/>
+              </div>
+          </div>
+          <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
+              <label for="data.displayDescription">{{localize "M20E.labels.displayDescription"}} : </label>
+<textarea name="data.displayDescription">{{data.displayDescription}}</textarea>
+          </div>
+      </section>
+      
+  </section>
+</form>

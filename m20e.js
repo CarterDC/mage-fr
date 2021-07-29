@@ -57,7 +57,7 @@ Hooks.once('init', async function () {
   Actors.registerSheet('m20e', M20eActorSheet, { makeDefault: true });
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('m20e', M20eItemSheet, { 
-    types: ["ability", "background", "meritflaw"], //todo , add all the other base item types
+    types: ["ability", "background", "meritflaw", "event", "misc"], //todo , add all the other base item types
     makeDefault: true 
   });
   Items.registerSheet("m20e", M20eParadigmSheet, {
