@@ -25,6 +25,9 @@ export default class M20eRoteItem extends M20eItem {
     itemData.update({['data.throws']: throws});
   }
 
+  /**
+   * @override
+   */
   _prepareOwnedItem() {
     super._prepareOwnedItem();
     const itemData = this.data;
@@ -35,9 +38,19 @@ export default class M20eRoteItem extends M20eItem {
   /**
    * @override
    */
-  getExtendedTraitData() {
-    
-    return {};
+  getTraitsToRoll() {
+    return this.data.data.throws[0].traitsToRoll;
+  }
+
+  /**
+   * @override
+   */
+  getThrowFlavor() {
+    const itemType = game.i18n.localize(`ITEM.Type${this.type.capitalize()}`);
+    const effect = this._getFlavor();
+
+    return `${itemType} ${this.name} : <br>
+    ${game.i18n.format('M20E.diceThrows.effect', {effect: effect})}.`;
   }
 
   get roteEffects() {
@@ -45,17 +58,18 @@ export default class M20eRoteItem extends M20eItem {
   }
 
   _getFlavor() {
-    //check if actor is able to use this rote's effects
-    if ( !this.actor ) { return ''; }
     return this.data.data.throws[0]?.traitsToRoll.map(effect => 
       `${this.actor.locadigm(`spheres.${effect.key}`)} (${effect.value})`
       ).join(' + ');
   }
 
-  _isActuallyRollable() {
+  _isActuallyRollable(actor=null) {
+    actor = actor || this.actor;
     //check if actor is able to use this rote's effects
-    if ( !this.actor ) { return true; }
-    return true;
+    const spheres = actor.data.data.spheres;
+    return this.data.data.throws[0].traitsToRoll.reduce((acc, cur) => {
+      return acc && (spheres[cur.key].value >= cur.value);
+    }, true);
   }
 
   async addEffect(availEffects) {

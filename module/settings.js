@@ -5,7 +5,40 @@ class Dummy extends FormApplication {
     window.open("https://discord.gg/er4TUtV", "_blank");
   }
 }
+
 export const registerSystemSettings = function() {
+
+  Hooks.on('renderSettingsConfig', async function (app, html, data) {
+    html.on('change', 'input', onInputChange);
+  });
+
+  /**
+   * Show/hide all the settings that have a dependency to the setting that was just clicked
+   * Note : as a conséquence, form is sumbitted and rerendered bypassing the submit button.
+   * also, using the 'reset' button would F everything up, till world reload ^^
+   */
+  const onInputChange = async function(event) {
+    const inputElem = event.currentTarget;
+    const [moduleName, settingName] = inputElem.name.split('.');
+    if ( moduleName !== game.system.id ) { return ;}
+    if ( inputElem.dataset.dtype !== 'Boolean' ) { return; }
+
+    //all settings that have the 'clicked setting' as a dependency
+    const dependents = Array.from(game.settings.settings, ([key, value]) => (
+      {key, value}
+      )).filter( setting => (
+        setting.key.split('.')[0] === moduleName && setting.value.dependency === settingName
+      ));
+    //if we got dependencies, update their config status, submit the form and rerender
+    if ( dependents.length > 0 ) {
+      dependents.forEach( dependent => {
+        const newValue = {...dependent.value,...{config:inputElem.checked}};
+        game.settings.settings.set(dependent.key, newValue);
+      });
+      await game.settings.sheet._onSubmit(event, {updateData:{[inputElem.name]:inputElem.checked},preventClose: true});
+      game.settings.sheet.render(true);
+    }
+  }
 
   /**
    * Display button to open a link to Mage-fr discord server
@@ -21,7 +54,7 @@ export const registerSystemSettings = function() {
   });
 
   /**
-   * Register desired compendium module name (scope)
+   * Chosen compendium module name (scope of the compendiumCollections)
    */
   game.settings.register("mage-fr", "compendiumScope", {
     name: "SETTINGS.compendiumScope",
@@ -33,7 +66,7 @@ export const registerSystemSettings = function() {
   });
 
   /**
-   * Register base roll difficulty (threshold)
+   * Base roll difficulty (threshold)
    */
   game.settings.register("mage-fr", "baseRollThreshold", {
     name: "SETTINGS.baseRollThreshold",
@@ -43,6 +76,9 @@ export const registerSystemSettings = function() {
     type: Number
   });
 
+  /**
+   * Whether specialisation rolls use the xs modifier
+   */
   game.settings.register("mage-fr", "specialisationRule", {
     name: "SETTINGS.specialisationRule",
     hint: "SETTINGS.specialisationRuleHint",
@@ -52,6 +88,9 @@ export const registerSystemSettings = function() {
     type: Boolean
   });
 
+  /**
+   * Whether specialisation rolls use the xs modifier
+   */
   game.settings.register("mage-fr", "roteRule", {
     name: "SETTINGS.roteRule",
     hint: "SETTINGS.roteRuleHint",
@@ -61,6 +100,9 @@ export const registerSystemSettings = function() {
     type: Boolean
   });
 
+  /**
+   * Whether to take into account the Health Malus to the dice pool
+   */
   game.settings.register("mage-fr", "useHealthMalus", {
     name: "SETTINGS.useHealthMalus",
     hint: "SETTINGS.useHealthMalusHint",
@@ -70,6 +112,22 @@ export const registerSystemSettings = function() {
     type: Boolean
   });
 
+  /**
+   * if useHealthMalus, should it also apply to magic rolls ?
+   */
+  game.settings.register("mage-fr", "useHealthMalusForMagic", {
+    name: "SETTINGS.useHealthMalusForMagic",
+    hint: "SETTINGS.useHealthMalusForMagicHint",
+    scope: "world",
+    config: game.settings.get('mage-fr', 'useHealthMalus'),
+    default: false,
+    type: Boolean,
+    dependency: "useHealthMalus"
+  })
+
+  /**
+   * Choice of 5 malus sets for untrained Talent, Skills and Knowledges
+   */
   game.settings.register("mage-fr", "untrainedMalus", {
     name: "SETTINGS.untrainedMalus",
     hint: "SETTINGS.untrainedMalusHint",
@@ -87,7 +145,7 @@ export const registerSystemSettings = function() {
   });
 
   /**
-   * Register wether players can see their paradox points setting
+   * Whether players can see their paradox points(and interract with them)
    */
    game.settings.register("mage-fr", "playersCanSeeParadoxPoints", {
     name: "SETTINGS.playersCanSeeParadoxPoints",

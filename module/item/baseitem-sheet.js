@@ -118,21 +118,16 @@ export default class M20eItemSheet extends ItemSheet {
     }
   }
 
-  async addItem(buttonElem) {
-    throw new Error("A subclass of M20eItemSheet must implement the 'addItem' method.");
-  }
-
-  async editItem(buttonElem) {
-    throw new Error("A subclass of M20eItemSheet must implement the 'editItem' method.");
-  }
-
-  async removeItem(buttonElem) {
-    throw new Error("A subclass of M20eItemSheet must implement the 'removeItem' method.");
-  }
+  //to be implemented by subClasses
+  async addItem(buttonElem) {}
+  //to be implemented by subClasses
+  async editItem(buttonElem) {}
+  //to be implemented by subClasses
+  async removeItem(buttonElem) {}
 
   /**
   *  @override
-  * added validation against dtype and min max before updating
+  * added validation against dtype and MIN/MAX before updating
   * re-renders the sheet to display the previous value if update is invalid
   * note: though data are validated against dtype by foundry,
   * updating a number with a string leaves the input blank

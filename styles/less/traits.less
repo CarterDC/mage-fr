@@ -115,7 +115,7 @@
     }
   }
 /* -------------------------------------------- */
-  .trait.dice{
+  .trait.throw{
     height:20px;
     margin: 3px 0;
 
@@ -129,9 +129,14 @@
         color: var(--m20e-badRed);
         margin-right:10px;
     }
+    .mini-button[data-disabled='true']{
+      color: var(--m20e-lightGrey);
+      border: none;
+      cursor:default;
+    }
     .mini-button.spe {
-            width: 50px;
-            margin-left:10px;
+      width: 50px;
+      margin-left:10px;
     }
     .mini-button.spe[data-active='true'] {
         color: var(--highlightColor); 

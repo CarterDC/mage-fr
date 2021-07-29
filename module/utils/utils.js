@@ -56,7 +56,7 @@ export function canSeeParadox() {
 }
 
 /**
- * @return {Boolean} Whether Dice So Nice module is actually present and active
+ * @returns {Boolean} Whether Dice So Nice module is actually present and active
  */
 export function dsnActive() {
   const dsnModule = game.modules.get('dice-so-nice');
@@ -64,7 +64,7 @@ export function dsnActive() {
 }
 
 /**
- * @return {Boolean} Whether 3D dice are actually avail to display for this user
+ * @returns {Boolean} Whether 3D dice are actually avail to display for this user
  */
 export function dsnUserActive() {
   return dsnActive() ? 
@@ -124,7 +124,7 @@ export async function promptNewValue(promptData) {
   }
   
   //configure the prompt message and add the input element
-  let content = promptData.promptContent
+  let content = promptData.promptContent;
   content += `<input type='text' value='${currentValue}'
     data-dtype='${dtype}'
     placeholder='${promptData.placeHolder}'
@@ -137,6 +137,32 @@ export async function promptNewValue(promptData) {
     rejectClose: false, // escaping or closing returns null (does not trigger an error)
     callback: (html) => { return html.find('input')[0]; }
   })
+}
+
+/**
+ * Prompts the user for a choice from options in a DropDown List
+ * @param {Object} promptData an object of the form {title:'',promptString:'', curValue:'', options:{value:'', name:''}}
+ * 
+ * @returns {Promise<String>|null} value of the selected option|null is escaped
+ */
+export async function promptSelect(promptData={}) {
+  //prepare the select options
+  const options = promptData.options.map((option) => {
+    const selected = option.value === promptData.curValue ? 'selected' : '';
+    return `<option value="${option.value}" ${selected}>${option.name}</option>`;
+  }).join("/n");
+  //prepare the content
+  const content = `${promptData.promptString}<select>${options}</select>`;
+  //prompt
+  return Dialog.prompt({
+    options: {classes: ['dialog', 'm20e']},
+    title: promptData.title,
+    content: content,
+    rejectClose: false, //escaping or closing returns null (does not trigger an error)
+    callback: (html) => { 
+      const selectElem = html.find('select')[0];
+      return selectElem.options[selectElem.selectedIndex].value }
+  });
 }
 
 /**

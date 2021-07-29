@@ -1,3 +1,7 @@
+import { DiceThrow } from './dice-throw.js'
+// Import Helpers
+import * as utils from '../utils/utils.js'
+import { log } from "../utils/utils.js";
 /**
  * 
  * @extends {Application}
@@ -12,7 +16,7 @@
     this.closeOnRoll = true;
 
     //add the paradigm css class if any to the default options.
-     const paraItem = this.diceThrow.actor.paradigm;
+    const paraItem = this.diceThrow.actor.paradigm;
     if ( paraItem ) {
       this.options.classes.push(paraItem.data.data.cssClass);
     }
@@ -51,7 +55,9 @@
     super.activateListeners(html)
     
     html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
+    html.find('.mini-button.throw-settings').mousedown(this._onSettingsClick.bind(this));
     html.find('.radio-label').click(this._onRadioClick.bind(this));
+
     //html.find('.bullet[data-clickable="true"').click(this._onBulletClick.bind(this));
     
     //new ContextMenu(html, '.dice-throw', this._rollModeContextMenu);
@@ -72,6 +78,7 @@
     switch (dataset.action){
       case 'roll':
         this.diceThrow.throwDice();
+        if ( this.closeOnRoll ) { this.close(); }
         break;
       case 'remove':
         this.diceThrow.removeTrait(traitElem.dataset.key);
@@ -89,18 +96,22 @@
         this.diceThrow.dicePoolMods.userMod -= 1;
         this.diceThrow.update();
         break;
-      case 'keep':
-        let toggle1 = (dataset.active === 'true');
-        this.keepOpen = !toggle1;
-        element.dataset.active = !toggle1;
-        this.render();
+      case 'auto-close':
+        this.closeOnRoll = !this.closeOnRoll;
+        element.dataset.active = this.closeOnRoll;
         break;
-      case 'settings': //cycle through throwSettings options. 
-        /*this.dialogOptions.throwSettings += 1;
-        if (this.dialogOptions.throwSettings > Dice.TROWSETTINGS_DFXPLODESUCCESS){
-          this.dialogOptions.throwSettings = Dice.TROWSETTINGS_BLANDROLL;
-        }
-        this.render();*/
+      default :
+        break;
+    };
+  }
+
+  _onSettingsClick(event) {
+    switch ( event.which ) {
+      case 1://left button
+        this.diceThrow.rotateSetting(-1);
+        break;
+      case 3://right button
+        this.diceThrow.rotateSetting(1);
         break;
     };
   }

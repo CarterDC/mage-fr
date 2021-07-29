@@ -2,54 +2,54 @@
   "ACTOR.TypeCharmage": "Perso Mage",
   "ACTOR.TypeNpcmage": "PNJ Mage",
   "ACTOR.TypeNpcsleeper": "PNJ Dormeur",
-  "ITEM.TypeParadigm": "Paradigme",
   "ITEM.TypeAbility": "Capacité",
-  "ITEM.TypeRote": "Routine",
   "ITEM.TypeBackground": "Historique",
-  "ITEM.TypeMeritflaw": "Atout & Handicap",
-  "ITEM.TypeMeritflawAlt": "Atout /<br>Handicap",
-  "ITEM.TypeEvent": "Évènement de Chronique",
-  "ITEM.TypeEventAlt": "Chronique :<br>Évènement",
   "ITEM.TypeContact": "Contact",
   "ITEM.TypeConsumable": "Consommable",
+  "ITEM.TypeEvent": "Évènement de Chronique",
+  "ITEM.TypeEventAlt": "Chronique&nbsp;:<br>Évènement",
+  "ITEM.TypeMeritflaw": "Atout & Handicap",
+  "ITEM.TypeMeritflawAlt": "Atout /<br>Handicap",
+  "ITEM.TypeParadigm": "Paradigme",
+  "ITEM.TypeRote": "Routine",
 
   "M20E": {
 
-    "arete":        "Arété",
-    "blabla":       "Blabla...",
-    "health":       "Santé",
+    "arete": "Arété",
+    "blabla": "Blabla...",
+    "health": "Santé",
     "paradigmName": "Paradigme de {name}",
-    "willpower":    "Volonté",
+    "willpower": "Volonté",
 
     "attributes": {
-      "appa":     "Apparence",
-      "char":     "Charisme",
-      "dext":     "Dexterité",
-      "inte":     "Intelligence",
-      "mani":     "Manipulation",
-      "mental":   "Mental",
-      "perc":     "Perception",
+      "appa": "Apparence",
+      "char": "Charisme",
+      "dext": "Dexterité",
+      "inte": "Intelligence",
+      "mani": "Manipulation",
+      "mental": "Mental",
+      "perc":  "Perception",
       "physical": "Physique",
-      "social":   "Social",
-      "stam":     "Vigueur",
-      "stre":     "Force",
-      "wits":     "Astuce"
+      "social": "Social",
+      "stam": "Vigueur",
+      "stre": "Force",
+      "wits": "Astuce"
     },
 
     "bio": {
-      "appearance":   "Apparence",
-      "apparentAge":  "Age<br>apparent",
-      "attitude":     "Attitude",
+      "appearance": "Apparence",
+      "apparentAge": "Age<br>apparent",
+      "attitude": "Attitude",
       "awakeningAge": "Age d'Éveil",
-      "birthday":     "Date de<br>Naissance",
-      "cabale":       "Cabale",
-      "essence":      "Essence",
-      "faction":      "Faction",
-      "gender":       "Genre",
-      "height":       "Taille",
-      "mentor":       "Mentor",
-      "nature":       "Nature",
-      "weight":       "Poids"
+      "birthday": "Date de<br>Naissance",
+      "cabale": "Cabale",
+      "essence": "Essence",
+      "faction": "Faction",
+      "gender": "Genre",
+      "height": "Taille",
+      "mentor": "Mentor",
+      "nature": "Nature",
+      "weight": "Poids"
     },
 
     "categories": {
@@ -57,14 +57,14 @@
       "arete": "ARÉTÉ",
       "attributes": "ATTRIBUTS",
       "backgrounds": "HISTORIQUES",
-      "chronic": "CHRONIQUE",
+      "events": "CHRONIQUE",
       "contacts": "CONTACTS",
       "description": "DESCRIPTION",
       "equipement": "ÉQUIPEMENT",
       "meritsflaws": "ATOUTS & HANDICAPS",
       "rotes": "ROUTINES",
       "spheres": "SPHÈRES",
-      "story": "BACKGROUND"
+      "xp": "EXPÉRIENCE"
     },
 
     "category":{
@@ -72,7 +72,7 @@
       "abilities": "Capacité",
       "attributes": "Attribut",
       "backgrounds": "Historique",
-      "chronic": "Évènement",
+      "events": "Évènement",
       "contacts": "Contact",
       "description": "Description",
       "equipement": "Équipement",
@@ -363,7 +363,9 @@
       "diceThrows": "Jets de Dés",
       "freeThrow": "Jet Libre",
       "mixedThrow": "Jet Mixte",
-      "throwFor": "Jet de {stat}"
+      "areteThrow": "Jet d'Arété",
+      "effect": "Effet de {effect}",
+      "throwFor": "Jet de {trait}"
     },
 
     "healthStatus": {
@@ -383,12 +385,12 @@
       "canDropJE": "Saisissez une valeur ou bien glissez/déposez un Journal.",
       "compendiumEdit": "Éditable uniquement via Compendium.",
       "createJE": "Créer un journal pour ce perso.",
+      "date": "Une date approximative ?",
       "dicePool": "Si le pool de dé tombe à 0, un dé irréductible sera lancé.",
       "displayDescription": "Apparait souvent en info-bulle ou en 'linkant' dans le chat",
       "displayName": "Apparaît automatiquement à la place du nom d'origine.",
       "edit": "Éditer",
       "extra": "Inutile et variable.",
-      "keepOpen": "Garder cette fenêtre ouverte.",
       "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
       "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus.",
       "magepower": {
@@ -411,6 +413,7 @@
         "2": "Chaque '1' retire un succès.",
         "3": "Chaque '1' retire un succès. + Chaque '10' rajoute un succès supplémentaire."
       },
+      "toggleAutoClose": "Basculer fermeture auto",
       "toggleEditMode": "Basculer 'mode édition'/'mode affichage'.",
       "unlockToEdit": "Basculez en 'mode édition'(🔓) pour remplir ce champ.",
       "untrained": "Non Entrainé !",
@@ -420,6 +423,8 @@
 
     "labels": {
       "cssClass": "Classe CSS",
+      "currentXP": "XP actuel",
+      "date": "Date",
       "dicePool": "Grpt. de Dés",
       "displayDescription": "Description Personnalisée",
       "extra": "Extra",
@@ -429,12 +434,14 @@
       "sheetLogo": "Logo fiche de perso",
       "spe": "Spé",
       "specialisation": "Spécialisation",
+      "studyPoints": "Points d'étude",
       "subType": "Sous-Type",
       "systemDescription": "⚠ Description Système",
       "systemName": "⚠ Nom système",
       "threshold": "Difficulté",
       "throw": "LANCER",
       "thrsh": "Diff.",
+      "totalXP": "Total XP",
       "type": "Type",
       "value": "Valeur"
     },
@@ -482,7 +489,9 @@
       "notLocalized": "L'entrée '{path}' n'existe pas dans le fichier de localisation !",
       "notOutsideCreation": "Vous ne pouvez pas faire celà en dehors de la 'Création de perso' - demandez au GM.",
       "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
-      "packNotFound": "Le compendium '{packName}' n'est pas trouvable !"
+      "packNotFound": "Le compendium '{packName}' n'est pas trouvable !",
+      "restrictedItem": "{actorName} ne peut as utiliser les items de type {itemType} !",
+      "unrollableRote": "{actorName} n'a pas le(s) niveau(x) de sphère nécessaire(s) pour lancer la routine {itemName} !"
     },
 
     "placeholders": {
@@ -501,7 +510,8 @@
       "lexiconContentAdd": "Ajout d'une nouvelle entrée de lexique à ce paradigme.",
       "lexiconContentEdit": "Modification d'une entrée de lexique pour ce paradigme.",
       "lexiconTitle": "Lexique",
-      "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>"
+      "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>",
+      "subTypeContent": "<p>Choisissez un <b>sous-type de {type}</b><br>Cet item sera crée avec les paramètres par défault du sous-type choisi.</p>"
     },
 
     "spheres": {

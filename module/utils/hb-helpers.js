@@ -23,6 +23,10 @@ export const registerHandlebarsHelpers = function() {
     return outStr;
   })
 
+  Handlebars.registerHelper('not', function(bool) {
+    return !bool;
+  })
+
  /**
  * Returns the paradigmic translation of the arguments
  * works like a localize(concat()) but substitutes the lexicon value if any

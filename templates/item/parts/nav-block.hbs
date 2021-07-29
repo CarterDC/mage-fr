@@ -1,6 +1,9 @@
 <nav class="sheet-tabs tabs" data-group="primary">
     <a data-tab="detail"><label>{{localize "M20E.navtabs.detail"}}</label></a>
     {{#if secondTab}}
+    {{#if (eq secondTab 'none')}}
+    <a class="disabled"><label></label></a>
+    {{else}}
     <a data-tab="{{secondTab}}">
       <div class="mini-button decoy" data-action="lock" data-hidden="{{lookup locks secondTab}}"></div>
       <div class="mini-button decoy" data-hidden="{{lookup locks secondTab}}" data-locked="{{lookup locks secondTab}}"></div>
@@ -11,6 +14,7 @@
           {{else}}<i class="fas fa-unlock-alt"></i>{{/if}}
       </div>
     </a>
+    {{/if}}
     {{else}}
     <a data-tab="description"><label>{{localize "M20E.navtabs.description"}}</label></a>
     {{/if}}
