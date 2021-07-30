@@ -7,7 +7,7 @@
             <div class="mini-banner">
                 <a class="mini-button decoy" data-locked="{{../locks.meritsflaws}}"></a>
                 <label class="column-header">{{localize (concat "M20E.subType." key)}}</label>
-                <a class="mini-button" data-disabled="{{../valuesEditLock}}" data-category="meritsflaws" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.meritsflaws}}"><i class="fas fa-plus"></i></a>
+                <a class="mini-button" data-category="meritsflaws" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.meritsflaws}}"><i class="fas fa-plus"></i></a>
             </div>
             {{#each meritflawgroup as |meritflaw key|}}
             <div class="trait meritflaw linkable" data-item-id="{{meritflaw._id}}" data-active= "false"> 
@@ -24,7 +24,7 @@
                 </a>
                 <div class="ligne"></div>
                 <div class="edit-bar" data-locked="{{../../locks.meritsflaws}}">
-                    <input class="inline-edit" type="text" value="{{meritflaw.data.value}}" {{disabled ../../valuesEditLock}} data-dtype="Number" min="0" max="5"/>
+                    <input class="inline-edit" type="text" value="{{meritflaw.data.value}}" data-dtype="Number" min="0" max="5"/>
                     <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
                     <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
                 </div>

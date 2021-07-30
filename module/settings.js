@@ -1,4 +1,4 @@
-import { FakeItem } from './apps/fakeitem-sheet.js'
+import { RulesConfig } from './apps/rules-config.js'
 
 class Dummy extends FormApplication {
   render(){
@@ -51,6 +51,28 @@ export const registerSystemSettings = function() {
     icon: "fab fa-discord",
     type: Dummy,
     restricted: false
+  });
+
+  /**
+   * Display button to open the rules config panel
+   */
+   game.settings.registerMenu("mage-fr", "rulesConfig", {
+    name: "SETTINGS.rulesConfig",
+    label: "SETTINGS.rulesConfig",
+    hint: "SETTINGS.rulesConfigHint",
+    icon: "fas fa-dice",
+    type: RulesConfig,
+    restricted: false
+  });
+
+  /**
+   * Display button to open the rules config panel
+   */
+   game.settings.register("mage-fr", "rules", {
+    scope: "world",
+    config: false,
+    default: [{type: 'talent', value: 2}, {type: 'skill', value: 3}],
+    type: Object
   });
 
   /**

@@ -18,7 +18,7 @@ export default class M20eActorSheet extends ActorSheet {
   constructor(...args) {
     super(...args);
     //create the 'locks' object like {attributes: true, abilities: true, ...} from an array of categories
-    this.locks = CONFIG.M20E.categoriesWithLocks.reduce((acc, cur) =>
+    this.locks = CONFIG.M20E.lockedCategories.reduce((acc, cur) =>
       ({...acc, [cur]: true}),{});
     
     //add the paradigm css class if any to the default options.
@@ -88,7 +88,6 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.isOwner = this.actor.isOwner;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
-    sheetData.valuesEditLock = ( actorData.data.creationDone && !game.user.isGM );
     
     const paradigm = this.actor.paradigm;
     if( paradigm ) {
@@ -102,7 +101,12 @@ export default class M20eActorSheet extends ActorSheet {
 
   /** @override */
   activateListeners(html) {
-    
+
+    //disable buttons/inputs given their 'protection status'
+    if ( this.actor.data.data.creationDone ) { // && !game.user.isGM ) {
+      this._protectElements(html);
+    }
+
     //actions for everyone
 
     //editable only (roughly equals 'isOwner')
@@ -422,7 +426,12 @@ export default class M20eActorSheet extends ActorSheet {
     event.preventDefault();
     const buttonElem = event.currentTarget;
     const dataset = buttonElem.dataset;
-    
+    //check if action is allowed before going any further
+    if ( dataset.disabled ) {
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
+      return;
+    }
+
     switch ( dataset.action ) {
       case 'lock': //deal with locks & dragDrop
         this._toggleCategoryLock(dataset.category);
@@ -431,13 +440,6 @@ export default class M20eActorSheet extends ActorSheet {
       case 'add':
         const itemType = CONFIG.M20E.categoryToType[dataset.category];
         const itemSubtype = CONFIG.M20E.categoryToType[dataset.subCategory];
-        //check wether we are allowed to add an item or not
-        if ( CONFIG.M20E.playModeLockedCat.includes(itemType) && 
-          this.actor.data.data.creationDone && 
-          !game.user.isGM ) {
-            ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
-            return;
-        }
         this._addItem(itemType, itemSubtype);
         break;
       
@@ -448,13 +450,6 @@ export default class M20eActorSheet extends ActorSheet {
       case 'remove':
         const itemId = buttonElem.closest(".trait").dataset.itemId;
         const item = this.actor.items.get(itemId);
-        //check wether we are allowed to remove an item or not
-        if ( CONFIG.M20E.playModeLockedCat.includes(item.data.type) && 
-          this.actor.data.data.creationDone && 
-          !game.user.isGM ) {
-            ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
-            return false;
-        }
         this._removeItem(item);
         break;
       
@@ -565,6 +560,24 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   /*  Implementation                              */
   /* -------------------------------------------- */
+
+  /**
+   * 'disables' some elements (input/buttons) for actors whose creation phase is over.
+   * a bit similar to Foundry's disableFields
+   * @param {HTMLElement} html sheet.element
+   */
+  _protectElements(html) {
+    CONFIG.M20E.protectedCategories.forEach( category => {
+      const elements = html.find(`.category.${category} input, .category.${category} .mini-button` );
+      for ( let el of elements) {
+        if ( el.name?.includes('value') || el.classList?.contains('inline-edit')) {
+          el.setAttribute("disabled", "");
+        } else if ( el.dataset?.action === 'add' || el.dataset?.action === 'remove' ) {
+          el.dataset.disabled = true;
+        }
+      }
+    });
+  }
 
   /**
   * Check all rollable categories for highlighted elements (ie data-active="true")
