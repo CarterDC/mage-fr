@@ -28,7 +28,7 @@ M20E.spheres = [
   "mind"
 ]
 
-M20E.categoriesWithLocks = [
+M20E.lockedCategories = [
   "attributes",
   "abilities",
   "spheres",
@@ -40,6 +40,17 @@ M20E.categoriesWithLocks = [
   "rotes",
   "equipement"
 ]
+
+//
+M20E.protectedCategories = [
+  "attributes",
+  "abilities",
+  "spheres",
+  "backgrounds",
+  "meritsflaws",
+  "arete"
+]
+
 
 M20E.categoryToType ={
   "abilities": "ability",
@@ -64,16 +75,6 @@ M20E.rollableCategories = [
   "arete",
   "background",
   "contact"
-]
-
-//categories that don't allow drop or addItem outside of char creation mode
-M20E.playModeLockedCat = [
-  "abilities",
-  "ability",
-  "backgrounds",
-  "background",
-  "meritsflaws",
-  "meritflaw"
 ]
 
 //list of abilityKey/abilitySubtype for base abilities creation without CompendiumColl
