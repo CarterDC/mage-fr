@@ -764,7 +764,8 @@
 .m20e .trait.description .bio-link {
   visibility: hidden;
   position: absolute;
-  right: 0px;
+  right: 3px;
+  top: 3px;
 }
 .m20e .trait.description .lock-wrapper:hover .bio-link {
   visibility: visible;
@@ -955,6 +956,39 @@ li.chat-message .card .card-footer .item-img {
   margin: 5px 0 0 5px;
   background-image: radial-gradient(rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
 }
+.m20e.dice-roll .dice-tooltip .willpower-success {
+  color: var(--m20e-midGrey);
+  font-size: var(--mainFontSize);
+  font-weight: bold;
+}
+.m20e.dice-roll .dice-tooltip .part-header {
+  color: var(--m20e-midGrey);
+  border-bottom: 1px solid var(--titleColor);
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos {
+  display: flex;
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .tooltip-info {
+  font-size: var(--titleColor);
+  font-weight: bold;
+  margin-left: 3px;
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .tooltip-info[data-value^="-"] {
+  color: var(--m20e-badRed);
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .tooltip-info[data-value^="+"] {
+  color: var(--m20e-goodGreen);
+}
+.m20e.dice-roll .dice-total {
+  color: var(--m20e-goodGreen);
+}
+.m20e.dice-roll .dice-total[data-result="0"],
+.m20e.dice-roll .dice-total[data-result="?"] {
+  color: var(--m20e-midGrey);
+}
+.m20e.dice-roll .dice-total[data-result^="-"] {
+  color: var(--m20e-badRed);
+}
 .mage {
   --titleColor: var(--titleColor);
 }
@@ -1043,7 +1077,7 @@ li.chat-message .card .card-footer .item-img {
   background: rgba(0, 0, 0, 0.05);
   border-color: #7a7971;
 }
-.m20e.dialogue .mini-button.dice-throw {
+.m20e.dialogue .mini-button.throw-dice {
   justify-content: space-evenly;
   height: 32px;
   width: 70%;

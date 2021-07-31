@@ -69,6 +69,11 @@ export default class M20eItemSheet extends ItemSheet {
 
   /** @override */
   activateListeners(html) {
+    //disable buttons/inputs given their 'protection status'
+    if ( this.item.isProtected && !game.user.isGM ) {
+      this._protectElements(html);
+    }
+
     //actions for everyone
     
 
@@ -139,6 +144,20 @@ export default class M20eItemSheet extends ItemSheet {
       return this.render();
     }
     super._onChangeInput(event);
+  }
+
+  /**
+   * 'disables' some elements (input/buttons) for items whose actor's creation phase is over.
+   * a bit similar to Foundry's disableFields
+   * @param {HTMLElement} html sheet.element
+   */
+  _protectElements(html) {
+    const elements = html.find(`input, select`);
+    for ( let el of elements) {
+      if ( el.name?.includes('data.value') || el.name?.includes('data.subType')) {
+        el.setAttribute("disabled", "");
+      }
+    }
   }
 
   /**

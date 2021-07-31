@@ -71,9 +71,9 @@ export class MageRoll extends Roll {
       const cls = getDocumentClass("ChatMessage");
       const msg = new cls(messageData);
       if ( rollMode ) msg.applyRollMode(rollMode);
-  
+      
       // Either create or return the data
-      if ( create ) return cls.create(msg.data);
+      if ( create ) return cls.create(msg.data,{rollMode: rollMode});
       else return msg.data;
   }
 
@@ -121,11 +121,15 @@ export class MageRoll extends Roll {
     // Execute the roll, if needed
     if ( !this._evaluated ) this.evaluate();
     let newTotal = Math.round(this.total * 100) / 100;
-    //log({mageRoll : this});
+    //todo : change real total value instead of that
     if (chatOptions.doUpgrade){
         newTotal +=1;
         this.options.isUpgraded = true;
     }
+
+    const totalString = newTotal === 0 ? game.i18n.localize('M20E.throwresult.failure') :
+      (newTotal > 0 ? game.i18n.format('M20E.throwresult.success', {total: newTotal}) : 
+        game.i18n.format('M20E.throwresult.critfailure', {total: newTotal}));
 
     // Define chat data
     const chatData = {
@@ -134,7 +138,7 @@ export class MageRoll extends Roll {
       user: chatOptions.user,
       tooltip: isPrivate ? "" : await this.getTooltip(),
       total: isPrivate ? "?" : newTotal,
-
+      totalString : isPrivate ? "?" : totalString
     };
 
     // Render the roll display template

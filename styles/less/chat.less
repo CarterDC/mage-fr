@@ -63,3 +63,43 @@ li.chat-message{
     }
   }
 }
+.m20e.dice-roll{
+  .dice-tooltip{
+    .willpower-success{
+        color: var(--m20e-midGrey);
+        font-size:  var(--mainFontSize);
+        font-weight: bold;
+    }
+    .part-header{
+        color: var(--m20e-midGrey);
+        border-bottom: 1px solid var(--titleColor);
+        .tooltip-infos{
+            display: flex;
+            .tooltip-info{
+                font-size: var(--titleColor);
+                font-weight: bold;
+                margin-left: 3px;
+            }
+            .tooltip-info[data-value^="-"]{
+                color:var(--m20e-badRed);
+            }
+            .tooltip-info[data-value^="+"]{
+                color:var(--m20e-goodGreen);
+            }
+        }
+    }
+  }
+  .dice-total{
+      color:var(--m20e-goodGreen);
+  }
+  .dice-total[data-result="0"],
+  .dice-total[data-result="?"]{
+      color:var(--m20e-midGrey);
+  }
+  .dice-total[data-result^="-"]{
+      color:var(--m20e-badRed);
+  }
+}
+
+
+

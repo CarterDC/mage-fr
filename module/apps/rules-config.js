@@ -3,7 +3,8 @@ import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
 /**
- * 
+ * Allows edition of a list of rules that are stored as an array in a game setting
+ * Not used atm
  * @extends {FormApplication}
  */
 export class RulesConfig extends FormApplication {

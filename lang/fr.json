@@ -57,10 +57,10 @@
       "arete": "ARÉTÉ",
       "attributes": "ATTRIBUTS",
       "backgrounds": "HISTORIQUES",
-      "events": "CHRONIQUE",
       "contacts": "CONTACTS",
       "description": "DESCRIPTION",
-      "equipement": "ÉQUIPEMENT",
+      "equipables": "ÉQUIPEMENTS",
+      "events": "CHRONIQUE",
       "meritsflaws": "ATOUTS & HANDICAPS",
       "rotes": "ROUTINES",
       "spheres": "SPHÈRES",
@@ -75,7 +75,7 @@
       "events": "Évènement",
       "contacts": "Contact",
       "description": "Description",
-      "equipement": "Équipement",
+      "equipables": "Équipements",
       "meritsflaws": "Atout & Handicap",
       "rotes": "Routine",
       "spheres": "Sphère",
@@ -540,9 +540,9 @@
     },
 
     "throwresult": {
-      "failure": "Echec",
-      "success": "Succès",
-      "critfailure": "Echec Critique"
+      "failure": "Échec !",
+      "success": "{total} Succès !",
+      "critfailure": "Échec Critique ({total}) !"
     },
 
     "welcomeMessage": {

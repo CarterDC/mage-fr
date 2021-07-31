@@ -354,7 +354,8 @@
       "meritflaw",
       "misc",
       "paradigm",
-      "rote"
+      "rote",
+      "weapon"
     ],
     "templates":{
       "virtualTrait":{
@@ -364,6 +365,10 @@
       "rollable":{
         "isRollable": true,
         "throws": []
+      },
+      "equipable":{
+        "isEquipable": true,
+        "equiped":false
       },
       "mageRestricted": {
         "restricted" : ["charmage", "npcmage"]
@@ -418,6 +423,23 @@
         "mageRestricted"
       ],
       "displayDescription":""
+    },
+    "weapon": {
+      "templates":[
+        "rollable",
+        "equipable"
+      ],
+      "damages": 0,
+      "damageType": "bashing",
+      "displayDescription": "",
+      "extra": {}
+    },
+    "miscequipable": {
+      "templates":[
+        "equipable"
+      ],
+      "displayDescription": "",
+      "extra": {}
     }
   }
 }

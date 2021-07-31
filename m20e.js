@@ -74,12 +74,12 @@ Hooks.once('init', async function () {
   preloadHandlebarsTemplates();
 
   //DICE thingies
-  CONFIG.Dice.MageRoll = dice.MageRoll;
-  CONFIG.Dice.rolls.push(dice.MageRoll);
-  CONFIG.M20E.diceThrowApp = DiceDialogue; //store class for later use
+  CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later use
+  CONFIG.Dice.rolls.push(dice.MageRoll); //make it official
+  CONFIG.M20E.diceThrowApp = DiceDialogue; //store class here for later use
   CONFIG.Dice.terms["s"] = dice.DieSuccess; //new dice term
-  dice.registerInitiative();
   dice.registerDieModifier(); //adds the 'xs' (success on explode) modifier
+  dice.registerInitiative();
 
   //test shit here !
 

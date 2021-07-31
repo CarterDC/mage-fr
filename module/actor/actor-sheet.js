@@ -103,7 +103,7 @@ export default class M20eActorSheet extends ActorSheet {
   activateListeners(html) {
 
     //disable buttons/inputs given their 'protection status'
-    if ( this.actor.data.data.creationDone ) { // && !game.user.isGM ) {
+    if ( this.actor.data.data.creationDone && !game.user.isGM ) {
       this._protectElements(html);
     }
 
@@ -399,8 +399,7 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  *  @override
-  * displays a waring upon clicking an empty link
+  * displays a warning upon clicking an empty link
   * triggers the creation of personnal JE upon clicking an empty link for that specific one
   */
   _onEntityLinkClick(event){
@@ -806,21 +805,20 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   _rollItem(itemId, shiftKey, throwIndex = 0) {
-      const item = this.actor.items.get(itemId);
-      //retrieve traits to roll
-      const traitsToRoll = item.getTraitsToRoll(throwIndex);
-      const diceThrow = new DiceThrow({
-        document: item,
-        traitsToRoll: traitsToRoll
-      });
-      if ( shiftKey ) {
-        //throw right away
-        diceThrow.throwDice();
-      } else {
-        //display dice throw dialog
-        diceThrow.render(true);
-      }
-
+    const item = this.actor.items.get(itemId);
+    //retrieve traits to roll
+    const traitsToRoll = item.getTraitsToRoll(throwIndex);
+    const diceThrow = new DiceThrow({
+      document: item,
+      traitsToRoll: traitsToRoll
+    });
+    if ( shiftKey ) {
+      //throw right away
+      diceThrow.throwDice();
+    } else {
+      //display dice throw dialog
+      diceThrow.render(true);
+    }
   }
 
   /* -------------------------------------------- */

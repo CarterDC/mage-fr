@@ -2,7 +2,10 @@ import { DiceThrow } from './dice-throw.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
+
 /**
+ * User interface with a DiceThrow object, allowing for some throw options
+ * modification of the traits to throw, threshold, dicepool, throwMode, rollMode...
  * 
  * @extends {Application}
  */
@@ -20,6 +23,8 @@ import { log } from "../utils/utils.js";
     if ( paraItem ) {
       this.options.classes.push(paraItem.data.data.cssClass);
     }
+    //register a hook on updateActor in order to refresh the diceThrow with updated actor values.
+    this.hook = Hooks.on('updateActor', (actor, data, options, useId) => this.onUpdateActor(actor, data, options, useId));
   }
 
   /** @override */
@@ -37,14 +42,19 @@ import { log } from "../utils/utils.js";
   /** @override */
   getData () {
     const appData = super.getData();
+    const dt = this.diceThrow;
 
-    appData.diceThrow = this.diceThrow;
-    appData.traits = this.diceThrow.xTraitsToRoll;
+    appData.dt = dt;
+    appData.traits = dt.xTraitsToRoll;
 
+    //creates an array for the radio options : value from 2 to 10, checked or ''
     appData.radioOptions = [...Array(9)].map((value, index) => {
-      const checked = this.diceThrow.thresholdBase === (index + 2) ? 'checked' : '';
+      const checked = dt.thresholdBase === (index + 2) ? 'checked' : '';
       return {value: `${index+2}`, ...{ checked }};
     });
+
+    //icon and title for the throw button
+    appData.extras = CONFIG.M20E.rollModeExtras[dt.rollMode];
 
     appData.closeOnRoll = this.closeOnRoll;
     return appData;
@@ -53,23 +63,93 @@ import { log } from "../utils/utils.js";
   /** @override */
   activateListeners (html) {
     super.activateListeners(html)
-    
-    html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
-    html.find('.mini-button.throw-settings').mousedown(this._onSettingsClick.bind(this));
-    html.find('.radio-label').click(this._onRadioClick.bind(this));
 
-    //html.find('.bullet[data-clickable="true"').click(this._onBulletClick.bind(this));
-    
-    //new ContextMenu(html, '.dice-throw', this._rollModeContextMenu);
+    //special handeling of the throw settings button since it works with both mouse buttons
+    html.find('.mini-button.throw-settings').mousedown(this._onSettingsClick.bind(this));
+    //roll threshold adjustement
+    html.find('.radio-label').click(this._onRadioClick.bind(this));
+    //adjustement of trait values (only on player magical effects)
+    html.find('.bullet[data-clickable="true"').click(this._onBulletClick.bind(this));
+    //every other button on the app
+    html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
+    //rollMode options in the context menu for the throw button
+    new ContextMenu(html, '.throw-dice', this._getRollModeContextMenu());
   }
 
-  _onRadioClick(event){
-    const element = event.currentTarget;
+  /* -------------------------------------------- */
+  /*  Context Menus                               */
+  /* -------------------------------------------- */
+
+  /**
+   * @return the context menu options for the '.throw-dice' element
+   * Set new rollMode for this throw
+   */
+  _getRollModeContextMenu() {
+    return [
+      {
+        name: game.i18n.localize('M20E.context.throwStealthRoll'),
+        icon: '<i class="fas fa-user-secret"></i>',
+        callback: element => {
+          console.log('MAGE | option non implémentée encore.');
+        },
+        condition: element => {
+          return game.user.isGM;
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.throwSelfRoll'),
+        icon: '<i class="fas fa-user"></i>',
+        callback: element => {
+          this.diceThrow.rollMode = "selfroll";
+          this.diceThrow.throwDice(this.closeOnRoll);
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.throwBlindRoll'),
+        icon: '<i class="fas fa-eye-slash"></i>',
+        callback: element => {
+          this.diceThrow.rollMode = "blindroll";
+          this.diceThrow.throwDice(this.closeOnRoll);
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.throwGmRoll'),
+        icon: '<i class="fas fa-user-friends"></i>',
+        callback: element => {
+          this.diceThrow.rollMode = "gmroll";
+          this.diceThrow.throwDice(this.closeOnRoll);
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.throwPublicRoll'),
+        icon: '<i class="fas fa-users"></i>',
+        callback: element => {
+          this.diceThrow.rollMode = "roll";
+          this.diceThrow.throwDice(this.closeOnRoll);
+        }
+      }
+    ];
+  }
+
+  /* -------------------------------------------- */
+  /*  Event Handlers                              */
+  /* -------------------------------------------- */
+
+  /**
+   * Updates the DiceThrow threshold according to the radio button that's been clicked
+   * @param  {} event
+   */
+  _onRadioClick(event) {
+    const labelElem = event.currentTarget;
     this.diceThrow.thresholdBase =  parseInt(element.innerHTML.trim());
     this.diceThrow.update();
   }
 
-  _onMiniButtonClick(event){
+  /**
+   * dispatch mini-button clicks according to their data-action
+   * @param  {} event
+   */
+  _onMiniButtonClick(event) {
     event.preventDefault();
     const element = event.currentTarget;
     const dataset = element.dataset;
@@ -77,8 +157,7 @@ import { log } from "../utils/utils.js";
     
     switch (dataset.action){
       case 'roll':
-        this.diceThrow.throwDice();
-        if ( this.closeOnRoll ) { this.close(); }
+        this.diceThrow.throwDice(this.closeOnRoll);
         break;
       case 'remove':
         this.diceThrow.removeTrait(traitElem.dataset.key);
@@ -105,6 +184,24 @@ import { log } from "../utils/utils.js";
     };
   }
 
+  /**
+   * update the value of a trait given the bullet that's been clicked
+   * only avail from clickable bullets
+   * atm got no gameplay effect besides the final flavor text
+   * @param  {} event
+   */
+  _onBulletClick(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const traitElem = element.closest('.trait');
+    this.diceThrow.updateTraitValue(traitElem.dataset.key, parseInt(element.dataset.index) + 1);
+  }
+
+  /**
+   * rotate between the 3 throw settings depending on the mouse button
+   * throw settings drive the roll modifiers df=1 and xs=10 
+   * @param  {} event
+   */
   _onSettingsClick(event) {
     switch ( event.which ) {
       case 1://left button
@@ -116,4 +213,32 @@ import { log } from "../utils/utils.js";
     };
   }
 
+  /**
+   * From the hooks on updateActor
+   * call an update of the diceThrow if hook options indicate a render true on our actor
+   * @param  {M20eActor} actor
+   * @param  {Object} data
+   * @param  {Object} options
+   * @param  {String} useId
+   */
+  onUpdateActor(actor, data, options, useId) {
+    if ( actor.id !== this.diceThrow.actor.id ) { return ; }
+    if ( options.render === true ) {
+      this.diceThrow.update(true);
+    }
+  }
+
+  /**
+   * removes the hook and the circular reference to the diceThrow
+   * @param  {} options={}
+   */
+  async close(options={}) {
+    //do some cleaning
+    Hooks.off('updateActor', this.hook);
+    this.hook = null;
+    this.closeOnRoll = null;
+    this.diceThrow = null;
+    //call super
+    return super.close(options);
+  }
 }
