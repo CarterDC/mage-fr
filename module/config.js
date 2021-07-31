@@ -38,7 +38,8 @@ M20E.lockedCategories = [
   "events",
   "contacts",
   "rotes",
-  "equipement"
+  "equipables",
+  "xp"
 ]
 
 //
@@ -63,7 +64,13 @@ M20E.categoryToType ={
   "merits": "merit",
   "flaws": "flaw",
   "events": "event",
-  "contacts": "contact"
+  "contacts": "contact",
+  "equipables": ["weapon", "miscequipable"]
+}
+
+M20E.equipablesTypes = { //itemtypes that are equipable=true
+  "weapon": "ITEM.TypeWeapon",
+  "miscequipable": "ITEM.TypeMiscequipable"
 }
 
 //categories that are actively checked for highlighted traits for dice throw creation
@@ -76,6 +83,29 @@ M20E.rollableCategories = [
   "background",
   "contact"
 ]
+
+M20E.rollModeExtras = {
+  gmroll: {
+    icon: "fas fa-user-friends",
+    title: "M20E.context.throwGmRoll"
+  },
+  blindroll: {
+    icon: "fas fa-eye-slash",
+    title: "M20E.context.throwBlindRoll",
+  },
+  selfroll: {
+    icon: "fas fa-user",
+    title: "M20E.context.throwSelfRoll"
+  },
+  roll: {
+    icon: "fas fa-users",
+    title: "M20E.context.throwPublicRoll"
+  },
+  stealth: {
+    icon: "fas fa-user-secret",
+    title: "M20E.context.throwStealthRoll"
+  }
+}
 
 //list of abilityKey/abilitySubtype for base abilities creation without CompendiumColl
 M20E.defaultAbilities = {

@@ -40,13 +40,8 @@ export const registerHandlebarsHelpers = function() {
       }
     }
     const paraData = arguments[0];
-    try { //TODO : redo without try catch (hasProperty ?)
-      const lexiconValue = foundry.utils.getProperty(paraData.lexicon, concatStr);
-      if(!lexiconValue) throw '';
-      return lexiconValue;
-    } catch (e) {
-      return game.i18n.localize(`M20E.${concatStr}`);
-    }
+    const lexiconValue = foundry.utils.getProperty(paraData.lexicon, concatStr) || null;
+    return lexiconValue || game.i18n.localize(`M20E.${concatStr}`);
   })
 
  /**
@@ -73,14 +68,6 @@ export const registerHandlebarsHelpers = function() {
   
   Handlebars.registerHelper("bulletState", function(value, index) {
     return (value > index) ? "active" : "";
-  })
-
-  Handlebars.registerHelper('throwresult', function (result) {
-    //todo : upgrade with format or `${}`
-    if ( result == "?" ) { return "?"; }
-    if ( result == "0" ) { return game.i18n.localize('M20E.throwresult.failure') + " !"; }
-    if ( result > 0 ) { return result + " " + game.i18n.localize('M20E.throwresult.success') + " !"; }
-    return game.i18n.localize('M20E.throwresult.critfailure') + " (" + result + ") !";
   })
 
   Handlebars.registerHelper('in', function() {
@@ -132,5 +119,4 @@ export const registerHandlebarsHelpers = function() {
       ></div>`
     return new Handlebars.SafeString(template);
   })
-
 }

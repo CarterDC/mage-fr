@@ -259,12 +259,27 @@ export default class M20eActor extends Actor {
     const {category, key= ''} = trait;
     const relativePath = key ? `${category}.${key}` : `${category}`;
     const actorData = this.data;
-    //TODO : add special case of willpower AND arete !!!
+
+    let value = 0;
+    let specName = '';
+    switch ( category ) {
+      case 'willpower':
+        value = parseInt(actorData.data.willpower.max);
+        specName = ''
+        break;
+      case 'arete':
+        value = parseInt(actorData.data.arete);
+        specName = ''
+        break;
+      default:
+        value = parseInt(foundry.utils.getProperty(actorData,`data.${relativePath}.value`)),
+        specName = foundry.utils.getProperty(actorData,`data.${relativePath}.specialisation`)
+    }
     return {
       name: game.i18n.localize(`M20E.${relativePath}`),
       displayName: this.getLexiconEntry(relativePath),
-      value: parseInt(foundry.utils.getProperty(actorData,`data.${relativePath}.value`)),
-      specName: foundry.utils.getProperty(actorData,`data.${relativePath}.specialisation`)
+      value: value,
+      specName: specName
     }
   }
 

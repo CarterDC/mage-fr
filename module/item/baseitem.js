@@ -23,6 +23,17 @@ export default class M20eItem extends Item {
     }    
     //default behavior, just call super and do all the default Item inits.
     super(data, context);
+
+    //check if protected type
+    const protectedTypes = CONFIG.M20E.protectedCategories.reduce( (acc, cur) => {
+      const itemType = CONFIG.M20E.categoryToType[cur]
+      return itemType ? [...acc, itemType] : acc;
+    }, []);
+    this.protectedType = protectedTypes.includes(this.type);
+  }
+
+  get isProtected() {
+    return this.protectedType && this.actor?.data.data.creationDone;
   }
 
   get isRollable() {

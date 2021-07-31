@@ -2,10 +2,9 @@
 import * as utils from '..//utils/utils.js'
 import { log } from "../utils/utils.js";
 
-//TODO : mettre les meme sécurités d'édition que sur une fiche normale
-// (pas de modif de la valeur apès la créa)
 /**
- * Extend the basic ActorSheet with some very simple modifications
+ * FormApp with actor as object
+ * allows the edition of some actor's traits as well as it's lexicon.
  * @extends {FormApplication}
  */
 export class FakeItem extends FormApplication {
@@ -38,7 +37,7 @@ export class FakeItem extends FormApplication {
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['m20e', 'sheet', 'item'],
-      template: 'systems/mage-fr/templates/item/fakeitem-sheet.hbs',
+      template: 'systems/mage-fr/templates/apps/fakeitem-sheet.hbs',
       width: 400,
       height: 'auto',
       resizable: true,
@@ -54,14 +53,16 @@ export class FakeItem extends FormApplication {
 
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
-    sheetData.valuesEditLock = ( actorData.data.creationDone && !game.user.isGM );
-
 
     return sheetData;
   }
 
   /** @override */
   activateListeners(html) {
+    //disable buttons/inputs given their 'protection status'
+    if ( this.actor.data.data.creationDone && !game.user.isGM ) {
+      this._protectElements(html);
+    }
     super.activateListeners(html);
   }
 
@@ -93,6 +94,20 @@ export class FakeItem extends FormApplication {
     this.actor.setLexiconEntry(this.itemData.relativePath, inputValue);
   }
 
+  /**
+   * 'disables' some elements (input/buttons) for actors whose creation phase is over.
+   * a bit similar to Foundry's disableFields
+   * @param {HTMLElement} html sheet.element
+   */
+   _protectElements(html) {
+    const elements = html.find(`input`);
+    for ( let el of elements) {
+      if ( el.name?.includes('value') ) {
+        el.setAttribute("disabled", "");
+      }
+    }
+  }
+
   async close(options) {
     const html = $(this.element);
     const newValue = html.find(".name")[0].value;
@@ -101,6 +116,8 @@ export class FakeItem extends FormApplication {
       //last update before closing
       this.actor.setLexiconEntry(this.itemData.relativePath, newValue);
     }
-    super.close(options);
+    this.actor = null;
+    this.itemData = null;
+    return super.close(options);
   }
 }
