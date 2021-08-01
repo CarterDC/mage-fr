@@ -70,18 +70,23 @@ export default class M20eActorSheet extends ActorSheet {
     //sheetData.items is already sorted on item.sort in the super
     //Abilities
     sheetData.items.abilities = { talents: {}, skills: {}, knowledges: {} };
-    sheetData.items.abilities.talents = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "talent") });
-    sheetData.items.abilities.skills = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "skill") });
-    sheetData.items.abilities.knowledges = sheetData.items.filter(function (item) { return (item.type === "ability") && (item.data.subType === "knowledge") });
+    sheetData.items.abilities.talents = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "talent") ));
+    sheetData.items.abilities.skills = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "skill") ));
+    sheetData.items.abilities.knowledges = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "knowledge") ));
     //merits and flaws
     sheetData.items.meritsflaws = { merits: {}, flaws: {} };
-    sheetData.items.meritsflaws.merits = sheetData.items.filter(function (item) { return (item.type === "meritflaw") && (item.data.subType === "merit") });
-    sheetData.items.meritsflaws.flaws = sheetData.items.filter(function (item) { return (item.type === "meritflaw") && (item.data.subType === "flaw") });
+    sheetData.items.meritsflaws.merits = sheetData.items.filter((item) => ( (item.type === "meritflaw") && (item.data.subType === "merit") ));
+    sheetData.items.meritsflaws.flaws = sheetData.items.filter((item) => ( (item.type === "meritflaw") && (item.data.subType === "flaw") ));
     //the rest of the items
-    sheetData.items.backgrounds = sheetData.items.filter(function (item) { return item.type === "background" });
-    sheetData.items.rotes = sheetData.items.filter(function (item) { return item.type === "rote" });
-    sheetData.items.events = sheetData.items.filter(function (item) { return item.type === "event" });
-    sheetData.items.miscellaneous = sheetData.items.filter(function (item) { return item.type === "misc" });
+    sheetData.items.backgrounds = sheetData.items.filter((item) => item.type === "background");
+    sheetData.items.rotes = sheetData.items.filter((item) => item.type === "rote");
+    sheetData.items.events = sheetData.items.filter((item) => item.type === "event");
+    //gear & other possessions
+    sheetData.items.equipables = sheetData.items.filter((item) => item.data.isEquipable === true);
+    sheetData.items.misc = sheetData.items.filter((item) => ( item.type === 'misc' && item.data.isEquipable === false ));
+    //todo : sort equipables according to type and isEquiped ?
+    //todo : sort misc according to isConsumable ?
+
 
     //other usefull data
     sheetData.isGM = game.user.isGM;
@@ -260,11 +265,34 @@ export default class M20eActorSheet extends ActorSheet {
       }
     ];
   } 
-
+  
   /* -------------------------------------------- */
   /*  Event Handlers                              */
   /* -------------------------------------------- */
-
+  
+    /**
+    *  @override
+    * added validation against dtype and min max before updating
+    * re-renders the sheet to display the previous value if update is invalid
+    * note: though data are validated against dtype by foundry,
+    * updating a number with a string leaves the input blank
+    */
+    async _onChangeInput(event) {
+      const element = event.target;
+      if ( ! utils.isValidUpdate(element) ) {
+        event.preventDefault();
+        return this.render();
+      }
+      super._onChangeInput(event);
+    }
+  
+  /**
+   * On a click on the big dice, round up every highlighted trait on the sheet
+   * send it to a new DiceThrow object and either render it for further options or
+   * just throw the dice
+   * 
+   * @param  {} event
+   */
   _onDiceClick(event) {
     //retrieve traits to roll
     const traitsToRoll = this.getTraitsToRoll();
@@ -383,22 +411,6 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  *  @override
-  * added validation against dtype and min max before updating
-  * re-renders the sheet to display the previous value if update is invalid
-  * note: though data are validated against dtype by foundry,
-  * updating a number with a string leaves the input blank
-  */
-  async _onChangeInput(event) {
-    const element = event.target;
-    if ( ! utils.isValidUpdate(element) ) {
-      event.preventDefault();
-      return this.render();
-    }
-    super._onChangeInput(event);
-  }
-
-  /**
   * displays a warning upon clicking an empty link
   * triggers the creation of personnal JE upon clicking an empty link for that specific one
   */
@@ -425,6 +437,7 @@ export default class M20eActorSheet extends ActorSheet {
     event.preventDefault();
     const buttonElem = event.currentTarget;
     const dataset = buttonElem.dataset;
+
     //check if action is allowed before going any further
     if ( dataset.disabled ) {
       ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
@@ -437,6 +450,7 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       
       case 'add':
+        //itemType can end up being a list of avail types for the category
         const itemType = CONFIG.M20E.categoryToType[dataset.category];
         const itemSubtype = CONFIG.M20E.categoryToType[dataset.subCategory];
         this._addItem(itemType, itemSubtype);
@@ -447,13 +461,14 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       
       case 'remove':
-        const itemId = buttonElem.closest(".trait").dataset.itemId;
-        const item = this.actor.items.get(itemId);
-        this._removeItem(item);
+        const removeItemId = buttonElem.closest(".trait").dataset.itemId;
+        this._removeItem(this.actor.items.get(removeItemId));
         break;
       
       case 'roll-item':
-        this._rollItem(buttonElem.closest(".trait").dataset.itemId, event.shiftKey);
+        const rollItemId = buttonElem.closest(".trait").dataset.itemId;
+        const rollItem = this.actor.items.get(rollItemId);
+        rollItem.roll(event.shiftKey); //throwIndex is 0 by default
         break;
       
       case 'expand':
@@ -801,23 +816,6 @@ export default class M20eActorSheet extends ActorSheet {
       }
       //then expand the one we just clicked
       desc.dataset.expanded = true;
-    }
-  }
-
-  _rollItem(itemId, shiftKey, throwIndex = 0) {
-    const item = this.actor.items.get(itemId);
-    //retrieve traits to roll
-    const traitsToRoll = item.getTraitsToRoll(throwIndex);
-    const diceThrow = new DiceThrow({
-      document: item,
-      traitsToRoll: traitsToRoll
-    });
-    if ( shiftKey ) {
-      //throw right away
-      diceThrow.throwDice();
-    } else {
-      //display dice throw dialog
-      diceThrow.render(true);
     }
   }
 

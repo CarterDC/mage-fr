@@ -11,13 +11,15 @@
 
 // Import Documents
 import M20eActor from './module/actor/actor.js'
-import M20eItem from './module/item/baseitem.js'
+import M20eItem from './module/item/base-item.js'
 import M20eRoteItem from './module/item/rote-item.js'
+import M20eRollableItem from './module/item/rollable-item.js'
 // Import Applications
 import M20eActorSheet from './module/actor/actor-sheet.js'
-import M20eItemSheet from './module/item/baseitem-sheet.js'
+import M20eItemSheet from './module/item/base-item-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 import M20eRoteSheet from './module/item/rote-sheet.js'
+import M20eRollableSheet from './module/item/rollable-sheet.js'
 import DiceDialogue from './module/dice/dice-throw-dialog.js'
 // Other Imports
 import { M20E } from './module/config.js'
@@ -49,7 +51,8 @@ Hooks.once('init', async function () {
   //add references to subclasses for use in the M20eItem constructor
   //proprty names must be valid item types
   CONFIG.Item.documentClasses = {
-    "rote": M20eRoteItem
+    "rote": M20eRoteItem,
+    "weapon": M20eRollableItem
   };
 
   // Register sheet application classes
@@ -64,8 +67,13 @@ Hooks.once('init', async function () {
     types: ["paradigm"],
     makeDefault: true
   });
+  //TODO : make rotes share the same item class and item sheet as other rollables.
   Items.registerSheet("m20e", M20eRoteSheet, {
     types: ["rote"],
+    makeDefault: true
+  });
+  Items.registerSheet("m20e", M20eRollableSheet, {
+    types: ["weapon"],//todo add other rollable types (wonders...)
     makeDefault: true
   });
 

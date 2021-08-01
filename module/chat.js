@@ -10,6 +10,7 @@ export function addChatListeners(html) {
     html.on('click', '.m20e.card', onCardFooterClick);
     html.on('click', '#linkToOptions', onLinkToOptionsClick);
 }
+
 /**
  * Open the gameSetting on the system tab
  * called solely from the welcome message
@@ -22,6 +23,7 @@ async function onLinkToOptionsClick(event) {
   sheet._tabs[0].active = 'system';
   sheet.render(true);
 }
+
 /**
  * Slowly expands or collapses the inner content of a '.m20e.card'
  * Does basically the same as Foundry vanilla roll messages 

@@ -5,13 +5,14 @@
   "ITEM.TypeAbility": "Capacité",
   "ITEM.TypeBackground": "Historique",
   "ITEM.TypeContact": "Contact",
-  "ITEM.TypeConsumable": "Consommable",
   "ITEM.TypeEvent": "Évènement de Chronique",
   "ITEM.TypeEventAlt": "Chronique&nbsp;:<br>Évènement",
   "ITEM.TypeMeritflaw": "Atout & Handicap",
   "ITEM.TypeMeritflawAlt": "Atout /<br>Handicap",
+  "ITEM.TypeMisc": "Divers",
   "ITEM.TypeParadigm": "Paradigme",
   "ITEM.TypeRote": "Routine",
+  "ITEM.TypeWeapon": "Arme",
 
   "M20E": {
 
@@ -100,6 +101,12 @@
       "throwSelfRoll": "Lancer pour Moi.",
       "throwStealthRoll": "Lancer Furtif.",
       "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès"
+    },
+
+    "damageType": {
+      "bashing": "Étourdissant",
+      "lethal": "Létal",
+      "aggravated": "Aggravé"
     },
 
     "defaultAbilities": {
@@ -422,15 +429,21 @@
     },
 
     "labels": {
+      "consumable": "Consommable",
       "cssClass": "Classe CSS",
       "currentXP": "XP actuel",
+      "damageType": "Type de dégâts",
+      "damage": "Dégâts",
       "date": "Date",
       "dicePool": "Grpt. de Dés",
       "displayDescription": "Description Personnalisée",
+      "equipable": "Équipable",
+      "equiped": "Équipé",
       "extra": "Extra",
       "personnalJEs": "Journaux Personnels",
       "pool": "Grpt.",
       "quantity": "Quantité",
+      "range": "Portée",
       "sheetLogo": "Logo fiche de perso",
       "spe": "Spé",
       "specialisation": "Spécialisation",
@@ -455,7 +468,8 @@
       "lexicon": "LEXIQUE",
       "magye": "MAGYE",
       "stuff": "MATOS",
-      "traits": "TRAITS"
+      "traits": "TRAITS",
+      "throws": "JETS"
     },
 
     "new": {
@@ -536,7 +550,12 @@
       "skill": "Compétence",
       "skills": "Compétences",
       "talent": "Talent",
-      "talents": "Talents"
+      "talents": "Talents",
+      "handtohand": "Corps-à-corps",
+      "melee": "Arme de Mêlée",
+      "throw": "Arme de jet",
+      "lightfire": "Arme à feu (légère)",
+      "heavyfire": "Arme à feu (lourde)"
     },
 
     "throwresult": {

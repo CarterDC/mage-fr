@@ -147,11 +147,7 @@ export default class M20eActor extends Actor {
       return;
     }
     //check against 'creation mode'
-    const protectedTypes = CONFIG.M20E.protectedCategories.reduce( (acc, cur) => {
-      const itemType = CONFIG.M20E.categoryToType[cur]
-      return itemType ? [...acc, itemType] : acc;
-    }, []);
-    if ( this.data.data.creationDone && !game.user.isGM && protectedTypes.includes(itemData.type) ) {
+    if ( this.data.data.creationDone && !game.user.isGM && itemData.protectedType ) {
         ui.notifications.error(game.i18n.localize('M20E.notifications.notOutsideCreation'));
         return false;
     }

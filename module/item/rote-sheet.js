@@ -1,5 +1,5 @@
 // Import Documents
-import M20eItemSheet from './baseitem-sheet.js'
+import M20eItemSheet from './base-item-sheet.js'
 // Import Helpers
 import { Trait, ExtendedTrait, MageThrow } from "../utils/classes.js";
 import * as utils from '../utils/utils.js'

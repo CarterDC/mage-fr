@@ -172,6 +172,10 @@
   width: 20px;
   display: inline-flex;
 }
+.m20e.sheet .sheet-tabs a.disabled,
+.m20e.dialogue .sheet-tabs a.disabled {
+  cursor: default;
+}
 .m20e.sheet .sheet-tabs a.active,
 .m20e.dialogue .sheet-tabs a.active {
   font-size: calc(var(--navFontSize) + 2px);
@@ -382,7 +386,8 @@
   flex: 10 10;
   text-align: center;
 }
-.m20e .category.rotes .grid {
+.m20e .category.rotes .grid,
+.m20e .category.events .grid {
   padding: 0 5px;
 }
 .bullet-display {
@@ -552,6 +557,7 @@
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /*  Category specific traits                    */
+  /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
@@ -827,6 +833,21 @@
 .m20e .rote:hover .trait-dice {
   visibility: visible;
   opacity: 1;
+}
+.m20e .trait.event {
+  margin-top: 3px;
+}
+.m20e .trait.event .trait-img {
+  position: relative;
+  align-self: flex-start;
+  border: none;
+  height: 40px;
+  width: 40px;
+  margin: 3px 5px 0 0;
+  background-image: radial-gradient(rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
+}
+.m20e .trait.event .trait-label {
+  margin-left: 5px;
 }
 .m20e .trait.rote-effect {
   width: 100%;
