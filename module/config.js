@@ -16,6 +16,20 @@ M20E.meritflawSubTypes = {
   flaw: "M20E.subType.flaw"
 }
 
+M20E.damageTypes = {
+  bashing: "M20E.damageType.bashing",
+  lethal: "M20E.damageType.lethal",
+  aggravated: "M20E.damageType.aggravated"
+}
+
+M20E.weaponSubTypes = {
+  handtohand: "M20E.subType.handtohand",
+  melee: "M20E.subType.melee",
+  throw: "M20E.subType.throw",
+  lightfire: "M20E.subType.lightfire",
+  heavyfire: "M20E.subType.heavyfire"
+}
+
 M20E.spheres = [
   "forc",
   "matt",

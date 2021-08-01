@@ -23,30 +23,11 @@ export default class M20eItem extends Item {
     }    
     //default behavior, just call super and do all the default Item inits.
     super(data, context);
-
-    //check if protected type
-    const protectedTypes = CONFIG.M20E.protectedCategories.reduce( (acc, cur) => {
-      const itemType = CONFIG.M20E.categoryToType[cur]
-      return itemType ? [...acc, itemType] : acc;
-    }, []);
-    this.protectedType = protectedTypes.includes(this.type);
-  }
-
-  get isProtected() {
-    return this.protectedType && this.actor?.data.data.creationDone;
-  }
-
-  get isRollable() {
-    return this.data.data.isRollable;
-  }
-
-  get isTrait() {
-    return this.data.data.isTrait;
   }
 
   /**
    * adds image path and systemDescription before sending the whole thing to the database
-   * prompts for subType if that particular item type does require one.
+   * prompts for subType if that particular item type does require one,
    * in order to get the matching img and systemDesc.
    *  @override
    */
@@ -73,6 +54,30 @@ export default class M20eItem extends Item {
       updateData.data.systemDescription = await utils.getDefaultDescription(specificType);
     }
     itemData.update( updateData );
+  }
+
+
+  /** @override */
+  prepareData() {
+    super.prepareData();
+    //check if item type is amongst protected types
+    const protectedTypes = CONFIG.M20E.protectedCategories.reduce( (acc, cur) => {
+      const itemType = CONFIG.M20E.categoryToType[cur]
+      return itemType ? [...acc, itemType] : acc;
+    }, []);
+    this.data.protectedType = protectedTypes.includes(this.type);
+  }
+
+  get isRollable() {
+    return this.data.data.isRollable;
+  }
+
+  get isTrait() {
+    return this.data.data.isTrait;
+  }
+
+  get isActive() {
+    return this.data.data.effects?.length > 0;
   }
 
 /**
@@ -106,16 +111,19 @@ export default class M20eItem extends Item {
    */
   _prepareOwnedItem() {}
 
+  /**
+   * Implemented in every rollable subClasses
+   */
   getTraitsToRoll(throwIndex=0) {}
 
+  /**
+   * Implemented in every rollable subClasses
+   */
   getThrowFlavor(xTraitsToRoll=[]) {}
-
-  get isActive() {
-    return this.data.data.effects?.length > 0;
-  }
 
   /**
    * Extends an array of {@link Trait} with relevant values to Throw dices
+   * called by a DiceThrow when item is the main document (instead of an actor)
    * 
    * @return {Array} an array of {@link ExtendedTrait} 
    */
@@ -141,9 +149,35 @@ export default class M20eItem extends Item {
     }
   }
 
+  /**
+   * get traits from a rollable item for the specific throw index (ie rotes only have 1 throw so it's index 0)
+   * create a new {@link DiceThrow} from traitsToRoll and either throw or open config App based on shiftkey status
+   * 
+   * @param  {Boolean} shiftKey
+   * @param  {Number} throwIndex=0 
+   */
+  roll(shiftKey, throwIndex = 0) {
+    if ( !this.isRollable ) { return null; }
+
+    //retrieve traits to roll
+    const traitsToRoll = this.getTraitsToRoll(throwIndex);
+    const diceThrow = new DiceThrow({
+      document: this,
+      traitsToRoll: traitsToRoll
+    });
+    if ( shiftKey ) {
+      //throw right away
+      diceThrow.throwDice();
+    } else {
+      //display dice throw dialog
+      diceThrow.render(true);
+    }
+  }
+
   /* -------------------------------------------- */
   /*  Paradigm Item Specific                      */
   /* -------------------------------------------- */
+
   // could have been in a subClass but it's just 4 functions anyway
 
   /**

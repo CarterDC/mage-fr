@@ -370,6 +370,10 @@
         "isEquipable": true,
         "equiped":false
       },
+      "consumable": {
+        "isConsumable": true,
+        "quantity": 0
+      },
       "mageRestricted": {
         "restricted" : ["charmage", "npcmage"]
       }
@@ -408,6 +412,10 @@
     },
     "misc": {
       "displayDescription": "",
+      "isEquipable": false,
+      "equiped": false,
+      "isConsumable": false,
+      "quantity": 0,
       "extra": {}
     },
     "paradigm":{
@@ -429,15 +437,10 @@
         "rollable",
         "equipable"
       ],
-      "damages": 0,
+      "subType": "handtohand",
       "damageType": "bashing",
-      "displayDescription": "",
-      "extra": {}
-    },
-    "miscequipable": {
-      "templates":[
-        "equipable"
-      ],
+      "damage": 0,
+      "range": 0,
       "displayDescription": "",
       "extra": {}
     }
