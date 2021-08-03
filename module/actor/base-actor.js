@@ -13,8 +13,16 @@ export default class M20eActor extends Actor {
 
   /** @override */
   constructor(data, context) {
-    //might need to do stuff in here
-    super(data, context);
+    //creates a derived class for specific item types
+    if ( data.type in CONFIG.Actor.documentClasses && !context?.isExtendedClass) {
+      // specify our custom actor subclass here
+      // when the constructor for the new class will call it's super(),
+      // the isExtendedClass flag will be true, thus bypassing this whole process
+      // and resume default behavior
+      return new CONFIG.Actor.documentClasses[data.type](data,{...{isExtendedClass: true}, ...context});
+  }    
+  //default behavior, just call super and do all the default Item inits.
+  super(data, context);
   }
 
   /**
@@ -126,19 +134,112 @@ export default class M20eActor extends Actor {
   /** @override */
   prepareData() {
     super.prepareData();
-    const actorData = this.data;
 
     this._extendHealthStats();
-    //this._extendMagePower();
 
     this.items.forEach(item => item._prepareOwnedItem());
   }
+
+  /** 
+   * Reevaluates secondary health stats 'status' and 'malus'
+   * according to health values and the list of maluses
+   */
+  _extendHealthStats() {
+    let health = this.data.data.health;
+    //prepare an array of negative integers from the comma separated string
+    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
+    const wounds = health.max - health.value;
+
+    health.status = game.i18n.localize(`M20E.healthStatus.${wounds}`);
+    if ( wounds > 0 ) {
+      health.malus = maluses[wounds - 1];
+    } else {
+      health.malus = 0;
+    }
+  }
+
+  /* -------------------------------------------- */
+  /*  Roll related                                */
+  /* -------------------------------------------- */
+
+  getThrowFlavor(xTraitsToRoll=[]) {
+    //regular roll (non item, non magical) compute flavor based on the number of traits inside the throw
+    switch ( xTraitsToRoll.length ) {
+      case 0: //no trait was selected
+        return `${game.i18n.localize("M20E.diceThrows.freeThrow")}.`;
+        break;
+      case 1: //only one trait roll
+      case 2: //classic (or not) 2 traits
+        const throwTrait = xTraitsToRoll.map(trait => {
+          return trait.useSpec ? `${trait.name}(S)` :
+            ( trait.value === 0 ? `<span class= "red-thingy">${trait.name}</span>` : trait.name) ;
+        }).join(' + ');
+        return `${game.i18n.format("M20E.diceThrows.throwFor", {trait: throwTrait})}.`;
+        break;
+      default: //too many traits => don't bother
+        return `${game.i18n.localize("M20E.diceThrows.mixedThrow")}.`;
+    }
+  }
+
+  getMacroData(data) {
+    const xTraitToRoll = this.extendTraits(data.map( d => new Trait(d)));
+    return {
+      name : this.getThrowFlavor(xTraitToRoll),
+      img: '', // todo : maybe find a more suitable image than default one
+      commandParameters : {
+        data: data
+      }
+    }
+  }
+
+  /**
+   * Extends an array of {@link Trait} with relevant values to Throw dices
+   * dispatch calls according to wether each Trait references an item or an actor property
+   * @return {Array} an array of {@link ExtendedTrait} 
+   */
+  extendTraits(traitsToRoll) {
+    return traitsToRoll.map(trait => {
+      const extendedData = trait.isItem ?
+        this.items.get(trait.itemId).getExtendedTraitData() :
+        this.getExtendedTraitData(trait);
+      
+      return new ExtendedTrait({trait, ...extendedData});
+    });
+  }
+
+  getExtendedTraitData(trait) {
+    const {category, key= ''} = trait;
+    const relativePath = key ? `${category}.${key}` : `${category}`;
+    const actorData = this.data;
+
+    let value = 0;
+    let specName = '';
+    switch ( category ) {
+      case 'willpower':
+        value = parseInt(actorData.data.willpower.max);
+        specName = ''
+        break;
+      default:
+        value = parseInt(foundry.utils.getProperty(actorData,`data.${relativePath}.value`)),
+        specName = foundry.utils.getProperty(actorData,`data.${relativePath}.specialisation`)
+    }
+    return {
+      name: game.i18n.localize(`M20E.${relativePath}`),
+      displayName: this.getLexiconEntry(relativePath),
+      value: value,
+      specName: specName
+    }
+  }
+
+  /* -------------------------------------------- */
+  /*  Sheet or other external                     */
+  /* -------------------------------------------- */
 
   /**
    * check whether dropped item can be 'safely' created on this actor
    * @param  {M20eItem} item item being dropped
    */
-  isDropAllowed(item) {
+   isDropAllowed(item) {
     const itemData = item.data;
     //check name against all names in same itemType
     const duplicates = this.items.filter(item => (item.type === itemData.type) && (item.name === itemData.name));
@@ -156,12 +257,6 @@ export default class M20eActor extends Actor {
       const itemType = game.i18n.localize(`ITEM.Type${item.type.capitalize()}`);
       ui.notifications.error(game.i18n.format('M20E.notifications.restrictedItem',
         {actorName:this.name, itemType: itemType}));
-      return false;
-    }
-    //check against spheres levels
-    if ( itemData.type === 'rote' && !item._isActuallyRollable(this) ){
-      ui.notifications.error(game.i18n.format('M20E.notifications.unrollableRote',
-        {actorName:this.name, itemName: item.name}));
       return false;
     }
     return true;
@@ -219,67 +314,6 @@ export default class M20eActor extends Actor {
   }
 
   /** 
-   * Reevaluates secondary health stats 'status' and 'malus'
-   * according to health values and the list of maluses
-   */
-  _extendHealthStats() {
-    let health = this.data.data.health;
-    //prepare an array of negative integers from the comma separated string
-    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
-    const wounds = health.max - health.value;
-
-    health.status = game.i18n.localize(`M20E.healthStatus.${wounds}`);
-    if ( wounds > 0 ) {
-      health.malus = maluses[wounds - 1];
-    } else {
-      health.malus = 0;
-    }
-  }
-
-  /**
-   * Extends an array of {@link Trait} with relevant values to Throw dices
-   * dispatch calls according to wether each Trait references an item or an actor property
-   * @return {Array} an array of {@link ExtendedTrait} 
-   */
-   extendTraits(traitsToRoll) {
-    return traitsToRoll.map(trait => {
-      const extendedData = trait.isItem ?
-        this.items.get(trait.itemId).getExtendedTraitData() :
-        this.getExtendedTraitData(trait);
-      
-      return new ExtendedTrait({trait, ...extendedData});
-    });
-  }
-
-  getExtendedTraitData(trait) {
-    const {category, key= ''} = trait;
-    const relativePath = key ? `${category}.${key}` : `${category}`;
-    const actorData = this.data;
-
-    let value = 0;
-    let specName = '';
-    switch ( category ) {
-      case 'willpower':
-        value = parseInt(actorData.data.willpower.max);
-        specName = ''
-        break;
-      case 'arete':
-        value = parseInt(actorData.data.arete);
-        specName = ''
-        break;
-      default:
-        value = parseInt(foundry.utils.getProperty(actorData,`data.${relativePath}.value`)),
-        specName = foundry.utils.getProperty(actorData,`data.${relativePath}.specialisation`)
-    }
-    return {
-      name: game.i18n.localize(`M20E.${relativePath}`),
-      displayName: this.getLexiconEntry(relativePath),
-      value: value,
-      specName: specName
-    }
-  }
-
-  /** 
    * Might be pretty useless ?
    *  'Safe' update as in 
    * "if value is a number, parseInt it just to be on the 'safe' side"
@@ -289,41 +323,6 @@ export default class M20eActor extends Actor {
     //beware of floats !!!
     const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
     return await this.update({[`data.${relativePath}`]: propertyValue});
-  }
-
-
-  increaseMagepower(index){
-    if( ! utils.canSeeParadox() ) { return; }
-    const base1Index = index += 1;
-    let {quintessence, paradox} = this.data.data.magepower;
-
-    //adding quint and/or removing paradox
-    if ( (20 - paradox) < base1Index ) { //paradox in the box, remove it
-      paradox -= 1;
-      this.safeUpdateProperty('magepower', {paradox});
-    } else {//add a quint point (according to index)
-      if ( quintessence < base1Index ) {
-        quintessence += 1;
-        this.safeUpdateProperty('magepower', {quintessence});
-      }
-    }
-  }
-
-  decreaseMagepower(index){
-    if ( ! utils.canSeeParadox() ) { return; }
-    const base1Index = index += 1;
-    let {quintessence, paradox} = this.data.data.magepower;
-
-    //adding paradox and/or removing quintessence
-    if ( (quintessence) >= base1Index ) { //quint in the box, remove it
-      quintessence -= 1;
-      this.safeUpdateProperty('magepower', {quintessence});
-    } else {//add a paradox point (according to index)
-      if ( (20 - paradox) >= base1Index ) {
-        paradox += 1;
-        this.safeUpdateProperty('magepower', {paradox});
-      }
-    }
   }
 
   //health & willpower
@@ -371,23 +370,6 @@ export default class M20eActor extends Actor {
   }
   
 /*
-  async modQuintessence(mod) {
-    const {quintessence, paradox}  = this.data.data.magepower;
-    let newValue = quintessence + parseInt(mod);
-    if ( newValue < 0 ) { newValue = 0; }
-    if ( newValue + paradox > 20 ) { newValue = 20 - paradox; }
-    return this.safeUpdateProperty('magepower.quintessence', newValue);
-  }
-
-  async modParadox(mod) {
-    const {quintessence, paradox}  = this.data.data.magepower;
-    let newValue = paradox + parseInt(mod);
-    if ( newValue < 0 ) { newValue = 0; }
-    if ( newValue + quintessence > 20 ) { newValue = 20 - quintessence; }
-    //TODO : maybe add whisp to GM on certain paradox values
-    return this.safeUpdateProperty('magepower.paradox', newValue);
-  }
-
   async addWound(amount, woundType = '', overhead = false) {
     const health = duplicate(this.data.data.health);
     woundType = woundType === '' ? 'value' : woundType;
@@ -402,7 +384,5 @@ export default class M20eActor extends Actor {
     }
 
   }*/
-
-
 
 }

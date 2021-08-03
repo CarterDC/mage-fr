@@ -1,12 +1,11 @@
 // Import Applications
 import { FakeItem } from '../apps/fakeitem-sheet.js'
-import { DiceThrow } from '../dice/dice-throw.js'
+import DiceThrow from '../dice/dice-throw.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 import { Trait, PromptData } from "../utils/classes.js";
 import * as chat from "../chat.js";
-
 
 /**
 * Implements M20eActorSheet as an extension of the ActorSheet class
@@ -65,9 +64,16 @@ export default class M20eActorSheet extends ActorSheet {
     const actorData = this.actor.data.toObject(false);
     sheetData.actor = actorData;
     sheetData.data = actorData.data;
+
+    //pre-digest some data to be usable by handlbars (avoid some helpers)
+    sheetData.resources = {};
+    sheetData.resources.health = this.getResourceData('health');
+    sheetData.resources.willpower = this.getResourceData('willpower');
+    sheetData.resources.magepower = this.getMagepowerData();
     
     //dispatch items into categories and subtypes
     //sheetData.items is already sorted on item.sort in the super
+    //todo : maybe don't put all the categories inside sheetData.items ?
     //Abilities
     sheetData.items.abilities = { talents: {}, skills: {}, knowledges: {} };
     sheetData.items.abilities.talents = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "talent") ));
@@ -83,7 +89,7 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.items.events = sheetData.items.filter((item) => item.type === "event");
     //gear & other possessions
     sheetData.items.equipables = sheetData.items.filter((item) => item.data.isEquipable === true);
-    sheetData.items.misc = sheetData.items.filter((item) => ( item.type === 'misc' && item.data.isEquipable === false ));
+    sheetData.items.miscs = sheetData.items.filter((item) => ( item.type === 'misc' && item.data.isEquipable === false ));
     //todo : sort equipables according to type and isEquiped ?
     //todo : sort misc according to isConsumable ?
 
@@ -93,6 +99,7 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.isOwner = this.actor.isOwner;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
+    sheetData.canSeeParadox = utils.canSeeParadox();
     
     const paradigm = this.actor.paradigm;
     if( paradigm ) {
@@ -576,6 +583,44 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
+   * Returns an Array with pre-digested data for direct use by handlebars in order to renders some helpers superfluous
+   * Populates the array with the relevant number of entries like {state: '', title: ''},
+   * based on resource properties (max, value, lethal and aggravated)
+   * 
+   * @returns {Array} [{state:'', title:''},]
+   */
+  getResourceData(resourceName) {
+    const rez = this.actor.data.data[resourceName];
+
+    return [...Array(rez.max)].map((element, index) => {
+      const state = (rez.max - rez.aggravated) > index ? 'aggravated' : 
+        ( (rez.max - rez.lethal) > index ? 'lethal' : 
+          ( (rez.max - rez.value) > index ? 'bashing' : '' ));
+      const title = state !== '' ? game.i18n.localize(`M20E.wounds.${state}`) : '';
+      return {state: state, title: title};
+    });
+  }
+
+  /**
+   * Returns an Array with pre-digested data for direct use by handlebars in order to renders some helpers superfluous
+   * Populates the array with the relevant number of entries like {state: '', title: ''},
+   * based on quintessence and paradox values (as well as whether players can see their own paradox)
+   * 
+   * @returns {Array} [{state:'', title:''},]
+   */
+  getMagepowerData() {
+    const mp = this.actor.data.data.magepower;
+    const canSeePara = utils.canSeeParadox();
+
+    return [...Array(20)].map((element, index) => {
+      const state = mp.quintessence > index ? 1 : 
+        ( (canSeePara && (20 - mp.paradox) <= index) ? 2 : 0 );
+      const title = canSeePara ? game.i18n.localize(`M20E.hints.magepower.${state}`) : '';
+      return {state: state, title: title};
+    });
+  }
+
+  /**
    * 'disables' some elements (input/buttons) for actors whose creation phase is over.
    * a bit similar to Foundry's disableFields
    * @param {HTMLElement} html sheet.element
@@ -829,9 +874,30 @@ export default class M20eActorSheet extends ActorSheet {
     //might be usefull at some point ?
     return super._canDragDrop(selector);
   }
-  /** @override */
+
+  /**
+   * pass along traitsToRoll if dragElem is main dice button (action == roll-traits)
+   * otherwise let super deal with it (might also contain a rollable item)
+   * 
+   *  @override */
   _onDragStart(event) {
-    super._onDragStart(event);
+    const dragElem = event.currentTarget;
+
+    if ( dragElem.dataset?.action === "roll-traits" ) {
+      // Create drag data
+      const dragData = {
+        actorId: this.actor.id,
+        sceneId: this.actor.isToken ? canvas.scene?.id : null,
+        tokenId: this.actor.isToken ? this.actor.token.id : null
+      }
+
+      dragData.type = "mage-roll";
+      dragData.data = this.getTraitsToRoll();
+
+      event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+    } else {
+      super._onDragStart(event);
+    }
   }
 
   /**

@@ -2,12 +2,60 @@
   {{!-- gear --}}
   {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="equipables" lock = locks.equipables addButton = true}}
   <p>⚠ Under Heavy Construction ⚠</p>
-  <div class="grid two-col">
-    <div>bla</div>
-    <div>blu</div>
+  <div class="grid one-col">
+        {{#each items.equipables as |equipable key|}}
+        <div class="trait equipable" data-item-id="{{equipable._id}}">
+            <img class="trait-img" src="{{equipable.img}}"/>
+            <div class="vertical-wrapper">
+                <div class="horizontal-wrapper">
+                    <label class="trait-label" data-item-id="{{equipable._id}}">
+                        {{equipable.name}}
+                    </label>
+                    <div class="ligne"></div>
+                    <div class="edit-bar" data-locked="{{../locks.equipables}}">
+                        <a class="mini-button" data-action="edit"><i class="fas fa-pencil-alt"></i></a>
+                        <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
+                    </div>
+                    <div class="bullet-display" data-locked="{{../locks.equipables}}">
+                        
+                    </div>
+                </div>
+                <div class="one-liner-desc" data-expanded="false">
+                  <a class="mini-button" data-action="expand">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </a>
+                  {{{equipable.data.displayDescription}}}
+                </div>
+            </div>
+        </div>
+        {{/each}}
   </div>
-  <div class="grid two-col">
-    <div>bla</div>
-    <div>blu</div>
+  <div class="grid one-col">
+        {{#each items.miscs as |misc key|}}
+        <div class="trait misc" data-item-id="{{misc._id}}">
+            <img class="trait-img" src="{{misc.img}}"/>
+            <div class="vertical-wrapper">
+                <div class="horizontal-wrapper">
+                    <label class="trait-label" data-item-id="{{misc._id}}">
+                        {{misc.name}}
+                    </label>
+                    <div class="ligne"></div>
+                    <div class="edit-bar" data-locked="{{../locks.equipables}}">
+                        <a class="mini-button" data-action="edit"><i class="fas fa-pencil-alt"></i></a>
+                        <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
+                    </div>
+                    <div class="bullet-display" data-locked="{{../locks.equipables}}">
+                        
+                    </div>
+                </div>
+                <div class="one-liner-desc" data-expanded="false">
+                  <a class="mini-button" data-action="expand">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </a>
+                  {{{misc.data.displayDescription}}}
+                </div>
+            </div>
+        </div>
+        {{/each}}
   </div>
 </section>

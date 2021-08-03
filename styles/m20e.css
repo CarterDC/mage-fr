@@ -21,6 +21,7 @@
   --m20e-badRedAlpha: #610d11b2;
   --m20e-goodGreen: #18520b;
   --m20e-goodGreenAlpha: #18520b80;
+  --m20e-neutralOrange: #b58018;
   --m20e-darkGrey: #191813;
   --m20e-midGrey: #56544e;
   --m20e-lightGrey: #7a7971;
@@ -526,18 +527,18 @@
 .m20e .willpower .box {
   background-color: var(--m20e-goodGreenAlpha);
 }
-.m20e .health .box[data-state='1'],
-.m20e .willpower .box[data-state='1'] {
+.m20e .health .box[data-state='bashing'],
+.m20e .willpower .box[data-state='bashing'] {
   background-color: var(--m20e-badRedAlpha);
 }
-.m20e .health .box[data-state='2'],
-.m20e .willpower .box[data-state='2'] {
+.m20e .health .box[data-state='lethal'],
+.m20e .willpower .box[data-state='lethal'] {
   background-color: var(--m20e-badRedAlpha);
   background-image: url('../assets/ui/strike1.png');
   background-size: contain;
 }
-.m20e .health .box[data-state='3'],
-.m20e .willpower .box[data-state='3'] {
+.m20e .health .box[data-state='aggravated'],
+.m20e .willpower .box[data-state='aggravated'] {
   background-color: var(--m20e-badRedAlpha);
   background-image: url('../assets/ui/strike2.png');
   background-size: contain;
@@ -1075,6 +1076,7 @@ li.chat-message .card .card-footer .item-img {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  position: relative;
 }
 .m20e.dialogue .radio-group div input {
   display: none;
@@ -1088,6 +1090,18 @@ li.chat-message .card .card-footer .item-img {
   border: 1px solid #bdb9b2;
   border-radius: 3px;
   cursor: pointer;
+}
+.m20e.dialogue .radio-group div label span {
+  color: var(--m20e-goodGreen);
+  position: absolute;
+  left: 10px;
+  top: -6px;
+}
+.m20e.dialogue .radio-group div label span[data-cue='vulgar'] {
+  color: var(--m20e-neutralOrange);
+}
+.m20e.dialogue .radio-group div label span[data-cue='vulgarWitness'] {
+  color: var(--m20e-badRed);
 }
 .m20e.dialogue .radio-group div label:hover {
   color: #303030;

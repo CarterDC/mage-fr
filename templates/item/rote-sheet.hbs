@@ -21,13 +21,13 @@
                     {{#if ../locks.effects}}
                     <div class="mini-button decoy"></div>
                     <label class="trait-label">
-                        {{localize (concat "M20E.spheres." trait.key)}}
+                        {{localize (m20e-concat "M20E.spheres." trait.key)}}
                     </label>
                     <div class="ligne"></div>
                     <div class="bullet-display" data-locked="true">
-                        {{#forLoop 5}}
+                        {{#m20e-forLoop 5}}
                         <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}"></span>
-                        {{/forLoop}}
+                        {{/m20e-forLoop}}
                     </div>
                     {{else}}
                     <a class="mini-button" title="{{localize 'M20E.hints.removeFromThrow'}}" data-action="remove" data-index="{{index}}"><i class="fas fa-times-circle"></i></a>
@@ -40,9 +40,9 @@
                     </select>
                     <div class="ligne"></div>
                     <div class="bullet-display" data-locked="true">
-                      {{#forLoop 5}}
+                      {{#m20e-forLoop 5}}
                       <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" data-clickable="{{clickableBullet ../../availEffects trait.key}}"></span>
-                      {{/forLoop}}
+                      {{/m20e-forLoop}}
                     </div>
                   {{/if}}
                 </div>

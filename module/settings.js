@@ -56,24 +56,24 @@ export const registerSystemSettings = function() {
   /**
    * Display button to open the rules config panel
    */
-   game.settings.registerMenu("mage-fr", "rulesConfig", {
+/*   game.settings.registerMenu("mage-fr", "rulesConfig", {
     name: "SETTINGS.rulesConfig",
     label: "SETTINGS.rulesConfig",
     hint: "SETTINGS.rulesConfigHint",
     icon: "fas fa-dice",
     type: RulesConfig,
     restricted: false
-  });
+  });*/
 
   /**
    * Display button to open the rules config panel
    */
-   game.settings.register("mage-fr", "rules", {
+/*   game.settings.register("mage-fr", "rules", {
     scope: "world",
     config: false,
     default: [{type: 'talent', value: 2}, {type: 'skill', value: 3}],
     type: Object
-  });
+  });*/
 
   /**
    * Chosen compendium module name (scope of the compendiumCollections)
@@ -177,5 +177,17 @@ export const registerSystemSettings = function() {
     default: true,
     type: Boolean
   });
+
+    /**
+   * Whether players will see visual cues of effect threshold recommandations
+   */
+     game.settings.register("mage-fr", "displayThresholdCues", {
+      name: "SETTINGS.displayThresholdCues",
+      hint: "SETTINGS.displayThresholdCuesHint",
+      scope: "world",
+      config: true,
+      default: true,
+      type: Boolean
+    });
 
 }

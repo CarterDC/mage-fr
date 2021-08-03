@@ -6,7 +6,7 @@
       <div class="grid one-col">
         <div class="mini-banner">
           <a class="mini-button decoy" data-locked="{{../locks.abilities}}"></a>
-          <label class="column-header">{{localize (concat "M20E.subType." key)}}</label>
+          <label class="column-header">{{localize (m20e-concat "M20E.subType." key)}}</label>
           <a class="mini-button" data-category="abilities" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.abilities}}"><i class="fas fa-plus"></i></a>
         </div>
         {{#each abilitygroup as |ability key|}}
@@ -29,9 +29,9 @@
             <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
           </div>
           <div class="bullet-display" data-locked="{{../../locks.abilities}}">
-            {{#forLoop 5}}
+            {{#m20e-forLoop 5}}
             <span class="bullet" data-index="{{this}}" data-state="{{bulletState ability.data.value this}}"></span>
-            {{/forLoop}}
+            {{/m20e-forLoop}}
           </div>
         </div>
         {{/each}}

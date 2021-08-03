@@ -8,27 +8,27 @@
               <input class = "name" name="name" type="text" value="{{actor.name}}" data-dtype="String"/>
               <a class="entity-link personnal-je" data-entity="{{data.link.type}}" data-pack="{{data.link.pack}}" data-id="{{data.link.id}}" title="{{localize "M20E.hints.openJE"}}"><i class="fas fa-info-circle"></i></a>
             </div>
-            <div class="dice-button" data-action = "dice-button"></div>
+            <div class="dice-button macro-ready" data-action = "roll-traits"></div>
         </div>
         <div class="header-row">
             <div class="resource-panel health" data-resource="health">
                 <div class="boxes">
-                    {{#forLoop data.health.max}}
-                        <div class="box" data-clickable="{{../editable}}" data-index="{{this}}" data-state="{{res ../data.health this}}"></div>
-                    {{/forLoop}}
+                    {{#each resources.health as |rez index|}}
+                        <div class="box" title="{{rez.title}}" data-clickable="{{../editable}}" data-index="{{index}}" data-state="{{rez.state}}"></div>
+                    {{/each}}
                 </div>
                 <div>
                     <label class="resource-context" data-resource="health">{{data.health.status}}</label>
                     {{#if (ne data.health.malus 0)}}
-                        <label>{{sign data.health.malus "-"}}D</label>
+                        <label>{{m20e-sign data.health.malus "-"}}D</label>
                     {{/if}}
                 </div>
             </div>
             <div class="resource-panel category willpower" style="margin: 0 0 0 0;" data-category="willpower" data-resource="willpower">
                 <div class="boxes">
-                    {{#forLoop data.willpower.max}}
-                        <div class="box" data-clickable="{{../editable}}" data-index="{{this}}" data-state="{{res ../data.willpower this}}"></div>
-                    {{/forLoop}}
+                    {{#each resources.willpower as |rez index|}}
+                        <div class="box" title="{{rez.title}}" data-clickable="{{../editable}}" data-index="{{index}}" data-state="{{rez.state}}"></div>
+                    {{/each}}
                 </div>
                 <div class="trait willpower" style="margin-left:4px;" data-active= "false">
                     <a class="trait-label resource-context" data-resource="willpower">
@@ -41,9 +41,9 @@
         <div class="header-row">
             <div class="resource-panel magepower" data-resource="magepower">
                 <div class="boxes" style="justify-content: space-between;">
-                    {{#forLoop 20}}
-                    {{magepowerBox ../data.magepower this}}
-                    {{/forLoop}}
+                    {{#each resources.magepower as |rez index|}}
+                    <div class="box" title= "{{rez.title}}" data-clickable= "{{../canSeeParadox}}" data-index="{{index}}" data-state="{{rez.state}}"></div>
+                    {{/each}}
                 </div>
             </div>
         </div>

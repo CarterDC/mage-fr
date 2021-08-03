@@ -1,4 +1,4 @@
-import { DiceThrow } from './dice-throw.js'
+import DiceThrow  from './dice-throw.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
@@ -24,7 +24,7 @@ import { log } from "../utils/utils.js";
       this.options.classes.push(paraItem.data.data.cssClass);
     }
     //register a hook on updateActor in order to refresh the diceThrow with updated actor values.
-    this.hook = Hooks.on('updateActor', (actor, data, options, useId) => this.onUpdateActor(actor, data, options, useId));
+    this.hook = Hooks.on('updateActor', this.onUpdateActor.bind(this));
   }
 
   /** @override */
@@ -49,14 +49,18 @@ import { log } from "../utils/utils.js";
 
     //creates an array for the radio options : value from 2 to 10, checked or ''
     appData.radioOptions = [...Array(9)].map((value, index) => {
-      const checked = dt.thresholdBase === (index + 2) ? 'checked' : '';
-      return {value: `${index+2}`, ...{ checked }};
+      index = index + 2; //we start from 2 to 10
+      const checked = dt.thresholdTotal === (index) ? 'checked' : '';
+      return {value: `${index}`, visualCue: this.getVisualCue(index), ...{checked}};
     });
 
     //icon and title for the throw button
     appData.extras = CONFIG.M20E.rollModeExtras[dt.rollMode];
+    //lock bullets for every thing but pure actor effects
+    appData.bulletsClickLock = !dt.isEffectRoll || dt.isItemThrow;
 
     appData.closeOnRoll = this.closeOnRoll;
+    log({appData})
     return appData;
   }
 
@@ -141,8 +145,7 @@ import { log } from "../utils/utils.js";
    */
   _onRadioClick(event) {
     const labelElem = event.currentTarget;
-    this.diceThrow.thresholdBase =  parseInt(element.innerHTML.trim());
-    this.diceThrow.update();
+    this.diceThrow.updateChosenThreshold(parseInt(labelElem.innerHTML.trim()))
   }
 
   /**
@@ -154,7 +157,8 @@ import { log } from "../utils/utils.js";
     const element = event.currentTarget;
     const dataset = element.dataset;
     const traitElem = element.closest('.trait');
-    
+    if ( dataset.disabled === 'true' ) { return; }
+
     switch (dataset.action){
       case 'roll':
         this.diceThrow.throwDice(this.closeOnRoll);
@@ -197,6 +201,25 @@ import { log } from "../utils/utils.js";
     this.diceThrow.updateTraitValue(traitElem.dataset.key, parseInt(element.dataset.index) + 1);
   }
 
+  getVisualCue(index) {
+    if ( !game.settings.get('mage-fr', 'displayThresholdCues') ) { return null; }
+
+    const dt = this.diceThrow;
+    if ( dt.isEffectRoll ) {
+      switch ( index - (dt.maxEffectLevel + (dt.thresholdBase - 3)) ) {
+        case 0:
+          return 'coincidental';
+        case 1:
+          return 'vulgar'
+        case 2:
+          return 'vulgarWitness'
+        default:
+          return null;
+      }
+    }
+    return null;
+  }
+
   /**
    * rotate between the 3 throw settings depending on the mouse button
    * throw settings drive the roll modifiers df=1 and xs=10 
@@ -219,11 +242,12 @@ import { log } from "../utils/utils.js";
    * @param  {M20eActor} actor
    * @param  {Object} data
    * @param  {Object} options
-   * @param  {String} useId
+   * @param  {String} userId
    */
-  onUpdateActor(actor, data, options, useId) {
+  onUpdateActor(actor, data, options, userId) {
     if ( actor.id !== this.diceThrow.actor.id ) { return ; }
     if ( options.render === true ) {
+      //todo : maybe add more checks to avoid useless updates ?? very minor
       this.diceThrow.update(true);
     }
   }
