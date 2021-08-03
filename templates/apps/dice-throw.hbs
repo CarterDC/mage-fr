@@ -15,15 +15,9 @@
             </label>
             <div class="ligne"></div>
             <div class="bullet-display" data-locked="true">
-                {{#if (and ../dt.isEffectRoll (not ../dt.isItemThrow))}}
-                {{#forLoop 5}}
-                <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" data-clickable="{{gt trait.valueMax this}}"></span>
-                {{/forLoop}}
-                {{else}}
-                {{#forLoop 5}}
-                <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" data-clickable="false"></span>
-                {{/forLoop}}
-                {{/if}}
+                {{#m20e-forLoop 5}}
+                <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" {{#if ../../bulletsClickLock}} data-clickable="false" {{else}} data-clickable="{{gt trait.valueMax this}}" {{/if}}></span>
+                {{/m20e-forLoop}}
             </div>
             {{#if trait.canUseSpec}}
                 <a class="mini-button spe" title="{{localize 'M20E.hints.useSpecialisation'}}" data-action="spe" data-active = {{trait.useSpec}}>{{localize "M20E.labels.spe"}}</a>
@@ -38,14 +32,14 @@
         <label style="text-align: center; margin-left:-6px;" title="{{localize 'M20E.hints.dicePool'}}">{{localize "M20E.labels.dicePool"}} :</label>
         <input name="dicePool" type="text" value="{{dt.dicePoolBase}}" data-dtype="Number" disabled/>
         {{#if (ne dt.dicePoolMalus 0)}}
-        <input class= "red-thingy" name="dicePoolMalus" type="text" value="{{sign dt.dicePoolMalus}}" data-dtype="Number" disabled/>
+        <input class= "red-thingy" name="dicePoolMalus" type="text" value="{{m20e-sign dt.dicePoolMalus}}" data-dtype="Number" disabled/>
         {{/if}}
         <div style="display: flex; flex-direction:row;">
             <div class="double-button" style="margin:0 5px;">
                 <a class="mini-button" title="{{localize 'M20E.hints.addDice'}}" data-action="mod-plus"><i class="fas fa-plus"></i></a>
                 <a class="mini-button" title="{{localize 'M20E.hints.removeDice'}}" data-action="mod-minus"><i class="fas fa-minus"></i></a>
             </div>
-            <input name="dicePoolBonus" type="text" value="{{sign dt.dicePoolBonus}}" data-dtype="Number" disabled/>
+            <input name="dicePoolBonus" type="text" value="{{m20e-sign dt.dicePoolBonus}}" data-dtype="Number" disabled/>
         </div>
         <i class="fas fa-equals" style ="font-size: 16px;" ></i>
         <input name="dicePoolTotal" type="text" value="{{dt.dicePoolTotal}}" data-dtype="Number" readonly/>
@@ -57,13 +51,18 @@
             {{#each radioOptions as |radio key|}}
             <div>
                 <input id="rad{{radio.value}}" type="radio" name="threshold" value="{{radio.value}}" {{radio.checked}}/>
-                <label class= "radio-label" for="rad{{radio.value}}">{{radio.value}}</label>
+                <label class= "radio-label" for="rad{{radio.value}}">
+                  {{radio.value}}
+                  {{#if radio.visualCue}}
+                  <span title="{{localize (m20e-concat 'M20E.hints.thresholdCue.' radio.visualCue)}}" data-cue="{{radio.visualCue}}"><i class="fas fa-caret-down"></i></span>
+                  {{/if}}
+                </label>
             </div>
             {{/each}}
         </div>
     </div>
 
-    <a class="mini-button throw-settings" title="{{localize (concat 'M20E.hints.throwSettings.' dt.throwSettings)}}" data-action="settings" data-settings="{{dt.throwSettings}}"><i class="fas fa-dice-d20"></i></a>
+    <a class="mini-button throw-settings" title="{{localize (m20e-concat 'M20E.hints.throwSettings.' dt.throwSettings)}}" data-action="settings" data-settings="{{dt.throwSettings}}"><i class="fas fa-dice-d20"></i></a>
     <a class="mini-button throw-dice" data-action="roll" title="{{localize extras.title}}">
         <span>{{localize "M20E.labels.throw"}} <i class="fas fa-dice"></i></span> <i class="{{extras.icon}}"></i>
     </a>

@@ -49,6 +49,27 @@ export function alphaSort(key = 'name') {
 }
 
 /**
+ * returns an Actor object from {actorId, sceneId, tokenId}
+ * TODO : add localized nofification warnings
+ * @param  {Object} data like from dropedData
+ * 
+ * @return {M20eActor} a token actor or world actor
+ */
+export function actorFromData(data) {
+  const {actorId, sceneId, tokenId} = data;
+  let actor;
+  if ( tokenId ) {
+    const scene = game.scenes.get(sceneId);
+    const tokenDoc = scene?.tokens.get( tokenId );
+    actor = tokenDoc?.actor;
+  }
+  if ( !actor ) {
+    actor = game.actors.get(actorId);
+  }
+  return actor;
+}
+
+/**
  * Whether current user can see/interract with his paradox points
  */
 export function canSeeParadox() {

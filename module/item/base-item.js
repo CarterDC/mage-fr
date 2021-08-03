@@ -1,5 +1,6 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
+import DiceThrow from '../dice/dice-throw.js'
 import { log } from "../utils/utils.js";
 import { Trait, ExtendedTrait } from "../utils/classes.js";
 
@@ -120,6 +121,19 @@ export default class M20eItem extends Item {
    * Implemented in every rollable subClasses
    */
   getThrowFlavor(xTraitsToRoll=[]) {}
+
+  getMacroData(data) {
+    const itemType = game.i18n.localize(`ITEM.Type${this.type.capitalize()}`);
+    return {
+      name : `${itemType} ${this.name}`,
+      img: this.img,
+      commandParameters : {
+        data: {
+          itemId: this.id
+        }
+      }
+    }
+  }
 
   /**
    * Extends an array of {@link Trait} with relevant values to Throw dices

@@ -6,7 +6,7 @@
         <div class="grid one-col">
             <div class="mini-banner">
                 <a class="mini-button decoy" data-locked="{{../locks.meritsflaws}}"></a>
-                <label class="column-header">{{localize (concat "M20E.subType." key)}}</label>
+                <label class="column-header">{{localize (m20e-concat "M20E.subType." key)}}</label>
                 <a class="mini-button" data-category="meritsflaws" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.meritsflaws}}"><i class="fas fa-plus"></i></a>
             </div>
             {{#each meritflawgroup as |meritflaw key|}}
@@ -31,9 +31,9 @@
                 <div class="bullet-display" data-locked="{{../../locks.meritsflaws}}">
                     <div class="meritflaw-value">
                         {{#if (eq meritflaw.data.subType "flaw")}}
-                        {{sign meritflaw.data.value "-"}}
+                        {{m20e-sign meritflaw.data.value "-"}}
                         {{else}}
-                        {{sign meritflaw.data.value}}
+                        {{m20e-sign meritflaw.data.value}}
                         {{/if}}
                     </div>
                 </div>

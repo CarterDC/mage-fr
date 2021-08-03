@@ -398,6 +398,7 @@
       "displayName": "Apparaît automatiquement à la place du nom d'origine.",
       "edit": "Éditer",
       "extra": "Inutile et variable.",
+      "imgClick": "Cliquer pour choisir une image",
       "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
       "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus.",
       "magepower": {
@@ -415,6 +416,11 @@
       "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags.",
       "systemName": "Sert de référence, éditable par un GM.",
       "threshold": "Les bonus/malus ne peuvent pas changer la difficulté au delà de +3/-3.",
+      "thresholdCue": {
+        "coincidental": "Effet coincidental.",
+        "vulgar": "Effet vulgaire.",
+        "vulgarWitness": "Effet vulgaire avec témoins."
+      },
       "throwSettings":{
         "1": "Les '1' ne font rien de spécial.",
         "2": "Chaque '1' retire un succès.",
@@ -571,8 +577,13 @@
       "noModule": "<p>Le système n'a pas trouvé de module de contenu activé.<br>Pas d'inquiétude, il fonctionne très bien sans. Néanmoins le module de contenu apporte de nombreux journaux et items déjà préparés et vous pouvez le trouver dans Foundy en cherchant 'Mage Packs'.</p>",
       "settings": "<p>Vous trouverez, en cliquant <a href='' id='linkToOptions'>ici</a>, des options à modifier selon vos besoins.</p>",
       "clickMe": "Cliquez moi !"
-    }
+    },
 
+    "wounds":{
+      "bashing": "Blessure étourdissante",
+      "lethal": "Blessure létale",
+      "aggravated": "Blessure aggravéé"
+    }
   },
 
   "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",
@@ -580,6 +591,8 @@
   "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",
   "SETTINGS.discordInvite": "Discord",
   "SETTINGS.discordInviteHint": "Rejoindre le server discord 'Mage-Fr' (Carter_DC#1097 pour me contacter).",
+  "SETTINGS.displayThresholdCues" : "Aide visuelle à la difficulté des effets.",
+  "SETTINGS.displayThresholdCuesHint" : "Recommandations de diff pour la magie coincidentale/vulgaire, indexées sur la difficulté de base et le niveau max dans l'effet.",
   "SETTINGS.M20E.rulesHeader": "Règles M20E.",
   "SETTINGS.None": "Vous n'avez pas les permissions nécessaires pour voir / modifier les options de ce système.",
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
@@ -602,6 +615,7 @@
   "SETTINGS.untrMalusNone": "Talent : 0, Comp. 0, Conn. : 0",
   "SETTINGS.untrMalusSoft": "Talent : 0, Comp. 0, Conn. : 1",
   "SETTINGS.useHealthMalus": "Malus de santé au pool de dés.",
-  "SETTINGS.useHealthMalusHint": "Applique automatiquement le malus au pool de dés (défini par la liste éditable en clic droit sur la santé)."
-
+  "SETTINGS.useHealthMalusHint": "Applique automatiquement le malus au pool de dés (cf : liste des malus éditable en clic droit sur la santé).",
+  "SETTINGS.useHealthMalusForMagic": "Malus de santé pour les Effets.",
+  "SETTINGS.useHealthMalusForMagicHint": "Applique aussi le malus au pool de dés pour les jets d'Effets magiques. Uniquement appliqué si l'option précédente est active."
 }

@@ -20,7 +20,7 @@ export class DieSuccess extends Die {
   }
 
   /** @override */
-  static DENOMINATION = "s";
+  static DENOMINATION = "s" ;
 
   /** @override */
   getResultLabel(result) {

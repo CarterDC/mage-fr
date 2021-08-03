@@ -11,6 +11,10 @@ export function addChatListeners(html) {
     html.on('click', '#linkToOptions', onLinkToOptionsClick);
 }
 
+export function addChatMessageContextOptions(html, options){
+
+}
+
 /**
  * Open the gameSetting on the system tab
  * called solely from the welcome message
@@ -57,5 +61,30 @@ export async function displayCard(actor, templateData) {
     whisper:[game.user.id], //linked cards are self-whisperd by default
     speaker: ChatMessage.getSpeaker({actor: actor})
   });
+}
+
+/**
+ * Creates and send a welcome chatMessage
+ * flags the user so the message is displayed only once
+ */
+export async function welcomeMessage() {
+  const msgTemplate = "systems/mage-fr/templates/chat/welcome-message.hbs";
+  //prepare the template Data
+  const templateData = game.i18n.localize('M20E.welcomeMessage');
+  templateData.isGM = game.user.isGM;
+  const module = game.modules.get(game.settings.get("mage-fr", "compendiumScope"));
+  templateData.packModuleActivated = module && module.active;
+
+  const htmlContent =  await renderTemplate(msgTemplate, templateData);
+  //send message
+  ChatMessage.create({
+    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+    content: htmlContent,
+    flavor: templateData.welcome,
+    speaker: {alias: "Carter_DC"},
+    whisper:[game.user.id]
+  });
+  //flag the user
+  game.user.setFlag("mage-fr","welcomeMessageShown", true);
 }
 

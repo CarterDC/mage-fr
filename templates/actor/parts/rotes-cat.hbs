@@ -6,7 +6,7 @@
         <div class="trait rote" data-item-id="{{rote._id}}">
             <div class="item-img" style="background-image: url({{rote.img}}), radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));">
               {{#if rote.data.isActuallyRollable}}
-              <div class="mini-button trait-dice" data-action="roll-item"></div>
+              <div class="mini-button trait-dice macro-ready" data-action="roll-item" data-item-id="{{rote._id}}"></div>
               {{/if}}
             </div>
             <div class="vertical-wrapper">

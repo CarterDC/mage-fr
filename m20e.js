@@ -10,20 +10,23 @@
  */
 
 // Import Documents
-import M20eActor from './module/actor/actor.js'
+import M20eActor from './module/actor/base-actor.js'
+import M20eMageActor from './module/actor/mage-actor.js'
 import M20eItem from './module/item/base-item.js'
 import M20eRoteItem from './module/item/rote-item.js'
 import M20eRollableItem from './module/item/rollable-item.js'
 // Import Applications
-import M20eActorSheet from './module/actor/actor-sheet.js'
+import M20eActorSheet from './module/actor/base-actor-sheet.js'
 import M20eItemSheet from './module/item/base-item-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 import M20eRoteSheet from './module/item/rote-sheet.js'
 import M20eRollableSheet from './module/item/rollable-sheet.js'
+import DiceThrow from './module/dice/dice-throw.js'
 import DiceDialogue from './module/dice/dice-throw-dialog.js'
 // Other Imports
 import { M20E } from './module/config.js'
 import { registerSystemSettings } from "./module/settings.js";
+import { registerHotbarOverride } from "./module/macro.js";
 import * as dice from "./module/dice/dice.js";
 import * as utils from './module/utils/utils.js'
 import { log } from "./module/utils/utils.js";
@@ -40,16 +43,20 @@ Hooks.once('init', async function () {
   game.m20e = {
     entities: {
       M20eActor,
-      M20eItem
+      M20eItem,
     },
-    config: M20E
+    config: M20E,
+    mageMacro: DiceThrow.fromMacro
   };
 
   CONFIG.M20E = M20E;
   CONFIG.Actor.documentClass = M20eActor;
+  //add references to subclasses for use in the M20eActor constructor
+  CONFIG.Actor.documentClasses = {
+    "charmage": M20eMageActor
+  }
   CONFIG.Item.documentClass = M20eItem;
   //add references to subclasses for use in the M20eItem constructor
-  //proprty names must be valid item types
   CONFIG.Item.documentClasses = {
     "rote": M20eRoteItem,
     "weapon": M20eRollableItem
@@ -77,9 +84,10 @@ Hooks.once('init', async function () {
     makeDefault: true
   });
 
-  registerSystemSettings();
-  registerHandlebarsHelpers();
-  preloadHandlebarsTemplates();
+  registerSystemSettings(); //system settings
+  registerHotbarOverride(); //hack on the hotbar
+  registerHandlebarsHelpers(); //all out HB helpers
+  preloadHandlebarsTemplates(); //preload all partials and some templates
 
   //DICE thingies
   CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later use
@@ -102,27 +110,13 @@ Hooks.once('ready', async function () {
 
   //display welcome message if needed
   if ( !game.user.getFlag("mage-fr","welcomeMessageShown") ) {
-    const msgTemplate = "systems/mage-fr/templates/chat/welcome-message.hbs";
-    //prepare the template Data
-    const templateData = game.i18n.localize('M20E.welcomeMessage');
-    templateData.isGM = game.user.isGM;
-    const module = game.modules.get(game.settings.get("mage-fr", "compendiumScope"));
-    templateData.packModuleActivated = module && module.active;
-
-    const htmlContent =  await renderTemplate(msgTemplate, templateData);
-    //send message
-    ChatMessage.create({
-      type: CONST.CHAT_MESSAGE_TYPES.OTHER,
-      content: htmlContent,
-      flavor: templateData.welcome,
-      speaker: {alias: "Carter_DC"},
-      whisper:[game.user.id]
-    });
-    //flag the user
-    game.user.setFlag("mage-fr","welcomeMessageShown", true);
+    chat.welcomeMessage();
   }
+
+  Hooks.on('hotbarDrop', DiceThrow.toMacro);
+  Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html));
+  Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
 });
 
-Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html));
 
 

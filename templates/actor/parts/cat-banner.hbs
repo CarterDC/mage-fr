@@ -2,10 +2,10 @@
         <div class="mini-button decoy" data-action="lock" data-hidden="{{lock}}"></div>
         {{#if addButton}}
         <a class="mini-button decoy" data-hidden="{{lock}}" data-locked="{{lock}}"></a>
-        <label>{{locadigm paraData "categories." category}}</label>
+        <label>{{m20e-locadigm paraData "categories." category}}</label>
         <a class="mini-button" data-action="add" data-category="{{category}}" data-hidden="{{lock}}" data-locked="{{lock}}"><i class="fas fa-plus"></i></a>
         {{else}}
-        <label>{{locadigm paraData "categories." category}}</label>
+        <label>{{m20e-locadigm paraData "categories." category}}</label>
         {{/if}}
         <a class="mini-button" data-action="lock" data-category="{{category}}" data-hidden="{{lock}}" title="{{localize 'M20E.hints.toggleEditMode'}}">
             {{#if lock}}<i class="fas fa-lock"></i>
