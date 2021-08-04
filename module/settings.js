@@ -40,6 +40,10 @@ export const registerSystemSettings = function() {
     }
   }
 
+  const onSettingChange = async function(newValue, settingName) {
+    Hooks.callAll('systemSettingChanged', newValue, settingName);
+  }
+
   /**
    * Display button to open a link to Mage-fr discord server
    * uses dummy formApp
@@ -95,7 +99,21 @@ export const registerSystemSettings = function() {
     scope: "world",
     config: true,
     default: 6,
-    type: Number
+    type: Number,
+    onChange: (newValue) => onSettingChange(newValue, 'baseRollThreshold')
+  });
+
+  /**
+   * Choice of 5 malus sets for untrained Talent, Skills and Knowledges
+   * penalty to the threshold
+   */
+   game.settings.register("mage-fr", "untrainedMalus", {
+    name: "SETTINGS.untrainedMalus",
+    hint: "SETTINGS.untrainedMalusHint",
+    scope: "world",
+    config: true,
+    default: "01X",
+    type: String
   });
 
   /**
@@ -146,25 +164,6 @@ export const registerSystemSettings = function() {
     type: Boolean,
     dependency: "useHealthMalus"
   })
-
-  /**
-   * Choice of 5 malus sets for untrained Talent, Skills and Knowledges
-   */
-  game.settings.register("mage-fr", "untrainedMalus", {
-    name: "SETTINGS.untrainedMalus",
-    hint: "SETTINGS.untrainedMalusHint",
-    scope: "world",
-    config: true,
-    default: "123",
-    type: String,
-    choices: {
-      "000": "SETTINGS.untrMalusNone",
-      "001": "SETTINGS.untrMalusSoft",
-      "012": "SETTINGS.untrMalusBalanced",
-      "111": "SETTINGS.untrMalusMed",
-      "123": "SETTINGS.untrMalusHard"
-    }
-  });
 
   /**
    * Whether players can see their paradox points(and interract with them)

@@ -24,7 +24,8 @@ import { log } from "../utils/utils.js";
       this.options.classes.push(paraItem.data.data.cssClass);
     }
     //register a hook on updateActor in order to refresh the diceThrow with updated actor values.
-    this.hook = Hooks.on('updateActor', this.onUpdateActor.bind(this));
+    Hooks.on('updateActor', this.onUpdateActor.bind(this));
+    Hooks.on('systemSettingChanged', this.onSystemSettingChanged.bind(this));
   }
 
   /** @override */
@@ -252,14 +253,22 @@ import { log } from "../utils/utils.js";
     }
   }
 
+  onSystemSettingChanged(newValue, settingName) {
+    if ( settingName === 'baseRollThreshold' ) {
+      this.diceThrow.update();
+    }
+  }
+
   /**
    * removes the hook and the circular reference to the diceThrow
    * @param  {} options={}
    */
   async close(options={}) {
     //do some cleaning
+    Hooks.off('updateActor', this.onUpdateActor);
+    Hooks.on('systemSettingChanged', this.onSystemSettingChanged);
     Hooks.off('updateActor', this.hook);
-    this.hook = null;
+
     this.closeOnRoll = null;
     this.diceThrow = null;
     //call super

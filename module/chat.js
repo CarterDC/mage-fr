@@ -3,15 +3,15 @@ import * as utils from './utils/utils.js'
 import { log } from "./utils/utils.js";
 
 /**
- * called on the Hooks.on CreateMessage, to add listeners to its html element
+ * called on the Hooks.on renderChatLog, to add listeners to its html element
  * @param  {} html
  */
-export function addChatListeners(html) {
-    html.on('click', '.m20e.card', onCardFooterClick);
-    html.on('click', '#linkToOptions', onLinkToOptionsClick);
+export function addChatListeners(app, html, data) {
+  html.on('click', '.m20e.card', onCardFooterClick);
+  html.on('click', '#linkToOptions', onLinkToOptionsClick);
 }
 
-export function addChatMessageContextOptions(html, options){
+export function addChatMessageContextOptions(html, options) {
 
 }
 
@@ -36,8 +36,8 @@ async function onLinkToOptionsClick(event) {
 function onCardFooterClick(event) {
   event.preventDefault();
   const card = $(event.currentTarget);
-  const tip = card.find(".card-tooltip");  
-  if ( !tip.is(":visible") ) tip.slideDown(200);
+  const tip = card.find(".card-tooltip");
+  if (!tip.is(":visible")) tip.slideDown(200);
   else tip.slideUp(200);
 }
 
@@ -58,8 +58,8 @@ export async function displayCard(actor, templateData) {
     type: CONST.CHAT_MESSAGE_TYPES.OTHER,
     content: htmlContent,
     flavor: htmlFlavor,
-    whisper:[game.user.id], //linked cards are self-whisperd by default
-    speaker: ChatMessage.getSpeaker({actor: actor})
+    whisper: [game.user.id], //linked cards are self-whisperd by default
+    speaker: ChatMessage.getSpeaker({ actor: actor })
   });
 }
 
@@ -75,16 +75,16 @@ export async function welcomeMessage() {
   const module = game.modules.get(game.settings.get("mage-fr", "compendiumScope"));
   templateData.packModuleActivated = module && module.active;
 
-  const htmlContent =  await renderTemplate(msgTemplate, templateData);
+  const htmlContent = await renderTemplate(msgTemplate, templateData);
   //send message
   ChatMessage.create({
     type: CONST.CHAT_MESSAGE_TYPES.OTHER,
     content: htmlContent,
     flavor: templateData.welcome,
-    speaker: {alias: "Carter_DC"},
-    whisper:[game.user.id]
+    speaker: { alias: "Carter_DC" },
+    whisper: [game.user.id]
   });
   //flag the user
-  game.user.setFlag("mage-fr","welcomeMessageShown", true);
+  game.user.setFlag("mage-fr", "welcomeMessageShown", true);
 }
 
