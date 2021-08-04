@@ -64,9 +64,9 @@ Hooks.once('init', async function () {
   Actors.unregisterSheet('core', ActorSheet);
   Actors.registerSheet('m20e', M20eActorSheet, { makeDefault: true });
   Items.unregisterSheet('core', ItemSheet);
-  Items.registerSheet('m20e', M20eItemSheet, { 
+  Items.registerSheet('m20e', M20eItemSheet, {
     types: ["ability", "background", "meritflaw", "event", "misc"], //todo , add all the other base item types
-    makeDefault: true 
+    makeDefault: true
   });
   Items.registerSheet("m20e", M20eParadigmSheet, {
     types: ["paradigm"],
@@ -107,7 +107,7 @@ Hooks.once('init', async function () {
 Hooks.once('ready', async function () {
 
   //display welcome message if needed
-  if ( !game.user.getFlag("mage-fr","welcomeMessageShown") ) {
+  if (!game.user.getFlag("mage-fr", "welcomeMessageShown")) {
     chat.welcomeMessage();
   }
 
@@ -116,6 +116,4 @@ Hooks.once('ready', async function () {
 
 Hooks.on('renderChatLog', chat.addChatListeners);
 Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
-
-
 

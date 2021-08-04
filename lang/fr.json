@@ -13,15 +13,12 @@
   "ITEM.TypeParadigm": "Paradigme",
   "ITEM.TypeRote": "Routine",
   "ITEM.TypeWeapon": "Arme",
-
   "M20E": {
-
     "arete": "Arété",
     "blabla": "Blabla...",
     "health": "Santé",
     "paradigmName": "Paradigme de {name}",
     "willpower": "Volonté",
-
     "attributes": {
       "appa": "Apparence",
       "char": "Charisme",
@@ -29,14 +26,13 @@
       "inte": "Intelligence",
       "mani": "Manipulation",
       "mental": "Mental",
-      "perc":  "Perception",
+      "perc": "Perception",
       "physical": "Physique",
       "social": "Social",
       "stam": "Vigueur",
       "stre": "Force",
       "wits": "Astuce"
     },
-
     "bio": {
       "appearance": "Apparence",
       "apparentAge": "Age<br>apparent",
@@ -52,7 +48,6 @@
       "nature": "Nature",
       "weight": "Poids"
     },
-
     "categories": {
       "abilities": "CAPACITÉS",
       "arete": "ARÉTÉ",
@@ -67,8 +62,7 @@
       "spheres": "SPHÈRES",
       "xp": "EXPÉRIENCE"
     },
-
-    "category":{
+    "category": {
       "arete": "Arété",
       "abilities": "Capacité",
       "attributes": "Attribut",
@@ -83,7 +77,6 @@
       "story": "Background",
       "willpower": "Volonté"
     },
-
     "context": {
       "addJournal": "Créer un journal personnel.",
       "editHealthMalus": "Éditer Malus Santé.",
@@ -102,13 +95,11 @@
       "throwStealthRoll": "Lancer Furtif.",
       "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès"
     },
-
     "damageType": {
       "bashing": "Étourdissant",
       "lethal": "Létal",
       "aggravated": "Aggravé"
     },
-
     "defaultAbilities": {
       "academics": "Erudition",
       "alertness": "Vigilance",
@@ -144,7 +135,6 @@
       "survival": "Survie",
       "technology": "Technologie"
     },
-
     "defaultDescriptions": {
       "default": {
         "book": "Livre",
@@ -152,27 +142,27 @@
         "title": "Description par défaut",
         "content": "<p>Template a éditer de préférence en mode HTML.</p>",
         "levels": {
-          "level1":{
+          "level1": {
             "bullets": "🞫",
             "title": "Titre 1 :",
             "description": "La description revient entièrement à la ligne si elle est trop longue."
           },
-          "level2":{
+          "level2": {
             "bullets": "●",
             "title": "Titre 2 :",
             "description": "On peut mettre autant de niveaux qu'on veut."
           },
-          "level3":{
+          "level3": {
             "bullets": "♥♥♥♥♥",
             "title": "Titre 3 :",
             "description": "Et les puces que l'on souhaite, aussi."
           },
-          "level4":{
+          "level4": {
             "bullets": "⚠⚠",
             "title": "Titre 4 :",
             "description": "Il suffit de bien respecter le template HTML,"
           },
-          "level5":{
+          "level5": {
             "bullets": "★★★",
             "title": "Titre 5 :",
             "description": "ou bien de tout effacer et d'écrire ce qu'on veut à la place ^^."
@@ -186,32 +176,32 @@
         "title": "Attributs",
         "content": "<p>Sauf cas exceptionnel, les attributs de la majorité des gens se situent entre 1 et 3.</p><p>Le maximum humain est de 5.</p>",
         "levels": {
-          "level0":{
+          "level0": {
             "bullets": "🞫",
             "title": "Terrible :",
             "description": "Vous souffrez d'un handicap sévère."
           },
-          "level1":{
+          "level1": {
             "bullets": "●",
             "title": "Faible :",
             "description": "Vous êtes vraiment mauvais, ça ne vaut presque pas la peine d'essayer."
           },
-          "level2":{
+          "level2": {
             "bullets": "●●",
             "title": "Moyen :",
             "description": "Etre dans la moyenne c'est bien, ça veut dire qu'il y a des gens plus mauvais que vous."
           },
-          "level3":{
+          "level3": {
             "bullets": "●●●",
             "title": "Bon :",
             "description": "Vous pouvez aisément 'vous la pêter' en soirée dans les bars."
           },
-          "level4":{
+          "level4": {
             "bullets": "●●●●",
             "title": "Remarquable :",
             "description": "Vous n'avez rien à envier aux héros de la littérature ou du cinéma."
           },
-          "level5":{
+          "level5": {
             "bullets": "●●●●●",
             "title": "Extra-ordinaire :",
             "description": "Si personne ne vous reconnait dans la rue, c'est que vous le voulez ainsi."
@@ -225,27 +215,27 @@
         "title": "Sphères",
         "content": "<p>Même si les sphères ont des points communs dans leur niveux de maîtrise (notamment les sphères motivales), il serait impossible de tout résumer de façon générique.</p><p>Aussi, référez vous à la page 512 du manuel ou utilisez des Compendium de descriptions contenant des informations plus précises.</p>",
         "levels": {
-          "level1":{
+          "level1": {
             "bullets": "●",
             "title": "Initié :",
             "description": "..."
           },
-          "level2":{
+          "level2": {
             "bullets": "●●",
             "title": "Apprenti :",
             "description": "..."
           },
-          "level3":{
+          "level3": {
             "bullets": "●●●",
             "title": "Disciple :",
             "description": "..."
           },
-          "level4":{
+          "level4": {
             "bullets": "●●●●",
             "title": "Adepte :",
             "description": "..."
           },
-          "level5":{
+          "level5": {
             "bullets": "●●●●●",
             "title": "Maître :",
             "description": "..."
@@ -259,32 +249,32 @@
         "title": "Talents",
         "content": "<p>Les Talents ont une part de prédisposition naturelle, souvent aussi améliorée par l'expérience et ou l'entrainement.</p><p>🛈 Généralement, les jets de Talents 'non entrainés' n'ont pas de malus à la difficulté.</p>",
         "levels": {
-          "level0":{
+          "level0": {
             "bullets": "🞫",
             "title": "Nul :",
             "description": "Vous ne pouvez guère compter que sur la 'chance du débutant'."
           },
-          "level1":{
+          "level1": {
             "bullets": "●",
             "title": "Médiocre :",
             "description": "Il y a des gamins de 10 ans qui sont 'naturellement' plus doués que vous."
           },
-          "level2":{
+          "level2": {
             "bullets": "●●",
             "title": "Décent :",
             "description": "Soit vous avez une bonne idée de ce que vous faites, soit c'est juste du talent, et dans ce cas, c'est honteux de ne pas l'exploiter mieux."
           },
-          "level3":{
+          "level3": {
             "bullets": "●●●",
             "title": "Doué :",
             "description": "Parmi les 'gens normaux' vous faites déjà figure d'exception, ce dont vous êtes capable impressionerait presque n'importe qui."
           },
-          "level4":{
+          "level4": {
             "bullets": "●●●●",
             "title": "Talentueux :",
             "description": "L'expérience ne fait pas tout, à ce niveau là, il y a clairement du talent."
           },
-          "level5":{
+          "level5": {
             "bullets": "●●●●●",
             "title": "Prodigieux :",
             "description": "Vous faites partie de ces génies qui ont une compréhension instinctive de leur art, mais qui surtout, l'ont développé activement !"
@@ -298,32 +288,32 @@
         "title": "Compétences",
         "content": "<p>Les Compétences sont le fruit d'un entraînement rigoureux, d'une pratique assidue et de l'application de techniques éprouvées.</p><p>🛈 Généralement, les jets de Compétences 'non entrainées' ont un malus de 1 à leur difficulté.</p>",
         "levels": {
-          "level0":{
+          "level0": {
             "bullets": "🞫",
             "title": "Inapte :",
             "description": "Vous pourriez bien avoir une vague idée de ce qu'il faut faire que vous ne sauriez pas plus comment vous y prendre."
           },
-          "level1":{
+          "level1": {
             "bullets": "●",
             "title": "Novice :",
             "description": "Plop."
           },
-          "level2":{
+          "level2": {
             "bullets": "●●",
             "title": "Amateur :",
             "description": "Plop."
           },
-          "level3":{
+          "level3": {
             "bullets": "●●●",
             "title": "Professionnel :",
             "description": "Plop."
           },
-          "level4":{
+          "level4": {
             "bullets": "●●●●",
             "title": "Spécialiste :",
             "description": "Plop."
           },
-          "level5":{
+          "level5": {
             "bullets": "●●●●●",
             "title": "Élite :",
             "description": "Plop."
@@ -337,32 +327,32 @@
         "title": "Connaissances",
         "content": "<p>Les Connaissances, soit vous les avez aquises, soit vous ne les avez pas... du tout !</p><p>🛈 Généralement, les jets de Connaissances 'non entrainées' sont irréalisables.</p>",
         "levels": {
-          "level0":{
+          "level0": {
             "bullets": "🞫",
             "title": "Ignorant :",
             "description": "A défaut d'assumer votre ignorance sur le sujet, vous pourriez tout aussi bien inventer des réponses."
           },
-          "level1":{
+          "level1": {
             "bullets": "●",
             "title": "Néophyte :",
             "description": "Le pire (ou le mieux) c'est que vous ignorez l'étendue même de votre inculture à ce sujet."
           },
-          "level2":{
+          "level2": {
             "bullets": "●●",
             "title": "Étudiant :",
             "description": "Vous avez des connaissances de base, elles sont possiblement incomplètes (voire erronées), mais au moins vous en êtes conscient."
           },
-          "level3":{
+          "level3": {
             "bullets": "●●●",
             "title": "Enseignant :",
             "description": "A ce niveau de culture, c'est une passion personnelle. Vous pourriez respectablement enseigner."
           },
-          "level4":{
+          "level4": {
             "bullets": "●●●●",
             "title": "Docteur :",
             "description": "Vos recherches à ce sujet intéresseraient beaucoup de monde ; si vous n'avez pas encore publié, vous devriez peut-être."
           },
-          "level5":{
+          "level5": {
             "bullets": "●●●●●",
             "title": "Éminent spécialiste :",
             "description": "Dans ce domaine, si vous l'ingorez, c'est que vraissemblablement, personne ne le sait (ou que ça n'existe juste pas)."
@@ -371,7 +361,6 @@
         "footer": "<p><strong>Description générique :</strong> Se référer au livre, à la page indiquée.</p>"
       }
     },
-
     "diceThrows": {
       "diceThrows": "Jets de Dés",
       "freeThrow": "Jet Libre",
@@ -380,7 +369,6 @@
       "effect": "Effet de {effect}",
       "throwFor": "Jet de {trait}"
     },
-
     "healthStatus": {
       "0": "En pleine forme.",
       "1": "Contusion.",
@@ -391,7 +379,6 @@
       "6": "Infirmité",
       "7": "Invalidité"
     },
-
     "hints": {
       "add": "Ajouter",
       "addDice": "Ajouter un Dé.",
@@ -427,7 +414,7 @@
         "vulgar": "Effet vulgaire.",
         "vulgarWitness": "Effet vulgaire avec témoins."
       },
-      "throwSettings":{
+      "throwSettings": {
         "1": "Les '1' ne font rien de spécial.",
         "2": "Chaque '1' retire un succès.",
         "3": "Chaque '1' retire un succès. + Chaque '10' rajoute un succès supplémentaire."
@@ -439,7 +426,6 @@
       "useSpecialisation": "Utiliser la spécialisation.",
       "value0to5": "Une valeur généralement entre 0 et 5."
     },
-
     "labels": {
       "consumable": "Consommable",
       "cssClass": "Classe CSS",
@@ -470,7 +456,6 @@
       "type": "Type",
       "value": "Valeur"
     },
-
     "navtabs": {
       "bio": "BIO",
       "description": "DESCRIPTION",
@@ -483,7 +468,6 @@
       "traits": "TRAITS",
       "throws": "JETS"
     },
-
     "new": {
       "ability": {
         "talent": "Nv Talent",
@@ -501,8 +485,7 @@
       },
       "rote": "Nvelle Routine"
     },
-
-    "notifications":{
+    "notifications": {
       "duplicateName": "Il existe déjà un item de ce type nommé '{name}' !",
       "gmPermissionNeeded": "Vous devez demander à un GM de faire celà !",
       "invalidFormat": "'{value}' n'a pas un format conforme !",
@@ -519,11 +502,9 @@
       "restrictedItem": "{actorName} ne peut as utiliser les items de type {itemType} !",
       "unrollableRote": "{actorName} n'a pas le(s) niveau(x) de sphère nécessaire(s) pour lancer la routine {itemName} !"
     },
-
     "placeholders": {
       "appearance": "L'apparence de ce personnage..."
     },
-
     "prompts": {
       "actorHasNoOwner": "<p><b>L'acteur {name} n'a pas de propriétaire !</b><br>Voulez-vous quand même créer ce journal ?<br><i>Vous devrez assigner des permissions vous-même par la suite, afin que son Joueur puisse y accéder librement.</i></p>",
       "addItemContent": "<p>Saisissez un nom pour <br><b>{name}</b> :</p>",
@@ -539,7 +520,6 @@
       "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>",
       "subTypeContent": "<p>Choisissez un <b>sous-type de {type}</b><br>Cet item sera crée avec les paramètres par défault du sous-type choisi.</p>"
     },
-
     "spheres": {
       "corr": "Corresp.",
       "entr": "Entropie",
@@ -551,8 +531,7 @@
       "spir": "Esprit",
       "time": "Temps"
     },
-
-    "subType":{
+    "subType": {
       "flaw": "Handicap",
       "flaws": "Handicaps",
       "knowledge": "Connaissance",
@@ -569,13 +548,11 @@
       "lightfire": "Arme à feu (légère)",
       "heavyfire": "Arme à feu (lourde)"
     },
-
     "throwresult": {
       "failure": "Échec !",
       "success": "{total} Succès !",
       "critfailure": "Échec Critique ({total}) !"
     },
-
     "welcomeMessage": {
       "welcome": "Bienvenue !",
       "header": "<p>Vous voyez ce message car c'est la première fois que vous vous connectez sur ce monde, alors, bienvenue !</p><p>J'espère que vous passerez de bons moments en utilisant mon système pour Mage M20e.</p>",
@@ -584,21 +561,19 @@
       "settings": "<p>Vous trouverez, en cliquant <a href='' id='linkToOptions'>ici</a>, des options à modifier selon vos besoins.</p>",
       "clickMe": "Cliquez moi !"
     },
-
-    "wounds":{
+    "wounds": {
       "bashing": "Blessure étourdissante",
       "lethal": "Blessure létale",
       "aggravated": "Blessure aggravéé"
     }
   },
-
   "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",
   "SETTINGS.compendiumScope": "Nom du module de Compendiums.",
   "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",
   "SETTINGS.discordInvite": "Discord",
   "SETTINGS.discordInviteHint": "Rejoindre le server discord 'Mage-Fr' (Carter_DC#1097 pour me contacter).",
-  "SETTINGS.displayThresholdCues" : "Aide visuelle à la difficulté des effets.",
-  "SETTINGS.displayThresholdCuesHint" : "Recommandations de diff pour la magie coincidentale/vulgaire, indexées sur la difficulté de base et le niveau max dans l'effet.",
+  "SETTINGS.displayThresholdCues": "Aide visuelle à la difficulté des effets.",
+  "SETTINGS.displayThresholdCuesHint": "Recommandations de diff pour la magie coincidentale/vulgaire, indexées sur la difficulté de base et le niveau max dans l'effet.",
   "SETTINGS.M20E.rulesHeader": "Règles M20E.",
   "SETTINGS.None": "Vous n'avez pas les permissions nécessaires pour voir / modifier les options de ce système.",
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
