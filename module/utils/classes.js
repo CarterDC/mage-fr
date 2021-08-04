@@ -1,23 +1,38 @@
 
 /**
- * Uniquely defines a Trait object by it's category,
+ * Helper class : Uniquely defines a Trait object by it's category,
  * it's key (if referencing a trait from actor's template)
  * or itemId (if referencing a trait that's actually an item)
  */
 export class Trait {
 
+  /**
+   * @param  {Object} obj {categrory='', key='', itemId=''}
+   */
   constructor(obj) {
-    const dataset = obj.dataset;
-    if ( dataset ) {
-      const traitElem = obj.closest(".trait");
-      this.category = traitElem.closest(".category").dataset.category || '';
-      this.key = traitElem.dataset.key || '';
-      this.itemId = traitElem.dataset.itemId || '';
-    } else {
-      this.category = obj.category || '';
+      this.category = obj.category;
       this.key = obj.key || '';
       this.itemId = obj.itemId || '';
-    }
+  }
+
+  /**
+   * Creates a new instance of Trait by getting infos from an html element's parents (.trait and .category)
+   * 
+   * @param  {HTMLElement} htmlElem an html element inside a '.trait' inside a '.category'
+   * 
+   * @returns {Trait|null} a Trait object made from the aquired info or null
+   */
+  static fromElement(htmlElem) {
+    if ( !htmlElem.dataset ) { return null; }
+    
+    const traitElem = htmlElem.closest(".trait");
+    const category = traitElem.closest(".category").dataset.category || null;
+    if ( !category ) { return null; }
+    return new Trait({
+      category: category,
+      key: traitElem.dataset.key || '',
+      itemId: traitElem.dataset.itemId || ''
+    });
   }
 
   get isItem() {
@@ -25,6 +40,10 @@ export class Trait {
   }
 }
 
+/**
+ * Helper class that stores relevant data to make a dice throw
+ * stores specialisation state, if spec is autorized and can return 'name' accordingly
+ */
 export class ExtendedTrait extends Trait {
 
   constructor(obj) {
@@ -47,7 +66,7 @@ export class ExtendedTrait extends Trait {
 
   get name() {
     return this.useSpec ? this._specName : 
-      this._displayName ? this._displayName : this._name;
+      (this._displayName ? this._displayName : this._name);
   }
 
   get specName() {
@@ -55,6 +74,9 @@ export class ExtendedTrait extends Trait {
   }
 }
 
+/**
+ * helper class 
+ */
 export class MageThrow {
   constructor(obj={}) {
     this.name = obj.name || '';
@@ -65,7 +87,7 @@ export class MageThrow {
 }
 
 /**
- * 
+ * helper class to be used by utils.prompts functions
  */
 export class PromptData {
   constructor(obj) {
@@ -76,6 +98,10 @@ export class PromptData {
     this._promptContent = obj.promptContent || null;
   }
 
+  /**
+   * retruns the actual _promptContent or generates a basic 'prompt new value' one.
+   * @returns {String} 
+   */
   get promptContent() {
     if ( this._promptContent ) {
       return this._promptContent;

@@ -24,7 +24,9 @@ import { log } from "../utils/utils.js";
       this.options.classes.push(paraItem.data.data.cssClass);
     }
     //register a hook on updateActor in order to refresh the diceThrow with updated actor values.
-    this.hook = Hooks.on('updateActor', this.onUpdateActor.bind(this));
+    this.hooks = [];
+    this.hooks.push(Hooks.on('updateActor', this.onUpdateActor.bind(this)));
+    this.hooks.push(Hooks.on('systemSettingChanged', this.onSystemSettingChanged.bind(this)));
   }
 
   /** @override */

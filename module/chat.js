@@ -3,10 +3,10 @@ import * as utils from './utils/utils.js'
 import { log } from "./utils/utils.js";
 
 /**
- * called on the Hooks.on CreateMessage, to add listeners to its html element
+ * called on the Hooks.on renderChatLog, to add listeners to its html element
  * @param  {} html
  */
-export function addChatListeners(html) {
+export function addChatListeners(app, html, data) {
     html.on('click', '.m20e.card', onCardFooterClick);
     html.on('click', '#linkToOptions', onLinkToOptionsClick);
 }

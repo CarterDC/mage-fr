@@ -39,12 +39,9 @@ import * as chat from "./module/chat.js";
 /* -------------------------------------------- */
 Hooks.once('init', async function () {
   log('Initialisation du système');
+  //CONFIG.debug.hooks = true;
 
-  game.m20e = {
-    entities: {
-      M20eActor,
-      M20eItem,
-    },
+  game.m20e = { //store some things here for later access
     config: M20E,
     mageMacro: DiceThrow.fromMacro
   };
@@ -53,7 +50,8 @@ Hooks.once('init', async function () {
   CONFIG.Actor.documentClass = M20eActor;
   //add references to subclasses for use in the M20eActor constructor
   CONFIG.Actor.documentClasses = {
-    "charmage": M20eMageActor
+    "charmage": M20eMageActor,
+    "npcmage": M20eMageActor
   }
   CONFIG.Item.documentClass = M20eItem;
   //add references to subclasses for use in the M20eItem constructor
@@ -85,14 +83,14 @@ Hooks.once('init', async function () {
   });
 
   registerSystemSettings(); //system settings
-  registerHotbarOverride(); //hack on the hotbar
-  registerHandlebarsHelpers(); //all out HB helpers
+  registerHotbarOverride(); //hack on the hotbar for shifKey on macros
+  registerHandlebarsHelpers(); //all of our HB helpers
   preloadHandlebarsTemplates(); //preload all partials and some templates
 
   //DICE thingies
-  CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later use
+  CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later access
   CONFIG.Dice.rolls.push(dice.MageRoll); //make it official
-  CONFIG.M20E.diceThrowApp = DiceDialogue; //store class here for later use
+  CONFIG.M20E.diceThrowApp = DiceDialogue; //store class here for later access
   CONFIG.Dice.terms["s"] = dice.DieSuccess; //new dice term
   dice.registerDieModifier(); //adds the 'xs' (success on explode) modifier
   dice.registerInitiative();
@@ -114,9 +112,10 @@ Hooks.once('ready', async function () {
   }
 
   Hooks.on('hotbarDrop', DiceThrow.toMacro);
-  Hooks.on('renderChatLog', (app, html, data) => chat.addChatListeners(html));
-  Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
 });
+
+Hooks.on('renderChatLog', chat.addChatListeners);
+Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
 
 
 

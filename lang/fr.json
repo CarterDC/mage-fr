@@ -149,7 +149,8 @@
       "default": {
         "book": "Livre",
         "page": "Page",
-        "content": "<p>Description par défaut.</p><p>Template a éditer de préférence en mode HTML.</p>",
+        "title": "Description par défaut",
+        "content": "<p>Template a éditer de préférence en mode HTML.</p>",
         "levels": {
           "level1":{
             "bullets": "🞫",
@@ -182,7 +183,8 @@
       "attributes": {
         "book": "MLA-20e.",
         "page": "p 273",
-        "content": "<p>Sauf cas exceptionnel, les attributs de la majorité des gens se situent entre 1 et 3.</p><p>Le maximum humain est à 5.</p>",
+        "title": "Attributs",
+        "content": "<p>Sauf cas exceptionnel, les attributs de la majorité des gens se situent entre 1 et 3.</p><p>Le maximum humain est de 5.</p>",
         "levels": {
           "level0":{
             "bullets": "🞫",
@@ -215,11 +217,12 @@
             "description": "Si personne ne vous reconnait dans la rue, c'est que vous le voulez ainsi."
           }
         },
-        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué.</p>"
+        "footer": "<p><strong>Description générique :</strong> Se référer au livre, à la page indiquée.</p>"
       },
       "spheres": {
         "book": "MLA-20e.",
         "page": "p 512",
+        "title": "Sphères",
         "content": "<p>Même si les sphères ont des points communs dans leur niveux de maîtrise (notamment les sphères motivales), il serait impossible de tout résumer de façon générique.</p><p>Aussi, référez vous à la page 512 du manuel ou utilisez des Compendium de descriptions contenant des informations plus précises.</p>",
         "levels": {
           "level1":{
@@ -248,12 +251,13 @@
             "description": "..."
           }
         },
-        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué."
+        "footer": "<p><strong>Description générique :</strong> Se référer au livre, à la page indiquée.</p>"
       },
       "talent": {
         "book": "MLA-20e.",
         "page": "p 275",
-        "content": "<p>Les talents ont clairement une part de prédisposition naturelle ; cela ne compense cependant pas un entraînement rigoureux, une pratique assidue ou l'application de techniques éprouvées.</p><p>Leur nature innée justifie un malus réduit sur leur jets « non-entraînés ».</p>",
+        "title": "Talents",
+        "content": "<p>Les Talents ont une part de prédisposition naturelle, souvent aussi améliorée par l'expérience et ou l'entrainement.</p><p>🛈 Généralement, les jets de Talents 'non entrainés' n'ont pas de malus à la difficulté.</p>",
         "levels": {
           "level0":{
             "bullets": "🞫",
@@ -273,7 +277,7 @@
           "level3":{
             "bullets": "●●●",
             "title": "Doué :",
-            "description": "Plop."
+            "description": "Parmi les 'gens normaux' vous faites déjà figure d'exception, ce dont vous êtes capable impressionerait presque n'importe qui."
           },
           "level4":{
             "bullets": "●●●●",
@@ -283,20 +287,21 @@
           "level5":{
             "bullets": "●●●●●",
             "title": "Prodigieux :",
-            "description": ""
+            "description": "Vous faites partie de ces génies qui ont une compréhension instinctive de leur art, mais qui surtout, l'ont développé activement !"
           }
         },
-        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué."
+        "footer": "<p><strong>Description générique :</strong> Se référer au livre, à la page indiquée.</p>"
       },
       "skill": {
         "book": "MLA-20e.",
         "page": "p 279",
-        "content": "<p></p>",
+        "title": "Compétences",
+        "content": "<p>Les Compétences sont le fruit d'un entraînement rigoureux, d'une pratique assidue et de l'application de techniques éprouvées.</p><p>🛈 Généralement, les jets de Compétences 'non entrainées' ont un malus de 1 à leur difficulté.</p>",
         "levels": {
           "level0":{
             "bullets": "🞫",
             "title": "Inapte :",
-            "description": "Plop."
+            "description": "Vous pourriez bien avoir une vague idée de ce qu'il faut faire que vous ne sauriez pas plus comment vous y prendre."
           },
           "level1":{
             "bullets": "●",
@@ -324,45 +329,46 @@
             "description": "Plop."
           }
         },
-        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué."
+        "footer": "<p><strong>Description générique :</strong> Se référer au livre, à la page indiquée.</p>"
       },
       "knowledge": {
         "book": "MLA-20e.",
         "page": "p 282",
-        "content": "<p></p>",
+        "title": "Connaissances",
+        "content": "<p>Les Connaissances, soit vous les avez aquises, soit vous ne les avez pas... du tout !</p><p>🛈 Généralement, les jets de Connaissances 'non entrainées' sont irréalisables.</p>",
         "levels": {
           "level0":{
             "bullets": "🞫",
             "title": "Ignorant :",
-            "description": "Le pire (ou le mieux) c'est que vous ignorez jusqu'à l'étendue même de votre ignorance."
+            "description": "A défaut d'assumer votre ignorance sur le sujet, vous pourriez tout aussi bien inventer des réponses."
           },
           "level1":{
             "bullets": "●",
             "title": "Néophyte :",
-            "description": "Plop."
+            "description": "Le pire (ou le mieux) c'est que vous ignorez l'étendue même de votre inculture à ce sujet."
           },
           "level2":{
             "bullets": "●●",
             "title": "Étudiant :",
-            "description": "Plop."
+            "description": "Vous avez des connaissances de base, elles sont possiblement incomplètes (voire erronées), mais au moins vous en êtes conscient."
           },
           "level3":{
             "bullets": "●●●",
             "title": "Enseignant :",
-            "description": "Plop."
+            "description": "A ce niveau de culture, c'est une passion personnelle. Vous pourriez respectablement enseigner."
           },
           "level4":{
             "bullets": "●●●●",
             "title": "Docteur :",
-            "description": "Plop."
+            "description": "Vos recherches à ce sujet intéresseraient beaucoup de monde ; si vous n'avez pas encore publié, vous devriez peut-être."
           },
           "level5":{
             "bullets": "●●●●●",
             "title": "Éminent spécialiste :",
-            "description": "Plop."
+            "description": "Dans ce domaine, si vous l'ingorez, c'est que vraissemblablement, personne ne le sait (ou que ça n'existe juste pas)."
           }
         },
-        "footer": "<p><strong>Description automatique :</strong> Se référer au livre / page indiqué."
+        "footer": "<p><strong>Description générique :</strong> Se référer au livre, à la page indiquée.</p>"
       }
     },
 
@@ -608,12 +614,7 @@
   "SETTINGS.throwSettingsDeductFailure": "Chaque 1 retire un succès.",
   "SETTINGS.throwSettingsDFXS": "'1' => -1 succès. + '10' => +1 succès.",
   "SETTINGS.untrainedMalus": "Malus de capacité non-entraînée.",
-  "SETTINGS.untrainedMalusHint": "Applique différents Malus au POOL DE DÉS pour les Talents, Compétences et Connaissances non entraînées.",
-  "SETTINGS.untrMalusBalanced": "Talent : 0, Comp. : 1, Conn. : 2",
-  "SETTINGS.untrMalusHard": "Talent : 1, Comp. : 2, Conn. : 3",
-  "SETTINGS.untrMalusMed": "Talent : 1, Comp. : 1, Conn. : 1",
-  "SETTINGS.untrMalusNone": "Talent : 0, Comp. 0, Conn. : 0",
-  "SETTINGS.untrMalusSoft": "Talent : 0, Comp. 0, Conn. : 1",
+  "SETTINGS.untrainedMalusHint": "Malus à la difficulté : Premier chiffre pour les Talents, second pour les Compétences, troisième pour les Connaissances. ('X' indique un jet irréalisable)",
   "SETTINGS.useHealthMalus": "Malus de santé au pool de dés.",
   "SETTINGS.useHealthMalusHint": "Applique automatiquement le malus au pool de dés (cf : liste des malus éditable en clic droit sur la santé).",
   "SETTINGS.useHealthMalusForMagic": "Malus de santé pour les Effets.",

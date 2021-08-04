@@ -8,16 +8,20 @@ export const TROWSETTINGS_DEDUCTFAILURE = 2;
 export const TROWSETTINGS_DFXPLODESUCCESS = 3;
 
 /**
- * 
- * 
+ * Manages everything dice throws related in mage-fr.
+ * Can do standalone 'quick throw' or display it's own DiceDialogue Application to drive throw options 
  */
 export default class DiceThrow {
 
-  /** @override */
+  /**
+   * class DiceThrow takes either actor or item as document
+   * and an array of {@link Trait} objects.
+   * @param {Object} args {document, traitsToRoll, options={}}
+   */
   constructor(args) {
-    const {document=null, traitsToRoll=[], options={}} = args;
-    if ( !document ) { return; }
-    if ( document.isEmbedded && !document.isRollable ) { return; }
+    const {document, traitsToRoll=[], options={}} = args;
+    if ( !document ) { throw 'M20E | Enable to create proper DiceThrow instance' }
+    if ( document.isEmbedded && !document.isRollable ) { throw 'M20E | Enable to create proper DiceThrow instance' }
 
     this._app = null;
     this._document = document; //either an actor or owned item
@@ -27,7 +31,7 @@ export default class DiceThrow {
   }
 
   /**
-   * intitialises the DiceThrow with option values || default
+   * intitialises the DiceThrow with options properties || default
    */
   initialize() {
     this.rollMode = this.options.rollMode !== undefined ? this.options.rollMode : game.settings.get("core", "rollMode");
@@ -53,6 +57,7 @@ export default class DiceThrow {
 
   /**
    * separate init for extended traits
+   * since it's not meant to be redone unless actor has been updated
    */
   initTraits() {
     this.xTraitsToRoll = this._document.extendTraits(this._traitsToRoll);
@@ -60,6 +65,7 @@ export default class DiceThrow {
 
   /**
    * Calculates and store some relevant data for display / roll
+   * also called by every update method call in order to display accurate values in case diceThrow has an App
    */
   prepareData() {
     this.isEffectRoll = DiceThrow.getIsEffectRoll(this._traitsToRoll);
@@ -67,14 +73,60 @@ export default class DiceThrow {
     this.maxEffectLevel = this.isEffectRoll ? this.getMaxEffectLevel() : null;
     //dice pool
     this.dicePoolBase = this.getDicePoolBase();
-    this.dicePoolMods.healthMod = this.getHealthMod(),
-    this.dicePoolMods.untrainedMMod = this.getUntrainedMod()
+    this.dicePoolMods.healthMod = this.getHealthMod();
+
     this.dicePoolTotal = Math.max(this.dicePoolBase + this.dicePoolMod, 1);
     //threshold
-    //TODO : change that if ever a use for threshold modifiers
+
     this.thresholdTotal = this.thresholdChosen || this.thresholdBase;
     //flavor
     this.flavor = this.getFlavor();
+  }
+
+  /* -------------------------------------------- */
+  /*  Macro to and from                           */
+  /* -------------------------------------------- */
+
+  /**
+   * Called by hook on hotbarDrop with prepared dropedData from a onDragStart event
+   * Populates a macro slot with relevant script to make a throw
+   */
+  static async toMacro(bar, dropedData, slot) {
+    if ( dropedData.data === [] ) { return false; }
+    const actor = utils.actorFromData(dropedData);
+    if ( !actor ) { return; } //todo add localized notification error
+
+    //construct our macroData
+    let macroData = {
+      commandParameters : {...dropedData, data: {}},
+      name : '',
+      img: '',
+      type: 'script',
+      scope: 'actor',
+      flags: {"shiftKey": false}
+    };
+    //get name, img and proper 'data' from actor or item
+    switch ( dropedData.type ) {
+      case 'm20e-roll':
+        macroData = foundry.utils.mergeObject(macroData, actor.getMacroData(dropedData.data));
+        break;
+      case 'Item':
+        const item = actor.items.get(dropedData.data._id);
+        if ( !item ) { return false; } //todo add localized notification error
+        macroData = foundry.utils.mergeObject(macroData, item.getMacroData(dropedData.data));
+        break;
+      default:
+        //like when you dragdrop an existing macro onto another slot
+        return false;
+    }
+    //construct our command
+    const stringified = JSON.stringify(macroData.commandParameters);
+    macroData.command = `game.m20e.mageMacro(${stringified},
+      this.data.flags['shiftKey']);`;
+  
+    //actually create the macro in the desired slot
+    const macro = await Macro.create({...macroData});
+    return await game.user.assignHotbarMacro(macro, slot);
   }
 
   static fromMacro(macroParams, shiftKey) {
@@ -84,7 +136,7 @@ export default class DiceThrow {
     let document = null;
     let traitsToRoll = [];
     switch ( macroParams.type ) {
-      case 'mage-roll':
+      case 'm20e-roll':
         document = actor;
         traitsToRoll = macroParams.data.map(obj => new Trait(obj));
         break;
@@ -109,49 +161,6 @@ export default class DiceThrow {
     }
   }
 
-  /**
-   * Called by hook on hotbarDrop with prepared dropedData from a onDragStart event
-   * Populates a macro slot with relevant script to make a throw
-   * @param  {} bar
-   * @param  {} dropedData
-   * @param  {} slot
-   */
-  static async toMacro(bar, dropedData, slot) {
-    if ( dropedData.data === [] ) { return false; }
-    const actor = utils.actorFromData(dropedData);
-    if ( !actor ) { return; } //todo add localized notification error
-
-    //construct our macroData
-    let macroData = {
-      commandParameters : {...dropedData, data: {}},
-      name : '',
-      img: '',
-      type: 'script',
-      scope: 'actor',
-      flags: {"shiftKey": false}
-    };
-    switch ( dropedData.type ) {
-      case 'mage-roll':
-        macroData = foundry.utils.mergeObject(macroData, actor.getMacroData(dropedData.data));
-        break;
-      case 'Item':
-        const item = actor.items.get(dropedData.data._id);
-        if ( !item ) { return false; } //todo add localized notification error
-        macroData = foundry.utils.mergeObject(macroData, item.getMacroData(dropedData.data));
-        break;
-      default:
-        //like when you dragdrop an existing macro onto another slot
-        return false;
-    }
-    //construct our command
-    const stringified = JSON.stringify(macroData.commandParameters);
-    macroData.command = `game.m20e.mageMacro(${stringified},
-      this.data.flags['shiftKey']);`;
-  
-    //actually create the macro on the desired slot
-    const macro = await Macro.create({...macroData});
-    return await game.user.assignHotbarMacro(macro, slot);
-  }
 
   /* -------------------------------------------- */
   /*  Throw implementation                        */

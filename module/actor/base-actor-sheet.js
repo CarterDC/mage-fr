@@ -193,7 +193,7 @@ export default class M20eActorSheet extends ActorSheet {
         name: game.i18n.localize('M20E.context.linkInChat'),
         icon: '<i class="fas fa-share"></i>',
         callback: element => {
-          this._linkInChat(new Trait(element[0]));
+          this._linkInChat(Trait.fromElement(element[0]));
         },
         condition: element => {
           return element[0].classList.contains('linkable');
@@ -203,7 +203,7 @@ export default class M20eActorSheet extends ActorSheet {
         name: game.i18n.localize('M20E.context.editTrait'),
         icon: '<i class="fas fa-pencil-alt"></i>',
         callback: element => {
-          this._editTrait(new Trait(element[0]));
+          this._editTrait(Trait.fromElement(element[0]));
         },//todo : maybe find different condition ?
         condition: element => {
           return element[0].classList.contains('linkable');
@@ -213,7 +213,7 @@ export default class M20eActorSheet extends ActorSheet {
         name: game.i18n.localize('M20E.context.removeLink'),
         icon: '<i class="fas fa-trash"></i>',
         callback: element => {
-          this._removeJELink(new Trait(element[0]));
+          this._removeJELink(Trait.fromElement(element[0]));
         },
         condition: element => {
           return element[0].dataset.linkId;
@@ -464,7 +464,7 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       
       case 'edit': //edit regular or virtual Trait (item)
-        this._editTrait(new Trait(buttonElem));
+        this._editTrait(Trait.fromElement(buttonElem));
         break;
       
       case 'remove':
@@ -652,7 +652,7 @@ export default class M20eActorSheet extends ActorSheet {
       return elementList.length === 0 ? acc : 
         [...acc, ...elementList.toArray().map(traitElem => {
           traitElem.dataset.active = false;
-          return new Trait(traitElem);
+          return Trait.fromElement(traitElem);
         })];
     }, []);
   }
@@ -890,10 +890,9 @@ export default class M20eActorSheet extends ActorSheet {
         sceneId: this.actor.isToken ? canvas.scene?.id : null,
         tokenId: this.actor.isToken ? this.actor.token.id : null
       }
-
-      dragData.type = "mage-roll";
+      dragData.type = "m20e-roll";
       dragData.data = this.getTraitsToRoll();
-
+      //set out parameters inside the event to be picked up by DiceThrow.toMacro() if needed
       event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
     } else {
       super._onDragStart(event);
@@ -953,6 +952,10 @@ export default class M20eActorSheet extends ActorSheet {
     return super._onDropItemCreate(itemData);
   }
 
+  /**
+   * Prompts user before deleting current paradigm item before adding newly dropped one
+   * @param  {ItemData} itemData proper ItemData from _onDropItem
+   */
   async _onDropParadigmItem(itemData) {
     //prompts for overwriting current Paradigm if any
     const actor = this.actor;
