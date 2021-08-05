@@ -163,6 +163,19 @@ export default class M20eItem extends Item {
     }
   }
 
+  getTraitData() {
+    return {
+      category: this.data.type,
+      key: this.data.name.replace(/[. +]/gi, '_').toLowerCase(),
+      data: {
+        subType: this.data.data.subType || null,
+        displayName: this.data.data.displayName || '',
+        value: parseInt(this.data.data.value),
+        specName:  this.data.data.specialisation || '',
+        itemId: this.data._id
+      }
+    }
+  }
   /**
    * get traits from a rollable item for the specific throw index (ie rotes only have 1 throw so it's index 0)
    * create a new {@link DiceThrow} from traitsToRoll and either throw or open config App based on shiftkey status

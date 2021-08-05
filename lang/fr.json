@@ -296,27 +296,27 @@
           "level1": {
             "bullets": "●",
             "title": "Novice :",
-            "description": "Plop."
+            "description": "Vous avez les rudiments du domaine et pouvez donc vaguement vous en sortir."
           },
           "level2": {
             "bullets": "●●",
             "title": "Amateur :",
-            "description": "Plop."
+            "description": "Vous êtes tout à fait compétent dans les situations ordinaires."
           },
           "level3": {
             "bullets": "●●●",
             "title": "Professionnel :",
-            "description": "Plop."
+            "description": "A ce niveau de compétence vous pourriez en faire votre métier."
           },
           "level4": {
             "bullets": "●●●●",
             "title": "Spécialiste :",
-            "description": "Plop."
+            "description": "Vous êtes entraînés à toutes les situations, votre maîtrise technique n'a d'égal que votre connaissance du sujet."
           },
           "level5": {
             "bullets": "●●●●●",
             "title": "Élite :",
-            "description": "Plop."
+            "description": "Quelques centaines de personnes de par le monde sont capables de tels exploits, et vous en faîtes partie."
           }
         },
         "footer": "<p><strong>Description générique :</strong> Se référer au livre, à la page indiquée.</p>"
@@ -486,9 +486,12 @@
       "rote": "Nvelle Routine"
     },
     "notifications": {
+      "actorNotFound": "L'acteur '{actorRef}' n'est pas trouvable !",
       "duplicateName": "Il existe déjà un item de ce type nommé '{name}' !",
       "gmPermissionNeeded": "Vous devez demander à un GM de faire celà !",
+      "impossibleThrow": "Ce jet est irréalisable !",
       "invalidFormat": "'{value}' n'a pas un format conforme !",
+      "itemNotFoundInActor": "L'item '{itemRef}' n'est pas trouvable dans l'acteur '{actorName}' !",
       "itemNotFoundInCompendium": "L'item '{documentName}' n'est pas trouvable dans le compendium '{packName}' !",
       "journalLinked": "Journal de {name} créé et lié au personnage.",
       "missingParadigm": "Il semblerait que ce personnage n'ait pas de pradigme !",

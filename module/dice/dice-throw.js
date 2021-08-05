@@ -25,9 +25,9 @@ export default class DiceThrow {
 
     this._app = null;
     this._document = document; //either an actor or owned item
-    this._traitsToRoll = traitsToRoll;
+    this._traitsToRoll = traitsToRoll; // can be [] at this point
     this.options = options;
-    this.initialize();
+    this._initialized = false;
   }
 
   /**
@@ -53,6 +53,7 @@ export default class DiceThrow {
 
     this.initTraits();
     this.prepareData();
+    this._initialized = true;
   }
 
   /**
@@ -71,96 +72,18 @@ export default class DiceThrow {
     this.isEffectRoll = DiceThrow.getIsEffectRoll(this._traitsToRoll);
     //only used by visual cues atm
     this.maxEffectLevel = this.isEffectRoll ? this.getMaxEffectLevel() : null;
+
     //dice pool
     this.dicePoolBase = this.getDicePoolBase();
     this.dicePoolMods.healthMod = this.getHealthMod();
-
     this.dicePoolTotal = Math.max(this.dicePoolBase + this.dicePoolMod, 1);
-    //threshold
 
+    //threshold
+    this.thresholdMods.untrainedMod = this.getUntrainedMod();
     this.thresholdTotal = this.thresholdChosen || this.thresholdBase;
     //flavor
-    this.flavor = this.getFlavor();
+    this.flavor = this._document.getThrowFlavor(this.xTraitsToRoll);
   }
-
-  /* -------------------------------------------- */
-  /*  Macro to and from                           */
-  /* -------------------------------------------- */
-
-  /**
-   * Called by hook on hotbarDrop with prepared dropedData from a onDragStart event
-   * Populates a macro slot with relevant script to make a throw
-   */
-  static async toMacro(bar, dropedData, slot) {
-    if ( dropedData.data === [] ) { return false; }
-    const actor = utils.actorFromData(dropedData);
-    if ( !actor ) { return; } //todo add localized notification error
-
-    //construct our macroData
-    let macroData = {
-      commandParameters : {...dropedData, data: {}},
-      name : '',
-      img: '',
-      type: 'script',
-      scope: 'actor',
-      flags: {"shiftKey": false}
-    };
-    //get name, img and proper 'data' from actor or item
-    switch ( dropedData.type ) {
-      case 'm20e-roll':
-        macroData = foundry.utils.mergeObject(macroData, actor.getMacroData(dropedData.data));
-        break;
-      case 'Item':
-        const item = actor.items.get(dropedData.data._id);
-        if ( !item ) { return false; } //todo add localized notification error
-        macroData = foundry.utils.mergeObject(macroData, item.getMacroData(dropedData.data));
-        break;
-      default:
-        //like when you dragdrop an existing macro onto another slot
-        return false;
-    }
-    //construct our command
-    const stringified = JSON.stringify(macroData.commandParameters);
-    macroData.command = `game.m20e.mageMacro(${stringified},
-      this.data.flags['shiftKey']);`;
-  
-    //actually create the macro in the desired slot
-    const macro = await Macro.create({...macroData});
-    return await game.user.assignHotbarMacro(macro, slot);
-  }
-
-  static fromMacro(macroParams, shiftKey) {
-    const actor = utils.actorFromData(macroParams);
-    if ( !actor ) { return; } //todo add localized notification error
-
-    let document = null;
-    let traitsToRoll = [];
-    switch ( macroParams.type ) {
-      case 'm20e-roll':
-        document = actor;
-        traitsToRoll = macroParams.data.map(obj => new Trait(obj));
-        break;
-      case 'Item':
-        const item = actor.items.get(macroParams.data.itemId);
-        if ( !item ) { return false; } //todo add localized notification error
-        if ( !item._isActuallyRollable(actor) ) { return false; } //todo add localized notification error
-        document = item;
-        traitsToRoll = item.getTraitsToRoll();
-        break;
-    }
-    if ( traitsToRoll === [] ) { return; }
-    
-    //at last create our diceThrow
-    const diceThrow = new DiceThrow({document, traitsToRoll});
-    if ( shiftKey ) {
-      //throw right away
-      diceThrow.throwDice();
-    } else {
-      //display dice throw dialog
-      diceThrow.render(true);
-    }
-  }
-
 
   /* -------------------------------------------- */
   /*  Throw implementation                        */
@@ -175,7 +98,44 @@ export default class DiceThrow {
    * @param  {Boolean} closeOnRoll only set to false by user clic on the App
    */
   async throwDice(closeOnRoll = true) {
+    // do the init (might throw an error if throw is actually impossible)
+    if ( !this._initialized ) {
+      try {
+        this.initialize();
+      } catch (e) {
+        ui.notifications.error(game.i18n.localize(`M20E.notifications.${e}`));
+        return;
+      }
+    }
+    // get the MageRoll instance
+    const mageRoll = this.getRoll();
+
+    // send the message
+    const speaker = ChatMessage.getSpeaker({actor: this.actor});
+    if ( this.isWonderThrow ) {
+      speaker.alias = this._document.name;
+    }
+    //the async evaluation is gonna be done by the toMessage()
+    await mageRoll.toMessage({
+      speaker : speaker,
+      flavor : this.flavor
+    }, {rollMode: this.rollMode}); //TODO : check how rollmode has been fixed in 0.8.9
+
+    //close app if exists or rerender it
+    if ( this._app ) {
+      if ( closeOnRoll ) {
+        await this.app.close();
+        this._app = null;
+      } else {
+        this.app.render(true);
+      }
+    }
+  }
+
+  getRoll() {
     //nicely pack everything we gonna need for our roll and our message
+    //todo : populate rollData.options with current values, pass less parameters but better ones
+    //ie store booleans, not strings ^^
     const rollData = {
       documentId: this._document.id,
       actorId: this.actor.id,
@@ -189,34 +149,11 @@ export default class DiceThrow {
       thresholdBase: this.thresholdBase,
       thresholdChosen: this.thresholdChosen,
       thresholdMods: this.thresholdMods,
-      thresholdTotal: this.thresholdTotal,
-      flavor: this.flavor
+      thresholdTotal: this.thresholdTotal
     }
-
+    //rollData is also passed in the roll options, so as to be avail later
     const formula = `(@dicePoolTotal)d10${rollData.tenXplodeSuccess}cs>=(@thresholdTotal)${rollData.deductFailures}`;
-    const mageRoll = new CONFIG.Dice.MageRoll(formula, rollData, rollData);
-
-    //the async evaluation is gonna be done by the toMessage()
-    //todo : use wonder's name as alias if relevant
-    //TODO : check how rollmode has been fixed in 0.8.9
-    const speaker = ChatMessage.getSpeaker({actor: this.actor});
-    if ( this.isWonderThrow ) {
-      speaker.alias = this._document.name;
-    }
-    await mageRoll.toMessage({
-      speaker : speaker,
-      flavor : rollData.flavor
-    }, {rollMode: this.rollMode});
-
-    //close app if exists or rerender it
-    if ( this._app ) {
-      if ( closeOnRoll ) {
-        await this.app.close();
-        this._app = null;
-      } else {
-        this.app.render(true);
-      }
-    }
+    return new CONFIG.Dice.MageRoll(formula, rollData, rollData);
   }
 
   /**
@@ -302,9 +239,9 @@ export default class DiceThrow {
   }
 
   /**
-   * computes a negative modifier to the dicePool
+   * computes a negative modifier to the difficulty threshold
    * only 0 value abilities are concerned
-   * actual malus depends on setting and ability subType
+   * actual malus depends on settings and ability subType
    * 
    * @returns {Number} a negative modifier
    */
@@ -317,65 +254,27 @@ export default class DiceThrow {
     //check if untrained ability
     this.xTraitsToRoll.forEach( trait => {
       if ( trait.category === "abilities" && trait.value === 0 ) {
-        const item = this.actor.items.get(trait.itemId);
-        if ( !item ) {
-          //todo : localize
-          ui.notifications.error(`M20E | Can't find item with Id : ${trait.itemId} on actor ${this.actor.name} !`);
-          return untrainedMod;
-        }
+        const item = this.actor.getItemFromId(trait.itemId);
+        if ( !item ) { throw 'impossibleThrow'; }
         //get specific game setting relative to untrained abilities
-        untrainedMod -= parseInt(settings.substr(subTypes[item.data.data.subType],1));
+        const malus = settings.substr(subTypes[item.data.data.subType],1);
+        if ( isNaN(malus) ) { throw 'impossibleThrow'; }
+        untrainedMod -= parseInt(malus);
       }
     })
     return untrainedMod;
   }
 
   /**
-   * Creates the flavor string (or delegate that task to the item responsible)
-   * 
-   * @param  {Boolean} useParadigm unused atm
-   * @returns {String} the roll flavor ready to be added tothe messageData
-   */
-  getFlavor(useParadigm = false) {
-    if ( this.isItemThrow ) {
-      //let the item deal with it !
-      return this._document.getThrowFlavor(this.xTraitsToRoll);
-    }
-    if ( this.isEffectRoll ) {
-      //pure magical throw => arete roll + all spheres with value in the effect 
-      const throwEffect = this.xTraitsToRoll.map(effect => 
-        `${this.actor.locadigm(`spheres.${effect.key}`)} (${effect.value})`
-        ).join(' + ');
-      return `${this.actor.locadigm('diceThrows.areteThrow')} :<br>
-        ${game.i18n.format('M20E.diceThrows.effect', {effect: throwEffect})}.`
-    }
-    //regular roll (non item, non magical) compute flavor based on the number of traits inside the throw
-    switch ( this.xTraitsToRoll.length ) {
-      case 0: //no trait was selected
-        return `${game.i18n.localize("M20E.diceThrows.freeThrow")}.`;
-        break;
-      case 1: //only one trait roll
-      case 2: //classic (or not) 2 traits
-        const throwTrait = this.xTraitsToRoll.map(trait => {
-          return trait.useSpec ? `${trait.name}(S)` :
-            ( trait.value === 0 ? `<span class= "red-thingy">${trait.name}</span>` : trait.name) ;
-        }).join(' + ');
-        return `${game.i18n.format("M20E.diceThrows.throwFor", {trait: throwTrait})}.`;
-        break;
-      default: //too many traits => don't bother
-        return `${game.i18n.localize("M20E.diceThrows.mixedThrow")}.`;
-    }
-  }
-
-  /**
    * magical effect is defined by there being only 'spheres' in the throw
+   * TODO : maybe redo using .every()
    * @param {Array} an array of either Traits or ExtendedTraits
    * 
    * @returns {Boolean} whether every Trait in the throw constitutes a magical effect
    */
   static getIsEffectRoll(traitsToRoll) {
     return traitsToRoll.length !== 0 && traitsToRoll.reduce((acc, cur) => {
-      return acc && cur.category === 'spheres'
+      return acc && cur.category === 'spheres';
     }, true);
   }
 
@@ -493,7 +392,106 @@ export default class DiceThrow {
    * called by ActorSheet or macro to display the DiceDialogue Application
    * @param  {Boolean} force=false
    */
-  render(force=false) {
+  render(force=false, options={}) {
+    // do the init (might throw an error if throw is actually impossible)
+    if ( !this._initialized || options.reInit ) {
+      try {
+        this.initialize();
+      } catch (e) {
+        ui.notifications.error(game.i18n.localize(`M20E.notifications.${e}`));
+        return;
+      }
+    }
     this.app.render(force);
   }
+
+  
+  /* -------------------------------------------- */
+  /*  Macro to and from                           */
+  /* -------------------------------------------- */
+
+  /**
+   * Called by hook on hotbarDrop with prepared dropedData from a onDragStart event
+   * Populates a macro slot with relevant script to make a throw
+   */
+   static async toMacro(bar, dropedData, slot) {
+    if ( dropedData.data === [] ) { return false; }
+    const actor = utils.actorFromData(dropedData);
+    if ( !actor ) { return; }
+
+    //construct our macroData
+    let macroData = {
+      commandParameters : {...dropedData, data: {}},
+      name : '',
+      img: '',
+      type: 'script',
+      scope: 'actor',
+      flags: {"shiftKey": false}
+    };
+    //get name, img and proper 'data' from actor or item
+    switch ( dropedData.type ) {
+      case 'm20e-roll':
+        macroData = foundry.utils.mergeObject(macroData, actor.getMacroData(dropedData.data));
+        break;
+      case 'Item':
+        const item = actor.getItemFromId(dropedData.data._id);
+        if ( !item ) { return false; }
+        if ( !item.isRollable ) { return false; }
+        macroData = foundry.utils.mergeObject(macroData, item.getMacroData(dropedData.data));
+        break;
+      default:
+        //like when you dragdrop an existing macro onto another slot
+        return false;
+    }
+    //construct our command
+    const stringified = JSON.stringify(macroData.commandParameters);
+    macroData.command = `game.m20e.mageMacro(${stringified},
+      this.data.flags['shiftKey']);`;
+  
+    //actually create the macro in the desired slot
+    const macro = await Macro.create({...macroData});
+    return await game.user.assignHotbarMacro(macro, slot);
+  }
+
+  /**
+   * Called by a macro click (or shift click)
+   * Creates an Instance of DiceThrow from the macro parameters
+   * either throwor open the app depending on shiftKey
+   * @param  {Object} macroParams 
+   * @param  {Boolean} shiftKey status of the shift key in the click event
+   */
+  static fromMacro(macroParams, shiftKey) {
+    const actor = utils.actorFromData(macroParams);
+    if ( !actor ) { return; }
+
+    let document = null;
+    let traitsToRoll = [];
+    switch ( macroParams.type ) {
+      case 'm20e-roll':
+        document = actor;
+        traitsToRoll = macroParams.data.map(obj => new Trait(obj));
+        break;
+      case 'Item':
+        const item = actor.getItemFromId(macroParams.data.itemId);
+        if ( !item ) { return false; }
+        if ( !item._isActuallyRollable(actor) ) { return false; } //todo add localized notification error
+        document = item;
+        traitsToRoll = item.getTraitsToRoll();
+        break;
+      default:
+        return;
+    }
+    if ( traitsToRoll === [] ) { return; }
+    
+    //at last create our diceThrow
+    const diceThrow = new DiceThrow({document, traitsToRoll});
+    if ( shiftKey ) {
+      //throw right away
+      diceThrow.throwDice();
+    } else {
+      //display dice throw dialog
+      diceThrow.render(true);
+    }
+  }
+
 }

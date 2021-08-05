@@ -50,10 +50,9 @@ export function alphaSort(key = 'name') {
 
 /**
  * returns an Actor object from {actorId, sceneId, tokenId}
- * TODO : add localized nofification warnings
  * @param  {Object} data like from dropedData
  * 
- * @return {M20eActor} a token actor or world actor
+ * @return {M20eActor|null} a token actor or world actor, null if not found
  */
 export function actorFromData(data) {
   const {actorId, sceneId, tokenId} = data;
@@ -65,6 +64,12 @@ export function actorFromData(data) {
   }
   if ( !actor ) {
     actor = game.actors.get(actorId);
+  }
+  if ( !actor ) {
+    ui.notifications.error(game.i18n.format('M20E.notifications.actorNotFound', {
+      actorRef: actorId || tokenId
+    }));
+    return null;
   }
   return actor;
 }
