@@ -36,7 +36,6 @@ export default class M20eActor extends Actor {
 
     if ( actorData.data.isPlayable === true ) {
       //auto link tokens in case of player character
-      //todo : maybe move that in sub class _preCreate if needed
       actorData.token.update({actorLink: true});
     }
 
@@ -134,10 +133,17 @@ export default class M20eActor extends Actor {
   /** @override */
   prepareData() {
     super.prepareData();
-
+    const actorData = this.data;
     this._extendHealthStats();
 
-    this.items.forEach(item => item._prepareOwnedItem());
+    this.items.forEach(item => {
+      /*if ( item.isTrait ) { 
+        const traitData = item.getTraitData();
+        const relativePath = `${traitData.category}.${traitData.key}`;
+        foundry.utils.setProperty(actorData.data, relativePath, traitData.data);
+      }*/
+      item._prepareOwnedItem();
+    });
   }
 
   /** 
@@ -234,6 +240,29 @@ export default class M20eActor extends Actor {
   /* -------------------------------------------- */
   /*  Sheet or other external                     */
   /* -------------------------------------------- */
+
+  getItemFromId(itemId) {
+    const item = this.items.get(itemId);
+    if ( !item ) {
+      ui.notifications.error(game.i18n.format('M20E.notifications.itemNotFoundInActor', {
+        itemRef: itemId,
+        actorName: this.name
+      }));
+    }
+    return item;
+  }
+
+  //todo : write this !
+  getItemFromName(itemName, itemType='', itemSubType= '') {
+    const item = null;//this.items.get(itemId);
+    if ( !item ) {
+      ui.notifications.error(game.i18n.format('M20E.notifications.itemNotFoundInActor', {
+        itemRef: itemName,
+        actorName: this.name
+      }));
+    }
+    return item;
+  }
 
   /**
    * check whether dropped item can be 'safely' created on this actor

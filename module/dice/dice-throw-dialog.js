@@ -266,8 +266,7 @@ import { log } from "../utils/utils.js";
   async close(options={}) {
     //do some cleaning
     Hooks.off('updateActor', this.onUpdateActor);
-    Hooks.on('systemSettingChanged', this.onSystemSettingChanged);
-    Hooks.off('updateActor', this.hook);
+    Hooks.off('systemSettingChanged', this.onSystemSettingChanged);
 
     this.closeOnRoll = null;
     this.diceThrow = null;
