@@ -8,9 +8,10 @@ import { Trait, PromptData } from "../utils/classes.js";
 import * as chat from "../chat.js";
 
 /**
-* Implements M20eActorSheet as an extension of the ActorSheet class
-* @extends {ActorSheet}
-*/
+ * Provides Sheet interraction management for npcsleepers type actors
+ * also base sheet class for all other actor sheets.
+ * @extends {ActorSheet}
+ */
 export default class M20eActorSheet extends ActorSheet {
 
   /** @override */
@@ -27,65 +28,58 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
-  /** @override */
+  /**
+   * adds a default dragDrop (on top of the vanilla default one)
+   * for any element that could be dragged to the macro hotbar
+   *  @override
+   */
   static get defaultOptions() {
     return mergeObject(super.defaultOptions, {
       classes: ['m20e', 'sheet', 'actor'],
-      template: 'systems/mage-fr/templates/actor/actor-sheet.hbs',
       width: 500,
-      height: 700,
+      height: 700,//todo : setmin width & min heigth in css for the whole app
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'traits' }],
       dragDrop: [{ dragSelector: ".macro-ready" }]
     })
   }
 
-  /** @inheritdoc */
-  _getHeaderButtons() {
-    let buttons = super._getHeaderButtons();
-
-    // Toggle character-creation lock
-    const icon = this.actor.data.data.creationDone ? 'fas fa-lock' : 'fas fa-unlock-alt';
-    buttons = [
-      {
-        class: "toggle-creation-mode",
-        icon: icon,
-        onclick: ev => this._onToggleCreationMode(ev)
-      }
-    ].concat(buttons);
-
-    return buttons;
+  /**
+   * overridden by extended actorSheet classes that use a different template
+   * @override
+   */
+    get template() {
+    return 'systems/mage-fr/templates/actor/actor-sheet.hbs';
   }
 
   /** @override */
   getData(options) {
-    const sheetData = super.getData(options);
+    const sheetData = super.getData(options); //todo maybe remove that at some point
     
-    // The Actor's data
-    const actorData = this.actor.data.toObject(false);
-    sheetData.actor = actorData;
-    sheetData.data = actorData.data;
+    //creates an standard js Object from the actor's PREPARED data (true would return the ._source data)
+    const actorData = this.actor.data.toObject(false); 
+    sheetData.actorData = actorData;
+    sheetData.data = actorData.data; //shorthand to avoid 'actorData.data' all the time
+    sheetData.actor = null; //not really usefull nor necessary anyway
 
     //pre-digest some data to be usable by handlbars (avoid some helpers)
     sheetData.resources = {};
     sheetData.resources.health = this.getResourceData('health');
     sheetData.resources.willpower = this.getResourceData('willpower');
-    sheetData.resources.magepower = this.getMagepowerData();
     
     //dispatch items into categories and subtypes
     //sheetData.items is already sorted on item.sort in the super
     //todo : maybe don't put all the categories inside sheetData.items ?
     //Abilities
-    sheetData.items.abilities = { talents: {}, skills: {}, knowledges: {} };
+    sheetData.items.abilities = {};
     sheetData.items.abilities.talents = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "talent") ));
     sheetData.items.abilities.skills = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "skill") ));
     sheetData.items.abilities.knowledges = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "knowledge") ));
     //merits and flaws
-    sheetData.items.meritsflaws = { merits: {}, flaws: {} };
+    sheetData.items.meritsflaws = {};
     sheetData.items.meritsflaws.merits = sheetData.items.filter((item) => ( (item.type === "meritflaw") && (item.data.subType === "merit") ));
     sheetData.items.meritsflaws.flaws = sheetData.items.filter((item) => ( (item.type === "meritflaw") && (item.data.subType === "flaw") ));
     //the rest of the items
     sheetData.items.backgrounds = sheetData.items.filter((item) => item.type === "background");
-    sheetData.items.rotes = sheetData.items.filter((item) => item.type === "rote");
     sheetData.items.events = sheetData.items.filter((item) => item.type === "event");
     //gear & other possessions
     sheetData.items.equipables = sheetData.items.filter((item) => item.data.isEquipable === true);
@@ -93,21 +87,18 @@ export default class M20eActorSheet extends ActorSheet {
     //todo : sort equipables according to type and isEquiped ?
     //todo : sort misc according to isConsumable ?
 
-
     //other usefull data
     sheetData.isGM = game.user.isGM;
     sheetData.isOwner = this.actor.isOwner;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
-    sheetData.canSeeParadox = utils.canSeeParadox();
     
     const paradigm = this.actor.paradigm;
     if( paradigm ) {
       sheetData.paraData = paradigm.data.data;
     }
     sheetData.dsnUserActive = utils.dsnUserActive();
-    
-    log({actor : sheetData.actor.name, sheetData : sheetData});
+
     return sheetData;
   }
 
@@ -118,7 +109,6 @@ export default class M20eActorSheet extends ActorSheet {
     if ( this.actor.data.data.creationDone && !game.user.isGM ) {
       this._protectElements(html);
     }
-
     //actions for everyone
 
     //editable only (roughly equals 'isOwner')
@@ -144,155 +134,150 @@ export default class M20eActorSheet extends ActorSheet {
     if ( game.user.isGM ) {
       new ContextMenu(html, '.resource-context', this._getResourceContextOptions());
     }
+
+    //testing shit here :
+    //html.on('dragover','section', this._onDragOver.bind(this));
     
     super.activateListeners(html);
   }
 
-  /* -------------------------------------------- */
-  /*  Context Menus                               */
-  /* -------------------------------------------- */
-
   /**
-   * @return the context menu options for the '.header-row.charname' element
-   * atm only paradigm item stuff
+   * 'disables' some elements (input/buttons) for actors whose creation phase is over.
+   * a bit similar to Foundry's disableFields
+   * @param {HTMLElement} html sheet.element
    */
-  _getNameContextOptions() {
-    return [
-      {
-        name: game.i18n.localize('M20E.context.editParadigm'),
-        icon: '<i class="fas fa-pencil-alt"></i>',
-        callback: () => {
-          const paradigm = this.actor.paradigm;
-          paradigm.sheet.render(true);
-        },
-        condition: () => {
-          return this.actor.paradigm; 
-        }
-      },
-      {
-        name: game.i18n.localize('M20E.context.removeParadigm'),
-        icon: '<i class="fas fa-trash"></i>',
-        callback: () => {
-          const paradigm = this.actor.paradigm;
-          this._removeItem(paradigm);
-        },
-        condition: () => {
-          return this.actor.paradigm; 
+   _protectElements(html) {
+    CONFIG.M20E.protectedCategories.forEach( category => {
+      const elements = html.find(`.category.${category} input, .category.${category} .mini-button` );
+      for ( let el of elements) {
+        if ( el.name?.includes('value') || el.classList?.contains('inline-edit')) {
+          el.setAttribute("disabled", "");
+        } else if ( el.dataset?.action === 'add' || el.dataset?.action === 'remove' ) {
+          el.dataset.disabled = true;
         }
       }
-    ];
+    });
   }
 
   /**
-   * @return the context menu options for the '.trait' elements
-   * link trait in chat, edit trait, remove JE link from trait that have one
+   * Returns an Array with pre-digested data for direct use by handlebars in order to renders some helpers superfluous
+   * Populates the array with the relevant number of entries like {state: '', title: ''},
+   * based on resource properties (max, bashing, lethal and aggravated)
+   * 
+   * @returns {Array} [{state:'', title:''},]
    */
-  _getTraitContextOptions() {
-    return [
-      {
-        name: game.i18n.localize('M20E.context.linkInChat'),
-        icon: '<i class="fas fa-share"></i>',
-        callback: element => {
-          this._linkInChat(Trait.fromElement(element[0]));
-        },
-        condition: element => {
-          return element[0].classList.contains('linkable');
-        }
-      },
-      {
-        name: game.i18n.localize('M20E.context.editTrait'),
-        icon: '<i class="fas fa-pencil-alt"></i>',
-        callback: element => {
-          this._editTrait(Trait.fromElement(element[0]));
-        },//todo : maybe find different condition ?
-        condition: element => {
-          return element[0].classList.contains('linkable');
-        }
-      },
-      {
-        name: game.i18n.localize('M20E.context.removeLink'),
-        icon: '<i class="fas fa-trash"></i>',
-        callback: element => {
-          this._removeJELink(Trait.fromElement(element[0]));
-        },
-        condition: element => {
-          return element[0].dataset.linkId;
-        }
-      }
-    ];
+  getResourceData(resourceName) {
+    const rez = this.actor.data.data.resources[resourceName];
+
+    return [...Array(rez.max)].map((element, index) => {
+      const state = (rez.max - rez.aggravated) > index ? 'aggravated' : 
+        ( (rez.max - rez.lethal) > index ? 'lethal' : 
+          ( (rez.max - rez.bashing) > index ? 'bashing' : '' ));
+      const title = state !== '' ? game.i18n.localize(`M20E.wounds.${state}`) : '';
+      return {state: state, title: title};
+    });
   }
 
- /**
-   * @return the context menu options for the '.resource-context' elements
-   * edit health max, edit heal malus list, edit willpower max.
-   */
-  _getResourceContextOptions() {
-    return [
-      {
-        name: game.i18n.localize('M20E.context.editWillpowerMax'),
-        icon: '<i class="fas fa-pencil-alt"></i>',
-        callback: () => {
-          this._editResource({
-            relativePath: 'willpower.max',
-            currentValue: foundry.utils.getProperty(this.actor.data.data, 'willpower.max'),
-            name: `${game.i18n.localize('M20E.willpower')} Max`
-          });
-        },
-        condition: element => {
-          return (element[0].dataset.resource === 'willpower');
-        }
-      },
-      {
-        name: game.i18n.localize('M20E.context.editHealthMax'),
-        icon: '<i class="fas fa-pencil-alt"></i>',
-        callback: () => {
-          this._editResource({
-            relativePath: 'health.max',
-            currentValue: foundry.utils.getProperty(this.actor.data.data, 'health.max'),
-            name: `${game.i18n.localize('M20E.health')} Max`
-          });
-        },
-        condition: element => {
-          return (element[0].dataset.resource === 'health');
-        }
-      },
-      {
-        name: game.i18n.localize('M20E.context.editHealthMalus'),
-        icon: '<i class="fas fa-pencil-alt"></i>',
-        callback: () => {
-          this._editResource({
-            relativePath: 'health.malusList',
-            currentValue: foundry.utils.getProperty(this.actor.data.data, 'health.malusList'),
-            name: `Malus ${game.i18n.localize("M20E.health")}`
-          });
-        },
-        condition: element => {
-          return (element[0].dataset.resource === 'health');
+  /* -------------------------------------------- */
+  /*  Event Handlers & Context Menus Callbacks    */
+  /* -------------------------------------------- */
+
+  /**
+  * Locks/Unlocks a category for edition - Only one cat is open a a time
+  * opening a category, closes all the other ones (cleaner that way)
+  * Adds a dragDrop upon unlocking a cat / removes it when locking
+  * 
+  * @param {string} category  the category to toggle
+  */
+   _toggleCategoryLock(category) {
+    if ( this.locks[category] === false ) {
+      //category' open atm, close it
+      this.locks[category] = true;
+      //remove the current drag n drop for this category if needed
+      if ( CONFIG.M20E.dragDropCategories.includes(category) ) {
+        this._dragDrop.pop();
+      }
+    } else {
+      //category's closed atm, close any other remaining open category (and remove dragDrop)
+      for ( const [cat, locked] of Object.entries(this.locks) ) {
+        if ( !locked ) {
+          this.locks[cat] = true;
+          if ( CONFIG.M20E.dragDropCategories.includes(cat) ) {
+            this._dragDrop.pop();
+          }
         }
       }
-    ];
-  } 
-  
-  /* -------------------------------------------- */
-  /*  Event Handlers                              */
-  /* -------------------------------------------- */
-  
-    /**
-    *  @override
-    * added validation against dtype and min max before updating
-    * re-renders the sheet to display the previous value if update is invalid
-    * note: though data are validated against dtype by foundry,
-    * updating a number with a string leaves the input blank
-    */
-    async _onChangeInput(event) {
-      const element = event.target;
-      if ( ! utils.isValidUpdate(element) ) {
-        event.preventDefault();
-        return this.render();
+      //open cat, create its dragDrop and add it to the sheets array
+      this.locks[category] = false;
+      if ( CONFIG.M20E.dragDropCategories.includes(category) ) {
+        const itemType = CONFIG.M20E.categoryToType[category];
+        const newDragDrop = new DragDrop({
+          dragSelector:`.${itemType} .trait-label`,
+          dropSelector:`.${itemType} .trait-label`,
+          callbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDrop.bind(this) }
+        })
+        this._dragDrop.push(newDragDrop);
       }
-      super._onChangeInput(event);
     }
-  
+    //in any case, render to enact the changes to locks & dragDrop state
+    this.render();
+  }
+
+  /**
+   * Expands and Collapses descriptions for certain items
+   * collapse previously expanded description element before expanding a new one
+   * just toggle dataset.expanded and let the css do the rest
+   * 
+   * @param  {Element} buttonElem the mini-button that triggered the event
+   */
+   _expandDescription(buttonElem) {
+    const desc = buttonElem.closest('.one-liner-desc');
+    if ( desc.dataset.expanded === 'true' ) {
+      //only one expanded and we clicked on it, collapse it
+      desc.dataset.expanded = false;
+    } else {
+      //collapses the expanded one (shouldn't be more than one actually)
+      const expandedOne = $(this.buttonElem).find('.one-liner-desc[data-expanded ="true"]');
+      if ( expandedOne.length !== 0 ) {
+        expandedOne[0].dataset.expanded = false;
+      }
+      //then expand the one we just clicked
+      desc.dataset.expanded = true;
+    }
+  }
+
+  /**
+  *  @override
+  * added validation against dtype and min max before updating
+  * re-renders the sheet to display the previous value if update is invalid
+  * note: though data are validated against dtype by foundry,
+  * updating a number with a string would leave the input blank
+  */
+  async _onChangeInput(event) {
+    const element = event.target;
+    if ( ! utils.isValidUpdate(element) ) {
+      event.preventDefault();
+      return this.render();
+    }
+    super._onChangeInput(event);
+  }
+
+  /**
+  * Toggles the active state of a trait element when it's label has been clicked.
+  * traits with a dataset.active === true are picked up when rolling dice
+  * any render of the sheet resets the active state to false (which is desired behavior)
+  * 
+  * @param {object} event the event that triggered (from a click on 'a.trait-label')
+  */
+   _onTraitLabelClick(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const traitElem = element.closest(".trait");
+    //just toggle the active status
+    const toggle = (traitElem.dataset.active === 'true');
+    traitElem.dataset.active = !toggle;
+  }
+
   /**
    * On a click on the big dice, round up every highlighted trait on the sheet
    * send it to a new DiceThrow object and either render it for further options or
@@ -317,61 +302,28 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  * Updates actor with a toggled value for data.creationDone.
-  * thus enabling/preventing edition of certain values
-  * also changes the header button icon accordingly
+  * Check all rollable categories for highlighted elements (ie data-active="true")
+  * return said elements as Trait objects for later consumption by Throw app.
+  * also toggle the active status of highlighted elements after we got them
   * 
-  * @param {object} event the event that triggered (from header button '.toggle-creation-mode')
+  * @return {Array} an Array of Traits objects that correspond to the previously highlighted elements
   */
-  async _onToggleCreationMode(event) {
-    if ( ! game.user.isGM ) {
-      ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
-      return;
-    }
-    //update the actor status
-    const buttonElem = event.currentTarget;
-    const iElem = $(buttonElem).find('.fas'); 
-    const toggle = this.actor.data.data.creationDone === true;
-    await this.actor.update({['data.creationDone']: !toggle});
-
-    //change the button icon
-    let classToRemove, classToAdd = '';
-    if ( toggle ) {
-      classToRemove = 'fa-lock';
-      classToAdd = 'fa-unlock-alt';
-    } else {
-      classToRemove = 'fa-unlock-alt';
-      classToAdd = 'fa-lock';
-    }
-    //todo : add localized title property to the button
-    iElem[0].classList.remove(classToRemove);
-    iElem[0].classList.add(classToAdd);
-  }
-
-  /**
-  * Toggles the active state of a trait element when it's label has been clicked.
-  * traits with a dataset.active === true are picked up when rolling dice
-  * any render of the sheet resets the active state to false (which is desired behavior)
-  * 
-  * @param {object} event the event that triggered (from a click on 'a.trait-label')
-  */
-  _onTraitLabelClick(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const traitElem = element.closest(".trait");
-    //just toggle the active status
-    const toggle = (traitElem.dataset.active === 'true');
-    traitElem.dataset.active = !toggle;
+   getTraitsToRoll() { 
+    //overly complicated statement that could be easily understood if coded with twice the lines
+    return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
+      const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
+      return elementList.length === 0 ? acc : 
+        [...acc, ...elementList.toArray().map(traitElem => {
+          traitElem.dataset.active = false;
+          return Trait.fromElement(traitElem);
+        })];
+    }, []);
   }
 
   /**
   * Dispatches clicks on resource panel boxes acording to resource type and mouse button press
-  * Foundry prefers a 'value/max' for resources whereas Mage counts wounds hence 
-  * 'descreseResource' actually adds wounds and 'increaseResource' removes wounds
-  * note: magepower is not a 'value/max' resource type but works in the same manner
-  * note : event is actually a mousedown
   * 
-  * @param {object} event the event that triggered (from div '.box')
+  * @param {object} event the mousedown-event that triggered (from div '.box')
   */
   _onResourceBoxClick(event) {
     event.preventDefault();
@@ -381,22 +333,12 @@ export default class M20eActorSheet extends ActorSheet {
     
     switch ( event.which ) {
       case 1://left button
-        if ( resourceName === 'magepower' ) {
-          this.actor.increaseMagepower(index);
-        } else {
-          this.actor.decreaseResource(resourceName, index);
-        }
+        this.actor.addWound(resourceName, index);
         break;
       case 3://right button
-        if ( resourceName === 'magepower' ){
-          this.actor.decreaseMagepower(index);
-        } else {
-          this.actor.increaseResource(resourceName, index);
-        }
+        this.actor.removeWound(resourceName, index);
         break;
-      default:
-        break;
-    };
+    }
   }
 
   /**
@@ -418,9 +360,10 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  * displays a warning upon clicking an empty link
-  * triggers the creation of personnal JE upon clicking an empty link for that specific one
-  */
+   * Intercepts a click on an entity link before it's processed by vanilla sheet
+   * displays a warning upon clicking an empty link and prevents vanilla behavior
+   * triggers the creation of personnal JE upon clicking an empty link for that specific one
+   */
   _onEntityLinkClick(event){
     const linkElem = event.currentTarget;
     const dataset = linkElem.dataset;
@@ -428,9 +371,10 @@ export default class M20eActorSheet extends ActorSheet {
     if ( !id ) {
       event.preventDefault();
       event.stopPropagation();
-      ui.notifications.warn(game.i18n.localize(`M20E.notifications.noJournal`));
-      if ( linkElem.classList.contains('personnal-je') ) {
+      if ( linkElem.classList.contains('personnal-je') && game.user.isGM) {
         this._createPersonnalJE();
+      } else {
+        ui.notifications.warn(game.i18n.localize(`M20E.notifications.noJournal`));
       }
     }
   }
@@ -484,10 +428,6 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
-  /* -------------------------------------------- */
-  /*  Context Menus Callbacks                     */
-  /* -------------------------------------------- */
-
   /**
   * Called in response to a contextMenu click on a resource label
   * prompts user for a new value (max health, maxwillpower or health malus)
@@ -496,7 +436,7 @@ export default class M20eActorSheet extends ActorSheet {
   * @param {object} { relativePath, currentValue, name }
   *                  prepared in the context menu callback
   */
-  async _editResource({ relativePath, currentValue, name }) {
+   async _editResource({ relativePath, currentValue, name }) {
     const promptData = new PromptData({
       title: game.i18n.format(`M20E.prompts.editTitle`, {name : name}),
       name: name,
@@ -523,29 +463,30 @@ export default class M20eActorSheet extends ActorSheet {
   /**
   * Called in response to a contextMenu click on a '.trait'
   * prepares real or 'fake' item data to be displayed in a chat message
-  * 
+  * TODO : change template to use itemData instead of 'item'
   * @param {Trait} trait  the Trait to be displayed in chat
   */
-  async _linkInChat(trait){
-    const {category, itemId, key } = trait;
+  async _linkInChat(trait) {
+    const {category, itemId, key } = trait.split();
     let item = {};
-    
+
     if ( itemId ) {
       //trait is actually a real item
+      //todo : let the item do it's own shit !
       item = this.actor.items.get(itemId);
     } else {
       //trait is an attribute or sphere, build 'fake' itemData 
       
       //retrieve attribute (or sphere) name from paradigm item's lexicon if any
-      const lexiconEntry = this.actor.getLexiconEntry(`${category}.${key}`);
+      const lexiconEntry = this.actor.getLexiconEntry(`traits.${trait.path}`);
       //get systemDescription from compendium given category and key
       const sysDesc = await utils.getSystemDescription(category, key);
       //build our fake item
       item = {
         type: game.i18n.localize(`M20E.category.${category}`),
-        name: game.i18n.localize(`M20E.${category}.${key}`),
+        name: game.i18n.localize(`M20E.traits.${trait.path}`),
         data: {
-          data: foundry.utils.getProperty(this.actor.data, `data.${category}.${key}`)
+          data: foundry.utils.getProperty(this.actor.data.data.traits, `${trait.path}`)
         }
       };
       item.data.data.displayName = lexiconEntry || '';
@@ -561,100 +502,20 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  * Removes link parameters from a specific trait
+  * Removes link parameters from a specific trait (actually only used on bio traits)
   * Called in response to a contextMenu click on a '.trait' that has an active link
   * 
   * @param {Trait} trait  the Trait the link should be removed from
   */
   async _removeJELink(trait){
-    const {category, key } = trait;
-    //prepare the update object
+     //prepare the update object
     let updateObj = {};
-    const relativePath = `data.${category}.${key}.link`;
+    const relativePath = `data.${trait.path}.link`;
     updateObj[`${relativePath}.-=type`] = null;
     updateObj[`${relativePath}.-=pack`] = null;
     updateObj[`${relativePath}.-=id`] = null;
 
     return this.actor.update(updateObj);
-  }
-
-  /* -------------------------------------------- */
-  /*  Implementation                              */
-  /* -------------------------------------------- */
-
-  /**
-   * Returns an Array with pre-digested data for direct use by handlebars in order to renders some helpers superfluous
-   * Populates the array with the relevant number of entries like {state: '', title: ''},
-   * based on resource properties (max, value, lethal and aggravated)
-   * 
-   * @returns {Array} [{state:'', title:''},]
-   */
-  getResourceData(resourceName) {
-    const rez = this.actor.data.data[resourceName];
-
-    return [...Array(rez.max)].map((element, index) => {
-      const state = (rez.max - rez.aggravated) > index ? 'aggravated' : 
-        ( (rez.max - rez.lethal) > index ? 'lethal' : 
-          ( (rez.max - rez.value) > index ? 'bashing' : '' ));
-      const title = state !== '' ? game.i18n.localize(`M20E.wounds.${state}`) : '';
-      return {state: state, title: title};
-    });
-  }
-
-  /**
-   * Returns an Array with pre-digested data for direct use by handlebars in order to renders some helpers superfluous
-   * Populates the array with the relevant number of entries like {state: '', title: ''},
-   * based on quintessence and paradox values (as well as whether players can see their own paradox)
-   * 
-   * @returns {Array} [{state:'', title:''},]
-   */
-  getMagepowerData() {
-    const mp = this.actor.data.data.magepower;
-    const canSeePara = utils.canSeeParadox();
-
-    return [...Array(20)].map((element, index) => {
-      const state = mp.quintessence > index ? 1 : 
-        ( (canSeePara && (20 - mp.paradox) <= index) ? 2 : 0 );
-      const title = canSeePara ? game.i18n.localize(`M20E.hints.magepower.${state}`) : '';
-      return {state: state, title: title};
-    });
-  }
-
-  /**
-   * 'disables' some elements (input/buttons) for actors whose creation phase is over.
-   * a bit similar to Foundry's disableFields
-   * @param {HTMLElement} html sheet.element
-   */
-  _protectElements(html) {
-    CONFIG.M20E.protectedCategories.forEach( category => {
-      const elements = html.find(`.category.${category} input, .category.${category} .mini-button` );
-      for ( let el of elements) {
-        if ( el.name?.includes('value') || el.classList?.contains('inline-edit')) {
-          el.setAttribute("disabled", "");
-        } else if ( el.dataset?.action === 'add' || el.dataset?.action === 'remove' ) {
-          el.dataset.disabled = true;
-        }
-      }
-    });
-  }
-
-  /**
-  * Check all rollable categories for highlighted elements (ie data-active="true")
-  * return said elements as Trait objects for later consumption by Throw app.
-  * also toggle the active status of highlighted elements after we got them
-  * 
-  * @return {Array} an Array of Traits objects that correspond to the previously highlighted elements
-  */
-  getTraitsToRoll() { 
-    //overly complicated statement that could be easily understood if coded with twice the lines
-    return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
-      const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
-      return elementList.length === 0 ? acc : 
-        [...acc, ...elementList.toArray().map(traitElem => {
-          traitElem.dataset.active = false;
-          return Trait.fromElement(traitElem);
-        })];
-    }, []);
   }
 
   /**
@@ -684,50 +545,6 @@ export default class M20eActorSheet extends ActorSheet {
     ui.notifications.info(game.i18n.format(`M20E.notifications.journalLinked`,{name: this.actor.name}));
   }
 
-  /* -------------------------------------------- */
-
-  /**
-  * Locks/Unlocks a category for edition - Only one cat is open a a time
-  * opening a category, closes all the other ones (cleaner that way)
-  * Adds a dragDrop upon unlocking a cat / removes it when locking
-  * 
-  * @param {string} category  the category to toggle
-  */
-  _toggleCategoryLock(category) {
-    if ( this.locks[category] === false ) {
-      //category' open atm, close it
-      this.locks[category] = true;
-      //remove the current drag n drop for this category if needed
-      if ( CONFIG.M20E.dragDropCategories.includes(category) ) {
-        this._dragDrop.pop();
-      }
-    } else {
-      //category's closed atm, close any other remaining open category (and remove dragDrop)
-      for ( const [cat, locked] of Object.entries(this.locks) ) {
-        if ( !locked ) {
-          this.locks[cat] = true;
-          if ( CONFIG.M20E.dragDropCategories.includes(cat) ) {
-            this._dragDrop.pop();
-          }
-        }
-      }
-      //open cat, create its dragDrop and add it to the sheets array
-      this.locks[category] = false;
-      if ( CONFIG.M20E.dragDropCategories.includes(category) ) {
-        const itemType = CONFIG.M20E.categoryToType[category];
-        const newDragDrop = new DragDrop({
-          dragSelector:`.${itemType} .trait-label`,
-          dropSelector:`.${itemType} .trait-label`, 
-          permissions: { drop: this._canDragDrop.bind(this) },
-          callbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDrop.bind(this) }
-        })
-        this._dragDrop.push(newDragDrop);
-      }
-    }
-    //in any case, render to enact the changes to locks & dragDrop state
-    this.render();
-  }
-
   /**
   * Call for the display of an item sheet to edit a trait
   * trait can either be an item (=> display it's item.sheet) or 
@@ -736,14 +553,14 @@ export default class M20eActorSheet extends ActorSheet {
   * @param {Trait} trait  the Trait to be edited
   */
   _editTrait(trait) {
-    const {category, key, itemId} = trait;
-    if ( category === 'attributes' || category === 'spheres' ) {
-      //use a fakeItem dialog to edit attribute (or sphere)
-      this._editFakeItem(category, key);
-    } else {
+    const {category, itemId, key } = trait.split();
+    if ( itemId ) {
       // regular item edit
       const item = this.actor.items.get(itemId);
       item.sheet.render(true);
+    } else {
+      //use a fakeItem dialog to edit attribute (or sphere)
+      this._editFakeItem(category, key);
     }
   }
 
@@ -791,7 +608,6 @@ export default class M20eActorSheet extends ActorSheet {
     //send the itemData to be created on the actor
     //and let the item._preCreate() deal with the specifics
     this.actor.createEmbeddedDocuments('Item', [itemData], {renderSheet: true, fromActorSheet: true });
-    
   }
 
   /**
@@ -823,17 +639,17 @@ export default class M20eActorSheet extends ActorSheet {
   */
   async _editFakeItem(category, key) {
     //retrieve attribute (or sphere) name from paradigm item's lexicon if any
-    const lexiconEntry = this.actor.getLexiconEntry(`${category}.${key}`);
+    const lexiconEntry = this.actor.getLexiconEntry(`traits.${category}.${key}`);
     //get systemDescription from compendium or localization given category and key
     const sysDesc = await utils.getSystemDescription(category, key);
     
     const itemData = {
       category: category,
       key: key,
-      relativePath: `${category}.${key}`,
+      relativePath: `traits.${category}.${key}`,
       type: game.i18n.localize(`M20E.category.${category}`),
       lexiconName: lexiconEntry || '',
-      placeholderName : game.i18n.localize(`M20E.${category}.${key}`),
+      placeholderName : game.i18n.localize(`M20E.traits.${category}.${key}`),
       systemDescription: sysDesc
     }
     //display fake sheet
@@ -841,39 +657,134 @@ export default class M20eActorSheet extends ActorSheet {
     fakeItem.render(true);
   }
 
+  /* -------------------------------------------- */
+  /*  Context Menus                               */
+  /* -------------------------------------------- */
+
   /**
-   * Expands and Collapses descriptions for certain items
-   * collapse previously expanded description element before expanding a new one
-   * just toggle dataset.expanded and let the css do the rest
-   * 
-   * @param  {Element} buttonElem the mini-button that triggered the event
+   * @return the context menu options for the '.header-row.charname' element
+   * atm only paradigm item stuff
    */
-  _expandDescription(buttonElem) {
-    const desc = buttonElem.closest('.one-liner-desc');
-    if ( desc.dataset.expanded === 'true' ) {
-      //only one expanded and we clicked on it, collapse it
-      desc.dataset.expanded = false;
-    } else {
-      //collapses the expanded one (shouldn't be more than one actually)
-      const expandedOne = $(this.buttonElem).find('.one-liner-desc[data-expanded ="true"]');
-      if ( expandedOne.length !== 0 ) {
-        expandedOne[0].dataset.expanded = false;
+   _getNameContextOptions() {
+    return [
+      {
+        name: game.i18n.localize('M20E.context.editParadigm'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          const paradigm = this.actor.paradigm;
+          paradigm.sheet.render(true);
+        },
+        condition: () => {
+          return this.actor.paradigm; 
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.removeParadigm'),
+        icon: '<i class="fas fa-trash"></i>',
+        callback: () => {
+          const paradigm = this.actor.paradigm;
+          this._removeItem(paradigm);
+        },
+        condition: () => {
+          return this.actor.paradigm; 
+        }
       }
-      //then expand the one we just clicked
-      desc.dataset.expanded = true;
-    }
+    ];
+  }
+
+  /**
+   * @return the context menu options for the '.trait' elements
+   * link trait in chat, edit trait, remove JE link from trait that have one
+   */
+  _getTraitContextOptions() {
+    return [
+      {//link actor trait or item in chat
+        name: game.i18n.localize('M20E.context.linkInChat'),
+        icon: '<i class="fas fa-share"></i>',
+        callback: element => {
+          this._linkInChat(Trait.fromElement(element[0]));
+        },
+        condition: element => {
+          return element[0].classList.contains('linkable');
+        }
+      },
+      {//edit actor trait in fakeitem sheet or edit item (in itemSheet)
+        name: game.i18n.localize('M20E.context.editTrait'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: element => {
+          this._editTrait(Trait.fromElement(element[0]));
+        },//todo : maybe find different condition ?
+        condition: element => {
+          return element[0].classList.contains('linkable');
+        }
+      },
+      {//remove a link to a journal entry from an actor trait (bio category)
+        name: game.i18n.localize('M20E.context.removeLink'),
+        icon: '<i class="fas fa-trash"></i>',
+        callback: element => {
+          this._removeJELink(Trait.fromElement(element[0]));
+        },
+        condition: element => {
+          return element[0].dataset.linkId;
+        }
+      }
+    ];
+  }
+
+  /**
+   * @return the context menu options for the '.resource-context' elements
+   * edit health max, edit heal malus list, edit willpower max.
+   */
+  _getResourceContextOptions() {
+    return [
+      {
+        name: game.i18n.localize('M20E.context.editWillpowerMax'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          this._editResource({
+            relativePath: 'resources.willpower.max',
+            currentValue: foundry.utils.getProperty(this.actor.data.data, 'resources.willpower.max'),
+            name: `${game.i18n.localize('M20E.willpower')} Max`
+          });
+        },
+        condition: element => {
+          return (element[0].dataset.resource === 'willpower');
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.editHealthMax'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          this._editResource({
+            relativePath: 'resources.health.max',
+            currentValue: foundry.utils.getProperty(this.actor.data.data, 'resources.health.max'),
+            name: `${game.i18n.localize('M20E.health')} Max`
+          });
+        },
+        condition: element => {
+          return (element[0].dataset.resource === 'health');
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.editHealthMalus'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          this._editResource({
+            relativePath: 'resources.health.malusList',
+            currentValue: foundry.utils.getProperty(this.actor.data.data, 'resources.health.malusList'),
+            name: `Malus ${game.i18n.localize("M20E.health")}`
+          });
+        },
+        condition: element => {
+          return (element[0].dataset.resource === 'health');
+        }
+      }
+    ];
   }
 
   /* -------------------------------------------- */
   /*  Drag n Drop                                 */
   /* -------------------------------------------- */
-
-  /** @override */
-  _canDragDrop(selector) {
-    log(selector);
-    //might be usefull at some point ?
-    return super._canDragDrop(selector);
-  }
 
   /**
    * pass along traitsToRoll if dragElem is main dice button (action == roll-traits)
@@ -1012,6 +923,13 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   /*  TESTING AREA                                */
   /* -------------------------------------------- */
+/*
+  _onDragOver(event) {
+    const testage = event.dataTransfer?.types;
+    testage.forEach(type => {
+      log(type);
+    })
+  }*/
 
   testage(canvas) {
     const d3d = game.dice3d;

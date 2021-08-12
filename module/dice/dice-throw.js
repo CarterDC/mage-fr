@@ -25,31 +25,31 @@ export default class DiceThrow {
 
     this._app = null;
     this._document = document; //either an actor or owned item
-    this._traitsToRoll = traitsToRoll; // can be [] at this point
+    this._traitsToRoll = traitsToRoll;
     this.options = options;
     this._initialized = false;
   }
 
   /**
-   * intitialises the DiceThrow with options properties || default
+   * intitialises the DiceThrow with options.properties || default
+   * todo : add support for extended throws
    */
   initialize() {
     this.rollMode = this.options.rollMode !== undefined ? this.options.rollMode : game.settings.get("core", "rollMode");
     this.isItemThrow = this._document.isEmbedded === true;
 
-    //todo : use options to modify values / mods ? for failed extended rolls maybe
     this.dicePoolMods = {
-      userMod: 0
+      userMod: 0,
+      optionsMod: this.options.dicePoolMod || 0
     };
 
     this.thresholdBase = this.options.thresholdBase || game.settings.get("mage-fr", "baseRollThreshold");
     this.thresholdChosen = null;
     this.thresholdMods = {
-      userMod: 0,
+      optionsMod: this.options.thresholdMod || 0
     };
 
     this.throwSettings = this.options.throwSettings || TROWSETTINGS_DEDUCTFAILURE;
-    //todo : maybe have a success mods array + extended rolls
 
     this.initTraits();
     this.prepareData();
@@ -70,8 +70,6 @@ export default class DiceThrow {
    */
   prepareData() {
     this.isEffectRoll = DiceThrow.getIsEffectRoll(this._traitsToRoll);
-    //only used by visual cues atm
-    this.maxEffectLevel = this.isEffectRoll ? this.getMaxEffectLevel() : null;
 
     //dice pool
     this.dicePoolBase = this.getDicePoolBase();
@@ -80,7 +78,7 @@ export default class DiceThrow {
 
     //threshold
     this.thresholdMods.untrainedMod = this.getUntrainedMod();
-    this.thresholdTotal = this.thresholdChosen || this.thresholdBase;
+    this.thresholdTotal = Math.clamped((this.thresholdChosen || this.thresholdBase) + this.thresholdMod, 2, 10);
     //flavor
     this.flavor = this._document.getThrowFlavor(this.xTraitsToRoll);
   }
@@ -198,6 +196,15 @@ export default class DiceThrow {
   }
 
   /**
+   * @returns {Number} sum of ALL difficulty threshold modifiers capped at -3/+3
+   */
+   get thresholdMod() {
+    return Math.clamped(Object.values(this.thresholdMods).reduce((acc, cur) => {
+      return acc + cur;
+    }, 0), -3, 3);
+  }
+
+  /**
    * computes the base dice pool
    * arete score for magic throws, or sum of the traits values
    * 
@@ -239,11 +246,11 @@ export default class DiceThrow {
   }
 
   /**
-   * computes a negative modifier to the difficulty threshold
+   * computes a positive modifier to the difficulty threshold
    * only 0 value abilities are concerned
    * actual malus depends on settings and ability subType
    * 
-   * @returns {Number} a negative modifier
+   * @returns {Number} a positive modifier
    */
   getUntrainedMod() {
     let untrainedMod = 0;
@@ -259,7 +266,7 @@ export default class DiceThrow {
         //get specific game setting relative to untrained abilities
         const malus = settings.substr(subTypes[item.data.data.subType],1);
         if ( isNaN(malus) ) { throw 'impossibleThrow'; }
-        untrainedMod -= parseInt(malus);
+        untrainedMod += parseInt(malus);
       }
     })
     return untrainedMod;
@@ -276,13 +283,6 @@ export default class DiceThrow {
     return traitsToRoll.length !== 0 && traitsToRoll.reduce((acc, cur) => {
       return acc && cur.category === 'spheres';
     }, true);
-  }
-
-  /**
-   * @returns {Number} the max value of an trait in an effect roll
-   */
-  getMaxEffectLevel() {
-    return this.xTraitsToRoll.reduce((acc, cur) => (Math.max(acc, cur.value)), 0);
   }
 
   /**

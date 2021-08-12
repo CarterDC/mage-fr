@@ -10,14 +10,16 @@
  */
 
 // Import Documents
-import M20eActor from './module/actor/base-actor.js'
+import M20eActor from './module/actor/m20e-actor.js'
 import M20eMageActor from './module/actor/mage-actor.js'
-import M20eItem from './module/item/base-item.js'
+import M20eItem from './module/item/m20e-item.js'
+import M20eParadigmItem from './module/item/paradigm-item.js'
 import M20eRoteItem from './module/item/rote-item.js'
 import M20eRollableItem from './module/item/rollable-item.js'
 // Import Applications
-import M20eActorSheet from './module/actor/base-actor-sheet.js'
-import M20eItemSheet from './module/item/base-item-sheet.js'
+import M20eActorSheet from './module/actor/m20e-actor-sheet.js'
+import M20eMageActorSheet from './module/actor/mage-actor-sheet.js'
+import M20eItemSheet from './module/item/m20e-item-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 import M20eRoteSheet from './module/item/rote-sheet.js'
 import M20eRollableSheet from './module/item/rollable-sheet.js'
@@ -28,7 +30,7 @@ import { M20E } from './module/config.js'
 import { registerSystemSettings } from "./module/settings.js";
 import { registerHotbarOverride } from "./module/macro.js";
 import * as dice from "./module/dice/dice.js";
-import * as utils from './module/utils/utils.js'
+import * as utils from './module/utils/utils.js';
 import { log } from "./module/utils/utils.js";
 import { registerHandlebarsHelpers } from "./module/utils/hb-helpers.js";
 import { preloadHandlebarsTemplates } from "./module/utils/hb-templates.js";
@@ -37,12 +39,14 @@ import * as chat from "./module/chat.js";
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
 /* -------------------------------------------- */
+
 Hooks.once('init', async function () {
   log('Initialisation du système');
   //CONFIG.debug.hooks = true;
 
   game.m20e = { //store some things here for later access
     config: M20E,
+    traits: {},
     mageMacro: DiceThrow.fromMacro
   };
 
@@ -56,13 +60,21 @@ Hooks.once('init', async function () {
   CONFIG.Item.documentClass = M20eItem;
   //add references to subclasses for use in the M20eItem constructor
   CONFIG.Item.documentClasses = {
+    "paradigm": M20eParadigmItem,
     "rote": M20eRoteItem,
     "weapon": M20eRollableItem
   };
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet);
-  Actors.registerSheet('m20e', M20eActorSheet, { makeDefault: true });
+  /*Actors.registerSheet("m20e", M20eActorSheet, {
+    types: ["npcsleeper"],
+    makeDefault: true
+  });*/
+  Actors.registerSheet("m20e", M20eMageActorSheet, {
+    types: ["charmage"],
+    makeDefault: true
+  });
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('m20e', M20eItemSheet, {
     types: ["ability", "background", "meritflaw", "event", "misc"], //todo , add all the other base item types
@@ -97,7 +109,6 @@ Hooks.once('init', async function () {
 
   //test shit here !
 
-
 })
 
 /* -------------------------------------------- */
@@ -117,3 +128,8 @@ Hooks.once('ready', async function () {
 Hooks.on('renderChatLog', chat.addChatListeners);
 Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
 
+//testing shit
+/*
+Hooks.on('renderCompendium', async function(compApp, html, compCollection) {
+  log(compApp._dragDrop[0].callbacks)
+})*/

@@ -6,6 +6,7 @@
   {{> "systems/mage-fr/templates/actor/parts/header-cat.hbs"}}
   <nav class="sheet-tabs tabs" data-group="primary">
     <a data-tab="traits"><label>{{localize "M20E.navtabs.traits"}}</label></a>
+    <a data-tab="magye"><label>{{localize "M20E.navtabs.magye"}}</label></a>
     <a data-tab="bio"><label>{{localize "M20E.navtabs.bio"}}</label></a>
     <a data-tab="stuff"><label>{{localize "M20E.navtabs.stuff"}}</label></a>
     <a data-tab="extra"><label>{{localize "M20E.navtabs.extra"}}</label></a>
@@ -16,6 +17,10 @@
     <section class="tab" data-group="primary" data-tab="traits">
       {{> "systems/mage-fr/templates/actor/parts/attributes-cat.hbs"}}
       {{> "systems/mage-fr/templates/actor/parts/abilities-cat.hbs"}}
+    </section>
+    <section class="tab" data-group="primary" data-tab="magye">
+      {{> "systems/mage-fr/templates/actor/parts/spheres-cat.hbs"}}
+      {{> "systems/mage-fr/templates/actor/parts/rotes-cat.hbs"}}
     </section>
 
     <section class="tab" data-group="primary" data-tab="bio">
@@ -29,6 +34,7 @@
     </section>
 
     <section class="tab" data-group="primary" data-tab="extra">
+{{> "systems/mage-fr/templates/actor/parts/xp-cat.hbs"}}
       {{> "systems/mage-fr/templates/actor/parts/events-cat.hbs"}}
     </section>
     

@@ -1,5 +1,5 @@
 // Import Documents
-import M20eActor from './base-actor.js'
+import M20eActor from './m20e-actor.js'
 
 import DiceThrow from '../dice/dice-throw.js'
 // Import Helpers
@@ -18,6 +18,23 @@ export default class M20eMageActor extends M20eActor {
   /** @override */
   constructor(data, context) {
     super(data, context);
+  }
+
+  /** @override */
+  prepareResources() {
+    super.prepareResources();
+    if( utils.canSeeParadox() ) {
+      const actorData = this.data;
+      //add dummy resource magepower in the form {value, max} to be used by token bars
+      actorData.data.magepower = {
+        value: actorData.data.resources.magepower.quintessence,
+        max: actorData.data.resources.magepower.quintessence + actorData.data.resources.magepower.paradox
+      }
+    }
+  }
+
+  get isMage() {
+    return true;
   }
 
   /**
@@ -49,47 +66,19 @@ export default class M20eMageActor extends M20eActor {
     }
   }
 
-  getExtendedTraitData(trait) {
-    const {category, key= ''} = trait;
-    const relativePath = key ? `${category}.${key}` : `${category}`;
-    const actorData = this.data;
-
-    let value = 0;
-    let specName = '';
-    switch ( category ) {
-      case 'willpower':
-        value = parseInt(actorData.data.willpower.max);
-        specName = ''
-        break;
-      case 'arete':
-        value = parseInt(actorData.data.arete);
-        specName = ''
-        break;
-      default:
-        value = parseInt(foundry.utils.getProperty(actorData,`data.${relativePath}.value`)),
-        specName = foundry.utils.getProperty(actorData,`data.${relativePath}.specialisation`)
-    }
-    return {
-      name: game.i18n.localize(`M20E.${relativePath}`),
-      displayName: this.getLexiconEntry(relativePath),
-      value: value,
-      specName: specName
-    }
-  }
-
   increaseMagepower(index){
     if( ! utils.canSeeParadox() ) { return; }
     const base1Index = index += 1;
-    let {quintessence, paradox} = this.data.data.magepower;
+    let {quintessence, paradox} = this.data.data.resources['magepower'];
 
     //adding quint and/or removing paradox
     if ( (20 - paradox) < base1Index ) { //paradox in the box, remove it
       paradox -= 1;
-      this.safeUpdateProperty('magepower', {paradox});
+      this.safeUpdateProperty('resources.magepower', {paradox});
     } else {//add a quint point (according to index)
       if ( quintessence < base1Index ) {
         quintessence += 1;
-        this.safeUpdateProperty('magepower', {quintessence});
+        this.safeUpdateProperty('resources.magepower', {quintessence});
       }
     }
   }
@@ -97,16 +86,16 @@ export default class M20eMageActor extends M20eActor {
   decreaseMagepower(index){
     if ( ! utils.canSeeParadox() ) { return; }
     const base1Index = index += 1;
-    let {quintessence, paradox} = this.data.data.magepower;
+    let {quintessence, paradox} = this.data.data.resources['magepower'];
 
     //adding paradox and/or removing quintessence
     if ( (quintessence) >= base1Index ) { //quint in the box, remove it
       quintessence -= 1;
-      this.safeUpdateProperty('magepower', {quintessence});
+      this.safeUpdateProperty('resources.magepower', {quintessence});
     } else {//add a paradox point (according to index)
       if ( (20 - paradox) >= base1Index ) {
         paradox += 1;
-        this.safeUpdateProperty('magepower', {paradox});
+        this.safeUpdateProperty('resources.magepower', {paradox});
       }
     }
   }

@@ -1,18 +1,29 @@
 
 /**
- * Helper class : Uniquely defines a Trait object by it's category,
- * it's key (if referencing a trait from actor's template)
+ * Helper class : Uniquely defines a Trait object by it's path relative to data.traits,
  * or itemId (if referencing a trait that's actually an item)
  */
 export class Trait {
 
   /**
-   * @param  {Object} obj {categrory='', key='', itemId=''}
+   * @param  {Object} obj {path='', itemId=''}
    */
   constructor(obj) {
-      this.category = obj.category;
-      this.key = obj.key || '';
+      this.path = obj.path;
       this.itemId = obj.itemId || '';
+  }
+
+  split() {
+    return {...Trait.splitPath(this.path), itemId: this.itemId};
+  }
+
+  static splitPath(path) {
+    const propKeys = path.split('.');
+    return {
+      category: propKeys[0],
+      subType: propKeys.length === 3 ? propKeys[1] : null,
+      key: propKeys.length === 3 ? propKeys[2] : (propKeys[1] || null)
+    };
   }
 
   /**
@@ -23,21 +34,24 @@ export class Trait {
    * @returns {Trait|null} a Trait object made from the aquired info or null
    */
   static fromElement(htmlElem) {
-    if ( !htmlElem.dataset ) { return null; }
-    
     const traitElem = htmlElem.closest(".trait");
-    const category = traitElem.closest(".category").dataset.category || null;
-    if ( !category ) { return null; }
+    const path = traitElem.dataset.path;
+
+    if ( !path ) { return null; }
     return new Trait({
-      category: category,
-      key: traitElem.dataset.key || '',
+      path: path,
       itemId: traitElem.dataset.itemId || ''
     });
   }
 
   get isItem() {
-    return this.category !== '' && this.itemId !== '' && this.key === '';
+    return this.itemId !== ''; //todo can do better in some circumstances
   }
+
+  get isExtended() {
+    return false;
+  }
+
 }
 
 /**
@@ -50,14 +64,18 @@ export class ExtendedTrait extends Trait {
     super(obj?.trait || obj);
     this._name = obj.name || '';
     this._displayName = obj.displayName || '';
-    this._specName = obj.specName || '';
-    this.value = obj.value;
-    this.valueMax = obj.value;
+    this._specialisation = obj.specialisation || '';
+    this.value = parseInt(obj.value);
+    this.valueMax = parseInt(obj.value);
     this._useSpec = obj.useSpec || false;
   }
 
+  get isExtended() {
+    return true;
+  }
+
   get canUseSpec() {
-    return this.value >= 4 && this._specName !== '';
+    return this.value >= 4 && this._specialisation !== '';
   }
 
   get useSpec() {
@@ -65,12 +83,12 @@ export class ExtendedTrait extends Trait {
   }
 
   get name() {
-    return this.useSpec ? this._specName : 
+    return this.useSpec ? this._specialisation : 
       (this._displayName ? this._displayName : this._name);
   }
 
   get specName() {
-    return this.useSpec ? this._name : this._specName;
+    return this.useSpec ? this._name : this._specialisation;
   }
 }
 

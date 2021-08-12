@@ -3,11 +3,11 @@ import * as utils from '../utils/utils.js'
 import DiceThrow from '../dice/dice-throw.js'
 import { log } from "../utils/utils.js";
 import { Trait, ExtendedTrait } from "../utils/classes.js";
-
+import * as chat from "../chat.js";
 
 /**
- * Implements M20eItem as an extension of the Item class
- * Adds new methods for all items and for specific item types.
+ * Item class for base items (items that just contain data), 
+ * also provides base functions for all derived item class
  * @extends {Item}
  */
 export default class M20eItem extends Item {
@@ -17,14 +17,15 @@ export default class M20eItem extends Item {
     //creates a derived class for specific item types
     if ( data.type in CONFIG.Item.documentClasses && !context?.isExtendedClass) {
         // specify our custom item subclass here
-        // when the constructor for the new class will call it's super(),
-        // the isExtendedClass flag will be true, thus bypassing this whole process
-        // and resume default behavior
         return new CONFIG.Item.documentClasses[data.type](data,{...{isExtendedClass: true}, ...context});
     }    
     //default behavior, just call super and do all the default Item inits.
     super(data, context);
   }
+
+  /* -------------------------------------------- */
+  /*  New Item Creation                           */
+  /* -------------------------------------------- */
 
   /**
    * adds image path and systemDescription before sending the whole thing to the database
@@ -36,8 +37,8 @@ export default class M20eItem extends Item {
     await super._preCreate(data, options, user);
     const itemData = this.data;
     
-    //check if item is from existing item (going in or out a compendium coll)
-    if ( itemData.flags.core?.sourceId ) { return; }
+    //check if item is from existing item (going in or out a compendiumColl or drag from actorSheet)
+    if ( itemData.flags.core?.sourceId || itemData._id ) { return; }
 
     //item is brand new => set some default values before sending it to the database
     const updateData = {data: {}};
@@ -57,6 +58,34 @@ export default class M20eItem extends Item {
     itemData.update( updateData );
   }
 
+  /**
+   * Prompts the user for a subType from dropDown list of available subtypes for this particular itemType
+   * @param {ItemData} itemData an instance of ItemData
+   * 
+   * @returns {Promise<String|null>} selected subType or null if user escaped the prompt
+   */
+  async promptForSubType(itemData) {
+    const itemType = itemData.type;
+    //build list of subTypes to be fed to the promptSelect()
+    const subTypes = Object.entries(
+      foundry.utils.getProperty(CONFIG.M20E, `${itemType}SubTypes`))
+      .map(([key, value]) => {
+        return {value: key, name: game.i18n.localize(value)};
+    });
+
+    return utils.promptSelect({
+      title: itemData.name,
+      promptString: game.i18n.format('M20E.prompts.subTypeContent', {
+        type: game.i18n.localize(`ITEM.Type${itemType.capitalize()}`)
+      }),
+      curValue: subTypes[0].key,
+      options: subTypes
+    });
+  }
+
+  /* -------------------------------------------- */
+  /*  Item Preparation                            */
+  /* -------------------------------------------- */
 
   /** @override */
   prepareData() {
@@ -69,6 +98,16 @@ export default class M20eItem extends Item {
     this.data.protectedType = protectedTypes.includes(this.type);
   }
 
+  /**
+   * called at the end of actor._prepareData to deal with owned items whose data depend on the actor.
+   * Implemented in subClasses
+   */
+   _prepareOwnedItem() {}
+
+  /* -------------------------------------------- */
+  /*  Shorthands                                  */
+  /* -------------------------------------------- */
+
   get isRollable() {
     return this.data.data.isRollable;
   }
@@ -77,40 +116,13 @@ export default class M20eItem extends Item {
     return this.data.data.isTrait;
   }
 
-  get isActive() {
+  get isActive() { // todo : not sure atm
     return this.data.data.effects?.length > 0;
   }
 
-/**
- * Prompts the user for a subType from dropDown list of available subtypes for this particular itemType
- * @param {ItemData} itemData an instance of ItemData
- * 
- * @returns {Promise<String|null>} selected subType or null if user escaped the prompt
- */
-  async promptForSubType(itemData) {
-    const itemType = itemData.type;
-    //build list of subTypes to be fed to the promptSelect()
-    const subTypes = Object.entries(
-      foundry.utils.getProperty(CONFIG.M20E, `${itemType}SubTypes`))
-      .map(([key, value]) => {
-        return {value: key, name: game.i18n.localize(value)};
-    });
-
-    return utils.promptSelect({
-       title: itemData.name,
-       promptString: game.i18n.format('M20E.prompts.subTypeContent', {
-         type: game.i18n.localize(`ITEM.Type${itemType.capitalize()}`)
-       }),
-       curValue: subTypes[0].key,
-       options: subTypes
-     });
-  }
-
-  /**
-   * called at the end of actor._prepareData to deal with owned items whose data depend on the actor.
-   * Implemented in subClasses
-   */
-  _prepareOwnedItem() {}
+  /* -------------------------------------------- */
+  /*  Roll related                                */
+  /* -------------------------------------------- */
 
   /**
    * Implemented in every rollable subClasses
@@ -165,10 +177,11 @@ export default class M20eItem extends Item {
 
   getTraitData() {
     return {
-      category: this.data.type,
-      key: this.data.name.replace(/[. +]/gi, '_').toLowerCase(),
+      cat: CONFIG.M20E.traitToCat[this.data.type],
+      subType: CONFIG.M20E.traitToCat[this.data.data.subType] || null,
+      key: utils.sanitize(this.data.name),
       data: {
-        subType: this.data.data.subType || null,
+        name: this.data.name,
         displayName: this.data.data.displayName || '',
         value: parseInt(this.data.data.value),
         specName:  this.data.data.specialisation || '',
@@ -176,6 +189,7 @@ export default class M20eItem extends Item {
       }
     }
   }
+
   /**
    * get traits from a rollable item for the specific throw index (ie rotes only have 1 throw so it's index 0)
    * create a new {@link DiceThrow} from traitsToRoll and either throw or open config App based on shiftkey status
@@ -200,65 +214,5 @@ export default class M20eItem extends Item {
       diceThrow.render(true);
     }
   }
-
-  /* -------------------------------------------- */
-  /*  Paradigm Item Specific                      */
-  /* -------------------------------------------- */
-
-  // could have been in a subClass but it's just 4 functions anyway
-
-  /**
-   * @param  {String} relativePath a localization path relative to the M20E root.
-   */
-  locadigm(relativePath) {
-    const lexiconValue = this.getLexiconEntry(relativePath);
-    return lexiconValue ? lexiconValue : game.i18n.localize(`M20E.${relativePath}`);
-  }
-
-  /**
-   * @param  {String} relativePath a property path relative to the item's lexicon object
-   * 
-   * @return {String|null} the value of the corresponding property or null if not found
-   */
-  getLexiconEntry(relativePath) {
-    return foundry.utils.getProperty(this.data.data.lexicon, relativePath) || null;
-  }
-
-  /**
-   * @param  {String} relativePath a property path relative to the item's lexicon object
-   * @param  {String} newValue the new value to be updated or '' for a removal of the property
-   */
-  async setLexiconEntry(relativePath, newValue) {
-    if ( newValue !== '' ) {
-      return await this.update({[`data.lexicon.${relativePath}`]: newValue});
-    } else {
-      //we've been passed an empty string => remove entry from lexicon
-      return await this.removeLexiconEntry(relativePath);
-    } 
-  }
-
-  /**
-   * Removes a lexicon entry
-   * @param  {String} relativePath a property path relative to the item's lexicon object
-   */
-  async removeLexiconEntry(relativePath) {
-    //the following assumes that all entries in the lexicon are valid in the first place ^^
-    //i guess it also assumes that relativePath aren't more than 2 levels deep
-    //otherwise function would have to be reccursive at some point ^^
-    let deletePath = "";
-    const keys = relativePath.split(".");
-    const lexiconEntry = duplicate(this.data.data.lexicon[keys[0]]);
-
-    if ( Object.keys(lexiconEntry).length > 1 ) {
-      //entry contain multiple 'properties' => just remove the one
-      deletePath = `data.lexicon.${keys[0]}.-=${keys[1]}`;
-    } else {
-      //entry contain only one 'property' => remove the entire entry
-      deletePath = `data.lexicon.-=${keys[0]}`;
-    }
-
-    return await this.update({[deletePath]: null});
-  }
-
 }
 

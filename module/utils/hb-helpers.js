@@ -24,6 +24,12 @@ export const registerHandlebarsHelpers = function() {
 
   /**
    */
+   Handlebars.registerHelper('m20e-sanitize', function(myString) {
+    return utils.sanitize(myString);
+  })
+
+  /**
+   */
   Handlebars.registerHelper('m20e-not', function(bool) {
     return !bool;
   })

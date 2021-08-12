@@ -25,13 +25,13 @@ export const isObject = myVariable =>
 
 /**
  * Whether the passed variable is actually a number
- * ( parsing it into a float does not return NaN )
+ * stolen from the internet !
  * @param {*} myVariable
  * 
  * @returns {boolean}  whether myVariable is a number or not
  */
 export const isNumeric = myVariable =>
-  !isNaN(parseFloat(myVariable));
+  !isNaN(parseFloat(myVariable)) && isFinite(myVariable);;
 
 /**
  * For use in array.sort()
@@ -46,6 +46,10 @@ export function alphaSort(key = 'name') {
     const bKey = b[key].toUpperCase();
     return ( aKey < bKey ) ? -1 : (( aKey > bKey ) ? 1 : 0);
   }
+}
+
+export function sanitize(myString) {
+  return myString.replace(/[. +]/gi, '_').toLowerCase();
 }
 
 /**

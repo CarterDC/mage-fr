@@ -1,11 +1,11 @@
 <header class="sheet-header">
     <div class="img-colunm">
-       <img src="{{actor.img}}" data-edit="img" title="{{localize "M20E.hints.imgClick"}}" alt="{{actor.name}} - Image"/>
+       <img src="{{actorData.img}}" data-edit="img" title="{{localize "M20E.hints.imgClick"}}" alt="{{actorData.name}} - Image"/>
     </div>
     <div class="header-column">
         <div class="header-row charname">
             <div class="name-wrapper">
-              <input class = "name" name="name" type="text" value="{{actor.name}}" data-dtype="String"/>
+              <input class = "name" name="name" type="text" value="{{actorData.name}}" data-dtype="String"/>
               <a class="entity-link personnal-je" data-entity="{{data.link.type}}" data-pack="{{data.link.pack}}" data-id="{{data.link.id}}" title="{{localize "M20E.hints.openJE"}}"><i class="fas fa-info-circle"></i></a>
             </div>
             <div class="dice-button macro-ready" data-action = "roll-traits"></div>
@@ -18,10 +18,10 @@
                     {{/each}}
                 </div>
                 <div>
-                    <label class="resource-context" data-resource="health">{{data.health.status}}</label>
-                    {{#if (ne data.health.malus 0)}}
-                        <label>{{m20e-sign data.health.malus "-"}}D</label>
-                    {{/if}}
+                    <label class="resource-context" data-resource="health">{{data.resources.health.status}}</label>
+                    {{#unless (eq data.resources.health.malus 0)}}
+                        <label>{{m20e-sign data.resources.health.malus "-"}}D</label>
+                    {{/unless}}
                 </div>
             </div>
             <div class="resource-panel category willpower" style="margin: 0 0 0 0;" data-category="willpower" data-resource="willpower">
@@ -30,7 +30,7 @@
                         <div class="box" title="{{rez.title}}" data-clickable="{{../editable}}" data-index="{{index}}" data-state="{{rez.state}}"></div>
                     {{/each}}
                 </div>
-                <div class="trait willpower" style="margin-left:4px;" data-active= "false">
+                <div class="trait willpower" style="margin-left:4px;" data-path="willpower" data-active= "false">
                     <a class="trait-label resource-context" data-resource="willpower">
                         {{localize "M20E.willpower"}}
                     </a>

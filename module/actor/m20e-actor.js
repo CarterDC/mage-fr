@@ -4,55 +4,152 @@ import { log } from "../utils/utils.js";
 import { Trait, ExtendedTrait } from "../utils/classes.js";
 
 /**
- * Implements M20eActor as an extension of the Actor class
- * adds system specific functions as well as some overrides
- * atm only used by the charMage actor-type.
+ * Actor class for base sleeper NPCs, 
+ * also provides base functions for all derived actor class (char and npc alike)
  * @extends {Actor}
  */
 export default class M20eActor extends Actor {
 
   /** @override */
   constructor(data, context) {
-    //creates a derived class for specific item types
+    //creates a derived class for specific actor types
     if ( data.type in CONFIG.Actor.documentClasses && !context?.isExtendedClass) {
       // specify our custom actor subclass here
       // when the constructor for the new class will call it's super(),
       // the isExtendedClass flag will be true, thus bypassing this whole process
       // and resume default behavior
       return new CONFIG.Actor.documentClasses[data.type](data,{...{isExtendedClass: true}, ...context});
-  }    
+    }
   //default behavior, just call super and do all the default Item inits.
   super(data, context);
   }
 
+  /* -------------------------------------------- */
+  /*  Actor Preparation                           */
+  /* -------------------------------------------- */
+
   /**
+   * first function in the prepareData sequence
+   *  @override
+   */
+  prepareBaseData() {
+    super.prepareBaseData();
+
+    this.prepareResources();
+    this.prepareTraits();
+  }
+
+  /**
+   * third function in the prepareData sequence
+   *  @override
+   */
+  prepareDerivedData() {
+    super.prepareDerivedData();
+
+    const actorData = this.data;
+    actorData.items.forEach( item => item._prepareOwnedItem() );
+  }
+
+  /**
+   * add dummy resources in actorData in the form {value, max}, to be used by token bars
+   * also computes secondary health stats 'status' and 'malus'
+   * according to health values and the list of maluses
+   */
+  prepareResources() {
+    const actorData = this.data;
+    
+    actorData.data.health = {
+      value: actorData.data.resources.health.bashing,
+      max: actorData.data.resources.health.max
+    }
+    actorData.data.willpower = {
+      value: actorData.data.resources.willpower.bashing,
+      max: actorData.data.resources.willpower.max
+    }
+
+    const health = actorData.data.resources.health;
+    //prepare an array of integers from the comma separated string
+    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
+    const wounds = health.max - health.bashing;
+
+    health.status = game.i18n.localize(`M20E.healthStatus.${wounds}`);
+    health.malus = wounds > 0 ? maluses[wounds - 1] : 0;
+  }
+
+  /**
+   * todo : description ^^
+   */
+  prepareTraits() {
+    const actorData = this.data;
+    //todo : maybe add copy of init value in here too
+    //beware of active effects.
+    actorData.items.forEach( item => {
+      if ( item.isTrait ) {
+        const traitData = item.getTraitData();
+        const relativePath = traitData.subType ? 
+          `${traitData.cat}.${traitData.subType}.${traitData.key}` : 
+          `${traitData.cat}.${traitData.key}`;
+        foundry.utils.setProperty(actorData.data.traits, relativePath, traitData.data);
+        foundry.utils.setProperty(game.m20e.traits, relativePath, traitData.data.name);
+      } else if (item.data.type === 'paradigm') {
+        //not a trait but since we're iterrating items...
+        actorData.data.paraItem = item;
+      }
+    });
+    //add willpower property in the traits array (for roll purposes)
+    //todo : check if willpower rolls use value or valuemax ?
+    foundry.utils.setProperty(actorData.data.traits, 'willpower', {value: actorData.data.resources.willpower.max});
+  }
+
+  /* -------------------------------------------- */
+  /*  Shorthands                                  */
+  /* -------------------------------------------- */
+
+  get isCharacter() {
+    return this.data.data.isCharacter === true;
+  }
+  get isNPC() {
+    return this.data.data.isCharacter !== true;
+  }
+  get isMage() { //obviously overriden in mageActor
+    return false;
+  }
+  get paradigm() {
+    return this.data.data.paraItem || null;
+  }
+
+  /* -------------------------------------------- */
+  /*  New Actor Creation                          */
+  /* -------------------------------------------- */
+
+  /**
+   * Executed only once, just prior the actorData is actually sent to the database
    * Adds base options/items to the actor (only if created from scratch !)
-   *  @override */
-  async _preCreate(data, options, user) {
+   *  @override
+   */
+   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     const actorData = this.data;
-    //check if actor is from existing actor (going in or out a compendium coll)
+    //check if actor is from existing actor (going in or out a compendiumColl)
     if ( actorData.flags.core?.sourceId ) { return; }
-
-    if ( actorData.data.isPlayable === true ) {
-      //auto link tokens in case of player character
-      actorData.token.update({actorLink: true});
-    }
 
     //get baseAbilities from compendium if any or defaultAbilities from config
     const baseAbilities = await this._getBaseAbilities();
-    
-    //get some other items
+    //get some other items (atm only paradigm item)
     const otherBaseItems = [];
-    //add paradigm item
     otherBaseItems.push ({
       type: 'paradigm',
       img: '',
       name: game.i18n.format(`M20E.paradigmName`, {name: actorData.name})
     });
 
-    //merge all the items together
     const items = [...baseAbilities, ...otherBaseItems];
+
+    //updates token config for player character
+    if ( actorData.data.isCharacter === true ) {
+      actorData.token.update(CONFIG.M20E.characterTokenConfig);
+    }
+
     //update everything
     actorData.update({items});
   }
@@ -62,7 +159,7 @@ export default class M20eActor extends Actor {
    * also sorts abilities alphabetically and adds values to the `sort`property
    * @return {Array} alpha sorted array of item data
    */
-  async _getBaseAbilities() {
+   async _getBaseAbilities() {
     //get the compendium module 'name' from the settings
     const scope = game.settings.get("mage-fr", "compendiumScope");
     //Todo : Maybe get packname from settings as well in the case of multiple compendium for different mage versions
@@ -75,7 +172,7 @@ export default class M20eActor extends Actor {
     //alpha sort the abilities now that they're localized
     baseAbilities.sort(utils.alphaSort());
     //defines the sort property so that later user-added abilities will display on top
-    //note : Foundry does the same thing, but only after the first 'same actor' drag/drop
+    //note : Foundry does the same thing, but only after the first 'same actor drag/drop'
     return baseAbilities.map((itemData, i) => {
       return {...itemData, ...{sort: (i+1) * CONST.SORT_INTEGER_DENSITY}};
     });
@@ -94,7 +191,7 @@ export default class M20eActor extends Actor {
         return myDocs.map(packItem => {
           return {
             type: 'ability',
-            img: '',
+            img: '',//todo add icon
             name: packItem.name,
             data: packItem.data.data
           };
@@ -120,7 +217,7 @@ export default class M20eActor extends Actor {
       .map(([key, value]) => {
         return {
           type: 'ability',
-          img: '',
+          img: '',//todo add icon
           name: game.i18n.localize(`M20E.defaultAbilities.${key}`),
           data: {
             subType: value,
@@ -128,113 +225,6 @@ export default class M20eActor extends Actor {
           }
         };
     });
-  }
-
-  /** @override */
-  prepareData() {
-    super.prepareData();
-    const actorData = this.data;
-    this._extendHealthStats();
-
-    this.items.forEach(item => {
-      /*if ( item.isTrait ) { 
-        const traitData = item.getTraitData();
-        const relativePath = `${traitData.category}.${traitData.key}`;
-        foundry.utils.setProperty(actorData.data, relativePath, traitData.data);
-      }*/
-      item._prepareOwnedItem();
-    });
-  }
-
-  /** 
-   * Reevaluates secondary health stats 'status' and 'malus'
-   * according to health values and the list of maluses
-   */
-  _extendHealthStats() {
-    let health = this.data.data.health;
-    //prepare an array of negative integers from the comma separated string
-    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
-    const wounds = health.max - health.value;
-
-    health.status = game.i18n.localize(`M20E.healthStatus.${wounds}`);
-    if ( wounds > 0 ) {
-      health.malus = maluses[wounds - 1];
-    } else {
-      health.malus = 0;
-    }
-  }
-
-  /* -------------------------------------------- */
-  /*  Roll related                                */
-  /* -------------------------------------------- */
-
-  getThrowFlavor(xTraitsToRoll=[]) {
-    //regular roll (non item, non magical) compute flavor based on the number of traits inside the throw
-    switch ( xTraitsToRoll.length ) {
-      case 0: //no trait was selected
-        return `${game.i18n.localize("M20E.diceThrows.freeThrow")}.`;
-        break;
-      case 1: //only one trait roll
-      case 2: //classic (or not) 2 traits
-        const throwTrait = xTraitsToRoll.map(trait => {
-          return trait.useSpec ? `${trait.name}(S)` :
-            ( trait.value === 0 ? `<span class= "red-thingy">${trait.name}</span>` : trait.name) ;
-        }).join(' + ');
-        return `${game.i18n.format("M20E.diceThrows.throwFor", {trait: throwTrait})}.`;
-        break;
-      default: //too many traits => don't bother
-        return `${game.i18n.localize("M20E.diceThrows.mixedThrow")}.`;
-    }
-  }
-
-  getMacroData(data) {
-    const xTraitToRoll = this.extendTraits(data.map( d => new Trait(d)));
-    return {
-      name : this.getThrowFlavor(xTraitToRoll),
-      img: '', // todo : maybe find a more suitable image than default one
-      commandParameters : {
-        data: data
-      }
-    }
-  }
-
-  /**
-   * Extends an array of {@link Trait} with relevant values to Throw dices
-   * dispatch calls according to wether each Trait references an item or an actor property
-   * @return {Array} an array of {@link ExtendedTrait} 
-   */
-  extendTraits(traitsToRoll) {
-    return traitsToRoll.map(trait => {
-      const extendedData = trait.isItem ?
-        this.items.get(trait.itemId).getExtendedTraitData() :
-        this.getExtendedTraitData(trait);
-      
-      return new ExtendedTrait({trait, ...extendedData});
-    });
-  }
-
-  getExtendedTraitData(trait) {
-    const {category, key= ''} = trait;
-    const relativePath = key ? `${category}.${key}` : `${category}`;
-    const actorData = this.data;
-
-    let value = 0;
-    let specName = '';
-    switch ( category ) {
-      case 'willpower':
-        value = parseInt(actorData.data.willpower.max);
-        specName = ''
-        break;
-      default:
-        value = parseInt(foundry.utils.getProperty(actorData,`data.${relativePath}.value`)),
-        specName = foundry.utils.getProperty(actorData,`data.${relativePath}.specialisation`)
-    }
-    return {
-      name: game.i18n.localize(`M20E.${relativePath}`),
-      displayName: this.getLexiconEntry(relativePath),
-      value: value,
-      specName: specName
-    }
   }
 
   /* -------------------------------------------- */
@@ -254,14 +244,7 @@ export default class M20eActor extends Actor {
 
   //todo : write this !
   getItemFromName(itemName, itemType='', itemSubType= '') {
-    const item = null;//this.items.get(itemId);
-    if ( !item ) {
-      ui.notifications.error(game.i18n.format('M20E.notifications.itemNotFoundInActor', {
-        itemRef: itemName,
-        actorName: this.name
-      }));
-    }
-    return item;
+
   }
 
   /**
@@ -289,15 +272,6 @@ export default class M20eActor extends Actor {
       return false;
     }
     return true;
-  }
-
-  /**
-   * Gets the sole paradigm item from this actor
-   * Note : class might actually be M20eParadigmItem if I kept the useless subclass system for the items
-   * @return {M20eItem|undefined} 
-   */
-  get paradigm() {
-    return this.items.filter(item => item.type === "paradigm")[0];
   }
 
   /**
@@ -344,6 +318,7 @@ export default class M20eActor extends Actor {
 
   /** 
    * Might be pretty useless ?
+   * TODO : remove that ! 
    *  'Safe' update as in 
    * "if value is a number, parseInt it just to be on the 'safe' side"
    * assumes the value as already been checked against min & max
@@ -355,63 +330,100 @@ export default class M20eActor extends Actor {
   }
 
   //health & willpower
-  decreaseResource(resourceName, index) {
+  addWound(resourceName, index) {
     const base1Index = index += 1; // cuz sometimes you're just too tired to think in base0
-    let {max, value, lethal, aggravated} = this.data.data[resourceName];
+    let {max, bashing, lethal, aggravated} = this.data.data.resources[resourceName];
 
-    //decrease main value first(bashing), then lethal, then aggravated
-    if ( (max - value) < base1Index ) {
-      value -= 1;
-      this.safeUpdateProperty(resourceName, {value});
+    //decrease bashing value first, then lethal, then aggravated
+    if ( (max - bashing) < base1Index ) {
+      bashing -= 1;
+      this.safeUpdateProperty(`resources.${resourceName}`, {bashing});
     } else {
       if ( (max - lethal) < base1Index ) {
         lethal -= 1;
-        this.safeUpdateProperty(resourceName, {lethal});
+        this.safeUpdateProperty(`resources.${resourceName}`, {lethal});
       } else {
         if ( (max - aggravated) < base1Index ) {
           aggravated -= 1;
-          this.safeUpdateProperty(resourceName, {aggravated});
+          this.safeUpdateProperty(`resources.${resourceName}`, {aggravated});
         }
       }
     }
   }
 
   //health & willpower
-  increaseResource(resourceName, index) {
+  removeWound(resourceName, index) {
     const base1Index = index += 1;
-    let {max, value, lethal, aggravated} = this.data.data[resourceName];
+    let {max, bashing, lethal, aggravated} = this.data.data.resources[resourceName];
 
-    //increase aggravated first, then lethal, then main value(bashing)
+    //increase aggravated value first, then lethal, then bashing
     if ( (max - aggravated) >= base1Index ) {
       aggravated += 1;
-      this.safeUpdateProperty(resourceName, {aggravated});
+      this.safeUpdateProperty(`resources.${resourceName}`, {aggravated});
     } else {
       if ( (max - lethal) >= base1Index ) {
         lethal += 1;
-        this.safeUpdateProperty(resourceName, {lethal});
+        this.safeUpdateProperty(`resources.${resourceName}`, {lethal});
       } else {
-        if ( (max - value) >= base1Index ) {
-          value += 1;
-          this.safeUpdateProperty(resourceName, {value});
+        if ( (max - bashing) >= base1Index ) {
+          bashing += 1;
+          this.safeUpdateProperty(`resources.${resourceName}`, {bashing});
         }
       }
     }
   }
-  
-/*
-  async addWound(amount, woundType = '', overhead = false) {
-    const health = duplicate(this.data.data.health);
-    woundType = woundType === '' ? 'value' : woundType;
-    const current = foundry.utils.getProperty(health, woundType);
-    //log(current);
-    if ( amount > current ) {
-      if  (overhead ){
 
-      } else {
-        return this._safeUpdateValue(`health.${woundType}`, 0);
+  /* -------------------------------------------- */
+  /*  Roll related                                */
+  /* -------------------------------------------- */
+
+  getThrowFlavor(xTraitsToRoll=[]) {
+    //regular roll (non item, non magical) compute flavor based on the number of traits inside the throw
+    switch ( xTraitsToRoll.length ) {
+      case 0: //no trait was selected
+        return `${game.i18n.localize("M20E.diceThrows.freeThrow")}.`;
+        break;
+      case 1: //only one trait roll
+      case 2: //classic (or not) 2 traits
+        const throwTrait = xTraitsToRoll.map(trait => {
+          return trait.useSpec ? `${trait.name}(S)` :
+            ( trait.value === 0 ? `<span class= "red-thingy">${trait.name}</span>` : trait.name) ;
+        }).join(' + ');
+        return `${game.i18n.format("M20E.diceThrows.throwFor", {trait: throwTrait})}.`;
+        break;
+      default: //too many traits => don't bother
+        return `${game.i18n.localize("M20E.diceThrows.mixedThrow")}.`;
+    }
+  }
+
+  getMacroData(data) {
+    const xTraitToRoll = this.extendTraits(data.map( d => new Trait(d)));
+    return {
+      name : this.getThrowFlavor(xTraitToRoll),
+      img: '', // todo : maybe find a more suitable image than default one
+      commandParameters : {
+        data: data
       }
     }
+  }
 
-  }*/
+  /**
+   * Extends an array of {@link Trait} with relevant values to Throw dices
+   * @return {Array} an array of {@link ExtendedTrait} 
+   */
+  extendTraits(traitsToRoll) {
+    return traitsToRoll.map(trait => new ExtendedTrait({trait, ...this.getExtendedTraitData(trait)}));
+  }
 
+  getExtendedTraitData(trait) {
+    const extendedTraitData = foundry.utils.getProperty(this.data.data.traits,
+      trait.path);
+
+    return {
+      name: extendedTraitData.name || game.i18n.localize(`M20E.traits.${trait.path}`),
+      displayName: extendedTraitData.displayName || this.getLexiconEntry(`traits.${trait.path}`),
+      value: extendedTraitData.value,
+      specialisation: extendedTraitData.specialisation
+    }
+  }
 }
