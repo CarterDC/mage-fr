@@ -2,6 +2,7 @@
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
+
 /**
  * A Die DiceTerm that only has 'S' faces
  * used solely by the 'xs' modifier with an actual result of 10
@@ -147,7 +148,7 @@ export class MageRoll extends Roll {
 }
 
 //todo ; do that with a mageroll and custom message !
-export function registerInitiative(){
+export function registerInitiative() {
   Combatant.prototype._getInitiativeFormula = function () {
 
     const actorData = this.actor.data;

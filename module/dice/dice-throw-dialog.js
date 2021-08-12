@@ -202,12 +202,17 @@ import { log } from "../utils/utils.js";
     this.diceThrow.updateTraitValue(traitElem.dataset.key, parseInt(element.dataset.index) + 1);
   }
 
-  getVisualCue(index) {
+  /**
+   * @param  {Number} thresholdValue the 2 to 10 index of a radio button (corresponding to an actual threshold value)
+   * 
+   * @returns {String} whether the difficulty threshold is coincidental, or vulgar according to the rules
+   */
+  getVisualCue(thresholdValue) {
     if ( !game.settings.get('mage-fr', 'displayThresholdCues') ) { return null; }
 
-    const dt = this.diceThrow;
-    if ( dt.isEffectRoll ) {
-      switch ( index - (dt.maxEffectLevel + (dt.thresholdBase - 3)) ) {
+    if ( this.diceThrow.isEffectRoll ) {
+      const maxEffectLevel = this.getMaxEffectLevel();
+      switch ( thresholdValue - (maxEffectLevel + (this.diceThrow.thresholdBase - 3)) ) {
         case 0:
           return 'coincidental';
         case 1:
@@ -219,6 +224,14 @@ import { log } from "../utils/utils.js";
       }
     }
     return null;
+  }
+
+  /**
+   * returns the max value of a trait (only used in the context of an effect roll)
+   * @returns {Number}
+   */
+   getMaxEffectLevel() {
+    return this.diceThrow.xTraitsToRoll.reduce((acc, cur) => (Math.max(acc, cur.value)), 0);
   }
 
   /**
@@ -253,6 +266,7 @@ import { log } from "../utils/utils.js";
     }
   }
 
+  //todo : redo better ! 
   onSystemSettingChanged(newValue, settingName) {
     if ( settingName === 'baseRollThreshold' ) {
       this.diceThrow.update();
@@ -267,9 +281,9 @@ import { log } from "../utils/utils.js";
     //do some cleaning
     Hooks.off('updateActor', this.onUpdateActor);
     Hooks.off('systemSettingChanged', this.onSystemSettingChanged);
-
     this.closeOnRoll = null;
     this.diceThrow = null;
+    
     //call super
     return super.close(options);
   }

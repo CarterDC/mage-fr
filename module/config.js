@@ -68,23 +68,31 @@ M20E.protectedCategories = [
 
 
 M20E.categoryToType ={
-  "abilities": "ability",
-  "talents": "talent",
-  "skills": "skill",
-  "knowledges": "knowledge",
-  "rotes": "rote",
-  "backgrounds" : "background",
-  "meritsflaws": "meritflaw",
-  "merits": "merit",
-  "flaws": "flaw",
-  "events": "event",
-  "contacts": "contact",
-  "equipables": ["weapon", "miscequipable"]
+  abilities: "ability",
+  talents: "talent",
+  skills: "skill",
+  knowledges: "knowledge",
+  rotes: "rote",
+  backgrounds : "background",
+  meritsflaws: "meritflaw",
+  merits: "merit",
+  flaws: "flaw",
+  events: "event",
+  contacts: "contact",
+  equipables: ["weapon", "miscequipable"]
+}
+
+M20E.traitToCat = {
+  ability: "abilities",
+  background: "backgrounds",
+  talent: "talents",
+  skill: "skills",
+  knowledge: "knowledges"
 }
 
 M20E.equipablesTypes = { //itemtypes that are equipable=true
-  "weapon": "ITEM.TypeWeapon",
-  "miscequipable": "ITEM.TypeMiscequipable"
+  weapon: "ITEM.TypeWeapon",
+  miscequipable: "ITEM.TypeMiscequipable"
 }
 
 //categories that are actively checked for highlighted traits for dice throw creation
@@ -192,6 +200,13 @@ M20E.extraDecorations = {//whatever the name, only the value is stored anyway
   extra7: "🗸",
   extra8: "⛧",
   extra9: "⛥"
+}
+
+M20E.characterTokenConfig = {
+  actorLink: true,
+  disposition: CONST.TOKEN_DISPOSITIONS['FRIENDLY'],
+  displayName: CONST.TOKEN_DISPLAY_MODES['HOVER'],
+  displayBars: CONST.TOKEN_DISPLAY_MODES['ALWAYS']
 }
 
 // default options for itemSheets depending on itemType

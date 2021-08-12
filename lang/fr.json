@@ -14,25 +14,10 @@
   "ITEM.TypeRote": "Routine",
   "ITEM.TypeWeapon": "Arme",
   "M20E": {
-    "arete": "Arété",
     "blabla": "Blabla...",
     "health": "Santé",
     "paradigmName": "Paradigme de {name}",
     "willpower": "Volonté",
-    "attributes": {
-      "appa": "Apparence",
-      "char": "Charisme",
-      "dext": "Dexterité",
-      "inte": "Intelligence",
-      "mani": "Manipulation",
-      "mental": "Mental",
-      "perc": "Perception",
-      "physical": "Physique",
-      "social": "Social",
-      "stam": "Vigueur",
-      "stre": "Force",
-      "wits": "Astuce"
-    },
     "bio": {
       "appearance": "Apparence",
       "apparentAge": "Age<br>apparent",
@@ -523,17 +508,6 @@
       "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>",
       "subTypeContent": "<p>Choisissez un <b>sous-type de {type}</b><br>Cet item sera crée avec les paramètres par défault du sous-type choisi.</p>"
     },
-    "spheres": {
-      "corr": "Corresp.",
-      "entr": "Entropie",
-      "forc": "Forces",
-      "life": "Vie",
-      "matt": "Matière",
-      "mind": "Psyché",
-      "prim": "Prime",
-      "spir": "Esprit",
-      "time": "Temps"
-    },
     "subType": {
       "flaw": "Handicap",
       "flaws": "Handicaps",
@@ -555,6 +529,35 @@
       "failure": "Échec !",
       "success": "{total} Succès !",
       "critfailure": "Échec Critique ({total}) !"
+    },
+    "traits": {
+      "arete": "Arété",
+      "attributes": {
+        "appa": "Apparence",
+        "char": "Charisme",
+        "dext": "Dexterité",
+        "inte": "Intelligence",
+        "mani": "Manipulation",
+        "mental": "Mental",
+        "perc": "Perception",
+        "physical": "Physique",
+        "social": "Social",
+        "stam": "Vigueur",
+        "stre": "Force",
+        "wits": "Astuce"
+      },
+      "spheres": {
+        "corr": "Corresp.",
+        "entr": "Entropie",
+        "forc": "Forces",
+        "life": "Vie",
+        "matt": "Matière",
+        "mind": "Psyché",
+        "prim": "Prime",
+        "spir": "Esprit",
+        "time": "Temps"
+      },
+      "willpower": "Volonté"
     },
     "welcomeMessage": {
       "welcome": "Bienvenue !",

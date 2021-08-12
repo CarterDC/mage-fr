@@ -9,130 +9,140 @@
         "__comment4__": "the 'ligne-sep' values instruct the display to insert a line for aesthetic purposes only"
       },
       "playable":{
-        "isPlayable": true,
+        "isCharacter": true,
         "creationDone": false,
         "currentXP": 0,
         "totalXP": 0,
         "studyPoints": ""
       },
       "resourceHealth":{
-        "health":{
-          "max": 7,
-          "value": 7,
-          "lethal": 7,
-          "aggravated": 7,
-          "malusList": "0, 1, 1, 2, 2, 5, 5"
+        "resources": {
+          "health":{
+            "max": 7,
+            "bashing": 7,
+            "lethal": 7,
+            "aggravated": 7,
+            "malusList": "0, 1, 1, 2, 2, 5, 5"
+          }
         }
       },
       "resourceWillpower":{
-        "willpower":{
-          "max": 5,
-          "value": 5,
-          "lethal": 5,
-          "aggravated": 5
+        "resources": {
+          "willpower":{
+            "max": 5,
+            "bashing": 5,
+            "lethal": 5,
+            "aggravated": 5
+          }
         }
       },
       "resourceMagePower":{
-        "magepower":{
-          "quintessence": 0,
-          "paradox": 0
+        "resources": {
+          "magepower":{
+            "quintessence": 0,
+            "paradox": 0
+          }
         }
       },
       "attributes":{
-        "attributes":{
-          "stre":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "char":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "perc":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "dext":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "mani":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
-          },    
-          "inte":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
-          },   
-          "stam":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "appa":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "wits":{
-            "value": 1,
-            "specialisation": "",
-            "displayDescription":""
+        "traits": {
+          "attributes":{
+            "stre":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "char":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "perc":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "dext":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "mani":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            },    
+            "inte":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            },   
+            "stam":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "appa":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "wits":{
+              "value": 1,
+              "specialisation": "",
+              "displayDescription":""
+            }
           }
         }
       },
       "spheres":{
-        "spheres":{
-          "forc":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "corr":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "spir":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "matt":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "entr":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "prim":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "life":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "time":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
-          },
-          "mind":{
-            "value": 0,
-            "specialisation": "",
-            "displayDescription":""
+        "traits":{
+          "spheres":{
+            "forc":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "corr":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "spir":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "matt":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "entr":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "prim":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "life":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "time":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            },
+            "mind":{
+              "value": 0,
+              "specialisation": "",
+              "displayDescription":""
+            }
           }
         }
       }
@@ -147,7 +157,13 @@
         "spheres"
       ],
 
-      "arete": 1,
+      "traits":{
+        "arete": {
+          "value": 1,
+          "specialisation": "",
+          "displayDescription":""
+        }
+      },
 
       "bio":{
         "faction":{
@@ -208,142 +224,6 @@
       "link": {},
       "permanent": {},
       "extra" : {}
-    },
-    "npcmage": {
-      "templates":[
-        "resourceHealth",
-        "resourceWillpower",
-        "resourceMagePower",
-        "attributes",
-        "spheres"
-      ],
-  
-      "arete": 1,
-  
-      "bio":{
-        "faction":{
-          "displayValue": "",
-          "link": {}
-        },
-        "birthday":{
-          "displayValue": ""
-        },
-        "mentor":{
-          "displayValue": "",
-          "link": {}
-        },
-        "apparentAge":{
-          "displayValue": ""
-        },
-        "cabale":{
-          "displayValue": "",
-          "link": {}
-        },
-        "awakeningAge":{
-          "displayValue": ""
-        },
-        "sep1":{
-          "displayValue": "ligne-sep"
-        },
-        "sep2": {
-          "displayValue": "ligne-sep"
-        },
-        "essence":{
-          "displayValue": "",
-          "link": {}
-        },
-        "gender":{
-          "displayValue": ""
-        },
-        "nature":{
-          "displayValue": "",
-          "link": {}
-        },
-        "height":{
-          "displayValue": ""
-        },
-        "attitude":{
-          "displayValue": "",
-          "link": {}
-        },
-        "weight": {
-          "displayValue": ""
-        }
-      },
-  
-      "description":"",
-      "possessedStuff":"",
-      "carriedStuff":"",
-  
-      "aliases": [],
-      "link": {},
-      "extra" : {}
-    },
-    "npcsleeper": {
-      "templates":[
-        "resourceHealth",
-        "resourceWillpower",
-        "attributes"
-      ],
-  
-      "bio":{
-        "faction":{
-          "displayValue": "",
-          "link": {}
-        },
-        "birthday":{
-          "displayValue": ""
-        },
-        "mentor":{
-          "displayValue": "",
-          "link": {}
-        },
-        "apparentAge":{
-          "displayValue": ""
-        },
-        "cabale":{
-          "displayValue": "",
-          "link": {}
-        },
-        "awakeningAge":{
-          "displayValue": ""
-        },
-        "sep1":{
-          "displayValue": "ligne-sep"
-        },
-        "sep2": {
-          "displayValue": "ligne-sep"
-        },
-        "essence":{
-          "displayValue": "",
-          "link": {}
-        },
-        "gender":{
-          "displayValue": ""
-        },
-        "nature":{
-          "displayValue": "",
-          "link": {}
-        },
-        "height":{
-          "displayValue": ""
-        },
-        "attitude":{
-          "displayValue": "",
-          "link": {}
-        },
-        "weight": {
-          "displayValue": ""
-        }
-      },
-  
-      "description":"",
-      "possessedStuff":"",
-      "carriedStuff":"",
-  
-      "aliases": [],
-      "link": {},
-      "extra" : {}
     }
   },
   "Item": {
@@ -374,6 +254,10 @@
         "isConsumable": true,
         "quantity": 0
       },
+      "active": {
+        "isActive": true,
+        "effects": []
+      },
       "mageRestricted": {
         "restricted" : ["charmage", "npcmage"]
       }
@@ -391,12 +275,12 @@
     },
     "background":{
       "templates":[
-        "virtualTrait"
+        "virtualTrait",
+        "active"
       ],
       "displayName":"",
       "systemDescription": "",
-      "displayDescription":"",
-      "effects":[]
+      "displayDescription":""
     },
     "event": {
       "displayDescription": "",
@@ -404,6 +288,9 @@
       "extra": {}
     },
     "meritflaw":{
+      "templates":[
+        "active"
+      ],
       "subType": "merit",
       "value": 0,
       "displayName":"",

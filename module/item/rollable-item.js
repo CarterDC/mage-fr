@@ -2,7 +2,7 @@
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 import { Trait, ExtendedTrait, MageThrow } from "../utils/classes.js";
-import M20eItem from './base-item.js'
+import M20eItem from './m20e-item.js'
 
 /**
  * @extends {M20eItem}
