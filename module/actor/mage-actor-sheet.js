@@ -24,8 +24,8 @@ export default class M20eMageActorSheet extends M20eActorSheet {
 
   /** @override */
   getData(options) {
-    const sheetData = super.getData(options); //todo maybe remove that at some point
-    
+    const sheetData = super.getData(options);
+    //add mage specific data (magepower & rote items)
     sheetData.resources.magepower = this.getMagepowerData();
     sheetData.items.rotes = sheetData.items.filter((item) => item.type === "rote");
 

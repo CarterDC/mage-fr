@@ -16,12 +16,12 @@
           <br>
             <div class="rote-effect-wrapper">
             <div class="category grid one-col">
-                {{#each throw.traitsToRoll as |trait index|}}
+                {{#each traits as |trait index|}}
                 <div class="trait rote-effect" data-index="{{index}}" data-active="false">
                     {{#if ../locks.effects}}
                     <div class="mini-button decoy"></div>
                     <label class="trait-label">
-                        {{localize (m20e-concat "M20E.spheres." trait.key)}}
+                        {{localize (m20e-concat "M20E.traits.spheres." trait.key)}}
                     </label>
                     <div class="ligne"></div>
                     <div class="bullet-display" data-locked="true">

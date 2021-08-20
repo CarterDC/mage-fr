@@ -23,9 +23,11 @@ import { log } from "../utils/utils.js";
     if ( paraItem ) {
       this.options.classes.push(paraItem.data.data.cssClass);
     }
+
     //register a hook on updateActor in order to refresh the diceThrow with updated actor values.
-    Hooks.on('updateActor', this.onUpdateActor.bind(this));
-    Hooks.on('systemSettingChanged', this.onSystemSettingChanged.bind(this));
+    Hooks.on('updateActor', this.onUpdateActor);
+    Hooks.on('updateCoreRollMode', this.onUpdateCoreRollMode);
+    Hooks.on('systemSettingChanged', this.onSystemSettingChanged);
   }
 
   /** @override */
@@ -258,7 +260,7 @@ import { log } from "../utils/utils.js";
    * @param  {Object} options
    * @param  {String} userId
    */
-  onUpdateActor(actor, data, options, userId) {
+  onUpdateActor = (actor, data, options, userId) => {
     if ( actor.id !== this.diceThrow.actor.id ) { return ; }
     if ( options.render === true ) {
       //todo : maybe add more checks to avoid useless updates ?? very minor
@@ -266,8 +268,12 @@ import { log } from "../utils/utils.js";
     }
   }
 
+  onUpdateCoreRollMode = (newRollMode) => {
+    log(`Changement de rollMode : ${newRollMode}`);
+  }
+
   //todo : redo better ! 
-  onSystemSettingChanged(newValue, settingName) {
+  onSystemSettingChanged = (newValue, settingName) => {
     if ( settingName === 'baseRollThreshold' ) {
       this.diceThrow.update();
     }
@@ -280,8 +286,8 @@ import { log } from "../utils/utils.js";
   async close(options={}) {
     //do some cleaning
     Hooks.off('updateActor', this.onUpdateActor);
+    Hooks.off('updateCoreRollMode', this.onUpdateCoreRollMode);
     Hooks.off('systemSettingChanged', this.onSystemSettingChanged);
-    this.closeOnRoll = null;
     this.diceThrow = null;
     
     //call super

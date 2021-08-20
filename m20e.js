@@ -108,7 +108,24 @@ Hooks.once('init', async function () {
   dice.registerInitiative();
 
   //test shit here !
-
+  /*Hooks.on('renderCompendium', (compendiumApp, html, appData) => {
+    if ( appData.cssClass.includes('item') ) {
+      compendiumApp._dragDrop[0].callbacks.dragstart = async function(event) {
+        const itemId = event.currentTarget.dataset.documentId;
+        const item = await appData.collection.getDocument(itemId);
+        //event.dataTransfer.setData(`itemType:${item.type}`, null);
+        event.dataTransfer.setData("text/plain", JSON.stringify({
+          type: appData.collection.documentName,
+          pack: appData.collection.collection,
+          id: itemId
+        }));
+        log(event.dataTransfer.types.length)
+      }
+      //no need for anyone else to deal with the renderCompendium any further 
+      
+      return false;
+    }
+  });*/
 })
 
 /* -------------------------------------------- */
@@ -123,6 +140,15 @@ Hooks.once('ready', async function () {
   }
 
   Hooks.on('hotbarDrop', DiceThrow.toMacro);
+
+  //create a hook on rollMode setting change
+  const onRollModeChange = function(newRollMode) {
+    ChatLog._setRollMode(newRollMode);
+    Hooks.callAll('updateCoreRollMode', newRollMode);
+  };
+  //replace the original onChange function (_setRollMode) with our own that has an extra Hooks call
+  const rollModeSetting = game.settings.settings.get('core.rollMode');
+  rollModeSetting.onChange = onRollModeChange;
 });
 
 Hooks.on('renderChatLog', chat.addChatListeners);

@@ -74,7 +74,7 @@ export class MageRoll extends Roll {
       if ( rollMode ) msg.applyRollMode(rollMode);
       
       // Either create or return the data
-      if ( create ) return cls.create(msg.data,{rollMode: rollMode});
+      if ( create ) return cls.create(msg.data, {rollMode: rollMode});
       else return msg.data;
   }
 

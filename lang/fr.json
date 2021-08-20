@@ -484,6 +484,7 @@
       "newParadigm": "Les modifications de CSS dûes au paradigme ne seront visibles qu'après un refresh (F5).",
       "noJournal": "Aucun lien vers un Journal !",
       "notLocalized": "L'entrée '{path}' n'existe pas dans le fichier de localisation !",
+      "noMoreAvailEffects": "Pas d'effet de sphère disponible !",
       "notOutsideCreation": "Vous ne pouvez pas faire celà en dehors de la 'Création de perso' - demandez au GM.",
       "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
       "packNotFound": "Le compendium '{packName}' n'est pas trouvable !",

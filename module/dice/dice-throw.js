@@ -69,6 +69,7 @@ export default class DiceThrow {
    * also called by every update method call in order to display accurate values in case diceThrow has an App
    */
   prepareData() {
+    //todo : test the new threshold shit for bugs
     this.isEffectRoll = DiceThrow.getIsEffectRoll(this._traitsToRoll);
 
     //dice pool
@@ -237,9 +238,9 @@ export default class DiceThrow {
       if ( this.isEffectRoll || this.xTraitsToRoll[0]?.category === 'arete' ) {
         //throw is pure magic check for specific setting
         healthMod = game.settings.get("mage-fr", "useHealthMalusForMagic") ? 
-          this.actor.data.data.health.malus * -1 : 0;
+          this.actor.data.data.resources.health.malus * -1 : 0;
       } else {
-        healthMod = this.actor.data.data.health.malus * -1;
+        healthMod = this.actor.data.data.resources.health.malus * -1;
       }
     }
     return healthMod;
@@ -351,7 +352,7 @@ export default class DiceThrow {
    */
    updateChosenThreshold(newValue) {
     this.thresholdChosen = newValue;
-    this.thresholdMods.userMod = this.thresholdChosen - this.thresholdBase;
+    //this.thresholdMods.userMod = this.thresholdChosen - this.thresholdBase;
 
     this.update();
   }
