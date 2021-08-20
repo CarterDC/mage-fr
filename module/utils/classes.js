@@ -13,19 +13,6 @@ export class Trait {
       this.itemId = obj.itemId || '';
   }
 
-  split() {
-    return {...Trait.splitPath(this.path), itemId: this.itemId};
-  }
-
-  static splitPath(path) {
-    const propKeys = path.split('.');
-    return {
-      category: propKeys[0],
-      subType: propKeys.length === 3 ? propKeys[1] : null,
-      key: propKeys.length === 3 ? propKeys[2] : (propKeys[1] || null)
-    };
-  }
-
   /**
    * Creates a new instance of Trait by getting infos from an html element's parents (.trait and .category)
    * 
@@ -42,6 +29,29 @@ export class Trait {
       path: path,
       itemId: traitElem.dataset.itemId || ''
     });
+  }
+
+  static fromPath(path) {
+    if ( !path ) { return null; }
+    return new Trait({path: path});
+  }
+
+  static splitPath(path) {
+    const propKeys = path.split('.');
+    return {
+      category: propKeys[0],
+      subType: propKeys.length === 3 ? propKeys[1] : null,
+      key: propKeys.length === 3 ? propKeys[2] : (propKeys[1] || null)
+    };
+  }
+
+  split() {
+    return {...Trait.splitPath(this.path), itemId: this.itemId};
+  }
+
+  get key() {
+    const propKeys = this.path.split('.');
+    return propKeys[propKeys.length - 1];
   }
 
   get isItem() {

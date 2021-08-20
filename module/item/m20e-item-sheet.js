@@ -57,10 +57,6 @@ export default class M20eItemSheet extends ItemSheet {
     //other usefull data
     sheetData.config = CONFIG.M20E;
     sheetData.isGM = game.user.isGM;
-    sheetData.isOwner = this.item.isOwner;
-    sheetData.valuesEditLock = this.item.isOwned ?
-      ( this.item.actor.data.data.creationDone && !game.user.isGM ) :
-      false;
 
     log({item : sheetData.item.name, sheetData : sheetData});
     return sheetData;
@@ -81,7 +77,6 @@ export default class M20eItemSheet extends ItemSheet {
     if ( this.options.editable ) {
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       html.find('.meritflaw select').change(this._onSubtypeChange.bind(this));
-
     }
     if ( game.user.isGM ) {
       

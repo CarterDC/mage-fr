@@ -54,12 +54,12 @@ export default class M20eActorSheet extends ActorSheet {
   /** @override */
   getData(options) {
     const sheetData = super.getData(options); //todo maybe remove that at some point
-    
-    //creates an standard js Object from the actor's PREPARED data (true would return the ._source data)
+
+    //creates a standard js Object from the actor's PREPARED data (true would return the ._source data)
     const actorData = this.actor.data.toObject(false); 
     sheetData.actorData = actorData;
     sheetData.data = actorData.data; //shorthand to avoid 'actorData.data' all the time
-    sheetData.actor = null; //not really usefull nor necessary anyway
+    delete sheetData['actor']; //not really usefull nor necessary anyway
 
     //pre-digest some data to be usable by handlbars (avoid some helpers)
     sheetData.resources = {};
@@ -89,7 +89,6 @@ export default class M20eActorSheet extends ActorSheet {
 
     //other usefull data
     sheetData.isGM = game.user.isGM;
-    sheetData.isOwner = this.actor.isOwner;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
     
@@ -815,7 +814,11 @@ export default class M20eActorSheet extends ActorSheet {
    *  @override
    */
   async _onDrop(event) {
-
+    log(event.dataTransfer.types.length)
+    /*if (itemType) {
+      event.preventDefault();
+      log(itemType.split(':')[1]);
+    }*/
     // Try to extract the data
     let data;
     try {

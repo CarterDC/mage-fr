@@ -47,7 +47,13 @@ export default class M20eActor extends Actor {
     super.prepareDerivedData();
 
     const actorData = this.data;
-    actorData.items.forEach( item => item._prepareOwnedItem() );
+    actorData.items.forEach( 
+      item => item._prepareOwnedItem()
+    );
+    const talents = this.items.filter(item => item.type === 'ability' && item.data.data.subType === 'talent');
+    talents.forEach( talent => {
+      talent.data.data.finalRanks = talent.data.data.value + 1;
+    })
   }
 
   /**
@@ -179,6 +185,7 @@ export default class M20eActor extends Actor {
   }
 
   /**
+   * 
    * Gets base abilities from a valid pack 
    * maps them to itemData objects (mostly for uniformity with _getDefaultAbilities())
    * @param  {CompendiumCollection} pack a valid base.abilities CompendiumCollection
