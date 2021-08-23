@@ -23,11 +23,12 @@ export class Trait {
   static fromElement(htmlElem) {
     const traitElem = htmlElem.closest(".trait");
     const path = traitElem.dataset.path;
+    const itemId = traitElem.dataset.itemId
 
-    if ( !path ) { return null; }
+    if ( !path && !itemId) { return null; }
     return new Trait({
-      path: path,
-      itemId: traitElem.dataset.itemId || ''
+      path: path || '',
+      itemId: itemId || ''
     });
   }
 
@@ -49,6 +50,11 @@ export class Trait {
     return {...Trait.splitPath(this.path), itemId: this.itemId};
   }
 
+  get category() {
+    const propKeys = this.path.split('.');
+    return propKeys[0];
+  }
+
   get key() {
     const propKeys = this.path.split('.');
     return propKeys[propKeys.length - 1];
@@ -61,7 +67,6 @@ export class Trait {
   get isExtended() {
     return false;
   }
-
 }
 
 /**

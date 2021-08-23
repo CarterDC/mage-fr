@@ -30,6 +30,9 @@
 
     <section class="tab" data-group="primary" data-tab="extra">
       {{> "systems/mage-fr/templates/actor/parts/events-cat.hbs"}}
+      {{#if isGM)}}
+      {{> "systems/mage-fr/templates/actor/parts/a-effects-cat.hbs"}}
+      {{/if}}
     </section>
     
   </section>

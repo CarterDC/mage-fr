@@ -3,6 +3,8 @@
   "ACTOR.TypeNpcmage": "PNJ Mage",
   "ACTOR.TypeNpcsleeper": "PNJ Dormeur",
   "ITEM.TypeAbility": "Capacité",
+  "ITEM.TypeActiveeffect": "Active Effect",
+  "ITEM.TypeActiveeffectAlt": "Active<br>Effect",
   "ITEM.TypeBackground": "Historique",
   "ITEM.TypeContact": "Contact",
   "ITEM.TypeEvent": "Évènement de Chronique",
@@ -35,6 +37,7 @@
     },
     "categories": {
       "abilities": "CAPACITÉS",
+      "aeffects": "ACTIVE EFFECTS",
       "arete": "ARÉTÉ",
       "attributes": "ATTRIBUTS",
       "backgrounds": "HISTORIQUES",
@@ -48,8 +51,9 @@
       "xp": "EXPÉRIENCE"
     },
     "category": {
-      "arete": "Arété",
       "abilities": "Capacité",
+      "aeffects": "Active Effect",
+      "arete": "Arété",
       "attributes": "Attribut",
       "backgrounds": "Historique",
       "events": "Évènement",
@@ -64,6 +68,7 @@
     },
     "context": {
       "addJournal": "Créer un journal personnel.",
+      "addXP": "Ajouter de l'XP.",
       "editHealthMalus": "Éditer Malus Santé.",
       "editHealthMax": "Éditer Santé Max.",
       "editParadigm": "Éditer le paradigme.",
@@ -73,6 +78,7 @@
       "removeImage": "Supprimer cette image",
       "removeLink": "Supprimer le lien vers ce Journal.",
       "removeParadigm": "Supprimer la paradigme actuel.",
+      "removeXP": "Supprimer de l'XP.",
       "throwBlindRoll": "Lancer en Aveugle.",
       "throwGmRoll": "Lancer pour le GM.",
       "throwPublicRoll": "Lancer Public.",
@@ -367,6 +373,7 @@
     "hints": {
       "add": "Ajouter",
       "addDice": "Ajouter un Dé.",
+      "aeToggleDisabled": "Activer/désactiver l'Active Effect.",
       "canDropJE": "Saisissez une valeur ou bien glissez/déposez un Journal.",
       "compendiumEdit": "Éditable uniquement via Compendium.",
       "createJE": "Créer un journal pour ce perso.",
@@ -412,6 +419,8 @@
       "value0to5": "Une valeur généralement entre 0 et 5."
     },
     "labels": {
+      "aeDisabled": "Désactivé",
+      "aeEnabled": "Actif",
       "consumable": "Consommable",
       "cssClass": "Classe CSS",
       "currentXP": "XP actuel",
@@ -423,6 +432,8 @@
       "equipable": "Équipable",
       "equiped": "Équipé",
       "extra": "Extra",
+      "key": "Clef",
+      "mode": "Mode",
       "personnalJEs": "Journaux Personnels",
       "pool": "Grpt.",
       "quantity": "Quantité",
@@ -459,6 +470,7 @@
         "skill": "Nvelle Compétence",
         "knowledge": "Nvelle Connaissance"
       },
+      "ActiveEffect": "Nvel ActiveEffect",
       "background": "Nvel Historique",
       "consumable": "Nv Consommable",
       "contact": "Nv Contact",
@@ -499,6 +511,7 @@
       "addItemContent": "<p>Saisissez un nom pour <br><b>{name}</b> :</p>",
       "addItemTitle": "Ajout d'un nouvel Item.",
       "addItemWarning": "<p>⚠ Les noms sont susceptibles d'être référencés par des règles <br> et ne peuvent, par conséquent, être modifiés <strong>que par un GM</strong>.</p>",
+      "addXPContent": "<p>Saisissez le <b>Gain d'XP</b> pour '{name}'<br><i>valeur positive uniquement</i></p>",
       "deleteContent": "<p>La suppression de '{name}' est <b>définitive</b>.<br>Confirmez-vous ?</p>",
       "deleteTitle": "Suppression de {name}",
       "dropParadigm": "<p>Écraser le paradigme existant ?</p>",
@@ -507,6 +520,7 @@
       "lexiconContentEdit": "Modification d'une entrée de lexique pour ce paradigme.",
       "lexiconTitle": "Lexique",
       "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>",
+      "removeXPContent": "<p>Saisissez la <b>Dépense d'XP</b> pour '{name}'<br><i>valeur positive uniquement</i></p>",
       "subTypeContent": "<p>Choisissez un <b>sous-type de {type}</b><br>Cet item sera crée avec les paramètres par défault du sous-type choisi.</p>"
     },
     "subType": {

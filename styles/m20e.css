@@ -47,6 +47,14 @@
 /************
 ** Imports **
 *************/
+.m20e.sheet .fake-placeholder,
+.m20e.dialogue .fake-placeholder {
+  display: block;
+  position: absolute;
+  margin: 5px 5px;
+  font-weight: normal;
+  font-style: italic;
+}
 .m20e.sheet .paradigm-img,
 .m20e.dialogue .paradigm-img {
   position: absolute;
@@ -389,6 +397,7 @@
   text-align: center;
 }
 .m20e .category.rotes .grid,
+.m20e .category.aeffects .grid,
 .m20e .category.events .grid {
   padding: 0 5px;
 }
@@ -559,6 +568,7 @@
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /*  Category specific traits                    */
+  /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
@@ -850,6 +860,10 @@
 }
 .m20e .trait.event .trait-label {
   margin-left: 5px;
+}
+.m20e .trait.aeffect input {
+  flex: 0 0 20px;
+  margin: 0px 0px 0px 1px;
 }
 .m20e .trait.rote-effect {
   width: 100%;

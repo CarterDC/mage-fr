@@ -215,7 +215,7 @@ export default class DiceThrow {
     if ( this.isEffectRoll ) {
       //dice pool base is just arete
       //items might have an arete score (ie Wonders, Talismans...)
-      return this._document.data.data.arete || this.actor.data.data.arete;
+      return this._document.data.data.arete || this.actor.data.data.traits.arete.value;
     } else {
       //dice pool base is sum of all values
       return this.xTraitsToRoll.reduce((acc, cur) => {

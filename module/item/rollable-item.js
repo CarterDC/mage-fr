@@ -30,7 +30,7 @@ export default class M20eRollableItem extends M20eItem {
   _prepareOwnedItem() {
     super._prepareOwnedItem();
     const itemData = this.data;
-
+    //todo cast data into relevant classes instances
   }
 
   /**
@@ -54,13 +54,11 @@ export default class M20eRollableItem extends M20eItem {
 
   _isActuallyRollable(actor=null) {
     actor = actor || this.actor;
-    //check if actor is able to use this rote's effects
-    const spheres = actor.data.data.spheres;
+
     return true;
   }
 
-  async addEffect(availEffects) {
- 
+  async addEffect(availEffects) { 
  
   }
 

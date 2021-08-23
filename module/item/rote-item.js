@@ -73,6 +73,11 @@ export default class M20eRoteItem extends M20eItem {
       ).join(' + ');
   }
 
+  /**
+   * todo : being rollable does not depends on the item but on the individual throws !
+   * find a way to do that !
+   * @param  {} actor=null
+   */
   _isActuallyRollable(actor=null) {
     actor = actor || this.actor;
     //check if actor is able to use this rote's effects

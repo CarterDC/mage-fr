@@ -128,6 +128,8 @@ export default class M20eActorSheet extends ActorSheet {
       new ContextMenu(html, '.header-row.charname', this._getNameContextOptions());
       //ctx menu on traits (edition / link)
       new ContextMenu(html, '.trait', this._getTraitContextOptions());
+      //ctx menu for current xp field
+      new ContextMenu(html, '.currXP', this._getXPContextOptions()); 
     }
     
     if ( game.user.isGM ) {
@@ -354,8 +356,17 @@ export default class M20eActorSheet extends ActorSheet {
     }
     //value has been validated => update the item
     const itemId = element.closest(".trait").dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    return await item.update({"data.value": element.value});
+    //special case of activeEffects checkbox
+    if ( element.closest(".trait").dataset.path === 'aeffects' ) {
+      //activeEffect disabled update (displayed value is !disabled)
+      const effect = this.actor.effects.get(itemId);
+      
+      return await effect.update({"disabled": !(element.checked)});
+    } else {
+      //regular item value update
+      const item = this.actor.items.get(itemId);
+      return await item.update({"data.value": element.value});
+    }
   }
 
   /**
@@ -403,16 +414,15 @@ export default class M20eActorSheet extends ActorSheet {
         //itemType can end up being a list of avail types for the category
         const itemType = CONFIG.M20E.categoryToType[dataset.category];
         const itemSubtype = CONFIG.M20E.categoryToType[dataset.subCategory];
-        this._addItem(itemType, itemSubtype);
+        this._addEmbedded(itemType, itemSubtype);
         break;
       
       case 'edit': //edit regular or virtual Trait (item)
         this._editTrait(Trait.fromElement(buttonElem));
         break;
       
-      case 'remove':
-        const removeItemId = buttonElem.closest(".trait").dataset.itemId;
-        this._removeItem(this.actor.items.get(removeItemId));
+      case 'remove'://rename for embedded
+        this._removeEmbedded(Trait.fromElement(buttonElem));
         break;
       
       case 'roll-item':
@@ -545,8 +555,9 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  * Call for the display of an item sheet to edit a trait
+  * Call for the display of a sheet to edit a trait
   * trait can either be an item (=> display it's item.sheet) or 
+  * an ActiveEffect (=> display it's ActiveEffectConfig)
   * an actor template property (=> display a 'fakeitem' sheet)
   * 
   * @param {Trait} trait  the Trait to be edited
@@ -554,9 +565,16 @@ export default class M20eActorSheet extends ActorSheet {
   _editTrait(trait) {
     const {category, itemId, key } = trait.split();
     if ( itemId ) {
-      // regular item edit
-      const item = this.actor.items.get(itemId);
-      item.sheet.render(true);
+      if ( category === 'aeffects' ) {
+        //item is in fact an activeEffect
+        const effect = this.actor.effects.get(itemId);
+        log(effect)
+        effect.sheet.render(true);
+      } else {
+        //regular item edit
+        const item = this.actor.items.get(itemId);
+        item.sheet.render(true);
+      }
     } else {
       //use a fakeItem dialog to edit attribute (or sphere)
       this._editFakeItem(category, key);
@@ -564,13 +582,13 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  * Prompts user for a name for the new item
-  * creates itemData accordingly and updates actor's embeddedDocuments with it
+  * Prompts user for a name for the new embedded document
+  * either create a new embeddedItem or and ActiveEffect according to 'itemType'
   * 
   * @param {string} itemType type of the item to be created
   * @param {string} itemSubtype subType if any
   */
-  async _addItem(itemType, itemSubtype = null) {
+  async _addEmbedded(itemType, itemSubtype = null) {
     if ( !itemType ) { return; }
 
     //prepare the promptData => prompt for the name of the item-to-be
@@ -591,6 +609,9 @@ export default class M20eActorSheet extends ActorSheet {
     const inputElem = await utils.promptNewValue(promptData);
     const name = inputElem?.value;
     if ( !name ) { return; }
+    //special case of activeeffects
+    if ( itemType === 'ActiveEffect' ) { return this._addEmbeddedEffect(name);}
+
     //validate name against all names in same itemType
     const duplicates = this.actor.items.filter(function (item) {
        return (item.type === itemType) && (item.name === name) 
@@ -609,21 +630,38 @@ export default class M20eActorSheet extends ActorSheet {
     this.actor.createEmbeddedDocuments('Item', [itemData], {renderSheet: true, fromActorSheet: true });
   }
 
-  /**
-  * Prompts user for confirmation before deleting the item from this.actor embedded collection
-   * 
-  * @param {Item} item an item with a name an id, to be deleted
-  */
-  async _removeItem(item) {
-    if ( !item ) { return; }
+  _addEmbeddedItem() {
 
+  }
+
+  _addEmbeddedEffect(name) {
+    const effectData = {label: name};
+    //todo : add aditionnal data (icon, origin, etc..)
+    this.actor.createEmbeddedDocuments('ActiveEffect', [effectData], {renderSheet: true});
+  }
+
+  /**
+  * Prompts user for confirmation before deleting the item/AEffect from this.actor embedded collection
+   * 
+  * @param {Trait} trait a trait containing the category and the itemId of the embedded doc to be deleted
+  */
+  async _removeEmbedded(trait) {
+    const {category, itemId, key } = trait.split();
+    const embedded = category === 'aeffects' ? this.actor.effects.get(itemId) : this.actor.items.get(itemId);
+    if ( !embedded ) { return; }
+
+    const name = category === 'aeffects' ? embedded.label : embedded.name;
     const confirmation = await Dialog.confirm({
       options: {classes: ['dialog', 'm20e']},
-      title: game.i18n.format("M20E.prompts.deleteTitle", {name: item.name}),
-      content: game.i18n.format("M20E.prompts.deleteContent", {name: item.name})
+      title: game.i18n.format("M20E.prompts.deleteTitle", {name: name}),
+      content: game.i18n.format("M20E.prompts.deleteContent", {name: name})
     });
     if ( confirmation ) {
-      this.actor.deleteEmbeddedDocuments('Item', [item.id]);
+      if ( category === 'aeffects' ) { 
+        this.actor.deleteEmbeddedDocuments('ActiveEffect', [embedded.id]);
+      } else {
+        this.actor.deleteEmbeddedDocuments('Item', [embedded.id]);
+      }
     }
   }
 
@@ -656,6 +694,46 @@ export default class M20eActorSheet extends ActorSheet {
     fakeItem.render(true);
   }
 
+  async addXP() {
+    const promptData = new PromptData({
+      title: this.actor.name,
+      promptContent: game.i18n.format('M20E.prompts.addXPContent', {name: this.actor.name}),
+      placeHolder: 0
+    });
+    //prompt for new value
+    const inputElem = await utils.promptNewValue(promptData);
+
+    //only update if valid xpGain
+    if ( inputElem === null ) { return; } //promptDialog was escaped
+    const xpGain = parseInt(inputElem.value);
+    if ( xpGain > 0 ) {
+      //update both currentXP and totalXP (total is just a reminder of all the xp gains)
+      const updateObj = {};
+      updateObj[`data.currentXP`] = this.actor.data.data.currentXP + xpGain;
+      updateObj[`data.totalXP`] = this.actor.data.data.totalXP + xpGain;
+      await this.actor.update(updateObj);
+    }
+  }
+
+  async removeXP() {
+    const promptData = new PromptData({
+      title: this.actor.name,
+      promptContent: game.i18n.format('M20E.prompts.removeXPContent', {name: this.actor.name}),
+      placeHolder: 0
+    });
+    //prompt for new value
+    const inputElem = await utils.promptNewValue(promptData);
+
+    //only update if valid xpLoss
+    if ( inputElem === null ) { return; } //promptDialog was escaped
+    const xpLoss = parseInt(inputElem.value);
+    if ( xpLoss > 0 ) {
+      //only update currentXP and ensure we don't go into negative xp values
+      const newValue = Math.max(this.actor.data.data.currentXP - xpLoss, 0);
+      await this.actor.update({[`data.currentXP`]: newValue});
+    }
+  }
+
   /* -------------------------------------------- */
   /*  Context Menus                               */
   /* -------------------------------------------- */
@@ -682,13 +760,13 @@ export default class M20eActorSheet extends ActorSheet {
         icon: '<i class="fas fa-trash"></i>',
         callback: () => {
           const paradigm = this.actor.paradigm;
-          this._removeItem(paradigm);
+          this._removeEmbedded(paradigm);
         },
         condition: () => {
           return this.actor.paradigm; 
         }
       }
-    ];
+    ]
   }
 
   /**
@@ -727,7 +805,7 @@ export default class M20eActorSheet extends ActorSheet {
           return element[0].dataset.linkId;
         }
       }
-    ];
+    ]
   }
 
   /**
@@ -778,7 +856,32 @@ export default class M20eActorSheet extends ActorSheet {
           return (element[0].dataset.resource === 'health');
         }
       }
-    ];
+    ]
+  }
+
+  _getXPContextOptions() {
+    return [
+      {
+        name: game.i18n.localize('M20E.context.addXP'),
+        icon: '<i class="fas fa-plus-square"></i>',
+        callback: () => {
+          this.addXP();
+        },
+        condition: () => {
+          return game.user.isGM;
+        }
+      },
+      {
+        name: game.i18n.localize('M20E.context.removeXP'),
+        icon: '<i class="fas fa-minus-square"></i>',
+        callback: () => {
+          this.removeXP();
+        },
+        condition: () => {
+          return this.actor.data.data.currentXP > 0;
+        }
+      }
+    ]
   }
 
   /* -------------------------------------------- */
