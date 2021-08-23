@@ -20,6 +20,7 @@ import M20eRollableItem from './module/item/rollable-item.js'
 import M20eActorSheet from './module/actor/m20e-actor-sheet.js'
 import M20eMageActorSheet from './module/actor/mage-actor-sheet.js'
 import M20eItemSheet from './module/item/m20e-item-sheet.js'
+import M20eAeSheet from './module/item/m20e-ae-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 import M20eRoteSheet from './module/item/rote-sheet.js'
 import M20eRollableSheet from './module/item/rollable-sheet.js'
@@ -93,6 +94,8 @@ Hooks.once('init', async function () {
     types: ["weapon"],//todo add other rollable types (wonders...)
     makeDefault: true
   });
+  //ActiveEffect sheet
+  CONFIG.ActiveEffect.sheetClass = M20eAeSheet;
 
   registerSystemSettings(); //system settings
   registerHotbarOverride(); //hack on the hotbar for shifKey on macros
@@ -108,24 +111,7 @@ Hooks.once('init', async function () {
   dice.registerInitiative();
 
   //test shit here !
-  /*Hooks.on('renderCompendium', (compendiumApp, html, appData) => {
-    if ( appData.cssClass.includes('item') ) {
-      compendiumApp._dragDrop[0].callbacks.dragstart = async function(event) {
-        const itemId = event.currentTarget.dataset.documentId;
-        const item = await appData.collection.getDocument(itemId);
-        //event.dataTransfer.setData(`itemType:${item.type}`, null);
-        event.dataTransfer.setData("text/plain", JSON.stringify({
-          type: appData.collection.documentName,
-          pack: appData.collection.collection,
-          id: itemId
-        }));
-        log(event.dataTransfer.types.length)
-      }
-      //no need for anyone else to deal with the renderCompendium any further 
-      
-      return false;
-    }
-  });*/
+
 })
 
 /* -------------------------------------------- */
@@ -155,7 +141,4 @@ Hooks.on('renderChatLog', chat.addChatListeners);
 Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
 
 //testing shit
-/*
-Hooks.on('renderCompendium', async function(compApp, html, compCollection) {
-  log(compApp._dragDrop[0].callbacks)
-})*/
+

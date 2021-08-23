@@ -2,29 +2,24 @@
     {{!-- EVENTS --}}
     {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="aeffects" lock = locks.aeffects addButton = true}}
     <div class="grid one-col">
-        {{#each items.events as |event key|}}
-        <div class="trait event" data-item-id="{{event._id}}">
-            <img class="trait-img" src="{{event.img}}"/>
-            <div class="vertical-wrapper">
-                <div class="horizontal-wrapper">
-                    <label class="trait-label" data-item-id="{{event._id}}">
-                        {{event.name}}
-                    </label>
-                    <div class="ligne"></div>
-                    <div class="edit-bar" data-locked="{{../locks.events}}">
-                        <a class="mini-button" data-action="edit"><i class="fas fa-pencil-alt"></i></a>
-                        <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
-                    </div>
-                    <div class="bullet-display" data-locked="{{../locks.events}}">
-                        {{event.data.date}}
-                    </div>
-                </div>
-                <div class="one-liner-desc" data-expanded="false">
-                  <a class="mini-button" data-action="expand">
-                    <i class="fas fa-ellipsis-h"></i>
-                  </a>
-                  {{{event.data.displayDescription}}}
-                </div>
+        {{#each effects as |effect key|}}
+        <div class="trait aeffect" data-path="aeffects" data-item-id="{{effect._id}}">
+            <img class="trait-img" src="{{effect.icon}}"/>
+            <label class="trait-label">
+                {{effect.label}}
+            </label>
+            <div class="ligne"></div>
+            <div class="edit-bar" data-locked="{{../locks.aeffects}}">
+                <input class="inline-edit" type="checkbox" {{checked (not effect.disabled)}} data-dtype="Boolean" title="{{localize 'M20E.hints.aeToggleDisabled'}}"/>
+                <a class="mini-button" data-action="edit"><i class="fas fa-pencil-alt"></i></a>
+                <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
+            </div>
+            <div class="bullet-display" data-locked="{{../locks.aeffects}}">
+                {{#if effect.disabled}}
+                {{localize "M20E.labels.aeDisabled"}}
+                {{else}}
+                {{localize "M20E.labels.aeEnabled"}}
+                {{/if}}
             </div>
         </div>
         {{/each}}

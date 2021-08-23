@@ -1,9 +1,9 @@
 <section class="category xp" data-category="xp">
     {{!-- EVENTS --}}
     {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="xp" lock = locks.xp addButton = false}}
-    <p>⚠ Under Construction ⚠</p>
-    <div class="grid two-col">
-        <div class= "field" title="{{localize 'M20E.hints.currentXP'}}">
+    <div class="flexrow">
+      <div class="flexcol">
+        <div class= "field currXP" title="{{localize 'M20E.hints.currentXP'}}">
             <label for="data.currentXP">{{localize "M20E.labels.currentXP"}} : </label>
             <input name="data.currentXP" disabled type="text" value="{{data.currentXP}}" data-dtype="Number"/>
         </div>
@@ -11,9 +11,12 @@
             <label for="data.totalXP">{{localize "M20E.labels.totalXP"}} : </label>
             <input name="data.totalXP" disabled type="text" value="{{data.totalXP}}" data-dtype="Number"/>
         </div>
-    </div>
-    <div class= "field" title="{{localize 'M20E.hints.studyPoints'}}">
-        <label for="data.studyPoints">{{localize "M20E.labels.studyPoints"}} : </label>
-<textarea name="data.studyPoints">{{data.studyPoints}}</textarea>
+      </div>
+      <div class="flexcol" style="flex: 1 1 50%;">
+          <div class= "field" title="{{localize 'M20E.hints.studyPoints'}}">
+              <label for="data.studyPoints">{{localize "M20E.labels.studyPoints"}} : </label>
+<textarea name="data.studyPoints" {{#if locks.xp}}readonly{{/if}}>{{data.studyPoints}}</textarea>
+        </div>
+       </div>
     </div>
 </section>

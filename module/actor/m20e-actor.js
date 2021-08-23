@@ -145,19 +145,18 @@ export default class M20eActor extends Actor {
     const otherBaseItems = [];
     otherBaseItems.push ({
       type: 'paradigm',
-      img: '',
+      img: '', //todo : maybe choose an icon for that ?
       name: game.i18n.format(`M20E.paradigmName`, {name: actorData.name})
     });
 
     const items = [...baseAbilities, ...otherBaseItems];
+    //update all items at once
+    actorData.update({items});
 
     //updates token config for player character
     if ( actorData.data.isCharacter === true ) {
       actorData.token.update(CONFIG.M20E.characterTokenConfig);
     }
-
-    //update everything
-    actorData.update({items});
   }
 
   /**
@@ -338,7 +337,7 @@ export default class M20eActor extends Actor {
 
   //health & willpower
   addWound(resourceName, index) {
-    const base1Index = index += 1; // cuz sometimes you're just too tired to think in base0
+    const base1Index = index + 1; // cuz sometimes you're just too tired to think in base0
     let {max, bashing, lethal, aggravated} = this.data.data.resources[resourceName];
 
     //decrease bashing value first, then lethal, then aggravated
@@ -360,7 +359,7 @@ export default class M20eActor extends Actor {
 
   //health & willpower
   removeWound(resourceName, index) {
-    const base1Index = index += 1;
+    const base1Index = index + 1;
     let {max, bashing, lethal, aggravated} = this.data.data.resources[resourceName];
 
     //increase aggravated value first, then lethal, then bashing

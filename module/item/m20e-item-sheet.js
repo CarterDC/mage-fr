@@ -50,6 +50,7 @@ export default class M20eItemSheet extends ItemSheet {
     const sheetData = super.getData(options);
 
     //the item's data
+    //todo : redo like actor sheet's
     const itemData = this.item.data.toObject(false);
     sheetData.item = itemData;
     sheetData.data = itemData.data;
@@ -77,6 +78,7 @@ export default class M20eItemSheet extends ItemSheet {
     if ( this.options.editable ) {
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       html.find('.meritflaw select').change(this._onSubtypeChange.bind(this));
+      html.on('blur', '.header-edit-name', this._onChangeInput.bind(this));
     }
     if ( game.user.isGM ) {
       

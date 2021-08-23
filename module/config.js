@@ -53,7 +53,8 @@ M20E.lockedCategories = [
   "contacts",
   "rotes",
   "equipables",
-  "xp"
+  "xp",
+  "aeffects"
 ]
 
 //
@@ -68,6 +69,7 @@ M20E.protectedCategories = [
 
 
 M20E.categoryToType ={
+  aeffects: "ActiveEffect",
   abilities: "ability",
   talents: "talent",
   skills: "skill",

@@ -56,10 +56,10 @@ export default class M20eMageActor extends M20eActor {
   getThrowFlavor(xTraitsToRoll=[]) {
     if ( DiceThrow.getIsEffectRoll(xTraitsToRoll) ) {
       //pure magical throw => arete roll + all spheres with value in the effect 
-      const throwEffect = this.xTraitsToRoll.map(effect => 
-        `${this.actor.locadigm(`spheres.${effect.key}`)} (${effect.value})`
+      const throwEffect = xTraitsToRoll.map(effect => 
+        `${effect.name} (${effect.value})`
         ).join(' + ');
-      return `${this.actor.locadigm('diceThrows.areteThrow')} :<br>
+      return `${this.locadigm('diceThrows.areteThrow')} :<br>
         ${game.i18n.format('M20E.diceThrows.effect', {effect: throwEffect})}.`
     } else {
       return super.getThrowFlavor(xTraitsToRoll);
@@ -68,7 +68,7 @@ export default class M20eMageActor extends M20eActor {
 
   increaseMagepower(index){
     if( ! utils.canSeeParadox() ) { return; }
-    const base1Index = index += 1;
+    const base1Index = index + 1;
     let {quintessence, paradox} = this.data.data.resources['magepower'];
 
     //adding quint and/or removing paradox
@@ -85,7 +85,7 @@ export default class M20eMageActor extends M20eActor {
 
   decreaseMagepower(index){
     if ( ! utils.canSeeParadox() ) { return; }
-    const base1Index = index += 1;
+    const base1Index = index + 1;
     let {quintessence, paradox} = this.data.data.resources['magepower'];
 
     //adding paradox and/or removing quintessence
