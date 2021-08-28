@@ -177,6 +177,7 @@ M20E.defaultImg = { // todo : find suitable svgs and add default for categories
   event: "icons/svg/book.svg",
   contact: "icons/svg/angel.svg",
   rote: "icons/svg/daze.svg",
+  ActiveEffect: "icons/svg/upgrade.svg",
   default: "icons/svg/item-bag.svg"
 }
 
@@ -218,3 +219,5 @@ M20E.itemSheetOptions = {
     height: 600
   }
 }
+
+M20E.traits = {};

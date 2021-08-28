@@ -316,3 +316,14 @@ export function propertiesToArray(obj = {}, prevPath = '') {
       }, []);
 }
 
+export function traitsToPaths(obj = {}, prevPath = '') {
+  return Object.entries(obj)
+    .reduce((acc, [key, value]) => 
+      {
+        let path = addDelimiter(prevPath, key);
+        return value.value !== undefined ?
+          acc.concat(path) :
+          acc.concat(traitsToPaths(value, path))
+      }, []);
+}
+

@@ -25,6 +25,15 @@
     //border-top: 3px double var(--highlightColor);
     background: var(--m20e-midGrey); 
   }
+  .bullet[data-state='upgraded']{
+    background: var(--m20e-lightGrey);
+  }
+  .bullet[data-state='downgraded']{
+    background-image: url('../assets/ui/bullet-strike.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+  }
 }
 .bullet-display[data-locked='false']{
   display: none;

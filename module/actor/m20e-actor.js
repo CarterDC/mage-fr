@@ -50,10 +50,6 @@ export default class M20eActor extends Actor {
     actorData.items.forEach( 
       item => item._prepareOwnedItem()
     );
-    const talents = this.items.filter(item => item.type === 'ability' && item.data.data.subType === 'talent');
-    talents.forEach( talent => {
-      talent.data.data.finalRanks = talent.data.data.value + 1;
-    })
   }
 
   /**
@@ -83,12 +79,20 @@ export default class M20eActor extends Actor {
   }
 
   /**
-   * todo : description ^^
+   * called at the end of prepareBaseData()
+   * populates a tree of traits in actorData from every item that is a virtualTrait
+   * Also populate a tree of all traits in the config
    */
   prepareTraits() {
     const actorData = this.data;
+    //add/update config with all item traits
+    utils.traitsToPaths(actorData.data.traits).forEach( path => {
+      foundry.utils.setProperty(CONFIG.M20E.traits, path, game.i18n.localize(`M20E.traits.${path}`));
+    });
+    /*actorData.data.traits.abilities = {talents:{}, skills:{}, knowledges:{}};
+    const items = [...actorData.items.entries()].map( set => set[1]);
+    items.sort((a, b) => (a.data.sort || 0) - (b.data.sort || 0));*/
     //todo : maybe add copy of init value in here too
-    //beware of active effects.
     actorData.items.forEach( item => {
       if ( item.isTrait ) {
         const traitData = item.getTraitData();
@@ -96,15 +100,62 @@ export default class M20eActor extends Actor {
           `${traitData.cat}.${traitData.subType}.${traitData.key}` : 
           `${traitData.cat}.${traitData.key}`;
         foundry.utils.setProperty(actorData.data.traits, relativePath, traitData.data);
-        foundry.utils.setProperty(game.m20e.traits, relativePath, traitData.data.name);
+        //add/update config with all item traits
+        foundry.utils.setProperty(CONFIG.M20E.traits, relativePath, traitData.data.name);
       } else if (item.data.type === 'paradigm') {
         //not a trait but since we're iterrating items...
         actorData.data.paraItem = item;
       }
     });
     //add willpower property in the traits array (for roll purposes)
-    //todo : check if willpower rolls use value or valuemax ?
     foundry.utils.setProperty(actorData.data.traits, 'willpower', {value: actorData.data.resources.willpower.max});
+  }
+
+  /**
+   * @override
+   * mostly vanilla function
+   * adds a _sourceValue to properties that are gonna be changed by the override
+   */
+  applyActiveEffects() {
+    const overrides = {};
+
+    // Organize non-disabled effects by their application priority
+    const changes = this.effects.reduce((changes, e) => {
+      if ( e.data.disabled ) return changes;
+      return changes.concat(e.data.changes.map(c => {
+        c = foundry.utils.duplicate(c);
+        c.effect = e;
+        c.priority = c.priority ?? (c.mode * 10);
+        return c;
+      }));
+    }, []);
+    changes.sort((a, b) => a.priority - b.priority);
+
+    // Apply all changes
+    for ( let change of changes ) {
+      const sourceValue = foundry.utils.getProperty(this.data, change.key);
+      const result = change.effect.apply(this, change);
+      if ( result !== null ) {
+        //add _sourceValue to the overriden property
+        const keys = change.key.split('.');
+        keys[keys.length-1] = '_sourceValue';
+        if ( !foundry.utils.hasProperty(this.data, keys.join('.')) ) {
+          //don't set sourceValue if it has already been set before
+          foundry.utils.setProperty(this.data, keys.join('.'), sourceValue);
+          //also add the property to the item if trait's actually an item
+          keys[keys.length-1] = 'itemId';
+          if ( foundry.utils.hasProperty(this.data, keys.join('.')) ) {
+            const item = this.items.get(foundry.utils.getProperty(this.data, keys.join('.')));
+            item.data.data._overrideValue = result;
+          }
+        }
+        //vanilla
+        overrides[change.key] = result;
+      }
+    }
+
+    // Expand the set of final overrides
+    this.overrides = foundry.utils.expandObject(overrides);
   }
 
   /* -------------------------------------------- */

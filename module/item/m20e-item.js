@@ -176,16 +176,17 @@ export default class M20eItem extends Item {
   }
 
   getTraitData() {
+    const itemData = this.data;
     return {
-      cat: CONFIG.M20E.traitToCat[this.data.type],
-      subType: CONFIG.M20E.traitToCat[this.data.data.subType] || null,
-      key: utils.sanitize(this.data.name),
+      cat: CONFIG.M20E.traitToCat[itemData.type],
+      subType: CONFIG.M20E.traitToCat[itemData.data.subType] || null,
+      key: utils.sanitize(itemData.name),
       data: {
-        name: this.data.name,
-        displayName: this.data.data.displayName || '',
-        value: parseInt(this.data.data.value),
-        specName:  this.data.data.specialisation || '',
-        itemId: this.data._id
+        name: itemData.name,
+        displayName: itemData.data.displayName || '',
+        value: parseInt(itemData.data.value),
+        specName:  itemData.data.specialisation || '',
+        itemId: itemData._id
       }
     }
   }

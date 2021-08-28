@@ -95,7 +95,7 @@ Hooks.once('init', async function () {
     makeDefault: true
   });
   //ActiveEffect sheet
-  //CONFIG.ActiveEffect.sheetClass = M20eAeSheet;
+  CONFIG.ActiveEffect.sheetClass = M20eAeSheet;
 
   registerSystemSettings(); //system settings
   registerHotbarOverride(); //hack on the hotbar for shifKey on macros

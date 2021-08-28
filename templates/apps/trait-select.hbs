@@ -1,0 +1,41 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <div class="dialog-block flavor">
+        <select name="2">
+            {{#select key2}}
+                {{#each keys2 as |value key|}}
+                    <option value="{{key}}">{{value}}</option>
+                {{/each}}
+            {{/select}}
+        </select>
+        {{#if keys3}}
+        <select name="3">
+            {{#select key3}}
+                {{#each keys3 as |value key|}}
+                    <option value="{{key}}">{{value}}</option>
+                {{/each}}
+            {{/select}}
+        </select>
+        {{/if}}
+        {{#if keys4}}
+          <select name="4">
+              {{#select key4}}
+                  {{#each keys4 as |value key|}}
+                      <option value="{{key}}">{{value}}</option>
+                  {{/each}}
+              {{/select}}
+          </select>
+        {{/if}}
+    </div>
+    <div class="dialog-block flavor">
+        <div class= "field" title="{{localize 'M20E.hints.key'}}">
+            <label for="key">{{localize "M20E.labels.key"}} : </label>
+            <input name="key" type="text" value="{{data.key}}" data-dtype="String"/>
+        </div>
+    </div>
+    <div class="dialog-buttons">
+        <button class="dialog-button ok default" data-button="ok">
+            <i class="fas fa-check"></i>
+            OK
+        </button>
+    </div>
+</form>
