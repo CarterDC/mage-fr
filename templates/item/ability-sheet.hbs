@@ -9,11 +9,7 @@
               <div class= "field">
                   <label for="data.subType">{{localize "M20E.labels.subType"}} : </label>
                   <select name="data.subType">
-                      {{#select data.subType}}
-                          {{#each config.abilitySubTypes as |value key|}}
-                              <option value="{{key}}">{{localize value}}</option>
-                          {{/each}}
-                      {{/select}}
+                      {{selectOptions config.abilitySubTypes selected=data.subType localize=true}}
                   </select>
               </div>
               <div class= "field" title="{{localize 'M20E.hints.value0to5'}}">

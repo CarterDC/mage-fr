@@ -7,7 +7,7 @@ import { log } from "../utils/utils.js";
  * allows the edition of some actor's traits as well as it's lexicon.
  * @extends {FormApplication}
  */
-export class FakeItem extends FormApplication {
+export class FakeItem extends DocumentSheet {
 
   /** @override */
   constructor(actor, itemData) {
@@ -53,7 +53,7 @@ export class FakeItem extends FormApplication {
 
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
-
+    log('ça passe')
     return sheetData;
   }
 

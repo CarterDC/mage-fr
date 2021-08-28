@@ -18,28 +18,30 @@
             <br> {{!-- todo replace br with css rule on item section tab margintop --}}
             <div class="grid two-col">
                 <div class= "field" title="{{localize 'M20E.hints.aeToggleDisabled'}}">
-                    <label>{{localize "M20E.labels.aeEnabled"}} : </label>
-                    <input class="inline-edit" data-name ="disabled" type="checkbox" {{checked (m20e-not data.disabled)}} data-dtype="Boolean"/>
+                    <label>{{localize "M20E.labels.aeEnabled"}} : </label><br>
+                    <a class="mini-button" data-action="check" title="{{localize 'M20E.hints.aeToggleDisabled'}}">{{#if (m20e-not data.disabled)}} <i class="fas fa-check"></i>{{/if}}</a>
                 </div>
                 <div class= "field" title="{{localize 'M20E.hints.origin'}}">
                     <label for="origin">{{localize "M20E.labels.origin"}} : </label>
-                    <input name="origin" type="text" value="{{data.origin}}" data-dtype="String"/>
+                    <input name="origin" disabled type="text" value="{{data.origin}}" data-dtype="String"/>
                 </div>
             </div>
         </section>
 
         <section class="tab" data-group="primary" data-tab="effects">
           <br>
-            <div class="category grid one-col">
-                <div class="trait lexicon">
-                    <label>{{localize 'M20E.labels.key'}}</label>
-                    <label>{{localize 'M20E.labels.mode'}}</label>
-                    <label>{{localize 'M20E.labels.value'}}</label>
+            <div class="category grid effect-grid">
+                <label>{{localize 'M20E.labels.trait'}}</label>
+                <label>{{localize 'M20E.labels.mode'}}</label>
+                <label>{{localize 'M20E.labels.value'}}</label>
+                <div class="edit-bar" data-locked="{{../locks.effects}}">
                     <div class="mini-button decoy"></div>
                     <div class="mini-button decoy"></div>
                 </div>
-                {{#each effects as |effect index|}}
-                <div class="trait lexicon" data-index="{{index}}" data-active="false">
+            </div>
+            {{#each effects as |effect index|}}
+            <div class="trait aeffect" data-index="{{index}}" data-active="false">
+                <div class="category grid effect-grid">
                     {{#if ../locks.effects}}
                     <label class="trait-label">
                         {{effect.key}}
@@ -51,9 +53,7 @@
                         {{effect.value}}
                     </label>
                     {{else}}
-                    <label class="trait-label">
-                        {{effect.key}}
-                    </label>
+                    <input type="text" value="{{effect.key}}" disabled/>
                     <select>
                     {{#select effect.mode}}
                         {{#each ../modes as |value key|}}
@@ -62,14 +62,14 @@
                     {{/select}}
                     </select>
                     <input class="inline-edit" data-name ="value" type="text" value="{{effect.value}}" data-dtype="Number" min="-5" max="5"/>
-                    <div class="edit-bar" data-locked="{{../locks.lexicon}}">
+                    {{/if}}
+                    <div class="edit-bar" data-locked="{{../locks.effects}}">
                         <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
                         <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
                     </div>
-                    {{/if}}
                 </div>
-                {{/each}}
             </div>
+            {{/each}}
         </section>
     </section>
 </form>

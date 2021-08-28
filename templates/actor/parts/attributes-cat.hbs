@@ -19,9 +19,7 @@
         <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a> 
       </div>
       <div class="bullet-display" data-locked="{{../locks.attributes}}">
-        {{#m20e-forLoop 5}}
-        <span class="bullet" data-index="{{this}}" data-state="{{bulletState attribute.value this}}"></span>
-        {{/m20e-forLoop}}
+        {{{m20e-bulletDisplay attribute 5}}}
       </div>
     </div>
     {{/each}}

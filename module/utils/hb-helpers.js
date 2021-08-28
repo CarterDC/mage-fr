@@ -72,9 +72,27 @@ export const registerHandlebarsHelpers = function() {
     //index of 'this' is base 0
     return this < valueMax;
   })
-  
-  Handlebars.registerHelper("bulletState", function(value, index) {
-    return (value > index) ? "active" : "";
+
+  Handlebars.registerHelper("m20e-bulletDisplay", function(trait, nbIterr) {
+    let returnString = '';
+    const currValue = foundry.utils.hasProperty(trait, '_overrideValue') ? trait._overrideValue : trait.value;
+    const origValue = foundry.utils.hasProperty(trait, '_sourceValue') ? trait._sourceValue : trait.value;
+    const min = Math.min(currValue, origValue);
+    const max = Math.max(currValue, origValue);
+    for (let index = 0; index < nbIterr; index++) {
+      let state = '';
+      if ( index < min ) {
+        state = 'active';
+      } else if ( index < max ) {
+        state = ( currValue > origValue ? 'upgraded': 'downgraded');
+      }
+      returnString += `<span class="bullet" data-index="${index}" data-state="${state}"></span>`;
+    }
+    return returnString;
+  })
+
+  Handlebars.registerHelper("bulletState", function(currValue, index) {
+    return (currValue > index) ? "active" : "";
   })
 
   Handlebars.registerHelper('in', function() {

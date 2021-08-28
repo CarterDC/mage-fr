@@ -65,7 +65,9 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.resources = {};
     sheetData.resources.health = this.getResourceData('health');
     sheetData.resources.willpower = this.getResourceData('willpower');
-    
+
+    sheetData.talents = actorData.data.traits.abilities.talents;
+
     //dispatch items into categories and subtypes
     //sheetData.items is already sorted on item.sort in the super
     //todo : maybe don't put all the categories inside sheetData.items ?
@@ -356,17 +358,8 @@ export default class M20eActorSheet extends ActorSheet {
     }
     //value has been validated => update the item
     const itemId = element.closest(".trait").dataset.itemId;
-    //special case of activeEffects checkbox
-    if ( element.closest(".trait").dataset.path === 'aeffects' ) {
-      //activeEffect disabled update (displayed value is !disabled)
-      const effect = this.actor.effects.get(itemId);
-      
-      return await effect.update({"disabled": !(element.checked)});
-    } else {
-      //regular item value update
-      const item = this.actor.items.get(itemId);
-      return await item.update({"data.value": element.value});
-    }
+    const item = this.actor.items.get(itemId);
+    return await item.update({"data.value": element.value});
   }
 
   /**
@@ -434,6 +427,12 @@ export default class M20eActorSheet extends ActorSheet {
       case 'expand':
         this._expandDescription(buttonElem);
         break;
+
+      case 'check':
+        //updates the disabled value of an active affect
+        const effectId = buttonElem.closest(".trait").dataset.itemId;
+        const effect = this.actor.effects.get(effectId);
+        effect.update({"disabled": !(effect.data.disabled)});
     }
   }
 
@@ -568,7 +567,6 @@ export default class M20eActorSheet extends ActorSheet {
       if ( category === 'aeffects' ) {
         //item is in fact an activeEffect
         const effect = this.actor.effects.get(itemId);
-        log(effect)
         effect.sheet.render(true);
       } else {
         //regular item edit
@@ -635,8 +633,11 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   _addEmbeddedEffect(name) {
-    const effectData = {label: name};
-    //todo : add aditionnal data (icon, origin, etc..)
+    const effectData = {
+      label: name,
+      icon: CONFIG.M20E.defaultImg['ActiveEffect'],
+      origin: 'added-manually'
+    };
     this.actor.createEmbeddedDocuments('ActiveEffect', [effectData], {renderSheet: true});
   }
 

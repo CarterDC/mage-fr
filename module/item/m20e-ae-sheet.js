@@ -1,9 +1,11 @@
+import { TraitSelect } from '../apps/trait-select-dialog.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
 /**
- *
+ * a fake itemsheet to edit ActiveEffects in lieu of ActiveEffectConfig
+ * doesn't display lot of 'useless' options ie: time related stuff
  * @extends {DocumentSheet}
  */
 export default class M20eAeSheet extends DocumentSheet {
@@ -46,7 +48,7 @@ export default class M20eAeSheet extends DocumentSheet {
 
    /** @inheritdoc */
    get template() {
-    return `systems/mage-fr/templates/item/active-effect-sheet.hbs`;
+    return `systems/mage-fr/templates/apps/active-effect-sheet.hbs`;
   }
 
   /** @inheritdoc */
@@ -111,58 +113,56 @@ export default class M20eAeSheet extends DocumentSheet {
 
   /* -------------------------------------------- */
 
-/* 
-_getHeaderButtons() {
-  let buttons = super._getHeaderButtons();
-  let canConfigure = this.isEditable && game.user.isGM;
-  if (!canConfigure) return buttons;
-  
-  // Add a Sheet Configuration button
-  buttons.unshift({
-    label: "Sheet",
-    class: "configure-sheet",
-    icon: "fas fa-cog",
-    onclick: ev => this._onConfigureSheet(ev)
-  });
-  return buttons;
-}*/
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+    let canConfigure = this.isEditable && game.user.isGM;
+    if (!canConfigure) return buttons;
+    
+    // Add a Sheet Configuration button
+    buttons.unshift({
+      label: "Sheet",
+      class: "configure-sheet",
+      icon: "fas fa-cog",
+      onclick: ev => this._onDisplayVanillaSheet(ev)
+    });
+    return buttons;
+  }
+
+  _onDisplayVanillaSheet(event) {
+    log('plop');
+  }
 
 /* -------------------------------------------- */
 /*  Event Listeners and Handlers                */
 /* -------------------------------------------- */
 
-/** @override */
-activateListeners(html) {
+  /** @override */
+  activateListeners(html) {
 
-  //actions for everyone  
+    //actions for everyone  
 
-  //editable only (roughly equals 'isOwner')
-  if ( this.options.editable ) {
+    //editable only (roughly equals 'isOwner')
+    if ( this.options.editable ) {
 
+    }
+    if ( game.user.isGM ) {
+      html.find('img[data-edit]').click(ev => this._onEditImage(ev));
+      html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
+      html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
+      html.find('select').change(this._onSelectChange.bind(this));
+    }
+    super.activateListeners(html);
   }
-  if ( game.user.isGM ) {
-    html.find('img[data-edit]').click(ev => this._onEditImage(ev));
-    html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
-    html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
-    html.find('select').change(this._onSelectChange.bind(this));
-  }
-  super.activateListeners(html);
-}
 
-  //special case of activeEffects checkbox
-  //activeEffect disabled update (displayed value is !disabled)
+  //
   async _onInlineEditChange(event) {
     event.preventDefault();
     const element = event.currentTarget;
-    if ( element.dataset.name === 'disabled' ) {
-      return await this.effect.update({"disabled": !(element.checked)});
-    } else {
-      const index = element.closest(".trait").dataset.index;
+    const index = element.closest(".trait").dataset.index;
 
-      const changes = duplicate(this.effect.data.changes);
-      changes[index].value = parseInt(element.value);
-      return await this.effect.update({'changes': changes});
-    }
+    const changes = duplicate(this.effect.data.changes);
+    changes[index].value = parseInt(element.value);
+    return await this.effect.update({'changes': changes});
   }
 
   async _onSelectChange(event) {
@@ -246,13 +246,21 @@ activateListeners(html) {
       case 'remove':
         this.removeItem(buttonElem);
         break;
+      case 'check':
+        this.disableItem(buttonElem);
+        break;
     }
+  }
+
+  async disableItem(buttonElem) {
+    //updates the disabled value of an active affect
+    this.effect.update({"disabled": !(this.effect.data.disabled)});
   }
 
   //to be implemented by subClasses
   async addItem(buttonElem) {
     const changes = duplicate(this.effect.data.changes);
-    changes.push({key: "None", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "0"});
+    changes.push({key: "data.traits.attributes.stre.value", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "0"});
     return await this.effect.update({'changes': changes});
   }
 
@@ -261,7 +269,14 @@ activateListeners(html) {
     const effectIndex = buttonElem.closest(".trait").dataset.index;
     const changes = duplicate(this.effect.data.changes);
     const currKey = changes[effectIndex].key;
-    log(currKey);
+    const newKey = await TraitSelect.prompt({
+      name: this.effect.data.label,
+      key: currKey
+    });
+    if ( !newKey ) { return; }
+    if ( ! foundry.utils.hasProperty(this.actor.data, newKey) ) { return;}
+    changes[effectIndex].key = newKey;
+    return await this.effect.update({'changes': changes});
   }
 
   //to be implemented by subClasses

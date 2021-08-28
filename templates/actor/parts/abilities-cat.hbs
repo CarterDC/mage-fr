@@ -29,9 +29,7 @@
             <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
           </div>
           <div class="bullet-display" data-locked="{{../../locks.abilities}}">
-            {{#m20e-forLoop 5}}
-            <span class="bullet" data-index="{{this}}" data-state="{{bulletState ability.data.value this}}"></span>
-            {{/m20e-forLoop}}
+            {{{m20e-bulletDisplay ability.data 5}}}
           </div>
         </div>
         {{/each}}
