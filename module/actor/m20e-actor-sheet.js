@@ -66,8 +66,6 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.resources.health = this.getResourceData('health');
     sheetData.resources.willpower = this.getResourceData('willpower');
 
-    sheetData.talents = actorData.data.traits.abilities.talents;
-
     //dispatch items into categories and subtypes
     //sheetData.items is already sorted on item.sort in the super
     //todo : maybe don't put all the categories inside sheetData.items ?

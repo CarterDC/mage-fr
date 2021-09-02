@@ -1,6 +1,6 @@
 {
   "Actor": {
-    "types": ["charmage"],
+    "types": ["charmage", "npcmage", "npcsleeper"],
     "templates":{
       "explanations": {
         "__comment1__": "attributes entries are ordered to be AUTO populated in 3 columns",
@@ -164,6 +164,150 @@
           "displayDescription":""
         }
       },
+
+      "bio":{
+        "faction":{
+          "displayValue": "",
+          "link": {}
+        },
+        "birthday":{
+          "displayValue": ""
+        },
+        "mentor":{
+          "displayValue": "",
+          "link": {}
+        },
+        "apparentAge":{
+          "displayValue": ""
+        },
+        "cabale":{
+          "displayValue": "",
+          "link": {}
+        },
+        "awakeningAge":{
+          "displayValue": ""
+        },
+        "sep1":{
+          "displayValue": "ligne-sep"
+        },
+        "sep2": {
+          "displayValue": "ligne-sep"
+        },
+        "essence":{
+          "displayValue": "",
+          "link": {}
+        },
+        "gender":{
+          "displayValue": ""
+        },
+        "nature":{
+          "displayValue": "",
+          "link": {}
+        },
+        "height":{
+          "displayValue": ""
+        },
+        "attitude":{
+          "displayValue": "",
+          "link": {}
+        },
+        "weight": {
+          "displayValue": ""
+        }
+      },
+
+      "description":"",
+      "possessedStuff":"",
+      "carriedStuff":"",
+
+      "aliases": [],
+      "link": {},
+      "permanent": {},
+      "extra" : {}
+    },
+    "npcmage": {
+      "templates":[
+        "resourceHealth",
+        "resourceWillpower",
+        "resourceMagePower",
+        "attributes",
+        "spheres"
+      ],
+
+      "traits":{
+        "arete": {
+          "value": 1,
+          "specialisation": "",
+          "displayDescription":""
+        }
+      },
+
+      "bio":{
+        "faction":{
+          "displayValue": "",
+          "link": {}
+        },
+        "birthday":{
+          "displayValue": ""
+        },
+        "mentor":{
+          "displayValue": "",
+          "link": {}
+        },
+        "apparentAge":{
+          "displayValue": ""
+        },
+        "cabale":{
+          "displayValue": "",
+          "link": {}
+        },
+        "awakeningAge":{
+          "displayValue": ""
+        },
+        "sep1":{
+          "displayValue": "ligne-sep"
+        },
+        "sep2": {
+          "displayValue": "ligne-sep"
+        },
+        "essence":{
+          "displayValue": "",
+          "link": {}
+        },
+        "gender":{
+          "displayValue": ""
+        },
+        "nature":{
+          "displayValue": "",
+          "link": {}
+        },
+        "height":{
+          "displayValue": ""
+        },
+        "attitude":{
+          "displayValue": "",
+          "link": {}
+        },
+        "weight": {
+          "displayValue": ""
+        }
+      },
+
+      "description":"",
+      "possessedStuff":"",
+      "carriedStuff":"",
+
+      "aliases": [],
+      "link": {},
+      "permanent": {},
+      "extra" : {}
+    },
+    "npcsleeper": {
+      "templates":[
+        "resourceHealth",
+        "resourceWillpower",
+        "attributes"
+      ],
 
       "bio":{
         "faction":{

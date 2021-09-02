@@ -406,7 +406,6 @@ export default class DiceThrow {
     this.app.render(force);
   }
 
-  
   /* -------------------------------------------- */
   /*  Macro to and from                           */
   /* -------------------------------------------- */
@@ -494,5 +493,4 @@ export default class DiceThrow {
       diceThrow.render(true);
     }
   }
-
 }

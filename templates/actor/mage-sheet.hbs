@@ -1,6 +1,6 @@
 <form class="{{cssClass}}" autocomplete="off" >
   {{#if paraData}}
-  <div class="paradigm-img" style="background-image: url('{{paraData.sheetLogo}}');"></div>
+  <div class="paradigm-img" style="opacity: {{paraData.opacity}}; background-image: url('{{paraData.sheetLogo}}');"></div>
   {{/if}}
   <div style="position:relative;">
   {{> "systems/mage-fr/templates/actor/parts/header-cat.hbs"}}
@@ -30,11 +30,13 @@
     </section>
     
     <section class="tab" data-group="primary" data-tab="stuff">
-      {{> "systems/mage-fr/templates/actor/parts/gear-cat.hbs"}}
+{{> "systems/mage-fr/templates/actor/parts/gear-cat.hbs"}}
     </section>
 
     <section class="tab" data-group="primary" data-tab="extra">
+{{#if data.isCharacter}}
 {{> "systems/mage-fr/templates/actor/parts/xp-cat.hbs"}}
+{{/if}}
       {{> "systems/mage-fr/templates/actor/parts/events-cat.hbs"}}
       {{#if isGM}}
       {{> "systems/mage-fr/templates/actor/parts/a-effects-cat.hbs"}}

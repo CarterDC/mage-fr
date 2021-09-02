@@ -20,7 +20,7 @@ import M20eRollableItem from './module/item/rollable-item.js'
 import M20eActorSheet from './module/actor/m20e-actor-sheet.js'
 import M20eMageActorSheet from './module/actor/mage-actor-sheet.js'
 import M20eItemSheet from './module/item/m20e-item-sheet.js'
-import M20eAeSheet from './module/item/m20e-ae-sheet.js'
+import M20eAeSheet from './module/apps/m20e-ae-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 import M20eRoteSheet from './module/item/rote-sheet.js'
 import M20eRollableSheet from './module/item/rollable-sheet.js'
@@ -48,7 +48,8 @@ Hooks.once('init', async function () {
   game.m20e = { //store some things here for later access
     config: M20E,
     traits: {},
-    mageMacro: DiceThrow.fromMacro
+    mageMacro: DiceThrow.fromMacro,
+    testage: chat.testage
   };
 
   CONFIG.M20E = M20E;
@@ -68,12 +69,12 @@ Hooks.once('init', async function () {
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet);
-  /*Actors.registerSheet("m20e", M20eActorSheet, {
+  Actors.registerSheet("m20e", M20eActorSheet, {
     types: ["npcsleeper"],
     makeDefault: true
-  });*/
+  });
   Actors.registerSheet("m20e", M20eMageActorSheet, {
-    types: ["charmage"],
+    types: ["charmage", "npcmage"],
     makeDefault: true
   });
   Items.unregisterSheet('core', ItemSheet);
@@ -111,7 +112,7 @@ Hooks.once('init', async function () {
   dice.registerInitiative();
 
   //test shit here !
-
+  game.socket.on('system.mage-fr', chat.onSocketReceived);
 })
 
 /* -------------------------------------------- */
@@ -139,6 +140,7 @@ Hooks.once('ready', async function () {
 
 Hooks.on('renderChatLog', chat.addChatListeners);
 Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
+
 
 //testing shit
 

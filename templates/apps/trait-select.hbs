@@ -1,25 +1,25 @@
 <form class="{{cssClass}}" autocomplete="off">
     <div class="dialog-block flavor">
-        <select name="2">
-            {{#select key2}}
-                {{#each keys2 as |value key|}}
+        <select name="0">
+            {{#select key0}}
+                {{#each keys0 as |value key|}}
                     <option value="{{key}}">{{value}}</option>
                 {{/each}}
             {{/select}}
         </select>
-        {{#if keys3}}
-        <select name="3">
-            {{#select key3}}
-                {{#each keys3 as |value key|}}
+        {{#if keys1}}
+        <select name="1">
+            {{#select key1}}
+                {{#each keys1 as |value key|}}
                     <option value="{{key}}">{{value}}</option>
                 {{/each}}
             {{/select}}
         </select>
         {{/if}}
-        {{#if keys4}}
-          <select name="4">
-              {{#select key4}}
-                  {{#each keys4 as |value key|}}
+        {{#if keys2}}
+          <select name="2">
+              {{#select key2}}
+                  {{#each keys2 as |value key|}}
                       <option value="{{key}}">{{value}}</option>
                   {{/each}}
               {{/select}}
@@ -29,7 +29,11 @@
     <div class="dialog-block flavor">
         <div class= "field" title="{{localize 'M20E.hints.key'}}">
             <label for="key">{{localize "M20E.labels.key"}} : </label>
-            <input name="key" type="text" value="{{data.key}}" data-dtype="String"/>
+            <div class="flexrow">
+                {{#if data.keyPrefix}}<label class="disabledInput">{{data.keyPrefix}}.</label>{{/if}}
+                <input name="key" type="text" value="{{data.key}}" data-dtype="String"/>
+                {{#if data.keySuffix}}<label class="disabledInput">.{{data.keySuffix}}</label>{{/if}}
+            </div>
         </div>
     </div>
     <div class="dialog-buttons">

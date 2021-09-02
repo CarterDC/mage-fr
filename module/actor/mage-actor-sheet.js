@@ -38,16 +38,18 @@ export default class M20eMageActorSheet extends M20eActorSheet {
   /** @inheritdoc */
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
-    //todo ! only do that on player characters !
-    // Toggle character-creation lock
-    const icon = this.actor.data.data.creationDone ? 'fas fa-lock' : 'fas fa-unlock-alt';
-    buttons = [
-      {
-        class: "toggle-creation-mode",
-        icon: icon,
-        onclick: ev => this._onToggleCreationMode(ev)
-      }
-    ].concat(buttons);
+    if ( this.actor.isCharacter ) {
+      // Toggle character-creation lock
+      const icon = this.actor.data.data.creationDone ? 'fas fa-lock' : 'fas fa-unlock-alt';
+      buttons = [
+        {
+          class: "toggle-creation-mode",
+          label: game.i18n.localize('M20E.labels.creation'),
+          icon: icon,
+          onclick: ev => this._onToggleCreationMode(ev)
+        }
+      ].concat(buttons);
+    }
 
     return buttons;
   }

@@ -1,4 +1,4 @@
-import { TraitSelect } from '../apps/trait-select-dialog.js'
+import { TraitSelect } from './trait-select-dialog.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
@@ -94,8 +94,12 @@ export default class M20eAeSheet extends DocumentSheet {
     //prepare effects array with predigested data
     sheetData.effects = this.effect.data.changes.map(effect => {
       const reducedKey = effect.key.split('.').filter((elem, index, arr) => index >= 2 && index < (arr.length - 1)).join('.');
+      let localizedKey = this.actor.locadigm(`traits.${reducedKey}`);
+      if ( localizedKey === `M20E.traits.${reducedKey}` ) {
+        localizedKey = foundry.utils.getProperty(CONFIG.M20E.traits, reducedKey);
+      }
       return {
-        key: reducedKey,
+        key: localizedKey,
         mode: effect.mode,
         modeString: sheetData.modes[effect.mode],
         value: effect.value
@@ -129,7 +133,9 @@ export default class M20eAeSheet extends DocumentSheet {
   }
 
   _onDisplayVanillaSheet(event) {
-    log('plop');
+    const configSheet = new ActiveEffectConfig(this.effect);
+    configSheet.render(true);
+    this.close();
   }
 
 /* -------------------------------------------- */
@@ -252,39 +258,52 @@ export default class M20eAeSheet extends DocumentSheet {
     }
   }
 
+  //In this instance 'item' is a change entry in the changes array for this ActiveEffect
   async disableItem(buttonElem) {
     //updates the disabled value of an active affect
     this.effect.update({"disabled": !(this.effect.data.disabled)});
   }
 
-  //to be implemented by subClasses
+  //In this instance 'item' is a change entry in the changes array for this ActiveEffect
   async addItem(buttonElem) {
     const changes = duplicate(this.effect.data.changes);
     changes.push({key: "data.traits.attributes.stre.value", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "0"});
     return await this.effect.update({'changes': changes});
   }
 
-  //to be implemented by subClasses
+  //In this instance 'item' is a change entry in the changes array for this ActiveEffect
   async editItem(buttonElem) {
     const effectIndex = buttonElem.closest(".trait").dataset.index;
     const changes = duplicate(this.effect.data.changes);
-    const currKey = changes[effectIndex].key;
-    const newKey = await TraitSelect.prompt({
+    const {prefix, traitKey, suffix} = M20eAeSheet.splitKey(changes[effectIndex].key);
+
+    let newTraitKey = await TraitSelect.prompt({
       name: this.effect.data.label,
-      key: currKey
+      key: traitKey,
+      keyPrefix: prefix,
+      keySuffix: suffix
     });
-    if ( !newKey ) { return; }
-    if ( ! foundry.utils.hasProperty(this.actor.data, newKey) ) { return;}
-    changes[effectIndex].key = newKey;
+    if ( !newTraitKey ) { return; }
+    newTraitKey = `${prefix}.${newTraitKey}.${suffix}`;
+    if ( ! foundry.utils.hasProperty(this.actor.data, newTraitKey) ) { return;}
+    changes[effectIndex].key = newTraitKey;
     return await this.effect.update({'changes': changes});
   }
 
-  //to be implemented by subClasses
+  static splitKey(key) {
+    const keys = key.split('.');
+    return {
+      suffix: keys[keys.length - 1],
+      prefix: `${keys[0]}.${keys[1]}`,
+      traitKey: keys.filter( (key, index, arr) => index >= 2 && index < arr.length - 1).join('.')
+    }
+  }
+
+  //In this instance 'item' is a change entry in the changes array for this ActiveEffect
   async removeItem(buttonElem) {
     const effectIndex = buttonElem.closest(".trait").dataset.index;
     const changes = duplicate(this.effect.data.changes);
     changes.splice(effectIndex, 1);
     return await this.effect.update({'changes': changes});
   }
-
 }
