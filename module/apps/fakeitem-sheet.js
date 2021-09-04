@@ -5,7 +5,7 @@ import { log } from "../utils/utils.js";
 /**
  * FormApp with actor as object
  * allows the edition of some actor's traits as well as it's lexicon.
- * @extends {FormApplication}
+ * @extends {DocumentSheet}
  */
 export class FakeItem extends DocumentSheet {
 
@@ -53,7 +53,6 @@ export class FakeItem extends DocumentSheet {
 
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
-    log('ça passe')
     return sheetData;
   }
 

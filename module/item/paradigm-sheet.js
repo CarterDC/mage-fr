@@ -52,7 +52,7 @@ export default class M20eParadigmSheet extends M20eItemSheet {
    */
   _onImgMousedown(event) {
     if ( event.which === 3 ) { //mouse right
-      const labelElem = event.currentTarget.previousElemSibling;
+      const labelElem = event.currentTarget.previousElementSibling;
       const menu = new ContextMenu($(this.element), '', this._getImgContextOptions());
       menu.render($(labelElem));
     }

@@ -5,7 +5,7 @@
     {{#if traits.length}}
     <div class="dialog-block">
         {{#each traits as |trait key|}}
-        <div class="trait throw" data-key="{{key}}">
+        <div class="trait dice-throw" data-key="{{key}}">
             <a class="mini-button" title="{{localize 'M20E.hints.removeFromThrow'}}" data-action="remove" data-disabled="{{../dt.isItemThrow}}"><i class="fas fa-times-circle"></i></a>
             <label class="trait-label tooltip" data-value ="{{trait.value}}" {{#if (eq trait.value 0)}} title="{{localize 'M20E.hints.untrained'}}"{{/if}}>
                 {{trait.name}}

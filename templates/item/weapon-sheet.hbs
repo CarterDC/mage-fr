@@ -8,7 +8,7 @@
             <br> {{!-- todo replace br with css rule on item section tab margintop --}}
           <div class="grid two-col">
               <div class= "field">
-                  <label for="data.subType">{{localize "M20E.labels.subType"}} : </label>
+                  <label>{{localize "M20E.labels.subType"}} : </label>
                   <select name="data.subType">
                       {{#select data.subType}}
                           {{#each config.weaponSubTypes as |value key|}}
@@ -18,7 +18,7 @@
                   </select>
               </div>
               <div class= "field">
-                  <label for="data.damageType">{{localize "M20E.labels.damageType"}} : </label>
+                  <label>{{localize "M20E.labels.damageType"}} : </label>
                   <select name="data.damageType">
                       {{#select data.damageType}}
                           {{#each config.damageTypes as |value key|}}
@@ -28,30 +28,35 @@
                   </select>
               </div> {{!-- todo damage may not be a fixed value but rather a trait + value --}}
               <div class= "field" title="{{localize 'M20E.hints.damage'}}">
-                  <label for="data.damage">{{localize "M20E.labels.damage"}} : </label>
+                  <label>{{localize "M20E.labels.damage"}} : </label>
                   <input name="data.damage" type="text" value="{{data.damage}}" data-dtype="Number" min="0" max="10"/>
               </div>
               <div class= "field" title="">
-                  <label for="data.range">{{localize "M20E.labels.range"}} : </label>
+                  <label>{{localize "M20E.labels.range"}} : </label>
                   <input name="data.range" type="text" value="{{data.range}}" data-dtype="Number" min="0" max="10"/>
               </div>
           </div>
             <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
-                <label for="data.displayDescription">{{localize "M20E.labels.displayDescription"}} : </label>
+                <label>{{localize "M20E.labels.displayDescription"}} : </label>
 <textarea name="data.displayDescription">{{data.displayDescription}}</textarea>
             </div>
         </section>
 
         <section class="tab" data-group="primary" data-tab="throws">
           <br>
-            <div class="rote-effect-wrapper">
             <div class="category grid one-col">
                 {{#each throws as |throw index|}}
-
+                <div class="trait throw" data-index="{{index}}">
+                    <label class="trait-label">
+                        {{throw.name}}
+                    </label>
+                    <div class="edit-bar" data-locked="{{../locks.throws}}">
+                        <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
+                        <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
                 {{/each}}
             </div>
-            </div>
         </section>
-
     </section>
 </form>

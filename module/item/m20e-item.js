@@ -205,7 +205,8 @@ export default class M20eItem extends Item {
     const traitsToRoll = this.getTraitsToRoll(throwIndex);
     const diceThrow = new DiceThrow({
       document: this,
-      traitsToRoll: traitsToRoll
+      traitsToRoll: traitsToRoll,
+      options: this.data.data.throws[throwIndex].options
     });
     if ( shiftKey ) {
       //throw right away

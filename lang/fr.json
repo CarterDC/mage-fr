@@ -14,6 +14,7 @@
   "ITEM.TypeMisc": "Divers",
   "ITEM.TypeParadigm": "Paradigme",
   "ITEM.TypeRote": "Routine",
+  "ITEM.TypeThrow": "Jet",
   "ITEM.TypeWeapon": "Arme",
   "M20E": {
     "blabla": "Blabla...",
@@ -394,7 +395,10 @@
       },
       "name": "Nom du trait ou de l'objet",
       "nonEditable": "Non-éditable.",
-      "openJE": "Voir/Éditer le journal de ce perso.",
+      "openJE": "Voir/Éditer ce journal.",
+      "openPersonalJE": "Voir/Éditer le journal de ce perso.",
+      "quantityMinus": "Diminuer la quantité",
+      "quantityPlus": "Augmenter la quantité",
       "remove": "Supprimer",
       "removeDice": "Supprimer un Dé.",
       "removeFromThrow": "Supprimer pour ce jet.",
@@ -414,6 +418,7 @@
       },
       "toggleAutoClose": "Basculer fermeture auto",
       "toggleEditMode": "Basculer 'mode édition'/'mode affichage'.",
+      "toggleEquiped": "Basculer équipé/déséquipé.",
       "unlockToEdit": "Basculez en 'mode édition'(🔓) pour remplir ce champ.",
       "untrained": "Non Entrainé !",
       "useSpecialisation": "Utiliser la spécialisation.",
@@ -451,6 +456,7 @@
       "systemName": "⚠ Nom système",
       "threshold": "Difficulté",
       "throw": "LANCER",
+      "throwOptions": "⚠ Options du jet",
       "thrsh": "Diff.",
       "totalXP": "Total XP",
       "trait": "Trait",
@@ -485,7 +491,8 @@
         "merit": "Nvel Atout",
         "flaw": "Nv Handicap"
       },
-      "rote": "Nvelle Routine"
+      "rote": "Nvelle Routine",
+      "throw": "Nveau Jet"
     },
     "notifications": {
       "actorNotFound": "L'acteur '{actorRef}' n'est pas trouvable !",

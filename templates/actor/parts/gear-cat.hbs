@@ -4,9 +4,9 @@
   <p>⚠ Under Heavy Construction ⚠</p>
   <div class="grid one-col">
         {{#each items.equipables as |equipable key|}}
-        <div class="trait equipable" data-item-id="{{equipable._id}}">
+        <div class="trait equipable" data-item-id="{{equipable._id}}" data-rollable="{{equipable.data.isRollable}}">
             <img class="trait-img" src="{{equipable.img}}"/>
-            <div class="vertical-wrapper">
+            <div class="vertical-wrapper" data-rollable="{{equipable.data.isRollable}}">
                 <div class="horizontal-wrapper">
                     <label class="trait-label" data-item-id="{{equipable._id}}">
                         {{equipable.name}}
@@ -17,7 +17,16 @@
                         <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
                     </div>
                     <div class="bullet-display" data-locked="{{../locks.equipables}}">
-                        
+                        {{#if equipable.data.isConsumable}}
+                        <div class="number-spinner">
+                            <input class="inline-edit" data-update-path="data.quantity" type="text" value="{{equipable.data.quantity}}" data-dtype="Number" min="0" max="99"/>
+                            <div class="double-button">
+                                <a class="mini-button" data-update-path="data.quantity" data-action="plus" data-locked="{{gte equipable.data.quantity 99}}" title="{{localize "M20E.hints.quantityPlus"}}"><i class="fas fa-chevron-up"></i></a>
+                                <a class="mini-button" data-update-path="data.quantity" data-action="minus" data-locked="{{lte equipable.data.quantity 0}}" title="{{localize "M20E.hints.quantityMinus"}}"><i class="fas fa-chevron-down"></i></a>
+                            </div>
+                        </div>
+                        {{/if}}
+                        <a class="mini-button" data-update-path="data.equiped" data-action="check" title="{{localize 'M20E.hints.toggleEquiped'}}" checked="{{equipable.data.equiped}}"><i class="fas fa-check"></i></a>
                     </div>
                 </div>
                 <div class="one-liner-desc" data-expanded="false">
@@ -45,7 +54,15 @@
                         <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
                     </div>
                     <div class="bullet-display" data-locked="{{../locks.equipables}}">
-                        
+                        {{#if misc.data.isConsumable}}
+                        <div class="number-spinner">
+                            <input class="inline-edit" data-update-path="data.quantity" type="text" value="{{misc.data.quantity}}" data-dtype="Number" min="0" max="99"/>
+                            <div class="double-button">
+                                <a class="mini-button" data-update-path="data.quantity" data-action="plus" data-locked="{{gte misc.data.quantity 99}}" title="{{localize "M20E.hints.quantityPlus"}}"><i class="fas fa-chevron-up"></i></a>
+                                <a class="mini-button" data-update-path="data.quantity" data-action="minus" data-locked="{{lte misc.data.quantity 0}}" title="{{localize "M20E.hints.quantityMinus"}}"><i class="fas fa-chevron-down"></i></a>
+                            </div>
+                        </div>
+                        {{/if}}
                     </div>
                 </div>
                 <div class="one-liner-desc" data-expanded="false">

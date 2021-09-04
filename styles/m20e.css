@@ -305,7 +305,9 @@
   margin: 0px 5px;
   height: 50px;
   display: flex;
+  flex: 0 0 50px;
   align-items: center;
+  justify-content: center;
   color: var(--m20e-midGrey);
   background: rgba(0, 0, 0, 0.05);
   border-radius: 3px;
@@ -482,6 +484,9 @@
 .m20e .mini-button[data-locked='true'] {
   display: none;
 }
+.m20e .mini-button[checked='false'] * {
+  display: none;
+}
 .m20e .mini-button.decoy {
   border: 0px;
   background: none;
@@ -525,6 +530,9 @@
   color: var(--hoverColor);
   text-shadow: none;
   box-shadow: none;
+}
+.m20e .double-button .mini-button[data-locked='true'] {
+  display: none;
 }
 .m20e .double-button:hover {
   box-shadow: 0 0 2px 1px var(--hoverColor);
@@ -588,6 +596,7 @@
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /*  Category specific traits                    */
+  /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
@@ -710,30 +719,30 @@
 .m20e .trait.ability input {
   padding: 1px 0 0;
 }
-.m20e .trait.throw {
+.m20e .trait.dice-throw {
   height: 20px;
   margin: 3px 0;
 }
-.m20e .trait.throw .trait-label[data-value="0"] {
+.m20e .trait.dice-throw .trait-label[data-value="0"] {
   color: var(--m20e-badRed);
 }
-.m20e .trait.throw .trait-label:hover {
+.m20e .trait.dice-throw .trait-label:hover {
   text-shadow: none;
 }
-.m20e .trait.throw .mini-button[data-action="remove"] {
+.m20e .trait.dice-throw .mini-button[data-action="remove"] {
   color: var(--m20e-badRed);
   margin-right: 10px;
 }
-.m20e .trait.throw .mini-button[data-disabled='true'] {
+.m20e .trait.dice-throw .mini-button[data-disabled='true'] {
   color: var(--m20e-lightGrey);
   border: none;
   cursor: default;
 }
-.m20e .trait.throw .mini-button.spe {
+.m20e .trait.dice-throw .mini-button.spe {
   width: 50px;
   margin-left: 10px;
 }
-.m20e .trait.throw .mini-button.spe[data-active='true'] {
+.m20e .trait.dice-throw .mini-button.spe[data-active='true'] {
   color: var(--highlightColor);
   text-shadow: none;
 }
@@ -880,6 +889,40 @@
 }
 .m20e .trait.event .trait-label {
   margin-left: 5px;
+}
+.m20e .trait.equipable .bullet-display,
+.m20e .trait.misc .bullet-display {
+  flex: 0 0 75px;
+}
+.m20e .trait.equipable .mini-button,
+.m20e .trait.misc .mini-button {
+  min-width: 20px;
+}
+.m20e .trait.equipable .number-spinner,
+.m20e .trait.misc .number-spinner {
+  position: relative;
+  flex: 0 0 50px;
+}
+.m20e .trait.equipable .number-spinner input,
+.m20e .trait.misc .number-spinner input {
+  height: 20px;
+  padding-right: 21px;
+}
+.m20e .trait.equipable .number-spinner .double-button,
+.m20e .trait.misc .number-spinner .double-button {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  height: 18px;
+  border: none;
+}
+.m20e .trait.equipable .number-spinner .double-button .mini-button,
+.m20e .trait.misc .number-spinner .double-button .mini-button {
+  height: 9px;
+}
+.m20e .trait.equipable .number-spinner .double-button:hover,
+.m20e .trait.misc .number-spinner .double-button:hover {
+  box-shadow: none;
 }
 .m20e .trait.aeffect input {
   flex: 0 0 20px;
@@ -1262,6 +1305,14 @@ li.chat-message .card .card-footer .item-img {
 .m20e.dialog .dialog-buttons .dialog-button {
   margin-top: 5px;
   flex: 0 0 40%;
+}
+.m20e {
+  /*input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: inner-spin-button;
+  }
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: outer-spin-button;
+  }*/
 }
 .m20e input:focus {
   box-shadow: 0 0 2px 1px var(--highlightColor);

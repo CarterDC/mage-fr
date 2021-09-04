@@ -113,7 +113,7 @@ export function dsnUserActive() {
 export function isValidUpdate(element) {
   if ( element === null ) { return false; }
   let isValid = true;
-  if ( element.type === 'text' && element.dataset.dtype === 'Number' ) {
+  if ( (element.type === 'text' || element.type === 'number') && element.dataset.dtype === 'Number' ) {
     if ( isNaN( element.value ) || element.value === '') {
       ui.notifications.error(game.i18n.format("M20E.notifications.nan", {value: element.value}));
       isValid = false;
