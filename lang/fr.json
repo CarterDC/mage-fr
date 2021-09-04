@@ -378,6 +378,7 @@
       "compendiumEdit": "Éditable uniquement via Compendium.",
       "createJE": "Créer un journal pour ce perso.",
       "date": "Une date approximative ?",
+      "diceButton": "click pour lancer les traits séléctionnés (shift+click pour lancer rapide).",
       "dicePool": "Si le pool de dé tombe à 0, un dé irréductible sera lancé.",
       "displayDescription": "Apparait souvent en info-bulle ou en 'linkant' dans le chat",
       "displayName": "Apparaît automatiquement à la place du nom d'origine.",
@@ -422,6 +423,7 @@
       "aeDisabled": "Désactivé",
       "aeEnabled": "Actif",
       "consumable": "Consommable",
+      "creation": "Créa",
       "cssClass": "Classe CSS",
       "currentXP": "XP actuel",
       "damageType": "Type de dégâts",
@@ -434,6 +436,7 @@
       "extra": "Extra",
       "key": "Clef",
       "mode": "Mode",
+      "opacity": "Opacité",
       "origin": "origin",
       "personnalJEs": "Journaux Personnels",
       "pool": "Grpt.",
@@ -523,6 +526,7 @@
       "lexiconTitle": "Lexique",
       "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>",
       "removeXPContent": "<p>Saisissez la <b>Dépense d'XP</b> pour '{name}'<br><i>valeur positive uniquement</i></p>",
+      "selectTraitTitle": "Sélection de Trait pour {name}",
       "subTypeContent": "<p>Choisissez un <b>sous-type de {type}</b><br>Cet item sera crée avec les paramètres par défault du sous-type choisi.</p>"
     },
     "subType": {

@@ -25,7 +25,7 @@ import { log } from "../utils/utils.js";
   }
 
   get title() {
-    return `${this.data.name} : Select Trait`; //todo : localize
+    return game.i18n.format( 'M20E.prompts.selectTraitTitle', {name : this.data.name});
   }
 
   /** @override */
@@ -34,14 +34,14 @@ import { log } from "../utils/utils.js";
     appData.data = this.data;
     this.keys = this.data.key.split('.');
 
-    appData.key2 = this.keys[2];
+    appData.key0 = this.keys[0];
+    appData.keys0 = this.getKeys(0);
+
+    appData.key1 = this.keys[1];
+    appData.keys1 = this.getKeys(1);
+
+    appData.key2= this.keys[2];
     appData.keys2 = this.getKeys(2);
-
-    appData.key3 = this.keys[3];
-    appData.keys3 = this.getKeys(3);
-
-    appData.key4= this.keys[4];
-    appData.keys4 = this.getKeys(4);
     
     appData.config = CONFIG.M20E;
     appData.isGM = game.user.isGM;
@@ -51,11 +51,12 @@ import { log } from "../utils/utils.js";
   }
 
   getKeys(keyIndex) {
-    if ( keyIndex >= (this.keys.length - 1) || this.keys[keyIndex] === 'value') { return null; }
-    const relativePath = this.keys.filter((element, index) => index>0 && index < keyIndex).join('.');
+    if ( keyIndex >= this.keys.length ) { return null; }
+    const locaPrefix = ['category', 'subType'];
+    const relativePath = ['traits', ...this.keys.filter((element, index) => index < keyIndex)].join('.');
     const obj = foundry.utils.getProperty(CONFIG.M20E, relativePath);
     return Object.keys(obj).reduce((acc, cur) => {
-      const value = typeof obj[cur] === 'string' ? obj[cur] : cur;
+      const value = typeof obj[cur] === 'string' ? obj[cur] : game.i18n.localize(`M20E.${locaPrefix[keyIndex]}.${cur}`);
       return {...acc, [cur]: value};
     },{});
   }
@@ -66,12 +67,7 @@ import { log } from "../utils/utils.js";
     html.find(".dialog-button").click(this._onClickButton.bind(this));
     html.find("input").change(this._onInputChange.bind(this));
     html.find("select").change(this._onSelectChange.bind(this));
-  }
-
-  _onClickButton(event) {
-    event.preventDefault();
-    this.data.callback(this.data.key);
-    this.close({resolved: true});
+    $(document).on('keydown', this._onKeyDown.bind(this));
   }
 
   _onInputChange(event) {
@@ -88,37 +84,88 @@ import { log } from "../utils/utils.js";
     const index = parseInt(selectElem.name);
     const keys = this.data.key.split('.');
     keys[index] = value;
-    keys.shift(); //remove 'data'
-    keys.length = index;
-    let tmp = Object.keys(foundry.utils.getProperty(CONFIG.M20E, keys.join('.')));
+    keys.length = index + 1;
+    let tmp = Object.keys(foundry.utils.getProperty(CONFIG.M20E, ['traits', ...keys].join('.')));
     if ( tmp[0] !== '0' ) {
       keys.push(tmp[0]);
-      tmp = Object.keys(foundry.utils.getProperty(CONFIG.M20E, keys.join('.')));
+      tmp = Object.keys(foundry.utils.getProperty(CONFIG.M20E, ['traits', ...keys].join('.')));
       if ( tmp[0] !== '0' ) {
         keys.push(tmp[0]);
       }
     }
-    keys.push('value');
-    this.data.key = ['data', ...keys].join('.');
+    this.data.key = keys.join('.');
     this.render(true);
   }
 
-  static async prompt({key, name, options={}}={}) {
+  /**
+   * Creates a new instance of TraitSelect,
+   * instanciated with current Trait key.
+   * pass a promise resolve as callback
+   * @param {Object} appData 
+   * @param {String} [appData.key] key defining the current Trait
+   * @param {String} [appData.name] prefix name of the App
+   * @param {Object} [appData.options] regular app options
+   */
+  static async prompt({key, name, keyPrefix, keySuffix, options={}}={}) {
     return new Promise((resolve, reject) => {
       const traitSelect = new this({
         name: name,
         key: key,
+        keyPrefix: keyPrefix,
+        keySuffix: keySuffix,
         callback: (result) => resolve(result)
       }, options);
       traitSelect.render(true);
     });
   }
 
-  async close(options = {}) {
-    if ( !options.resolved ) {
-      this.data.callback(null);
-    }
-    return super.close(options);
+  /**
+   * add delimiters ('.') between prefix key and suffix if relevant
+   */
+  getFormatedKey() {
+    let formatedKey = this.data.keyPrefix ? `${this.data.keyPrefix}.${this.data.key}` : this.data.key;
+    formatedKey = this.data.keySuffix ? `${formatedKey}.${this.data.keySuffix}` : formatedKey;
+    return formatedKey;
   }
 
+  /**
+   * Resolve the Promise by using the callback function with formatedKey as an argument
+   * then closes the App
+   * @param  {} event
+   */
+  _onClickButton(event) {
+    event.preventDefault();
+    this.data.callback(this.data.key);
+    this.close({resolved: true});
+  }
+
+  /**
+   * From Foundry.js class Dialog
+   * Handle a keydown event while the dialog is active
+   * @param {KeyboardEvent} event   The keydown event
+   * @private
+   */
+  _onKeyDown(event) {
+    // Close dialog
+    if ( event.key === "Escape" ) {
+      event.preventDefault();
+      event.stopPropagation();
+      return this.close();
+    }
+    // Confirm default choice
+    if ( (event.key === "Enter") ) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.data.callback(this.data.key);
+      this.close({resolved: true});
+    }
+  }
+
+  async close(options = {}) {
+    if ( !options?.resolved ) {
+      this.data.callback(null);
+    }
+    $(document).off('keydown');
+    return super.close(options);
+  }
 }

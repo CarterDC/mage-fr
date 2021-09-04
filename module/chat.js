@@ -88,3 +88,10 @@ export async function welcomeMessage() {
   game.user.setFlag("mage-fr", "welcomeMessageShown", true);
 }
 
+export function testage(test) {
+  game.socket.emit('system.mage-fr', {test: test});
+}
+
+export function onSocketReceived(data) {
+  log(data);
+}

@@ -63,7 +63,6 @@
   right: 0;
   width: 100%;
   height: calc(100% - 28px);
-  opacity: 0.2;
   background-size: contain;
   background-repeat: repeat-y;
 }
@@ -1182,6 +1181,16 @@ li.chat-message .card .card-footer .item-img {
 }
 .m20e.dialogue .mini-button.throw-settings[data-settings="3"] {
   color: var(--m20e-badRed);
+}
+.m20e.dialogue .disabledInput {
+  border: none;
+  color: #4b4a44;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+  padding: 1px 3px;
+  flex: 0 0;
+  font-weight: normal;
+  line-height: 26px;
 }
 .systemDescription {
   padding: 0px 2px;

@@ -89,9 +89,11 @@ export default class M20eActor extends Actor {
     utils.traitsToPaths(actorData.data.traits).forEach( path => {
       foundry.utils.setProperty(CONFIG.M20E.traits, path, game.i18n.localize(`M20E.traits.${path}`));
     });
-    /*actorData.data.traits.abilities = {talents:{}, skills:{}, knowledges:{}};
-    const items = [...actorData.items.entries()].map( set => set[1]);
-    items.sort((a, b) => (a.data.sort || 0) - (b.data.sort || 0));*/
+    //add initiative to the traits 
+    const dext = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.dext.value'));
+    const wits = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.wits.value'));
+    foundry.utils.setProperty(actorData.data.traits, 'initiative.value', dext + wits);
+
     //todo : maybe add copy of init value in here too
     actorData.items.forEach( item => {
       if ( item.isTrait ) {
