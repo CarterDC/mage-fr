@@ -33,6 +33,11 @@
   .mini-button[data-locked='true']{
     display: none;
   }
+  .mini-button[checked ='false']{
+    * {
+      display: none;
+    }
+  }
   .mini-button.decoy{
     border: 0px;
     background: none;
@@ -76,6 +81,9 @@
       color: var(--hoverColor);
       text-shadow: none;
       box-shadow: none;
+    }
+    .mini-button[data-locked='true']{
+      display: none;
     }
     
   }

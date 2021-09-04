@@ -1,5 +1,6 @@
 // Import Documents
 import M20eItemSheet from './m20e-item-sheet.js'
+import {ThrowSheet} from '../apps/throw-sheet.js'
 // Import Helpers
 import { Trait, ExtendedTrait, MageThrow } from "../utils/classes.js";
 import * as utils from '../utils/utils.js'
@@ -43,30 +44,34 @@ export default class M20eRollableSheet extends M20eItemSheet {
 
 
   /**
-   * Note : In this context 'Item' refers to a magycal effect in the form of a Trait object
-   * in itemData.data.throws[{traitsToRoll[]}]
+   * Note : In this context 'Item' refers to a MageThrow object int he data.throws array
    *  @override
    */
   async addItem(buttonElem) {
-    
+    const throws = duplicate(this.item.data.data.throws);
+    throws.push(new MageThrow({name: game.i18n.localize('M20E.new.throw')}));
+    return await this.item.update({['data.throws']: throws});
   }
 
   /**
-   * Note : In this context 'Item' refers to a magycal effect in the form of a Trait object
-   * in itemData.data.throws[{traitsToRoll[]}]
+   * Note : In this context 'Item' refers to a MageThrow object int he data.throws array
    *  @override
    */
   async editItem(buttonElem) {
-    //does nothing, there's no edit button on rote effects ^^
+    const throwIndex = buttonElem.closest(".trait").dataset.index;
+    const throwSheet = new ThrowSheet(this.item, throwIndex);
+    throwSheet.render(true);
   }
 
   /**
-   * Note : In this context 'Item' refers to a magycal effect in the form of a Trait object
-   * in itemData.data.throws[{traitsToRoll[]}]
+   * Note : In this context 'Item' refers to a MageThrow object int he data.throws array
    *  @override
    */
   async removeItem(buttonElem) {
-
+    const throwIndex = buttonElem.closest(".trait").dataset.index;
+    const throws = duplicate(this.item.data.data.throws);
+    throws.splice(throwIndex, 1);
+    return await this.item.update({['data.throws']: throws});
   }
 
 

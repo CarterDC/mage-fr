@@ -43,13 +43,11 @@ import * as chat from "./module/chat.js";
 
 Hooks.once('init', async function () {
   log('Initialisation du système');
-  //CONFIG.debug.hooks = true;
 
   game.m20e = { //store some things here for later access
     config: M20E,
     traits: {},
-    mageMacro: DiceThrow.fromMacro,
-    testage: chat.testage
+    mageMacro: DiceThrow.fromMacro
   };
 
   CONFIG.M20E = M20E;
@@ -112,7 +110,7 @@ Hooks.once('init', async function () {
   dice.registerInitiative();
 
   //test shit here !
-  game.socket.on('system.mage-fr', chat.onSocketReceived);
+  //game.socket.on('system.mage-fr', chat.onSocketReceived);
 })
 
 /* -------------------------------------------- */

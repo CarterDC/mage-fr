@@ -262,10 +262,8 @@ export default class DiceThrow {
     //check if untrained ability
     this.xTraitsToRoll.forEach( trait => {
       if ( trait.category === "abilities" && trait.value === 0 ) {
-        const item = this.actor.getItemFromId(trait.itemId);
-        if ( !item ) { throw 'impossibleThrow'; }
         //get specific game setting relative to untrained abilities
-        const malus = settings.substr(subTypes[item.data.data.subType],1);
+        const malus = settings.substr(subTypes[trait.subType],1);
         if ( isNaN(malus) ) { throw 'impossibleThrow'; }
         untrainedMod += parseInt(malus);
       }

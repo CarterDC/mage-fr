@@ -36,8 +36,8 @@ export default class M20eRollableItem extends M20eItem {
   /**
    * @override
    */
-  getTraitsToRoll() {
-    return [];
+  getTraitsToRoll(throwIndex) {
+    return this.data.data.throws[throwIndex].traitsToRoll;
   }
 
   /**
@@ -58,19 +58,4 @@ export default class M20eRollableItem extends M20eItem {
     return true;
   }
 
-  async addEffect(availEffects) { 
- 
-  }
-
-  async updateEffectValue(effectIndex, value) {
-
-  }
-
-  async updateEffectKey(effectIndex, key) {
-
-  }
-
-  async removeEffect(effectIndex) {
-
-  }
 }

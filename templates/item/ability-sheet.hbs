@@ -7,21 +7,21 @@
       <section class="tab" data-group="primary" data-tab="detail">
           <div class="grid two-col">
               <div class= "field">
-                  <label for="data.subType">{{localize "M20E.labels.subType"}} : </label>
+                  <label>{{localize "M20E.labels.subType"}} : </label>
                   <select name="data.subType">
                       {{selectOptions config.abilitySubTypes selected=data.subType localize=true}}
                   </select>
               </div>
               <div class= "field" title="{{localize 'M20E.hints.value0to5'}}">
-                  <label for="data.value">{{localize "M20E.labels.value"}} : </label>
+                  <label>{{localize "M20E.labels.value"}} : </label>
                   <input name="data.value" type="text" value="{{data.value}}" data-dtype="Number" min="0" max="5"/>
               </div>
               <div class= "field" title="{{localize 'M20E.hints.specialisation'}}">
-                  <label for="data.specialisation">{{localize "M20E.labels.specialisation"}} : </label>
+                  <label>{{localize "M20E.labels.specialisation"}} : </label>
                   <input name="data.specialisation" type="text" value="{{data.specialisation}}" data-dtype="String"/>
               </div>
               <div class= "field" title="{{localize 'M20E.hints.extra'}}">
-                  <label for="data.extra">{{localize "M20E.labels.extra"}} : </label>
+                  <label>{{localize "M20E.labels.extra"}} : </label>
                   <select name="data.extra">
                       {{#select data.extra}}
                           {{#each config.extraDecorations as |value key|}}
@@ -32,13 +32,13 @@
               </div>
               {{#if isGM}}
               <div class= "field" title="{{localize 'M20E.hints.systemName'}}">
-                  <label for="name">{{localize "M20E.labels.systemName"}} : </label>
+                  <label>{{localize "M20E.labels.systemName"}} : </label>
                   <input name="name" type="text" value="{{item.name}}" data-dtype="String" />
               </div>
               {{/if}}
           </div>
           <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
-              <label for="data.displayDescription">{{localize "M20E.labels.displayDescription"}} : </label>
+              <label>{{localize "M20E.labels.displayDescription"}} : </label>
 <textarea name="data.displayDescription">{{data.displayDescription}}</textarea>
           </div>
       </section>

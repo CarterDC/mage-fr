@@ -4,7 +4,7 @@ import DiceThrow from '../dice/dice-throw.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, PromptData } from "../utils/classes.js";
+import { Trait, PromptData, DynaCtx } from "../utils/classes.js";
 import * as chat from "../chat.js";
 
 /**
@@ -129,7 +129,10 @@ export default class M20eActorSheet extends ActorSheet {
       //ctx menu on traits (edition / link)
       new ContextMenu(html, '.trait', this._getTraitContextOptions());
       //ctx menu for current xp field
-      new ContextMenu(html, '.currXP', this._getXPContextOptions()); 
+      new ContextMenu(html, '.currXP', this._getXPContextOptions());
+      //ctx menu for rollable items
+      new DynaCtx(html, '.trait[data-rollable="true"]', (traitElem) => this._getRollableContextOptions(traitElem));
+      //html.find('.vertical-wrapper[data-rollable="true"]').mousedown(this._onRollableClick.bind(this));
     }
     
     if ( game.user.isGM ) {
@@ -350,14 +353,17 @@ export default class M20eActorSheet extends ActorSheet {
   */
   async _onInlineEditChange(event) {
     event.preventDefault();
-    const element = event.currentTarget;
-    if ( ! utils.isValidUpdate(element) ) {
+    event.stopPropagation();
+    const inputElem = event.currentTarget;
+    if ( ! utils.isValidUpdate(inputElem) ) {
       return this.render();
     }
     //value has been validated => update the item
-    const itemId = element.closest(".trait").dataset.itemId;
+    const updatePath = inputElem.dataset.updatePath || 'data.value';
+    const updateValue = inputElem.value;
+    const itemId = inputElem.closest(".trait").dataset.itemId;
     const item = this.actor.items.get(itemId);
-    return await item.update({"data.value": element.value});
+    return await item.update({[`${updatePath}`]: updateValue});
   }
 
   /**
@@ -428,9 +434,14 @@ export default class M20eActorSheet extends ActorSheet {
 
       case 'check':
         //updates the disabled value of an active affect
-        const effectId = buttonElem.closest(".trait").dataset.itemId;
-        const effect = this.actor.effects.get(effectId);
-        effect.update({"disabled": !(effect.data.disabled)});
+        this._toggleEmbeddedProperty(Trait.fromElement(buttonElem), dataset.updatePath);
+        break;
+
+      case 'plus':
+      case 'minus':
+        const mod = dataset.action === 'minus' ? -1 : 1;
+        this._modEmbeddedProperty(Trait.fromElement(buttonElem), dataset.updatePath, mod);
+      default:
     }
   }
 
@@ -664,6 +675,22 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
+  async _toggleEmbeddedProperty(trait, editPath) {
+    const {category, itemId, key } = trait.split();
+    const embeddedDoc = category === 'aeffects' ? 
+      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
+    const currValue = foundry.utils.getProperty(embeddedDoc.data, editPath);
+    return await embeddedDoc.update({[`${editPath}`]: !currValue});
+  }
+
+  async _modEmbeddedProperty(trait, editPath, mod) {
+    const {category, itemId, key } = trait.split();
+    const embeddedDoc = category === 'aeffects' ? 
+      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
+    const currValue = foundry.utils.getProperty(embeddedDoc.data, editPath);
+    return await embeddedDoc.update({[`${editPath}`]: currValue + mod});
+  }
+
   /**
   * Displays a "fake item-sheet" from actor's attributes or spheres
   * Enables edition of misc values : paradigmic name (actually stored in the lexicon),
@@ -805,6 +832,22 @@ export default class M20eActorSheet extends ActorSheet {
         }
       }
     ]
+  }
+
+  _getRollableContextOptions(traitElem) {
+    const itemId = traitElem.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    if ( !item.data.data.equiped ) { return null;} //useless, no ctx menu on unequiped rollables^^
+    //prepare context menu options
+    return item.data.data.throws.map( (mageThrow, index) => {
+      return {
+        name: mageThrow.name,
+        icon: '<i class="fas fa-dice"></i>',
+        callback: element => {
+          item.roll(false, index);
+        }
+      }
+    });
   }
 
   /**

@@ -163,6 +163,7 @@ export default class M20eAeSheet extends DocumentSheet {
   //
   async _onInlineEditChange(event) {
     event.preventDefault();
+    event.stopPropagation();
     const element = event.currentTarget;
     const index = element.closest(".trait").dataset.index;
 

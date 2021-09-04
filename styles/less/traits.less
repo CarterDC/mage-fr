@@ -115,7 +115,7 @@
     }
   }
 /* -------------------------------------------- */
-  .trait.throw{
+  .trait.dice-throw{
     height:20px;
     margin: 3px 0;
 
@@ -296,6 +296,37 @@
   }
   .trait-label{
     margin-left : 5px;
+  }
+}
+/* -------------------------------------------- */
+.trait.equipable,
+.trait.misc{
+  .bullet-display{
+    flex: 0 0 75px;
+  }
+  .mini-button{
+    min-width: 20px;
+  }
+  .number-spinner{
+    position: relative;
+    flex: 0 0 50px;
+    input{
+      height:20px;
+      padding-right: 21px;
+    }
+    .double-button{
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      height: 18px;
+      border: none;
+      .mini-button{
+        height: 9px;
+      }
+    }
+    .double-button:hover{
+      box-shadow: none;
+    }
   }
 }
 

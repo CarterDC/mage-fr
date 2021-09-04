@@ -1,0 +1,58 @@
+<form class="{{cssClass}}" autocomplete="off">
+    <header class="sheet-header">
+        <div class="header-column">
+            <div class="header-row">
+                <input class="name" name="name" type="text" value="{{data.name}}" data-dtype="String" title="{{localize 'M20E.hints.name'}}"/>
+                <span class="item-type">{{{localize 'ITEM.TypeThrow'}}}</span>
+            </div>
+        </div>
+    </header>
+    {{> "systems/mage-fr/templates/item/parts/nav-block.hbs" secondTab='traits'}}
+
+    <section class="sheet-body">
+        <section class="tab" data-group="primary" data-tab="detail">
+            <br> {{!-- todo replace br with css rule on item section tab margintop --}}
+            <div class="grid two-col">
+                <div class= "field">
+                    <label>{{localize "M20E.labels.threshold"}} : </label>
+                    <input name="options.thresholdBase" type="text" value="{{data.options.thresholdBase}}" data-dtype="Number" min="2" max="10"/>
+                </div>
+                <div class= "field">
+                    <label>{{localize "M20E.labels.thresholdMod"}} : </label>
+                    <input name="options.thresholdMod" type="text" value="{{data.options.thresholdMod}}" data-dtype="Number" min="-3" max="3"/>
+                </div>
+                <div class= "field">
+                    <label>{{localize "M20E.labels.dicePoolMod"}} : </label>
+                    <input name="options.dicePoolMod" type="text" value="{{data.options.dicePoolMod}}" data-dtype="Number" min="-3" max="3"/>
+                </div>
+                <div class= "field">
+                    <label>{{localize "M20E.labels.throwOptions"}} : </label>
+                    <input class="inline-edit" data-update-path="options" type="text" value="{{data.throwOptions}}" data-dtype="String"/>
+                </div>
+            </div>
+          <div class= "field">
+              <label>{{localize "M20E.labels.displayDescription"}} : </label>
+<textarea name="description">{{data.description}}</textarea>
+          </div>
+        </section>
+
+        <section class="tab" data-group="primary" data-tab="traits">
+          <br>
+            <div class="rote-effect-wrapper">
+            <div class="category grid one-col">
+                {{#each data.traitsToRoll as |trait index|}}
+                <div class="trait aeffect" data-index="{{index}}" data-active="false">
+                    <label class="trait-label">
+                        {{trait.path}}
+                    </label>
+                    <div class="edit-bar" data-locked="{{../locks.traits}}">
+                        <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
+                        <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+            </div>
+        </section>
+    </section>
+</form>

@@ -55,6 +55,11 @@ export class Trait {
     return propKeys[0];
   }
 
+  get subType() {
+    const propKeys = this.path.split('.');
+    return propKeys.length === 3 ? propKeys[1] : null;
+  }
+
   get key() {
     const propKeys = this.path.split('.');
     return propKeys[propKeys.length - 1];
@@ -144,6 +149,23 @@ export class PromptData {
       } else {
         return '';
       }
+    }
+  }
+}
+
+export class DynaCtx extends ContextMenu {
+
+  constructor(element, selector, callback) {
+    super(element, selector, []);
+    this.callback = callback;
+  }
+
+  render(target) {
+    if ( this.callback instanceof Function ) {
+      const menuOptions = this.callback(target[0]);
+      if ( !menuOptions || menuOptions === [] ) { return this.close();}
+      this.menuItems = menuOptions;
+      super.render(target);
     }
   }
 }
