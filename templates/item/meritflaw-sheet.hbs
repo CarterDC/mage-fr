@@ -1,5 +1,5 @@
 <form class="{{cssClass}}" autocomplete="off">
-  {{> "systems/mage-fr/templates/item/parts/header-block.hbs" useDisplayName=true itemImg=item.img itemType="ITEM.TypeMeritflawAlt"}}
+  {{> "systems/mage-fr/templates/item/parts/header-block.hbs" useDisplayName=true itemImg=item.data.img itemType="ITEM.TypeMeritflawAlt"}}
 
   {{> "systems/mage-fr/templates/item/parts/nav-block.hbs"}}
 
@@ -23,7 +23,7 @@
               {{#if isGM}}
               <div class= "field" title="{{localize 'M20E.hints.systemName'}}">
                   <label>{{localize "M20E.labels.systemName"}} : </label>
-                  <input name="name" type="text" value="{{item.name}}" data-dtype="String"/>
+                  <input name="name" type="text" value="{{item.data.name}}" data-dtype="String"/>
               </div>
               {{/if}}
           </div>

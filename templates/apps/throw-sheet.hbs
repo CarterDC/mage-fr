@@ -38,13 +38,19 @@
 
         <section class="tab" data-group="primary" data-tab="traits">
           <br>
-            <div class="rote-effect-wrapper">
+            <div class="throw-traits-wrapper">
             <div class="category grid one-col">
-                {{#each data.traitsToRoll as |trait index|}}
-                <div class="trait aeffect" data-index="{{index}}" data-active="false">
+                {{#each data.traits as |trait index|}}
+                <div class="trait throw-trait" data-index="{{index}}" data-active="false">
                     <label class="trait-label">
                         {{trait.path}}
                     </label>
+                    <div class="ligne"></div>
+                    <div class="bullet-display" data-locked="{{../locks.traits}}">
+                        <label class="trait-label">
+                            {{trait.localizedName}}
+                        </label>
+                    </div>
                     <div class="edit-bar" data-locked="{{../locks.traits}}">
                         <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
                         <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>

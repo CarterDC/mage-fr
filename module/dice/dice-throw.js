@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, ExtendedTrait } from "../utils/classes.js";
+import { Trait, MageThrow } from "../utils/classes.js";
 
 export const TROWSETTINGS_BLANDROLL = 1;
 export const TROWSETTINGS_DEDUCTFAILURE = 2;
@@ -9,23 +9,24 @@ export const TROWSETTINGS_DFXPLODESUCCESS = 3;
 
 /**
  * Manages everything dice throws related in mage-fr.
- * Can do standalone 'quick throw' or display it's own DiceDialogue Application to drive throw options 
+ * Can do standalone 'quick throw' or display it's own DiceDialog Application to drive throw options 
  */
 export default class DiceThrow {
 
   /**
    * class DiceThrow takes either actor or item as document
    * and an array of {@link Trait} objects.
-   * @param {Object} args {document, traitsToRoll, options={}}
+   * @param {Object} args {document, traits, throwIndex, options}
    */
   constructor(args) {
-    const {document, traitsToRoll=[], options={}} = args;
+    const {document, traits=[], throwIndex=0, options={}} = args;
     if ( !document ) { throw 'M20E | Enable to create proper DiceThrow instance' }
     if ( document.isEmbedded && !document.isRollable ) { throw 'M20E | Enable to create proper DiceThrow instance' }
 
     this._app = null;
     this._document = document; //either an actor or owned item
-    this._traitsToRoll = traitsToRoll;
+    this._traits = traits;
+    this._thowIndex = throwIndex;
     this.options = options;
     this._initialized = false;
   }
@@ -44,7 +45,7 @@ export default class DiceThrow {
     };
 
     this.thresholdBase = this.options.thresholdBase || game.settings.get("mage-fr", "baseRollThreshold");
-    this.thresholdChosen = null;
+    this.thresholdChosen = this.thresholdBase;
     this.thresholdMods = {
       optionsMod: this.options.thresholdMod || 0
     };
@@ -57,11 +58,12 @@ export default class DiceThrow {
   }
 
   /**
+   * Ask the document to extend the traits array with relevant values to execute/display the throw (name, specialisation, value, valueMax etc...) 
    * separate init for extended traits
    * since it's not meant to be redone unless actor has been updated
    */
   initTraits() {
-    this.xTraitsToRoll = this._document.extendTraits(this._traitsToRoll);
+    this._document.extendTraits(this._traits);
   }
 
   /**
@@ -69,8 +71,7 @@ export default class DiceThrow {
    * also called by every update method call in order to display accurate values in case diceThrow has an App
    */
   prepareData() {
-    //todo : test the new threshold shit for bugs
-    this.isEffectRoll = DiceThrow.getIsEffectRoll(this._traitsToRoll);
+    this.isEffectRoll = DiceThrow.getIsEffectRoll(this._traits);
 
     //dice pool
     this.dicePoolBase = this.getDicePoolBase();
@@ -79,9 +80,9 @@ export default class DiceThrow {
 
     //threshold
     this.thresholdMods.untrainedMod = this.getUntrainedMod();
-    this.thresholdTotal = Math.clamped((this.thresholdChosen || this.thresholdBase) + this.thresholdMod, 2, 10);
+    this.thresholdTotal = Math.clamped(this.thresholdChosen + this.thresholdMod, 2, 10);
     //flavor
-    this.flavor = this._document.getThrowFlavor(this.xTraitsToRoll);
+    this.flavor = this._document.getThrowFlavor(this._traits, this._thowIndex);
   }
 
   /* -------------------------------------------- */
@@ -118,7 +119,7 @@ export default class DiceThrow {
     await mageRoll.toMessage({
       speaker : speaker,
       flavor : this.flavor
-    }, {rollMode: this.rollMode}); //TODO : check how rollmode has been fixed in 0.8.9
+    }, {rollMode: this.rollMode});
 
     //close app if exists or rerender it
     if ( this._app ) {
@@ -138,7 +139,8 @@ export default class DiceThrow {
     const rollData = {
       documentId: this._document.id,
       actorId: this.actor.id,
-      traitsToRoll: this._traitsToRoll,
+      traits: this._traits,//todo : maybe don't put the whole thing in there
+      throwIndex: this._thowIndex,
       options: this.options,
       deductFailures: (this.throwSettings === TROWSETTINGS_BLANDROLL) ? '' :  'df=1',
       tenXplodeSuccess: this.getExplodeSuccess() ? "xs=10" : "",
@@ -218,7 +220,7 @@ export default class DiceThrow {
       return this._document.data.data.arete || this.actor.data.data.traits.arete.value;
     } else {
       //dice pool base is sum of all values
-      return this.xTraitsToRoll.reduce((acc, cur) => {
+      return this._traits.reduce((acc, cur) => {
         return acc + cur.value;
       }, 0);
     }
@@ -235,7 +237,7 @@ export default class DiceThrow {
     if ( this.isWonderThrow ) { return 0;} //wonders don't have a health malus
     let healthMod = 0;
     if ( game.settings.get("mage-fr", "useHealthMalus") ) {
-      if ( this.isEffectRoll || this.xTraitsToRoll[0]?.category === 'arete' ) {
+      if ( this.isEffectRoll || this._traits[0]?.category === 'arete' ) {
         //throw is pure magic check for specific setting
         healthMod = game.settings.get("mage-fr", "useHealthMalusForMagic") ? 
           this.actor.data.data.resources.health.malus * -1 : 0;
@@ -258,9 +260,9 @@ export default class DiceThrow {
     const settings = game.settings.get("mage-fr", "untrainedMalus");
     if ( settings === "000" ) { return 0; }
     //settings is 3 digit string => first char for talents, second char for skills and third char for knowledges
-    const subTypes = {talent: 0, skill: 1, knowledge: 2};
+    const subTypes = {talents: 0, skills: 1, knowledges: 2};
     //check if untrained ability
-    this.xTraitsToRoll.forEach( trait => {
+    this._traits.forEach( trait => {
       if ( trait.category === "abilities" && trait.value === 0 ) {
         //get specific game setting relative to untrained abilities
         const malus = settings.substr(subTypes[trait.subType],1);
@@ -278,10 +280,11 @@ export default class DiceThrow {
    * 
    * @returns {Boolean} whether every Trait in the throw constitutes a magical effect
    */
-  static getIsEffectRoll(traitsToRoll) {
-    return traitsToRoll.length !== 0 && traitsToRoll.reduce((acc, cur) => {
+  static getIsEffectRoll(traits) {
+    return traits.every( trait => trait.category === "spheres" );
+    /*return traits.length !== 0 && traits.reduce((acc, cur) => {
       return acc && cur.category === 'spheres';
-    }, true);
+    }, true);*/
   }
 
   /**
@@ -292,13 +295,12 @@ export default class DiceThrow {
   getExplodeSuccess() {
     if ( this.throwSettings === TROWSETTINGS_DFXPLODESUCCESS ) { return true; }
     if ( this._document.type === 'rote' && game.settings.get("mage-fr", "roteRule")) { return true; }
-    return game.settings.get("mage-fr", "specialisationRule") && 
-      this.xTraitsToRoll.length !== 0 &&
-      this.xTraitsToRoll.reduce((acc, cur) => (acc || cur.useSpec), false);
+    return game.settings.get("mage-fr", "specialisationRule") &&
+      this._traits.some( trait => trait.useSpec);
   }
 
   /* -------------------------------------------- */
-  /*  {DiceDialogue} App Handlers                 */
+  /*  {DiceDialog} App Handlers                 */
   /* -------------------------------------------- */
 
   /**
@@ -325,7 +327,7 @@ export default class DiceThrow {
    * @param  {Number} index index of the trait in the throw's traits array
    */
   removeTrait(index) {
-    this._traitsToRoll.splice(index, 1);
+    this._traits.splice(index, 1);
     this.xTraitsToRoll.splice(index, 1);
     this.update();
   }
@@ -461,28 +463,30 @@ export default class DiceThrow {
   static fromMacro(macroParams, shiftKey) {
     const actor = utils.actorFromData(macroParams);
     if ( !actor ) { return; }
-
+    //todo : maybe add options in macro parameters ?
     let document = null;
-    let traitsToRoll = [];
+    let traits = [];
+    let throwIndex =0;
     switch ( macroParams.type ) {
       case 'm20e-roll':
         document = actor;
-        traitsToRoll = macroParams.data.map(obj => new Trait(obj));
+        traits = macroParams.data.map(obj => new Trait(obj));
         break;
       case 'Item':
         const item = actor.getItemFromId(macroParams.data.itemId);
+        throwIndex = parseInt(macroParams.data.throwIndex);
         if ( !item ) { return false; }
         if ( !item._isActuallyRollable(actor) ) { return false; } //todo add localized notification error
         document = item;
-        traitsToRoll = item.getTraitsToRoll();
+        traits = item.getTraitsToRoll(throwIndex);
         break;
       default:
         return;
     }
-    if ( traitsToRoll === [] ) { return; }
+    if ( traits === [] ) { return; }
     
     //at last create our diceThrow
-    const diceThrow = new DiceThrow({document, traitsToRoll});
+    const diceThrow = new DiceThrow({document, traits, throwIndex});
     if ( shiftKey ) {
       //throw right away
       diceThrow.throwDice();

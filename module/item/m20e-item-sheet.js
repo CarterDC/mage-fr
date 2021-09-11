@@ -48,18 +48,15 @@ export default class M20eItemSheet extends ItemSheet {
   /** @override */
   getData(options) {
     const sheetData = super.getData(options);
-
-    //the item's data
-    //todo : redo like actor sheet's
-    const itemData = this.item.data.toObject(false);
-    sheetData.item = itemData;
-    sheetData.data = itemData.data;
+    //sheetData.data is a standard js Object created from the item's PREPARED data
+    const itemData = sheetData.data; 
+    sheetData.data = itemData.data; //shorthand for convenience to avoid 'data.data' all the time
 
     //other usefull data
     sheetData.config = CONFIG.M20E;
     sheetData.isGM = game.user.isGM;
 
-    log({item : sheetData.item.name, sheetData : sheetData});
+    log({item : this.item.name, sheetData : sheetData});
     return sheetData;
   }
 

@@ -351,6 +351,18 @@
   padding-right: 31px;
   min-height: 26px;
 }
+.m20e.item .throw-traits-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.m20e.item .throw-traits-wrapper .one-col {
+  width: 80%;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding: 0px 3px;
+  min-height: 26px;
+}
 .m20e.item .effect-grid {
   width: 100%;
   grid-template-columns: 40fr 35fr 10fr 15fr;
@@ -537,6 +549,27 @@
 .m20e .double-button:hover {
   box-shadow: 0 0 2px 1px var(--hoverColor);
 }
+.m20e .number-spinner {
+  position: relative;
+  flex: 0 0 50px;
+}
+.m20e .number-spinner input {
+  height: 20px;
+  padding-right: 21px;
+}
+.m20e .number-spinner .double-button {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  height: 18px;
+  border: none;
+}
+.m20e .number-spinner .double-button .mini-button {
+  height: 9px;
+}
+.m20e .number-spinner .double-button:hover {
+  box-shadow: none;
+}
 .m20e .resource-panel {
   flex: 1 1;
 }
@@ -596,6 +629,8 @@
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /*  Category specific traits                    */
+  /* -------------------------------------------- */
+  /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
@@ -890,39 +925,46 @@
 .m20e .trait.event .trait-label {
   margin-left: 5px;
 }
-.m20e .trait.equipable .bullet-display,
+.m20e .trait.equipable {
+  margin-top: 3px;
+}
+.m20e .trait.equipable div.item-img {
+  position: relative;
+  align-self: flex-start;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border: none;
+  height: 40px;
+  width: 40px;
+  margin: 3px 5px 0 0;
+}
+.m20e .trait.equipable .trait-label {
+  margin-left: 5px;
+}
+.m20e .trait.equipable .trait-dice {
+  visibility: hidden;
+  position: absolute;
+  border: none;
+  top: 12px;
+  left: 12px;
+  width: 30px;
+  height: 30px;
+  background-image: url("../assets/ui/ten-dice.png");
+  background-size: contain;
+  cursor: pointer;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1s;
+}
+.m20e .rote:hover .trait-dice {
+  visibility: visible;
+  opacity: 1;
+}
 .m20e .trait.misc .bullet-display {
   flex: 0 0 75px;
 }
-.m20e .trait.equipable .mini-button,
 .m20e .trait.misc .mini-button {
   min-width: 20px;
-}
-.m20e .trait.equipable .number-spinner,
-.m20e .trait.misc .number-spinner {
-  position: relative;
-  flex: 0 0 50px;
-}
-.m20e .trait.equipable .number-spinner input,
-.m20e .trait.misc .number-spinner input {
-  height: 20px;
-  padding-right: 21px;
-}
-.m20e .trait.equipable .number-spinner .double-button,
-.m20e .trait.misc .number-spinner .double-button {
-  position: absolute;
-  top: 1px;
-  right: 1px;
-  height: 18px;
-  border: none;
-}
-.m20e .trait.equipable .number-spinner .double-button .mini-button,
-.m20e .trait.misc .number-spinner .double-button .mini-button {
-  height: 9px;
-}
-.m20e .trait.equipable .number-spinner .double-button:hover,
-.m20e .trait.misc .number-spinner .double-button:hover {
-  box-shadow: none;
 }
 .m20e .trait.aeffect input {
   flex: 0 0 20px;
@@ -943,6 +985,20 @@
 .m20e .trait.rote-effect .mini-button {
   color: var(--m20e-badRed);
   margin-right: 10px;
+}
+.m20e .trait.throw-trait {
+  width: 100%;
+  justify-self: center;
+  height: 20px;
+  margin: 3px 0px 3px 0px;
+}
+.m20e .trait.throw-trait .trait-label {
+  padding-left: 3px;
+}
+.m20e .trait.throw-trait .bullet-display {
+  flex: 0 0 100px;
+  justify-content: flex-start;
+  padding-left: 3px;
 }
 .m20e .trait.lexicon input {
   height: 24px;

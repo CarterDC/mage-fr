@@ -1,8 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
-import DiceThrow from '../dice/dice-throw.js'
 import { log } from "../utils/utils.js";
-import { Trait, ExtendedTrait } from "../utils/classes.js";
+import { Trait } from "../utils/classes.js";
 import * as chat from "../chat.js";
 
 /**
@@ -87,6 +86,25 @@ export default class M20eItem extends Item {
   /*  Item Preparation                            */
   /* -------------------------------------------- */
 
+  /**
+   * todo : maybe migrate in the item prepareData with actor owned check ?
+   */
+   getTraitData() {
+    const itemData = this.data;
+    return {
+      cat: CONFIG.M20E.traitToCat[itemData.type],
+      subType: CONFIG.M20E.traitToCat[itemData.data.subType] || null,
+      key: utils.sanitize(itemData.name),
+      data: {
+        name: itemData.name,
+        displayName: itemData.data.displayName || '',
+        value: parseInt(itemData.data.value),
+        specName:  itemData.data.specialisation || '',
+        itemId: itemData._id
+      }
+    }
+  }
+
   /** @override */
   prepareData() {
     super.prepareData();
@@ -109,112 +127,15 @@ export default class M20eItem extends Item {
   /* -------------------------------------------- */
 
   get isRollable() {
-    return this.data.data.isRollable;
+    return this.data.data.isRollable === true;
   }
 
   get isTrait() {
-    return this.data.data.isTrait;
+    return this.data.data.isTrait === true;
   }
 
   get isActive() { // todo : not sure atm
     return this.data.data.effects?.length > 0;
-  }
-
-  /* -------------------------------------------- */
-  /*  Roll related                                */
-  /* -------------------------------------------- */
-
-  /**
-   * Implemented in every rollable subClasses
-   */
-  getTraitsToRoll(throwIndex=0) {}
-
-  /**
-   * Implemented in every rollable subClasses
-   */
-  getThrowFlavor(xTraitsToRoll=[]) {}
-
-  getMacroData(data) {
-    const itemType = game.i18n.localize(`ITEM.Type${this.type.capitalize()}`);
-    return {
-      name : `${itemType} ${this.name}`,
-      img: this.img,
-      commandParameters : {
-        data: {
-          itemId: this.id
-        }
-      }
-    }
-  }
-
-  /**
-   * Extends an array of {@link Trait} with relevant values to Throw dices
-   * called by a DiceThrow when item is the main document (instead of an actor)
-   * 
-   * @return {Array} an array of {@link ExtendedTrait} 
-   */
-  extendTraits(traitsToRoll) {
-    return traitsToRoll.map(trait => {
-      const extendedData = this.actor.getExtendedTraitData(trait);
-      
-      return new ExtendedTrait({...extendedData, ...trait});
-    });
-  }
-
-  /**
-   * 
-   * @return {Object} data needed to populate an ExtendedTrait
-   */
-  getExtendedTraitData() {
-    if ( !this.isTrait ) { return null; }
-    return {
-      name: this.name,
-      displayName: this.data.data.displayName,
-      value: parseInt(this.data.data.value),
-      specName:  this.data.data.specialisation
-    }
-  }
-
-  getTraitData() {
-    const itemData = this.data;
-    return {
-      cat: CONFIG.M20E.traitToCat[itemData.type],
-      subType: CONFIG.M20E.traitToCat[itemData.data.subType] || null,
-      key: utils.sanitize(itemData.name),
-      data: {
-        name: itemData.name,
-        displayName: itemData.data.displayName || '',
-        value: parseInt(itemData.data.value),
-        specName:  itemData.data.specialisation || '',
-        itemId: itemData._id
-      }
-    }
-  }
-
-  /**
-   * get traits from a rollable item for the specific throw index (ie rotes only have 1 throw so it's index 0)
-   * create a new {@link DiceThrow} from traitsToRoll and either throw or open config App based on shiftkey status
-   * 
-   * @param  {Boolean} shiftKey
-   * @param  {Number} throwIndex=0 
-   */
-  roll(shiftKey, throwIndex = 0) {
-    if ( !this.isRollable ) { return null; }
-
-    //retrieve traits to roll
-    const traitsToRoll = this.getTraitsToRoll(throwIndex);
-    const diceThrow = new DiceThrow({
-      document: this,
-      traitsToRoll: traitsToRoll,
-      options: this.data.data.throws[throwIndex].options
-    });
-    if ( shiftKey ) {
-      //throw right away
-      diceThrow.throwDice();
-    } else {
-      //display dice throw dialog
-      diceThrow.render(true);
-    }
   }
 }
 

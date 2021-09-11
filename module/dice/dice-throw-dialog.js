@@ -9,7 +9,7 @@ import { log } from "../utils/utils.js";
  * 
  * @extends {Application}
  */
- export default class DiceDialogue extends Application {
+ export default class DiceDialog extends Application {
   
   /** @override */
   constructor(diceThrow, options){
@@ -48,7 +48,7 @@ import { log } from "../utils/utils.js";
     const dt = this.diceThrow;
 
     appData.dt = dt;
-    appData.traits = dt.xTraitsToRoll;
+    appData.traits = dt._traits;
 
     //creates an array for the radio options : value from 2 to 10, checked or ''
     appData.radioOptions = [...Array(9)].map((value, index) => {
@@ -171,7 +171,7 @@ import { log } from "../utils/utils.js";
         break;
       case 'spe':
         const speToggle = (dataset.active === 'true');
-        this.diceThrow.xTraitsToRoll[traitElem.dataset.key]._useSpec = !speToggle;
+        this.diceThrow._traits[traitElem.dataset.key]._useSpec = !speToggle;
         this.diceThrow.update();
         break;
       case 'mod-plus':
@@ -233,7 +233,7 @@ import { log } from "../utils/utils.js";
    * @returns {Number}
    */
    getMaxEffectLevel() {
-    return this.diceThrow.xTraitsToRoll.reduce((acc, cur) => (Math.max(acc, cur.value)), 0);
+    return this.diceThrow._traits.reduce((acc, cur) => (Math.max(acc, cur.value)), 0);
   }
 
   /**

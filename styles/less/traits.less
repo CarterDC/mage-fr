@@ -283,6 +283,8 @@
     opacity: 1;
   }
 /* -------------------------------------------- */
+
+/* -------------------------------------------- */
 .trait.event{
   margin-top: 3px;
   .trait-img{
@@ -299,7 +301,43 @@
   }
 }
 /* -------------------------------------------- */
-.trait.equipable,
+.trait.equipable {
+    margin-top: 3px;
+    div.item-img{
+      position: relative;
+      align-self: flex-start;
+      background-size: contain;
+      background-repeat: no-repeat;
+      //background-color: radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));
+      border: none;
+      height: 40px;
+      width: 40px;
+      margin: 3px 5px 0 0;
+    }
+    .trait-label{
+      margin-left : 5px;
+    }
+    .trait-dice{
+      visibility: hidden;
+      position:absolute;
+      border:none;
+      top:12px;
+      left:12px;
+      width:30px;
+      height: 30px;
+      background-image: url("../assets/ui/ten-dice.png");
+      background-size: contain; 
+      cursor: pointer;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 1s;
+    }
+  }
+  .rote:hover .trait-dice{
+    visibility: visible;
+    opacity: 1;
+  }
+
 .trait.misc{
   .bullet-display{
     flex: 0 0 75px;
@@ -307,27 +345,7 @@
   .mini-button{
     min-width: 20px;
   }
-  .number-spinner{
-    position: relative;
-    flex: 0 0 50px;
-    input{
-      height:20px;
-      padding-right: 21px;
-    }
-    .double-button{
-      position: absolute;
-      top: 1px;
-      right: 1px;
-      height: 18px;
-      border: none;
-      .mini-button{
-        height: 9px;
-      }
-    }
-    .double-button:hover{
-      box-shadow: none;
-    }
-  }
+
 }
 
 /* -------------------------------------------- */
@@ -354,6 +372,21 @@
         margin-right:10px;
     }
   }
+/* -------------------------------------------- */
+.trait.throw-trait{
+  width:100%;
+  justify-self: center;
+  height: 20px;
+  margin: 3px 0px 3px 0px;
+  .trait-label{
+    padding-left: 3px;
+  }
+  .bullet-display{
+    flex: 0 0 100px;
+    justify-content: flex-start;
+    padding-left: 3px;
+  }
+}
 /* -------------------------------------------- */
   .trait.lexicon{ //todo : should use field instead !
     input{

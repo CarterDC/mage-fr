@@ -53,13 +53,10 @@ export default class M20eActorSheet extends ActorSheet {
 
   /** @override */
   getData(options) {
-    const sheetData = super.getData(options); //todo maybe remove that at some point
-
-    //creates a standard js Object from the actor's PREPARED data (true would return the ._source data)
-    const actorData = this.actor.data.toObject(false); 
-    sheetData.actorData = actorData;
-    sheetData.data = actorData.data; //shorthand to avoid 'actorData.data' all the time
-    delete sheetData['actor']; //not really usefull nor necessary anyway
+    const sheetData = super.getData(options);
+    //sheetData.data is a standard js Object created from the actor's PREPARED data
+    const actorData = sheetData.data; 
+    sheetData.data = actorData.data; //shorthand for convenience to avoid 'data.data' all the time
 
     //pre-digest some data to be usable by handlbars (avoid some helpers)
     sheetData.resources = {};
@@ -731,6 +728,7 @@ export default class M20eActorSheet extends ActorSheet {
 
     //only update if valid xpGain
     if ( inputElem === null ) { return; } //promptDialog was escaped
+    //TODO : put that in actor !!
     const xpGain = parseInt(inputElem.value);
     if ( xpGain > 0 ) {
       //update both currentXP and totalXP (total is just a reminder of all the xp gains)
@@ -752,6 +750,7 @@ export default class M20eActorSheet extends ActorSheet {
 
     //only update if valid xpLoss
     if ( inputElem === null ) { return; } //promptDialog was escaped
+    //TODO : put that in actor !!
     const xpLoss = parseInt(inputElem.value);
     if ( xpLoss > 0 ) {
       //only update currentXP and ensure we don't go into negative xp values
@@ -839,13 +838,16 @@ export default class M20eActorSheet extends ActorSheet {
     const item = this.actor.items.get(itemId);
     if ( !item.data.data.equiped ) { return null;} //useless, no ctx menu on unequiped rollables^^
     //prepare context menu options
-    return item.data.data.throws.map( (mageThrow, index) => {
+    return item.data.data.throws.map( (mageThrow, throwIndex) => {
       return {
         name: mageThrow.name,
+        itemId: itemId,
+        throwIndex: throwIndex,
         icon: '<i class="fas fa-dice"></i>',
-        callback: element => {
-          item.roll(false, index);
-        }
+        callback: (target, event) => {
+          item.roll(event.shiftKey, throwIndex);
+        },
+        dragDropCallbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDrop.bind(this) }
       }
     });
   }
@@ -936,21 +938,28 @@ export default class M20eActorSheet extends ActorSheet {
    * 
    *  @override */
   _onDragStart(event) {
-    const dragElem = event.currentTarget;
-
-    if ( dragElem.dataset?.action === "roll-traits" ) {
-      // Create drag data
-      const dragData = {
-        actorId: this.actor.id,
-        sceneId: this.actor.isToken ? canvas.scene?.id : null,
-        tokenId: this.actor.isToken ? this.actor.token.id : null
-      }
-      dragData.type = "m20e-roll";
-      dragData.data = this.getTraitsToRoll();
-      //set out parameters inside the event to be picked up by DiceThrow.toMacro() if needed
-      event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-    } else {
-      super._onDragStart(event);
+    const dataset = event.currentTarget.dataset
+    // Create drag data
+    const dragData = {
+      actorId: this.actor.id,
+      sceneId: this.actor.isToken ? canvas.scene?.id : null,
+      tokenId: this.actor.isToken ? this.actor.token.id : null
+    }
+    switch ( dataset?.action ) {
+      case 'roll-traits' : 
+        dragData.type = "m20e-roll";
+        dragData.data = this.getTraitsToRoll();
+      case 'roll-throw' :
+        const item = this.actor.items.get(dataset.itemId);
+        dragData.type = "Item";
+        dragData.data = duplicate(item.data);
+        dragData.data.throwIndex = dataset.throwIndex || 0;
+      default:
+        if ( dragData.data ) {
+          event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+        } else {
+          super._onDragStart(event);
+        }
     }
   }
 

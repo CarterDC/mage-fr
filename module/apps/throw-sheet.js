@@ -75,6 +75,9 @@ export class ThrowSheet extends DocumentSheet {
     };
 
     sheetData.data = duplicate(this.mageThrow);
+    sheetData.data.traits.forEach( trait => {
+      trait.localizedName = foundry.utils.getProperty(CONFIG.M20E.traits, trait.path);
+    });
     sheetData.data.throwOptions = JSON.stringify(sheetData.data.options) || {};
     sheetData.locks = this.locks;
     sheetData.isGM = game.user.isGM;
@@ -179,7 +182,7 @@ export class ThrowSheet extends DocumentSheet {
   //to be implemented by subClasses
   async addItem(buttonElem) {
     const throws = duplicate(this.item.data.data.throws);
-    throws[this.throwIndex].traitsToRoll.push(new Trait({path: 'attributes.stre'}));
+    throws[this.throwIndex].traits.push(new Trait({path: 'attributes.stre'}));
     return await this.item.update({['data.throws']: throws});
   }
 
@@ -187,7 +190,7 @@ export class ThrowSheet extends DocumentSheet {
   async editItem(buttonElem) {
     const traitIndex = buttonElem.closest(".trait").dataset.index;
     const throws = duplicate(this.item.data.data.throws);
-    const currPath = throws[this.throwIndex].traitsToRoll[traitIndex].path;
+    const currPath = throws[this.throwIndex].traits[traitIndex].path;
 
     const newTraitPath = await TraitSelect.prompt({
       name: throws[this.throwIndex].name,
@@ -195,7 +198,7 @@ export class ThrowSheet extends DocumentSheet {
     });
     if ( !newTraitPath || newTraitPath === currPath ) { return; }
 
-    throws[this.throwIndex].traitsToRoll[traitIndex].path = newTraitPath;
+    throws[this.throwIndex].traits[traitIndex].path = newTraitPath;
     return await this.item.update({['data.throws']: throws});
   }
 

@@ -31,7 +31,7 @@ export default class M20eMageActorSheet extends M20eActorSheet {
 
     sheetData.canSeeParadox = utils.canSeeParadox();
     
-    log({actor : sheetData.actorData.name, sheetData : sheetData});
+    log({actor : this.actor.name, sheetData : sheetData});
     return sheetData;
   }
 
