@@ -31,7 +31,7 @@ export const isObject = myVariable =>
  * @returns {boolean}  whether myVariable is a number or not
  */
 export const isNumeric = myVariable =>
-  !isNaN(parseFloat(myVariable)) && isFinite(myVariable);;
+  !isNaN(parseFloat(myVariable)) && isFinite(myVariable);
 
 /**
  * For use in array.sort()

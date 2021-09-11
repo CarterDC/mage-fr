@@ -178,6 +178,11 @@ M20E.defaultImg = { // todo : find suitable svgs and add default for categories
   contact: "icons/svg/angel.svg",
   rote: "icons/svg/daze.svg",
   ActiveEffect: "icons/svg/upgrade.svg",
+  handtohand: "systems/mage-fr/assets/icons/fist.svg",
+  melee: "systems/mage-fr/assets/icons/sword-brandish.svg",
+  throw: "systems/mage-fr/assets/icons/thrown-daggers.svg",
+  lightfire: "systems/mage-fr/assets/icons/pistol-gun.svg",
+  heavyfire: "systems/mage-fr/assets/icons/famas.svg",
   default: "icons/svg/item-bag.svg"
 }
 

@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, ExtendedTrait } from "../utils/classes.js";
+import { Trait } from "../utils/classes.js";
 
 /**
  * Actor class for base sleeper NPCs, 
@@ -436,15 +436,15 @@ export default class M20eActor extends Actor {
   /*  Roll related                                */
   /* -------------------------------------------- */
 
-  getThrowFlavor(xTraitsToRoll=[]) {
+  getThrowFlavor(traits=[]) {
     //regular roll (non item, non magical) compute flavor based on the number of traits inside the throw
-    switch ( xTraitsToRoll.length ) {
+    switch ( traits.length ) {
       case 0: //no trait was selected
         return `${game.i18n.localize("M20E.diceThrows.freeThrow")}.`;
         break;
       case 1: //only one trait roll
       case 2: //classic (or not) 2 traits
-        const throwTrait = xTraitsToRoll.map(trait => {
+        const throwTrait = traits.map(trait => {
           return trait.useSpec ? `${trait.name}(S)` :
             ( trait.value === 0 ? `<span class= "red-thingy">${trait.name}</span>` : trait.name) ;
         }).join(' + ');
@@ -456,9 +456,10 @@ export default class M20eActor extends Actor {
   }
 
   getMacroData(data) {
-    const xTraitToRoll = this.extendTraits(data.map( d => new Trait(d)));
+    const traits = data.map( d => new Trait(d));
+    this.extendTraits(traits);
     return {
-      name : this.getThrowFlavor(xTraitToRoll),
+      name : this.getThrowFlavor(traits),
       img: '', // todo : maybe find a more suitable image than default one
       commandParameters : {
         data: data
@@ -470,8 +471,10 @@ export default class M20eActor extends Actor {
    * Extends an array of {@link Trait} with relevant values to Throw dices
    * @return {Array} an array of {@link ExtendedTrait} 
    */
-  extendTraits(traitsToRoll) {
-    return traitsToRoll.map(trait => new ExtendedTrait({trait, ...this.getExtendedTraitData(trait)}));
+  extendTraits(traits) {
+    traits.map(trait => {
+      trait.data = {...trait.data, ...this.getExtendedTraitData(trait)};
+    });
   }
 
   getExtendedTraitData(trait) {

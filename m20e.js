@@ -25,7 +25,7 @@ import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 import M20eRoteSheet from './module/item/rote-sheet.js'
 import M20eRollableSheet from './module/item/rollable-sheet.js'
 import DiceThrow from './module/dice/dice-throw.js'
-import DiceDialogue from './module/dice/dice-throw-dialog.js'
+import DiceDialog from './module/dice/dice-throw-dialog.js'
 // Other Imports
 import { M20E } from './module/config.js'
 import { registerSystemSettings } from "./module/settings.js";
@@ -104,7 +104,7 @@ Hooks.once('init', async function () {
   //DICE thingies
   CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later access
   CONFIG.Dice.rolls.push(dice.MageRoll); //make it official
-  CONFIG.M20E.diceThrowApp = DiceDialogue; //store class here for later access
+  CONFIG.M20E.diceThrowApp = DiceDialog; //store class here for later access
   CONFIG.Dice.terms["s"] = dice.DieSuccess; //new dice term
   dice.registerDieModifier(); //adds the 'xs' (success on explode) modifier
   dice.registerInitiative();

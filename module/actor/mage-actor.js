@@ -5,7 +5,7 @@ import DiceThrow from '../dice/dice-throw.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, ExtendedTrait } from "../utils/classes.js";
+import { Trait } from "../utils/classes.js";
 
 /**
  * Implements M20eActor as an extension of the Actor class

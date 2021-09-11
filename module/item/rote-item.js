@@ -1,13 +1,13 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, ExtendedTrait, MageThrow } from "../utils/classes.js";
-import M20eItem from './m20e-item.js'
+import { Trait, MageThrow } from "../utils/classes.js";
+import M20eRollableItem from './rollable-item.js'
 
 /**
- * @extends {M20eItem}
+ * @extends {M20eRollableItem}
  */
-export default class M20eRoteItem extends M20eItem {
+export default class M20eRoteItem extends M20eRollableItem {
 
   /** @override */
   constructor(data, context) {
@@ -25,33 +25,6 @@ export default class M20eRoteItem extends M20eItem {
     itemData.update({['data.throws']: throws});
   }
 
-  /** @override */
-  prepareData() {
-    super.prepareData();
-    const traits = this.data.data.throws[0]?.traitsToRoll;
-    if ( !traits ) { return; }
-    this.data.data.throws[0].traitsToRoll = traits.map(trait => {
-      return foundry.utils.mergeObject(Trait.fromPath(trait.path), {value: trait.value})
-    });
-  }
-
-  /**
-   * @override
-   */
-  _prepareOwnedItem() {
-    super._prepareOwnedItem();
-    const itemData = this.data;
-    itemData.data.flavor = this._getFlavor();
-    itemData.data.isActuallyRollable = this._isActuallyRollable();
-  }
-
-  /**
-   * @override
-   */
-  getTraitsToRoll() {
-    return this.data.data.throws[0].traitsToRoll;
-  }
-
   /**
    * @override
    */
@@ -64,27 +37,13 @@ export default class M20eRoteItem extends M20eItem {
   }
 
   get roteEffects() {
-    return this.data.data.throws[0].traitsToRoll.map(effect => effect.key);
+    return this.data.data.throws[0].traits.map(effect => effect.key);
   }
 
   _getFlavor() {
-    return this.data.data.throws[0]?.traitsToRoll.map(effect => 
+    return this.data.data.throws[0]?.traits.map(effect => 
       `${this.actor.locadigm(`traits.spheres.${effect.key}`)} (${effect.value})`
       ).join(' + ');
-  }
-
-  /**
-   * todo : being rollable does not depends on the item but on the individual throws !
-   * find a way to do that !
-   * @param  {} actor=null
-   */
-  _isActuallyRollable(actor=null) {
-    actor = actor || this.actor;
-    //check if actor is able to use this rote's effects
-    const spheres = actor.data.data.traits.spheres;
-    return this.data.data.throws[0].traitsToRoll.every( trait => 
-      spheres[trait.key].value >= trait.value
-    );
   }
 
   async addEffect(availEffects) {
@@ -94,28 +53,30 @@ export default class M20eRoteItem extends M20eItem {
       ui.notifications.warn(game.i18n.localize('M20E.notifications.noMoreAvailEffects'));
       return;
     }
-    const newTrait = Trait.fromPath(`spheres.${firstKey}`);
-    newTrait.value = 1;
+    const newTrait = new Trait({
+      path: `spheres.${firstKey}`,
+      data: {valueOverride:1}
+    });
     const throws = duplicate(this.data.data.throws);
-    throws[0].traitsToRoll.push(newTrait);
+    throws[0].traits.push(newTrait);
     return await this.update({['data.throws']: throws});
   }
 
   async updateEffectValue(effectIndex, value) {
     const throws = duplicate(this.data.data.throws);
-    throws[0].traitsToRoll[effectIndex].value = value;
+    throws[0].traits[effectIndex].data.valueOverride = value;
     return await this.update({['data.throws']: throws});
   }
 
   async updateEffectKey(effectIndex, key) {
     const throws = duplicate(this.data.data.throws);
-    throws[0].traitsToRoll[effectIndex].path = `spheres.${key}`;
+    throws[0].traits[effectIndex].path = `spheres.${key}`;
     return await this.update({['data.throws']: throws});
   }
 
   async removeEffect(effectIndex) {
     const throws = duplicate(this.data.data.throws);
-    throws[0].traitsToRoll.splice(effectIndex, 1);
+    throws[0].traits.splice(effectIndex, 1);
     return await this.update({['data.throws']: throws});
   }
 }

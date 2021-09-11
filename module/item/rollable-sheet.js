@@ -2,7 +2,7 @@
 import M20eItemSheet from './m20e-item-sheet.js'
 import {ThrowSheet} from '../apps/throw-sheet.js'
 // Import Helpers
-import { Trait, ExtendedTrait, MageThrow } from "../utils/classes.js";
+import { Trait, MageThrow } from "../utils/classes.js";
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
@@ -24,8 +24,9 @@ export default class M20eRollableSheet extends M20eItemSheet {
   getData(options) {
     const sheetData = super.getData(options);
     sheetData.locks = this.locks;
-    sheetData.throws = sheetData.data.throws;
-  
+    sheetData.throws = sheetData.data.throws.map( mageThrow => {
+      return { ...duplicate(mageThrow), flavor: mageThrow.getFlavor(this.actor)}
+    });
     return sheetData;
   }
 

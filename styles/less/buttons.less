@@ -90,4 +90,26 @@
   .double-button:hover {
     box-shadow: 0 0 2px 1px var(--hoverColor);
   }
+
+  .number-spinner{
+    position: relative;
+    flex: 0 0 50px;
+    input{
+      height:20px;
+      padding-right: 21px;
+    }
+    .double-button{
+      position: absolute;
+      top: 1px;
+      right: 1px;
+      height: 18px;
+      border: none;
+      .mini-button{
+        height: 9px;
+      }
+    }
+    .double-button:hover{
+      box-shadow: none;
+    }
+  }
 }

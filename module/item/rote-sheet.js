@@ -1,7 +1,6 @@
 // Import Documents
 import M20eItemSheet from './m20e-item-sheet.js'
 // Import Helpers
-import { Trait, ExtendedTrait, MageThrow } from "../utils/classes.js";
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
@@ -24,7 +23,7 @@ export default class M20eRoteSheet extends M20eItemSheet {
     const sheetData = super.getData(options);
     sheetData.locks = this.locks;
     sheetData.throw = sheetData.data.throws[0];
-    sheetData.traits = sheetData.throw.traitsToRoll.map(trait => {
+    sheetData.traits = sheetData.throw.traits.map(trait => {
       return {...trait.split(), value: trait.value}
     });
     sheetData.availEffects = this.getAvailEffects();
