@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait } from "../utils/classes.js";
+import { Trait } from '../dice/dice.js'
 
 /**
  * Actor class for base sleeper NPCs, 

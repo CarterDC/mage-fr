@@ -1,5 +1,5 @@
 // Import Helpers
-import { MageThrow, Trait } from '../utils/classes.js';
+import { Trait, MageThrow } from '../dice/dice.js'
 import { TraitSelect } from './trait-select-dialog.js'
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";

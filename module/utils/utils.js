@@ -1,4 +1,3 @@
-import { Trait, PromptData } from "./classes.js";
 
 //loging & tracing
 const consoleTrace = args => {
@@ -193,6 +192,35 @@ export async function promptSelect(promptData={}) {
       const selectElem = html.find('select')[0];
       return selectElem.options[selectElem.selectedIndex].value }
   });
+}
+
+/**
+ * helper class to be used by utils.prompts functions
+ */
+ export class PromptData {
+  constructor(obj) {
+    this.title = obj.title || null;
+    this.name = obj.name || null;
+    this.currentValue = obj.currentValue || '';
+    this.placeHolder = obj.placeHolder || '';
+    this._promptContent = obj.promptContent || null;
+  }
+
+  /**
+   * retruns the actual _promptContent or generates a basic 'prompt new value' one.
+   * @returns {String} 
+   */
+  get promptContent() {
+    if ( this._promptContent ) {
+      return this._promptContent;
+    } else {
+      if ( this.name ) {
+        return game.i18n.format("M20E.prompts.newValue", {name : this.name});
+      } else {
+        return '';
+      }
+    }
+  }
 }
 
 /**

@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, MageThrow } from "../utils/classes.js";
+import { Trait, MageThrow } from '../dice/dice.js'
 import M20eRollableItem from './rollable-item.js'
 
 /**

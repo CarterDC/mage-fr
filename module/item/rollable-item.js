@@ -2,7 +2,7 @@
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 import DiceThrow from '../dice/dice-throw.js'
-import { Trait, MageThrow } from "../utils/classes.js";
+import { Trait, MageThrow } from '../dice/dice.js'
 import M20eItem from './m20e-item.js'
 
 /**
