@@ -1,10 +1,11 @@
 // Import Applications
 import { FakeItem } from '../apps/fakeitem-sheet.js'
 import DiceThrow from '../dice/dice-throw.js'
+import { Trait } from '../dice/dice.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, PromptData, DynaCtx } from "../utils/classes.js";
+import { DynaCtx } from "../utils/classes.js";
 import * as chat from "../chat.js";
 
 /**
@@ -288,10 +289,10 @@ export default class M20eActorSheet extends ActorSheet {
    */
   _onDiceClick(event) {
     //retrieve traits to roll
-    const traitsToRoll = this.getTraitsToRoll();
+    const traits = this.getTraitsToRoll();
     const diceThrow = new DiceThrow({
       document: this.actor,
-      traitsToRoll: traitsToRoll
+      traits: traits
     });
     if ( event.shiftKey ) {
       //throw right away
@@ -451,7 +452,7 @@ export default class M20eActorSheet extends ActorSheet {
   *                  prepared in the context menu callback
   */
    async _editResource({ relativePath, currentValue, name }) {
-    const promptData = new PromptData({
+    const promptData = new utils.PromptData({
       title: game.i18n.format(`M20E.prompts.editTitle`, {name : name}),
       name: name,
       currentValue : currentValue
@@ -600,7 +601,7 @@ export default class M20eActorSheet extends ActorSheet {
       game.i18n.localize(`M20E.new.${itemType}.${itemSubtype}`) :
       game.i18n.localize(`M20E.new.${itemType}`);
 
-    const promptData = new PromptData({
+    const promptData = new utils.PromptData({
       title: game.i18n.localize(`M20E.prompts.addItemTitle`),
       placeHolder: placeHodlderName,
       promptContent : game.i18n.format(`M20E.prompts.addItemContent`, {name: placeHodlderName})
@@ -718,7 +719,7 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   async addXP() {
-    const promptData = new PromptData({
+    const promptData = new utils.PromptData({
       title: this.actor.name,
       promptContent: game.i18n.format('M20E.prompts.addXPContent', {name: this.actor.name}),
       placeHolder: 0
@@ -740,7 +741,7 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   async removeXP() {
-    const promptData = new PromptData({
+    const promptData = new utils.PromptData({
       title: this.actor.name,
       promptContent: game.i18n.format('M20E.prompts.removeXPContent', {name: this.actor.name}),
       placeHolder: 0

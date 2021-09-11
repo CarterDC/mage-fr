@@ -2,7 +2,7 @@
 import M20eItemSheet from './m20e-item-sheet.js'
 import {ThrowSheet} from '../apps/throw-sheet.js'
 // Import Helpers
-import { Trait, MageThrow } from "../utils/classes.js";
+import { Trait, MageThrow } from '../dice/dice.js'
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 

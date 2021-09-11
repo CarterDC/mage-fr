@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, MageThrow } from "../utils/classes.js";
+import { Trait, MageThrow } from '../dice/dice.js'
 
 export const TROWSETTINGS_BLANDROLL = 1;
 export const TROWSETTINGS_DEDUCTFAILURE = 2;
@@ -281,7 +281,7 @@ export default class DiceThrow {
    * @returns {Boolean} whether every Trait in the throw constitutes a magical effect
    */
   static getIsEffectRoll(traits) {
-    return traits.every( trait => trait.category === "spheres" );
+    return traits.length !== 0 && traits.every( trait => trait.category === "spheres" );
     /*return traits.length !== 0 && traits.reduce((acc, cur) => {
       return acc && cur.category === 'spheres';
     }, true);*/
@@ -331,7 +331,7 @@ export default class DiceThrow {
     this.xTraitsToRoll.splice(index, 1);
     this.update();
   }
-  
+
   /**
    * updates the value of a trait from the extended traits array
    * from user interaction with clickable bullets on the DiceDialog App
