@@ -8,7 +8,7 @@
               <div class="ligne"></div>
           </div>
           {{else}}
-          <div class="trait description" data-key="{{key}}" data-link-id="{{bio.link.id}}"> 
+          <div class="trait description" data-path="bio.{{key}}" data-link-id="{{bio.link.id}}"> 
               <label class="trait-label" title="">{{{m20e-locadigm ../paraData "bio." key}}}</label>
               <label class="colon">:</label>
               <div class="lock-wrapper" data-locked="{{../locks.description}}">

@@ -93,8 +93,8 @@ export default class M20eActor extends Actor {
     const dext = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.dext.value'));
     const wits = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.wits.value'));
     foundry.utils.setProperty(actorData.data.traits, 'initiative.value', dext + wits);
+    foundry.utils.setProperty(CONFIG.M20E.traits, 'initiative', game.i18n.localize('M20E.traits.initiative'));
 
-    //todo : maybe add copy of init value in here too
     actorData.items.forEach( item => {
       if ( item.isTrait ) {
         const traitData = item.getTraitData();
@@ -198,7 +198,7 @@ export default class M20eActor extends Actor {
     const otherBaseItems = [];
     otherBaseItems.push ({
       type: 'paradigm',
-      img: '', //todo : maybe choose an icon for that ?
+      img: 'systems/mage-fr/assets/icons/abstract-013.svg',
       name: game.i18n.format(`M20E.paradigmName`, {name: actorData.name})
     });
 
@@ -250,7 +250,7 @@ export default class M20eActor extends Actor {
         return myDocs.map(packItem => {
           return {
             type: 'ability',
-            img: '',//todo add icon
+            img: 'systems/mage-fr/assets/icons/auto-repair.svg',
             name: packItem.name,
             data: packItem.data.data
           };
@@ -276,7 +276,7 @@ export default class M20eActor extends Actor {
       .map(([key, value]) => {
         return {
           type: 'ability',
-          img: '',//todo add icon
+          img: 'systems/mage-fr/assets/icons/auto-repair.svg',
           name: game.i18n.localize(`M20E.defaultAbilities.${key}`),
           data: {
             subType: value,
@@ -389,9 +389,9 @@ export default class M20eActor extends Actor {
   }
 
   //health & willpower
-  addWound(resourceName, index) {
-    const base1Index = index + 1; // cuz sometimes you're just too tired to think in base0
+  addWound(resourceName, index=null) {
     let {max, bashing, lethal, aggravated} = this.data.data.resources[resourceName];
+    const base1Index = index !== null ? index + 1 : max; 
 
     //decrease bashing value first, then lethal, then aggravated
     if ( (max - bashing) < base1Index ) {
@@ -411,9 +411,9 @@ export default class M20eActor extends Actor {
   }
 
   //health & willpower
-  removeWound(resourceName, index) {
-    const base1Index = index + 1;
+  removeWound(resourceName, index=null) {
     let {max, bashing, lethal, aggravated} = this.data.data.resources[resourceName];
+    const base1Index = index !== null ? index + 1 : 1;
 
     //increase aggravated value first, then lethal, then bashing
     if ( (max - aggravated) >= base1Index ) {
@@ -431,6 +431,25 @@ export default class M20eActor extends Actor {
       }
     }
   }
+
+  async addXP(xpGain) {
+    if ( xpGain > 0 ) {
+      //update both currentXP and totalXP (total is just a reminder of all the xp gains)
+      const updateObj = {};
+      updateObj[`data.currentXP`] = this.data.data.currentXP + xpGain;
+      updateObj[`data.totalXP`] = this.data.data.totalXP + xpGain;
+      await this.update(updateObj);
+    }
+  }
+
+  async removeXP(xpLoss) {
+    if ( xpLoss > 0 ) {
+      //only update currentXP and ensure we don't go into negative xp values
+      const newValue = Math.max(this.data.data.currentXP - xpLoss, 0);
+      await this.update({[`data.currentXP`]: newValue});
+    }
+  }
+
 
   /* -------------------------------------------- */
   /*  Roll related                                */
@@ -460,7 +479,7 @@ export default class M20eActor extends Actor {
     this.extendTraits(traits);
     return {
       name : this.getThrowFlavor(traits),
-      img: '', // todo : maybe find a more suitable image than default one
+      img: 'systems/mage-fr/assets/icons/d10.svg',
       commandParameters : {
         data: data
       }

@@ -18,7 +18,7 @@ export default class M20eMageActorSheet extends M20eActorSheet {
   }
 
   /** @override */
-   get template() { //todo: have different template for mages (with magic tab obviously)
+   get template() {
     return 'systems/mage-fr/templates/actor/mage-sheet.hbs';
   }
 
@@ -53,7 +53,7 @@ export default class M20eMageActorSheet extends M20eActorSheet {
 
     return buttons;
   }
-  
+
   /* -------------------------------------------- */
   /*  Event Handlers                              */
   /* -------------------------------------------- */

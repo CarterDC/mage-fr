@@ -1,6 +1,11 @@
 /**************************************************************
  * Classes and functions related to dice rolls                 
- * 
+ * class Trait
+ * class MageThrow
+ * class DieSuccess extends Die
+ * class MageRoll extends Roll
+ * function registerInitiative()
+ * function registerDieModifier() adds a new die modifier 'XS'
  */
 
 
@@ -14,6 +19,9 @@ import { log } from "../utils/utils.js";
  * Uniquely defines a Trait object by it's path relative to ActorData.data.traits.
  * Traits can be 'extended' storing roll necessary infos in the 'data' property.
  * can also contain an itemId associated to the trait path.
+ * 
+ * Note : a path could be 1 of 3 forms "category", "category.key" or "category.subType.key"
+ * "willpower", "spheres.corr", "abilities.talent.art"
  */
  export class Trait {
 
@@ -88,16 +96,25 @@ import { log } from "../utils/utils.js";
     return {...Trait.splitPath(this.path), itemId: this.itemId};
   }
 
+  /**
+   * returns the first property key in the path
+   */
   get category() {
     const propKeys = this.path.split('.');
     return propKeys[0];
   }
 
+  /**
+   * returns the second key in the path only if path contains 3 property keys
+   */
   get subType() {
     const propKeys = this.path.split('.');
     return propKeys.length === 3 ? propKeys[1] : null;
   }
 
+  /**
+   * returns the last property key in the path (unless path only contains 1 property key, it being the category)
+   */
   get key() {
     const propKeys = this.path.split('.');
     return propKeys.length > 1 ? propKeys[propKeys.length - 1] : null;
@@ -115,28 +132,37 @@ import { log } from "../utils/utils.js";
   }
 
   /**
-   * Returns whether user is allowed to use 
+   * Returns whether user is allowed to use a specialisation
    */
   get canUseSpec() {
-    return this.value >= 4 && this.data.specialisation !== '';
+    return this.value >= 4 && this.data.specialisation && this.data.specialisation !== '';
   }
 
+  /**
+   * Returns whether this trait should use it's specialisation (with extra check)
+   */
   get useSpec() {
     return this.canUseSpec && this.data.useSpec;
   }
 
+  /**
+   * returns traits name, displayName or specialisation depending on circumstances
+   */
   get name() {
     return this.useSpec ? this.data.specialisation : 
       (this.data.displayName ? this.data.displayName : this.data.name);
   }
 
+  /**
+   * returns value that will be displayed in the tooltip of the name
+   */
   get specName() {
     return this.useSpec ? this.name : this.data.specialisation;
   }
 
 
   get isItem() {
-    return this.itemId !== ''; //todo can do better in some circumstances
+    return this.itemId !== '';
   }
 
   get isExtended() {
@@ -147,6 +173,7 @@ import { log } from "../utils/utils.js";
 
 /**
  * helper class 
+ * Defines a throw usually stored in rollable items (rotes, weapons etc...)
  */
  export class MageThrow {
   constructor(obj={}) {
@@ -221,21 +248,16 @@ export class DieSuccess extends Die {
 
   /** @override */
   getResultLabel(result) {
-    return {
-      "1": 'S',
-      "2": 'S',
-      "3": 'S',
-      "4": 'S',
-      "5": 'S',
-      "6": 'S',
-      "7": 'S',
-      "8": 'S',
-      "9": 'S',
-      "10": 'S'
-    }[result.result];
+    return 'S';
   }
 }
 
+/**
+ * Extension of the roll class, defines it's own templates, 
+ * and management of die terms in case of XS modifiers.
+ * also deals with mdofication of total score in case of willpower spending
+ * @extends {Roll}
+ */
 export class MageRoll extends Roll {
   constructor(formula, data, options) {
     super(formula, data, options);
@@ -248,7 +270,6 @@ export class MageRoll extends Roll {
    * Copy of the vanilla Foundry
    * Modify the roll that's passed to the chatMessage
    * if roll contains 'xs' dice adds new term
-   * todo : put that in function
    * @override
    */
   async toMessage(messageData={}, {rollMode, create=true}={}) {
@@ -263,7 +284,7 @@ export class MageRoll extends Roll {
         sound: CONFIG.sounds.dice,
       }, messageData);
       messageData.roll = this.getRollForMessage();
-      
+
       // Either create the message or just return the chat data
       const cls = getDocumentClass("ChatMessage");
       const msg = new cls(messageData);
@@ -306,7 +327,7 @@ export class MageRoll extends Roll {
    * @param {object} [chatOptions]      An object configuring the behavior of the resulting chat message.
    * @return {Promise<string>}          The rendered HTML template as a string
    */
-  async render(chatOptions={}) {
+   async render(chatOptions={}) {
     chatOptions = foundry.utils.mergeObject({
       user: game.user.id,
       flavor: null,
@@ -316,17 +337,12 @@ export class MageRoll extends Roll {
     const isPrivate = chatOptions.isPrivate;
 
     // Execute the roll, if needed
-    if ( !this._evaluated ) this.evaluate();
-    let newTotal = Math.round(this.total * 100) / 100;
-    //todo : change real total value instead of that
-    if (chatOptions.doUpgrade){
-        newTotal +=1;
-        this.options.isUpgraded = true;
-    }
+    if (!this._evaluated) this.evaluate();
 
-    const totalString = newTotal === 0 ? game.i18n.localize('M20E.throwresult.failure') :
-      (newTotal > 0 ? game.i18n.format('M20E.throwresult.success', {total: newTotal}) : 
-        game.i18n.format('M20E.throwresult.critfailure', {total: newTotal}));
+    const total = Math.round(this.total * 100) / 100;
+    const totalString = total === 0 ? game.i18n.localize('M20E.throwresult.failure') :
+      (total > 0 ? game.i18n.format('M20E.throwresult.success', {total: total}) : 
+        game.i18n.format('M20E.throwresult.critfailure', {total: total}));
 
     // Define chat data
     const chatData = {
@@ -334,7 +350,7 @@ export class MageRoll extends Roll {
       flavor: isPrivate ? null : chatOptions.flavor,
       user: chatOptions.user,
       tooltip: isPrivate ? "" : await this.getTooltip(),
-      total: isPrivate ? "?" : newTotal,
+      total: isPrivate ? "?" : total,
       totalString : isPrivate ? "?" : totalString
     };
 
@@ -342,8 +358,10 @@ export class MageRoll extends Roll {
     return renderTemplate(chatOptions.template, chatData);
   }
 }
-
-//todo ; do that with a mageroll and custom message !
+  
+/**
+ * todo : extend the whole combat class instead to deal with custom message template, tie breakers etc...
+ */
 export function registerInitiative() {
   Combatant.prototype._getInitiativeFormula = function () {
 
@@ -355,7 +373,10 @@ export function registerInitiative() {
   }
 }
 
-export function registerDieModifier(){
+/**
+ * Adds the custom die modifier 'xs' explodeSuccess, that allows for added auto success on a 10 roll
+ */
+export function registerDieModifier() {
   Die.prototype.constructor.MODIFIERS["xs"] = "explodeSuccess";
   //modified copy of Foundry's Die.explode()
   Die.prototype.explodeSuccess = function(modifier) {

@@ -139,9 +139,10 @@ export default class DiceThrow {
     const rollData = {
       documentId: this._document.id,
       actorId: this.actor.id,
-      traits: this._traits,//todo : maybe don't put the whole thing in there
+      traits: this._traits,
       throwIndex: this._thowIndex,
       options: this.options,
+      isEffectRoll: this.isEffectRoll,
       deductFailures: (this.throwSettings === TROWSETTINGS_BLANDROLL) ? '' :  'df=1',
       tenXplodeSuccess: this.getExplodeSuccess() ? "xs=10" : "",
       dicePoolBase: this.dicePoolBase,
@@ -275,16 +276,12 @@ export default class DiceThrow {
 
   /**
    * magical effect is defined by there being only 'spheres' in the throw
-   * TODO : maybe redo using .every()
    * @param {Array} an array of either Traits or ExtendedTraits
    * 
    * @returns {Boolean} whether every Trait in the throw constitutes a magical effect
    */
   static getIsEffectRoll(traits) {
     return traits.length !== 0 && traits.every( trait => trait.category === "spheres" );
-    /*return traits.length !== 0 && traits.reduce((acc, cur) => {
-      return acc && cur.category === 'spheres';
-    }, true);*/
   }
 
   /**
@@ -328,7 +325,6 @@ export default class DiceThrow {
    */
   removeTrait(index) {
     this._traits.splice(index, 1);
-    this.xTraitsToRoll.splice(index, 1);
     this.update();
   }
 
@@ -341,7 +337,7 @@ export default class DiceThrow {
    * @param  {Number} newValue 
    */
   updateTraitValue(index, newValue) {
-    this.xTraitsToRoll[index].value = newValue;
+    this._traits[index].data.valueOverride = newValue;
     this.update();
   }
 
@@ -423,7 +419,7 @@ export default class DiceThrow {
     let macroData = {
       commandParameters : {...dropedData, data: {}},
       name : '',
-      img: '',
+      img: 'systems/mage-fr/assets/icons/d10.svg',
       type: 'script',
       scope: 'actor',
       flags: {"shiftKey": false}
@@ -476,6 +472,7 @@ export default class DiceThrow {
         const item = actor.getItemFromId(macroParams.data.itemId);
         throwIndex = parseInt(macroParams.data.throwIndex);
         if ( !item ) { return false; }
+        //todo : add throwindex in that function
         if ( !item._isActuallyRollable(actor) ) { return false; } //todo add localized notification error
         document = item;
         traits = item.getTraitsToRoll(throwIndex);

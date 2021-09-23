@@ -399,8 +399,8 @@
         "quantity": 0
       },
       "active": {
-        "isActive": true,
-        "effects": []
+        "isActive": false,
+        "isActivated": true
       },
       "mageRestricted": {
         "restricted" : ["charmage", "npcmage"]
@@ -442,6 +442,9 @@
       "displayDescription":""
     },
     "misc": {
+      "templates":[
+        "active"
+      ],
       "displayDescription": "",
       "isEquipable": false,
       "equiped": false,

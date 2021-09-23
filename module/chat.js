@@ -1,18 +1,163 @@
 // Import Helpers
 import * as utils from './utils/utils.js'
 import { log } from "./utils/utils.js";
+import DiceThrow from './dice/dice-throw.js'
+import ParadoxDialog from './apps/paradox-dlg.js'
+import { Trait, MageThrow } from './dice/dice.js'
+
+/* -------------------------------------------- */
+/*  Sockets                                     */
+/* -------------------------------------------- */
+
+export function onSocketReceived(data) {
+  if ( !game.user.isGM ) { return; }
+  //only deal with socket data whose action property is 'execute'
+  //callback should be the name of a function referenced in the game.m20e.socketCallbacks
+  //parameters could also be objects
+  if ( data.action === 'execute' ) {
+    const callback = game.m20e.socketCallbacks[data.fnName]
+    callback(data.parameter);
+  }
+}
+
+/* -------------------------------------------- */
+/*  Message Events Hanlders                     */
+/* -------------------------------------------- */
 
 /**
- * called on the Hooks.on renderChatLog, to add listeners to its html element
+ * Adds new listeners to selectors inside a newly displayed message html
+ * called on the Hooks.on renderChatLog
  * @param  {} html
  */
 export function addChatListeners(app, html, data) {
-  html.on('click', '.m20e.card', onCardFooterClick);
-  html.on('click', '#linkToOptions', onLinkToOptionsClick);
+  html.on('click', '.m20e.card', onCardFooterClick); //drawer behavior of chatmessages
+  html.on('click', '.display-desc-button', onCardDescButtonClick);
+  
+  html.on('click', '#linkToOptions', onLinkToOptionsClick); //only present in the welcome message
 }
 
+/**
+ * Adds new items to a message's contextmenu
+ * called by the hooks on 'getChatLogEntryContext'
+ */
 export function addChatMessageContextOptions(html, options) {
+  options.push(
+    {
+      name: game.i18n.localize("M20E.context.rollParadox"),
+      icon: '<i class="fas fa-radiation"></i>',
+      condition: liElem => {
+          const message = game.messages.get(liElem.data("messageId"));
+          const isEffectRoll = message._roll?.options?.isEffectRoll || false;
+          return game.user.isGM && isEffectRoll;
+      },
+      callback: liElem => rollParadox(liElem)
+    },
+    {
+        name: game.i18n.localize("M20E.context.willpowerForSuccess"),
+        icon: '<i class="fas fa-balance-scale-left"></i>',
+        condition: liElem => {
+            const message = game.messages.get(liElem.data("messageId"));
+            const isWillpowered = message._roll?.options?.isWillpowered || false;
+            const isVisible = (game.user.isGM || message.isAuthor) && message.isContentVisible;
+            return isVisible && message.isRoll && !isWillpowered;
+        },
+        callback: liElem => {
+          //since it updates a message, either call the function as GM
+          //or emit on the socket to have it executed by a GM
+          const messageId = liElem.data("messageId");
+          if ( game.user.isGM ) {
+            sacrificeWillpower(messageId);
+          } else {
+            game.socket.emit('system.mage-fr', {
+              action: 'execute',
+              fnName: 'sacrificeWillpower',
+              parameter : messageId
+            });
+          }
+        }
+    },
+    {
+      name: game.i18n.localize("M20E.context.extendThrow"),
+      icon: '<i class="fas fa-sync-alt"></i>',
+      condition: liElem => {
+          const message = game.messages.get(liElem.data("messageId"));
+          const isVisible = (game.user.isGM || message.isAuthor) && message.isContentVisible;
+          return isVisible && message._roll?._total >= 0;
+      },
+      callback: liElem => extendThrow(liElem)
+    },
+    {
+      name: game.i18n.localize("M20E.context.sameThrow"),
+      icon: '<i class="fas fa-redo-alt"></i>',
+      condition: liElem => {
+          const message = game.messages.get(liElem.data("messageId"));
+          return message.isContentVisible && message.isRoll;
+      },
+      callback: liElem => sameThrow(liElem)
+    }
+  );
+  return options;
+}
 
+/**
+ * Modifies the total of a roll inside a message in exchange for a willpower point
+ * @param  {String} messageId 
+ */
+export async function sacrificeWillpower(messageId) {
+  const message = game.messages.get(messageId);
+  const actor = utils.actorFromData(message.data.speaker);
+  if ( !actor ) { return; }
+
+  //check if actor still has willpower to spend
+  const willpower = actor.data.data.resources.willpower;
+  if ( willpower.aggravated > 0 ) {
+    //update message with modified roll
+    const roll = message._roll;
+    roll._total += 1;
+    roll.options.isWillpowered = true;
+    await message.update({
+      content: '', //necessary to force a render of the roll template
+      roll: roll.toJSON()
+    });
+    //remove the sacrificed willpower point
+    actor.addWound('willpower');
+  } else {
+    ui.notifications.error(game.i18n.localize('M20E.notifications.notEnoughWillpower'));
+  }
+}
+
+async function extendThrow(liElem) {
+  const message = game.messages.get(liElem.data("messageId"));
+  const actor = utils.actorFromData(message.data.speaker);
+  if ( !actor ) { return; }
+  log(message._roll);
+}
+
+async function sameThrow(liElem) {
+  const message = game.messages.get(liElem.data("messageId"));  
+  //get actor from current scene/selected token if any, or user chosen character from userConfig
+  const actor = utils.getUserActor();
+  if (! actor ) { return; }
+  const throwData = message._roll.options;
+  const traits = throwData.traits.map( traitData => {
+    return Trait.fromData(traitData.path, traitData.data, traitData.itemId);
+  });
+  //todo add some of the throwData as options of the new throw ?
+  const diceThrow = new DiceThrow({
+    document: actor,
+    traits: traits,
+    options: throwData.options
+  });
+  diceThrow.render(true);
+}
+
+async function rollParadox(liElem) {
+  const message = game.messages.get(liElem.data("messageId"));
+  const roll = message._roll;
+  const actor = utils.actorFromData(message.data.speaker);
+  if ( !actor ) { return; }
+  const paradlg = new ParadoxDialog(actor, roll);
+  paradlg.render(true);
 }
 
 /**
@@ -40,6 +185,20 @@ function onCardFooterClick(event) {
   if (!tip.is(":visible")) tip.slideDown(200);
   else tip.slideUp(200);
 }
+
+/**
+ * Switchs display between displayDesc and sysDesc
+ * TODO : finish that
+ */
+ function onCardDescButtonClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const button = $(event.currentTarget);
+  /*const tip = card.find(".card-tooltip");
+  if (!tip.is(":visible")) tip.slideDown(200);
+  else tip.slideUp(200);*/
+}
+
 
 /**
  * Displays a Trait Card in the chat
@@ -88,11 +247,134 @@ export async function welcomeMessage() {
   game.user.setFlag("mage-fr", "welcomeMessageShown", true);
 }
 
-/*
-export function testage(test) {
-  game.socket.emit('system.mage-fr', {test: test});
+
+/* -------------------------------------------- */
+/*  ChatMessage Override                        */
+/* -------------------------------------------- */
+
+/**
+ * Modification of the ChatMessage class only meant to allow for stealth rolls.
+ * Actually don't check for ._roll so could also be used for sending blind messages
+ * (message from a user, that the sender won't see)
+ */
+export class M20eChatMessage extends ChatMessage {
+  constructor(data, context) {
+    super(data, context);
+  }
+
+  applyRollMode(rollMode) {
+    if (rollMode === 'stealthroll') {
+      this.data.update({['flags.stealthroll']: true});
+      rollMode = "blindroll";
+    }
+    super.applyRollMode(rollMode);
+  }
+
+  /**
+   * Allows for stealth rolls (are not displayed at all, instead of "???" messages)
+   * Also allows for other uses of the same principle
+   * @override
+   */
+  async getHTML() {
+    if ( this.data.flags.stealthroll && this.data.blind && this.data.whisper.length) {
+      if ( game.user.isGM ) {
+        return super.getHTML();
+      }
+    } else {
+      return super.getHTML();
+    }
+  }
 }
 
-export function onSocketReceived(data) {
-  log(data);
-}*/
+/* -------------------------------------------- */
+/*  slash command intercept                     */
+/* -------------------------------------------- */
+
+/**
+ * Called by the Hooks on "chatMessage".
+ * Intercepts the input message, checks for our own custom commands (ie system rolls)
+ * basically a dumb down copy of the vanilla chatLog.processMessage().
+ * @returns {Boolean} true or false whether the default Foundry behavior should continue or not.
+ */
+ export function onProcessMessage(chatLog, message, chatData) {
+  let dealtWith = false;
+  // Alter the message content, if needed
+  message = message.replace(/\n/g, "<br>");  
+  // Parse the message to determine the matching handler
+  let [command, match] = customParseMessage(message);
+
+  // Process message data based on the identified command type
+  switch (command) {
+    case "mroll": case "mageroll":
+      let [formula, flavor] = match.slice(2, 4);
+      createSystemRollFromCommand(formula, flavor);
+      dealtWith = true;
+      break;
+    default:
+      break;
+  }
+
+  return !dealtWith; //return false if command has been dealt with in here
+}
+
+/**
+ * Searches for patterns matching our own 'custom' commands.
+ * basically a dumb down copy of the vanilla ChatLog#parse().
+ * @param  {String} message a preprocessed string to be matched against some regex.
+ * 
+ * @returns a length=2 array containing our command (or 'none') and the result of the regex match
+ */
+function customParseMessage(message) {
+  
+  // Dice roll regex
+  let formula = '([^#]*)';                  // Capture any string not starting with '#'
+  formula += '(?:(?:#\\s?)(.*))?';          // Capture any remaining flavor text
+  const mroll = '^(\\/mr(?:oll)? )';        // MageRolls, support /mr or /mroll
+  const mageroll = '^(\\/mager(?:oll)? )';   // MageRolls, support /mager or /mageroll
+
+  // Define regex patterns
+  const patterns = {
+    "mroll": new RegExp(mroll+formula, 'i'),
+    "mageroll": new RegExp(mageroll+formula, 'i')
+  };
+
+  // Iterate over patterns, finding the first match
+  let command, rgx, match;
+  for ( [command, rgx] of Object.entries(patterns) ) {
+    match = message.match(rgx); 
+    if ( match ) return [command, match];
+  }
+  return ["none", [message, "", message]];
+}
+
+/**
+ * Creates and sends a roll to chat, using our own custom Roll class rather than the vanilla one
+ * @param  {} formula
+ * @param  {} flavor
+ */
+async function createSystemRollFromCommand(formula, flavor) {
+  //validate formula before going any further
+  const rollClass = CONFIG.Dice.MageRoll; //could also be CONFIG.Dice.rolls[1]
+  if ( !rollClass.validate(formula) ) {
+    ui.notifications.warn(game.i18n.format('MYSYSTEM.notifications.wrongFormula', {formula: formula}));
+    return;
+  }
+
+  //get actor from current scene/selected token if any, or user chosen character from userConfig
+  const msgClass = ChatMessage.implementation; //could use 'ChatMessage' directly instead
+  const speaker = msgClass.getSpeaker(); //also used when sending the message
+  const actor = msgClass.getSpeakerActor(speaker) || game.user.character;
+
+  //create roll  
+  const rollData = actor ? actor.getRollData() : {};
+  const rollOptions = {};
+  const roll = new rollClass(formula, rollData, rollOptions);
+
+  //send roll (it will be evaluated in the .toMessage())
+  //alternatively, roll could be evaluated, rendered and it's template sent as chatMessage.content
+  return await roll.toMessage({
+    speaker: speaker,
+    flavor: flavor
+  }, {rollMode: game.settings.get("core", "rollMode")});
+
+}

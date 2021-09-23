@@ -73,6 +73,11 @@ export const registerHandlebarsHelpers = function() {
     return this < valueMax;
   })
 
+ /**
+ * returns a html string that displays 'nbIterr' bullets computed from 'trait' parameter
+ * takes into account if trait has been overriden by ActiveEffect to adjust data-state
+ * also adds a overflow in the dataset for values that are greater than nbIterr
+ */
   Handlebars.registerHelper("m20e-bulletDisplay", function(trait, nbIterr) {
     let returnString = '';
     const currValue = foundry.utils.hasProperty(trait, '_overrideValue') ? trait._overrideValue : trait.value;
@@ -81,12 +86,13 @@ export const registerHandlebarsHelpers = function() {
     const max = Math.max(currValue, origValue);
     for (let index = 0; index < nbIterr; index++) {
       let state = '';
+      const overflow = currValue > index + nbIterr;
       if ( index < min ) {
         state = 'active';
       } else if ( index < max ) {
         state = ( currValue > origValue ? 'upgraded': 'downgraded');
       }
-      returnString += `<span class="bullet" data-index="${index}" data-state="${state}"></span>`;
+      returnString += `<span class="bullet" data-index="${index}" data-state="${state}" data-overflow="${overflow}"></span>`;
     }
     return returnString;
   })

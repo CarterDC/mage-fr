@@ -66,7 +66,6 @@ export default class M20eActorSheet extends ActorSheet {
 
     //dispatch items into categories and subtypes
     //sheetData.items is already sorted on item.sort in the super
-    //todo : maybe don't put all the categories inside sheetData.items ?
     //Abilities
     sheetData.items.abilities = {};
     sheetData.items.abilities.talents = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "talent") ));
@@ -192,6 +191,7 @@ export default class M20eActorSheet extends ActorSheet {
   * @param {string} category  the category to toggle
   */
    _toggleCategoryLock(category) {
+
     if ( this.locks[category] === false ) {
       //category' open atm, close it
       this.locks[category] = true;
@@ -718,6 +718,10 @@ export default class M20eActorSheet extends ActorSheet {
     fakeItem.render(true);
   }
 
+  /**
+   * Prompts user for a positive xp value to add
+   * let the actor update the current and total XP values
+   */
   async addXP() {
     const promptData = new utils.PromptData({
       title: this.actor.name,
@@ -726,20 +730,15 @@ export default class M20eActorSheet extends ActorSheet {
     });
     //prompt for new value
     const inputElem = await utils.promptNewValue(promptData);
-
-    //only update if valid xpGain
     if ( inputElem === null ) { return; } //promptDialog was escaped
-    //TODO : put that in actor !!
-    const xpGain = parseInt(inputElem.value);
-    if ( xpGain > 0 ) {
-      //update both currentXP and totalXP (total is just a reminder of all the xp gains)
-      const updateObj = {};
-      updateObj[`data.currentXP`] = this.actor.data.data.currentXP + xpGain;
-      updateObj[`data.totalXP`] = this.actor.data.data.totalXP + xpGain;
-      await this.actor.update(updateObj);
-    }
+
+    this.actor.addXP(parseInt(inputElem.value));
   }
 
+  /**
+   * Prompts user for a positive xp value to remove
+   * let the actor update the current XP value (and not the total one)
+   */
   async removeXP() {
     const promptData = new utils.PromptData({
       title: this.actor.name,
@@ -748,16 +747,9 @@ export default class M20eActorSheet extends ActorSheet {
     });
     //prompt for new value
     const inputElem = await utils.promptNewValue(promptData);
-
-    //only update if valid xpLoss
     if ( inputElem === null ) { return; } //promptDialog was escaped
-    //TODO : put that in actor !!
-    const xpLoss = parseInt(inputElem.value);
-    if ( xpLoss > 0 ) {
-      //only update currentXP and ensure we don't go into negative xp values
-      const newValue = Math.max(this.actor.data.data.currentXP - xpLoss, 0);
-      await this.actor.update({[`data.currentXP`]: newValue});
-    }
+
+    this.actor.removeXP(parseInt(inputElem.value));
   }
 
   /* -------------------------------------------- */
@@ -950,17 +942,18 @@ export default class M20eActorSheet extends ActorSheet {
       case 'roll-traits' : 
         dragData.type = "m20e-roll";
         dragData.data = this.getTraitsToRoll();
+        event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+        break;
       case 'roll-throw' :
         const item = this.actor.items.get(dataset.itemId);
         dragData.type = "Item";
         dragData.data = duplicate(item.data);
         dragData.data.throwIndex = dataset.throwIndex || 0;
+        event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
+        break;
       default:
-        if ( dragData.data ) {
-          event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
-        } else {
-          super._onDragStart(event);
-        }
+        super._onDragStart(event);
+        break;
     }
   }
 
@@ -969,11 +962,6 @@ export default class M20eActorSheet extends ActorSheet {
    *  @override
    */
   async _onDrop(event) {
-    log(event.dataTransfer.types.length)
-    /*if (itemType) {
-      event.preventDefault();
-      log(itemType.split(':')[1]);
-    }*/
     // Try to extract the data
     let data;
     try {
@@ -1059,17 +1047,17 @@ export default class M20eActorSheet extends ActorSheet {
     if ( !this.actor.isOwner ) return false;
     const element = event.target;
     if ( element.classList.contains('link-drop') ) {
-      const key = element.closest(".trait").dataset.key;
+      const path = element.closest(".trait").dataset.path;
       //create the update object with dropData
-      let updateObj = {[`data.bio.${key}.link`]: data};
+      let updateObj = {[`data.${path}.link`]: data};
       //retrieve journal name
       if ( data.pack ) {
         const pack = game.packs.get(data.pack);
         const indexEntry = pack.index.get(data.id);
-        updateObj[`data.bio.${key}.displayValue`] = indexEntry.name;
+        updateObj[`data.${path}.displayValue`] = indexEntry.name;
       } else {
         const journalEntry = game.journal.get(data.id);
-        updateObj[`data.bio.${key}.displayValue`] = journalEntry.name;
+        updateObj[`data.${path}.displayValue`] = journalEntry.name;
       }
       return this.actor.update(updateObj);
 

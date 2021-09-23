@@ -35,15 +35,17 @@ export const isNumeric = myVariable =>
 /**
  * For use in array.sort()
  * implements a basic alpha sorting on the property passed in argument
- * @param {string} key optionnal
+ * @param {string} path optionnal
  * 
  * @returns {function} the actual sorting function with correct property
  */
-export function alphaSort(key = 'name') {
+export function alphaSort(path = 'name') {
+  const lang = game.settings.get('core', 'language');
   return function(a, b) {
-    const aKey = a[key].toUpperCase();
-    const bKey = b[key].toUpperCase();
-    return ( aKey < bKey ) ? -1 : (( aKey > bKey ) ? 1 : 0);
+    const aKey = foundry.utils.getProperty(a, path);
+    const bKey = foundry.utils.getProperty(b, path);
+    //return ( aKey < bKey ) ? -1 : (( aKey > bKey ) ? 1 : 0);
+    return aKey.localeCompare(bKey, lang, { sensitivity: 'base' });
   }
 }
 
@@ -53,26 +55,61 @@ export function sanitize(myString) {
 
 /**
  * returns an Actor object from {actorId, sceneId, tokenId}
- * @param  {Object} data like from dropedData
+ * @param  {Object} data like from dropedData, macroData or speakerData
+ * Note : speakerData has a different naming scheme ie : actor instead of actorId !!!
  * 
  * @return {M20eActor|null} a token actor or world actor, null if not found
  */
 export function actorFromData(data) {
-  const {actorId, sceneId, tokenId} = data;
+  const actorId = data.actorId || data.actor; 
+  const sceneId = data.sceneId || data.scene;
+  const tokenId = data.tokenId || data.token;
+  
   let actor;
   if ( tokenId ) {
+    //try and get actor from scene and tokenId
     const scene = game.scenes.get(sceneId);
     const tokenDoc = scene?.tokens.get( tokenId );
     actor = tokenDoc?.actor;
   }
   if ( !actor ) {
+    //token method not fruitful, get actor from world actors
     actor = game.actors.get(actorId);
   }
   if ( !actor ) {
+    //no success in getting the actor
     ui.notifications.error(game.i18n.format('M20E.notifications.actorNotFound', {
       actorRef: actorId || tokenId
     }));
     return null;
+  }
+  return actor;
+}
+
+/**
+ * returns actor from user owned and selected token.
+ * if no user selected token (or multiple) then return chosen actor from user config
+ * @returns {M20eActor|null} 
+ * TODO : check with no canvas mode !!!
+ */
+export function getUserActor() {
+  let actor = null;
+  //get tokens that are selected and owned by the user
+  const selectedOwnedTokens = game.canvas?.tokens.controlled.filter( token => 
+    token.actor && token.actor.isOwner) || [];
+  
+  switch ( selectedOwnedTokens.length ) {
+    case 1:
+      actor = selectedOwnedTokens[0].actor;
+      break;
+    case 0:
+      actor = game.user.character;
+      break;
+    default:
+      break;
+  }
+  if ( !actor ) {
+    ui.notifications.warn(game.i18n.localize('M20E.notifications.noSingleTokenSelected'));
   }
   return actor;
 }

@@ -22,7 +22,6 @@
     cursor: pointer; 
   }
   .bullet[data-state='active']{
-    //border-top: 3px double var(--highlightColor);
     background: var(--m20e-midGrey); 
   }
   .bullet[data-state='upgraded']{
@@ -33,6 +32,10 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
+  }
+  .bullet[data-overflow='true']{
+    border-top: 3px solid var(--highlightColor);
+    border-bottom: 3px solid var(--highlightColor);
   }
 }
 .bullet-display[data-locked='false']{

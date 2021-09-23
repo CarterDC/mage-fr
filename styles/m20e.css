@@ -460,6 +460,10 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
+.bullet-display .bullet[data-overflow='true'] {
+  border-top: 3px solid var(--highlightColor);
+  border-bottom: 3px solid var(--highlightColor);
+}
 .bullet-display[data-locked='false'] {
   display: none;
 }
@@ -1089,6 +1093,16 @@ li.chat-message .card .card-tooltip .tooltip-part.item-ddesc {
   margin: 5px 0px 10px;
   padding: 0px 2px 5px;
   border-bottom: 1px solid var(--titleColor);
+}
+li.chat-message .card .card-tooltip .display-desc-button {
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.1);
+  margin: 3px 5px;
+  border-radius: 3px;
+  border-style: solid;
+  border-width: 1px 2px 2px 1px;
+  padding: 3px;
+  text-align: center;
 }
 li.chat-message .card .card-footer {
   display: flex;
