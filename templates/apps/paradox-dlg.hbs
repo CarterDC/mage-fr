@@ -1,0 +1,27 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <div class="header-column">
+        <div class="header-row">
+            <input class = "name" type="text" value="{{document.name}}" data-dtype="String" disabled/>
+            <span class="item-type">{{document.type}}</span>
+        </div>
+    </div>
+  </header>
+
+    <section class="sheet-body">
+        <section>
+            <div class= "field" title="{{localize 'M20E.hints.value0to5'}}">
+                <label>{{prompt}}</label>
+            </div>
+            <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
+                <label>{{localize "M20E.labels.displayDescription"}} : </label>
+
+            </div>
+        </section>
+        <section>
+            <div class= "field" title="{{localize 'M20E.hints.compendiumEdit'}}">
+                <label>{{localize "M20E.labels.systemDescription"}} : </label>
+                
+            </div>
+        </section>
+</form>

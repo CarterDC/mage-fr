@@ -18,7 +18,7 @@ export default class M20eMageActorSheet extends M20eActorSheet {
   }
 
   /** @override */
-   get template() { //todo: have different template for mages (with magic tab obviously)
+   get template() {
     return 'systems/mage-fr/templates/actor/mage-sheet.hbs';
   }
 
@@ -53,7 +53,7 @@ export default class M20eMageActorSheet extends M20eActorSheet {
 
     return buttons;
   }
-  
+
   /* -------------------------------------------- */
   /*  Event Handlers                              */
   /* -------------------------------------------- */
@@ -99,22 +99,15 @@ export default class M20eMageActorSheet extends M20eActorSheet {
     const index = parseInt(element.dataset.index);
     const resourceName = element.closest('.resource-panel').dataset.resource;
     
+    if ( resourceName !== 'magepower' ) {
+      return super._onResourceBoxClick(event);
+    }
     switch ( event.which ) {
       case 1://left button
-        if ( resourceName === 'magepower' ) {
           this.actor.increaseMagepower(index);
-        } else {
-          this.actor.addWound(resourceName, index);
-        }
         break;
       case 3://right button
-        if ( resourceName === 'magepower' ){
           this.actor.decreaseMagepower(index);
-        } else {
-          this.actor.removeWound(resourceName, index);
-        }
-        break;
-      default:
         break;
     };
   }

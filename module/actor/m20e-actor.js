@@ -1,6 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
+import { M20E } from '../config.js'
 import { Trait } from '../dice/dice.js'
 
 /**
@@ -58,24 +59,27 @@ export default class M20eActor extends Actor {
    * according to health values and the list of maluses
    */
   prepareResources() {
+    const WT = CONFIG.M20E.WOUNDTYPE;
     const actorData = this.data;
-    
-    actorData.data.health = {
-      value: actorData.data.resources.health.bashing,
-      max: actorData.data.resources.health.max
-    }
+
+    //create willpower property with {value, max} pair
+    const willpower = actorData.data.resources.willpower;
     actorData.data.willpower = {
-      value: actorData.data.resources.willpower.bashing,
-      max: actorData.data.resources.willpower.max
+      value: willpower.max - willpower[WT.BASHING],
+      max: willpower.max
     }
 
+    //create health property with {value, max} pair
     const health = actorData.data.resources.health;
+    actorData.data.health = {
+      value: health.max - health[WT.BASHING],
+      max: health.max
+    }
     //prepare an array of integers from the comma separated string
     const maluses = health.malusList.split(',').map(v => (parseInt(v)));
-    const wounds = health.max - health.bashing;
-
-    health.status = game.i18n.localize(`M20E.healthStatus.${wounds}`);
-    health.malus = wounds > 0 ? maluses[wounds - 1] : 0;
+    //create derived data for health resource, to be displayed and used later
+    health.status = utils.safeLocalize(`M20E.healthStatus.${health[WT.BASHING]}`);
+    health.malus = health[WT.BASHING] > 0 ? maluses[(health[WT.BASHING] - 1)] : 0;
   }
 
   /**
@@ -93,8 +97,8 @@ export default class M20eActor extends Actor {
     const dext = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.dext.value'));
     const wits = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.wits.value'));
     foundry.utils.setProperty(actorData.data.traits, 'initiative.value', dext + wits);
+    foundry.utils.setProperty(CONFIG.M20E.traits, 'initiative', game.i18n.localize('M20E.traits.initiative'));
 
-    //todo : maybe add copy of init value in here too
     actorData.items.forEach( item => {
       if ( item.isTrait ) {
         const traitData = item.getTraitData();
@@ -198,7 +202,7 @@ export default class M20eActor extends Actor {
     const otherBaseItems = [];
     otherBaseItems.push ({
       type: 'paradigm',
-      img: '', //todo : maybe choose an icon for that ?
+      img: 'systems/mage-fr/assets/icons/abstract-013.svg',
       name: game.i18n.format(`M20E.paradigmName`, {name: actorData.name})
     });
 
@@ -250,7 +254,7 @@ export default class M20eActor extends Actor {
         return myDocs.map(packItem => {
           return {
             type: 'ability',
-            img: '',//todo add icon
+            img: 'systems/mage-fr/assets/icons/auto-repair.svg',
             name: packItem.name,
             data: packItem.data.data
           };
@@ -276,7 +280,7 @@ export default class M20eActor extends Actor {
       .map(([key, value]) => {
         return {
           type: 'ability',
-          img: '',//todo add icon
+          img: 'systems/mage-fr/assets/icons/auto-repair.svg',
           name: game.i18n.localize(`M20E.defaultAbilities.${key}`),
           data: {
             subType: value,
@@ -387,50 +391,80 @@ export default class M20eActor extends Actor {
     const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
     return await this.update({[`data.${relativePath}`]: propertyValue});
   }
+  /**
+   * Adds the amount amount of wounds of type woundType to the resource resourceName
+   * Has a built in overflow to apply remaining wounds to the directly above woundtype.
+   * Todo : maybe check if actor is unconscious or dead and put relevant AE or message ?
+  */
+  async wound(resourceName, amount, woundType = M20E.WOUNDTYPE.BASHING) {
 
-  //health & willpower
-  addWound(resourceName, index) {
-    const base1Index = index + 1; // cuz sometimes you're just too tired to think in base0
-    let {max, bashing, lethal, aggravated} = this.data.data.resources[resourceName];
-
-    //decrease bashing value first, then lethal, then aggravated
-    if ( (max - bashing) < base1Index ) {
-      bashing -= 1;
-      this.safeUpdateProperty(`resources.${resourceName}`, {bashing});
-    } else {
-      if ( (max - lethal) < base1Index ) {
-        lethal -= 1;
-        this.safeUpdateProperty(`resources.${resourceName}`, {lethal});
-      } else {
-        if ( (max - aggravated) < base1Index ) {
-          aggravated -= 1;
-          this.safeUpdateProperty(`resources.${resourceName}`, {aggravated});
+    //recursively add wounds to higher woundTypes in case of overflow
+    const overflow = (rez, amount, woundType, updateObj={}) => {
+      const remainder = Math.max(amount - (rez.max - rez[woundType]), 0);
+      updateObj[`data.resources.${resourceName}.${woundType}`] = Math.min(rez.max, rez[woundType] + amount);
+      return ( remainder &&  woundType < M20E.WOUNDTYPE.AGGRAVATED ) ? 
+        overflow(rez, remainder, woundType + 1, updateObj) : updateObj;
+    }
+    //recursively standardize lower woundTypes values to the highest value if needed
+    const standardize = (rez, updateObj, woundType) => {
+      if ( woundType > M20E.WOUNDTYPE.BASHING ) {
+        if (rez[woundType-1] < updateObj[`data.resources.${resourceName}.${woundType}`]) {
+          updateObj[`data.resources.${resourceName}.${woundType - 1}`] = updateObj[`data.resources.${resourceName}.${woundType}`];
         }
+        standardize(rez, updateObj, woundType - 1);
       }
+    }
+
+    //create & populate the updateObj
+    let updateObj = overflow(this.data.data.resources[resourceName], amount, woundType);
+    standardize(this.data.data.resources[resourceName], updateObj, woundType);
+
+    return await this.update(updateObj);
+  }
+
+  /**
+   * Removes the amount amount of wounds of type woundType to the resource resourceName
+   * Has a built in overflow to heal remaining wounds to the directly below woundtype.
+   * Todo : maybe check if actor regains consciousness or revives and remove relevant AE or message ?
+   */
+  async heal(resourceName, amount, woundType = M20E.WOUNDTYPE.BASHING) {
+
+    //recursively remove wounds to lower woundTypes in case of overflow
+    const overflow = (rez, amount, woundType, minValue, updateObj={}) => {
+      //can't heal if woundType above is not healed first, hence the minValue
+      const newValue = Math.max(rez[woundType] - amount, minValue);
+      updateObj[`data.resources.${resourceName}.${woundType}`] = newValue;
+      //calculate remainder based on the actual healed value for this wountType
+      const remainder = Math.max(amount - (rez[woundType] - newValue), 0);
+      return ( remainder &&  woundType > M20E.WOUNDTYPE.BASHING ) ? 
+        overflow(rez, remainder, woundType - 1, newValue, updateObj) : updateObj;
+    }
+
+    //create & populate the updateObj
+    const rez = this.data.data.resources[resourceName];
+    let updateObj = overflow(rez, amount, woundType, (rez[woundType + 1] ?? 0));
+
+    return await this.update(updateObj);
+  }
+
+  async addXP(xpGain) {
+    if ( xpGain > 0 ) {
+      //update both currentXP and totalXP (total is just a reminder of all the xp gains)
+      const updateObj = {};
+      updateObj[`data.currentXP`] = this.data.data.currentXP + xpGain;
+      updateObj[`data.totalXP`] = this.data.data.totalXP + xpGain;
+      await this.update(updateObj);
     }
   }
 
-  //health & willpower
-  removeWound(resourceName, index) {
-    const base1Index = index + 1;
-    let {max, bashing, lethal, aggravated} = this.data.data.resources[resourceName];
-
-    //increase aggravated value first, then lethal, then bashing
-    if ( (max - aggravated) >= base1Index ) {
-      aggravated += 1;
-      this.safeUpdateProperty(`resources.${resourceName}`, {aggravated});
-    } else {
-      if ( (max - lethal) >= base1Index ) {
-        lethal += 1;
-        this.safeUpdateProperty(`resources.${resourceName}`, {lethal});
-      } else {
-        if ( (max - bashing) >= base1Index ) {
-          bashing += 1;
-          this.safeUpdateProperty(`resources.${resourceName}`, {bashing});
-        }
-      }
+  async removeXP(xpLoss) {
+    if ( xpLoss > 0 ) {
+      //only update currentXP and ensure we don't go into negative xp values
+      const newValue = Math.max(this.data.data.currentXP - xpLoss, 0);
+      await this.update({[`data.currentXP`]: newValue});
     }
   }
+
 
   /* -------------------------------------------- */
   /*  Roll related                                */
@@ -460,7 +494,7 @@ export default class M20eActor extends Actor {
     this.extendTraits(traits);
     return {
       name : this.getThrowFlavor(traits),
-      img: '', // todo : maybe find a more suitable image than default one
+      img: 'systems/mage-fr/assets/icons/d10.svg',
       commandParameters : {
         data: data
       }

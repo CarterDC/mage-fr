@@ -11,11 +11,13 @@ import * as chat from "../chat.js";
  */
 export default class M20eItem extends Item {
 
-  /** @override */
+  /**
+   * creates a derived class for specific item types
+   * @override 
+   */
   constructor(data, context) {
-    //creates a derived class for specific item types
     if ( data.type in CONFIG.Item.documentClasses && !context?.isExtendedClass) {
-        // specify our custom item subclass here
+        // instanciate our custom item subclass here
         return new CONFIG.Item.documentClasses[data.type](data,{...{isExtendedClass: true}, ...context});
     }    
     //default behavior, just call super and do all the default Item inits.

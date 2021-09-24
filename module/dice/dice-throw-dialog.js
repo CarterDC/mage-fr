@@ -58,7 +58,7 @@ import { log } from "../utils/utils.js";
     });
 
     //icon and title for the throw button
-    appData.extras = CONFIG.M20E.rollModeExtras[dt.rollMode];
+    appData.extras = CONFIG.M20E.rollModeExtras[game.settings.get("core", "rollMode")];
     //lock bullets for every thing but pure actor effects
     appData.bulletsClickLock = !dt.isEffectRoll || dt.isItemThrow;
 
@@ -97,7 +97,8 @@ import { log } from "../utils/utils.js";
         name: game.i18n.localize('M20E.context.throwStealthRoll'),
         icon: '<i class="fas fa-user-secret"></i>',
         callback: element => {
-          console.log('MAGE | option non implémentée encore.');
+          this.diceThrow.rollMode = "stealthroll";
+          this.diceThrow.throwDice(this.closeOnRoll);
         },
         condition: element => {
           return game.user.isGM;
@@ -263,20 +264,23 @@ import { log } from "../utils/utils.js";
   onUpdateActor = (actor, data, options, userId) => {
     if ( actor.id !== this.diceThrow.actor.id ) { return ; }
     if ( options.render === true ) {
-      //todo : maybe add more checks to avoid useless updates ?? very minor
       this.diceThrow.update(true);
     }
   }
 
+  /**
+   * callback for custom hooks on updateCoreRollMode
+   * just render the sheet in order to have the roll icon changed (see getData extra)
+   */
   onUpdateCoreRollMode = (newRollMode) => {
-    log(`Changement de rollMode : ${newRollMode}`);
+    this.render(true);
   }
 
-  //todo : redo better ! 
+  //might not be ncessary
   onSystemSettingChanged = (newValue, settingName) => {
-    if ( settingName === 'baseRollThreshold' ) {
+    /*if ( settingName === 'baseRollThreshold' ) {
       this.diceThrow.update();
-    }
+    }*/
   }
 
   /**

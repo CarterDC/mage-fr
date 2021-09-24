@@ -2,22 +2,24 @@
     <header class="card-header">
     </header>
     <header class="card-tooltip">
-      {{#if item.data.data.displayName}}
-        {{#if (ne item.data.data.displayName item.name)}}
-        <div class="tooltip-part item-name">
-          {{{item.name}}}
+      {{#if item.data.data.systemDescription}}
+        {{#if item.data.data.displayDescription}}
+        <div class="display-desc-button" data-action="display-desc">
+          <span>{{localize "M20E.labels.displayDesc"}} <i class="fas fa-chevron-down"></i></span>
+        </div>
+        <div class="tooltip-part item-ddesc hidden-field">
+          {{{item.data.data.displayDescription}}}
         </div>
         {{/if}}
-      {{/if}}
-      {{#if item.data.data.displayDescription}}
-      <div class="tooltip-part item-ddesc">
-        {{{item.data.data.displayDescription}}}
-      </div>
-      {{/if}}
-      {{#if item.data.data.systemDescription}}
       <div class="tooltip-part">
         {{{item.data.data.systemDescription}}}
       </div>
+      {{else}}
+        {{#if item.data.data.displayDescription}}
+        <div class="tooltip-part item-ddesc">
+          {{{item.data.data.displayDescription}}}
+        </div>
+        {{/if}}
       {{/if}}
     </header>
     {{#if (eq item.type 'rote')}}

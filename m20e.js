@@ -37,8 +37,9 @@ import { registerHandlebarsHelpers } from "./module/utils/hb-helpers.js";
 import { preloadHandlebarsTemplates } from "./module/utils/hb-templates.js";
 import * as chat from "./module/chat.js";
 
+
 /* -------------------------------------------- */
-/*  Foundry VTT Initialization                  */
+/*  System Initialization                       */
 /* -------------------------------------------- */
 
 Hooks.once('init', async function () {
@@ -47,7 +48,10 @@ Hooks.once('init', async function () {
   game.m20e = { //store some things here for later access
     config: M20E,
     traits: {},
-    mageMacro: DiceThrow.fromMacro
+    mageMacro: DiceThrow.fromMacro,
+    socketCallbacks: {
+      sacrificeWillpower: (messageId) => chat.sacrificeWillpower(messageId)
+    }
   };
 
   CONFIG.M20E = M20E;
@@ -64,6 +68,7 @@ Hooks.once('init', async function () {
     "rote": M20eRoteItem,
     "weapon": M20eRollableItem
   };
+  CONFIG.ChatMessage.documentClass = chat.M20eChatMessage;
 
   // Register sheet application classes
   Actors.unregisterSheet('core', ActorSheet);
@@ -110,11 +115,11 @@ Hooks.once('init', async function () {
   dice.registerInitiative();
 
   //test shit here !
-  //game.socket.on('system.mage-fr', chat.onSocketReceived);
+  game.socket.on('system.mage-fr', chat.onSocketReceived);
 })
 
 /* -------------------------------------------- */
-/*  Other usefull Hooks                         */
+/*  Ready Hook                                  */
 /* -------------------------------------------- */
 
 Hooks.once('ready', async function () {
@@ -134,11 +139,25 @@ Hooks.once('ready', async function () {
   //replace the original onChange function (_setRollMode) with our own that has an extra Hooks call
   const rollModeSetting = game.settings.settings.get('core.rollMode');
   rollModeSetting.onChange = onRollModeChange;
+
+  //create and display a GM panel if user is a GM (or assistant)
+  if ( game.user.isGM ) {
+
+  }
 });
 
+/* -------------------------------------------- */
+/*  Other usefull Hooks                         */
+/* -------------------------------------------- */
+Hooks.on('renderSidebar', function(sideBarApp, html, appData) {
+  log("ça avance");
+});
+
+Hooks.on("chatMessage", (chatLog, message, chatData) => {
+  return chat.onProcessMessage(chatLog, message, chatData);
+});
 Hooks.on('renderChatLog', chat.addChatListeners);
 Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
-
 
 //testing shit
 

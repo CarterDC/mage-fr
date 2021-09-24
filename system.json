@@ -9,7 +9,7 @@
       "discord": "Carter_DC#1097"
     }
   ],
-  "version": "0.18.42",
+  "version": "0.19.44",
   "templateVersion": "1",
   "minimumCoreVersion": "0.8.3",
   "compatibleCoreVersion": "0.8.9",
@@ -35,6 +35,7 @@
   "gridUnits": "m",
 
   "primaryTokenAttribute": "health",
+  "socket": "true",
 
   "url": "https://github.com/CarterDC/mage-fr",
   "manifest": "https://raw.githubusercontent.com/CarterDC/mage-fr/main/system.json",

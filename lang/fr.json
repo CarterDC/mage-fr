@@ -75,11 +75,13 @@
       "editParadigm": "Éditer le paradigme.",
       "editTrait": "Éditer ce trait.",
       "editWillpowerMax": "Éditer Volonté Max.",
+      "extendThrow": "Étendre ce jet.",
       "linkInChat": "Envoyer vers le chat.",
       "removeImage": "Supprimer cette image",
       "removeLink": "Supprimer le lien vers ce Journal.",
-      "removeParadigm": "Supprimer la paradigme actuel.",
+      "removeParadigm": "Supprimer le paradigme actuel.",
       "removeXP": "Supprimer de l'XP.",
+      "sameThrow": "Faire le même jet.",
       "throwBlindRoll": "Lancer en Aveugle.",
       "throwGmRoll": "Lancer pour le GM.",
       "throwPublicRoll": "Lancer Public.",
@@ -436,6 +438,7 @@
       "date": "Date",
       "dicePool": "Grpt. de Dés",
       "displayDescription": "Description Personnalisée",
+      "displayDesc": "Description Perso.",
       "equipable": "Équipable",
       "equiped": "Équipé",
       "extra": "Extra",
@@ -506,9 +509,11 @@
       "missingParadigm": "Il semblerait que ce personnage n'ait pas de pradigme !",
       "nan": "'{value}' n'est pas un nombre !",
       "newParadigm": "Les modifications de CSS dûes au paradigme ne seront visibles qu'après un refresh (F5).",
+      "noSingleTokenSelected": "1 token (et un seul) doit être sélectionné !",
       "noJournal": "Aucun lien vers un Journal !",
       "notLocalized": "L'entrée '{path}' n'existe pas dans le fichier de localisation !",
       "noMoreAvailEffects": "Pas d'effet de sphère disponible !",
+      "notEnoughWillpower": "Pas assez de volonté !",
       "notOutsideCreation": "Vous ne pouvez pas faire celà en dehors de la 'Création de perso' - demandez au GM.",
       "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
       "packNotFound": "Le compendium '{packName}' n'est pas trouvable !",
@@ -533,6 +538,8 @@
       "lexiconTitle": "Lexique",
       "newValue": "<p>Entrez une nouvelle valeur pour <br><b>{name}</b> :</p>",
       "removeXPContent": "<p>Saisissez la <b>Dépense d'XP</b> pour '{name}'<br><i>valeur positive uniquement</i></p>",
+      "paradoxTitle": "Conséquences d'un effet magyque",
+      "paradoxContent": "{result} ({rollTotal}) pour un effet de niveau {maxLevel} :",
       "selectTraitTitle": "Sélection de Trait pour {name}",
       "subTypeContent": "<p>Choisissez un <b>sous-type de {type}</b><br>Cet item sera crée avec les paramètres par défault du sous-type choisi.</p>"
     },
@@ -554,12 +561,17 @@
       "heavyfire": "Arme à feu (lourde)"
     },
     "throwresult": {
+      "isWillpowered": "+ 1 Succès (Volonté)",
       "failure": "Échec !",
       "success": "{total} Succès !",
-      "critfailure": "Échec Critique ({total}) !"
+      "critfailure": "Échec Critique ({total}) !",
+      "fail": "Échec",
+      "succ": "Succès",
+      "crit": "Échec critique"
     },
     "traits": {
       "arete": "Arété",
+      "initiative": "Initiative",
       "attributes": {
         "appa": "Apparence",
         "char": "Charisme",
@@ -596,9 +608,9 @@
       "clickMe": "Cliquez moi !"
     },
     "wounds": {
-      "bashing": "Blessure étourdissante",
-      "lethal": "Blessure létale",
-      "aggravated": "Blessure aggravéé"
+      "1": "Blessure étourdissante",
+      "2": "Blessure létale",
+      "3": "Blessure aggravéé"
     }
   },
   "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",
@@ -611,8 +623,10 @@
   "SETTINGS.M20E.rulesHeader": "Règles M20E.",
   "SETTINGS.None": "Vous n'avez pas les permissions nécessaires pour voir / modifier les options de ce système.",
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
+  "SETTINGS.playersCanRemoveAggravated": "Peut soigner les blessures aggravées.",
+  "SETTINGS.playersCanRemoveAggravatedHint": "Si déssactivé les joueurs ne pourront plus enlever eux-même leurs blessures aggravées, mais pourront encore en mettre.",
   "SETTINGS.playersCanSeeParadoxPoints": "Peut voir les points de Paradoxe.",
-  "SETTINGS.playersCanSeeParadoxPointsHint": "Les joueurs ne voient pas leur Paradoxe (⚠ ils ne pourront plus interagir avec leur 'barre de puissance').",
+  "SETTINGS.playersCanSeeParadoxPointsHint": "⚠ Si désactivé, les joueurs ne pourront plus non plus interagir avec leur 'barre de puissance'.",
   "SETTINGS.roteRule": "Jet des Routines.",
   "SETTINGS.roteRuleHint": "Les 10 donnent un succès supplémentaire lors de l'utilisation d'une Routine.",
   "SETTINGS.rulesConfig": "Configuration des règles",

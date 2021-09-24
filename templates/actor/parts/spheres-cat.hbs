@@ -35,10 +35,8 @@
         <input name="data.traits.spheres.{{key}}.value" type="text" value="{{sphere.value}}" data-dtype="Number" min="0" max="10"/>
         <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a> 
       </div>
-      <div class="bullet-display" data-locked="{{../locks.spheres}}">                        
-        {{#m20e-forLoop 5}}
-        <span class="bullet" data-index="{{this}}" data-state="{{bulletState sphere.value this}}"></span>
-        {{/m20e-forLoop}}
+      <div class="bullet-display" data-locked="{{../locks.spheres}}">
+          {{{m20e-bulletDisplay sphere 5}}}
       </div>
     </div>
     {{/each}}

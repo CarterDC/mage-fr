@@ -19,9 +19,10 @@
         "resources": {
           "health":{
             "max": 7,
-            "bashing": 7,
-            "lethal": 7,
-            "aggravated": 7,
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0,
             "malusList": "0, 1, 1, 2, 2, 5, 5"
           }
         }
@@ -30,9 +31,10 @@
         "resources": {
           "willpower":{
             "max": 5,
-            "bashing": 5,
-            "lethal": 5,
-            "aggravated": 5
+            "1": 0,
+            "2": 0,
+            "3": 0,
+            "4": 0
           }
         }
       },
@@ -40,7 +42,8 @@
         "resources": {
           "magepower":{
             "quintessence": 0,
-            "paradox": 0
+            "paradox": 0,
+            "permanentParadox": 0
           }
         }
       },
@@ -222,7 +225,6 @@
 
       "aliases": [],
       "link": {},
-      "permanent": {},
       "extra" : {}
     },
     "npcmage": {
@@ -299,7 +301,6 @@
 
       "aliases": [],
       "link": {},
-      "permanent": {},
       "extra" : {}
     },
     "npcsleeper": {
@@ -366,7 +367,6 @@
 
       "aliases": [],
       "link": {},
-      "permanent": {},
       "extra" : {}
     }
   },
@@ -399,8 +399,8 @@
         "quantity": 0
       },
       "active": {
-        "isActive": true,
-        "effects": []
+        "isActive": false,
+        "isActivated": true
       },
       "mageRestricted": {
         "restricted" : ["charmage", "npcmage"]
@@ -442,6 +442,9 @@
       "displayDescription":""
     },
     "misc": {
+      "templates":[
+        "active"
+      ],
       "displayDescription": "",
       "isEquipable": false,
       "equiped": false,
