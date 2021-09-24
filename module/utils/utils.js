@@ -49,8 +49,29 @@ export function alphaSort(path = 'name') {
   }
 }
 
+/**
+ * regex replace to get rid of some characters in the string (to be used as a property name)
+ * atm only replaces '.' and ' ' with '_'
+ * todo : maybe add other symbols that could be an issue like brackets and such ?
+ */
 export function sanitize(myString) {
   return myString.replace(/[. +]/gi, '_').toLowerCase();
+}
+
+/**
+ * Checks for the existence of a translation string in le localization
+ * if no string is found (or localize returned the original path), then return according to override
+ * 
+ * @param  {String} completePath
+ * @param  {Boolean|String} override =true
+ * 
+ * @returns localized string | '' | completePath | override
+ */
+export function safeLocalize(completePath, override = true) {
+  let translation = game.i18n.localize(completePath);
+  if ( typeof(translation) !== 'string' ) { translation = ''; }
+  return translation !== completePath ? translation : 
+    (!!override ? '' : ( override ? override : completePath ) )
 }
 
 /**
@@ -362,7 +383,7 @@ const addDelimiter = (a, b) =>
 /**
  * Recursive function that creates an array of {fullPath: value} pairs
  * given an object (with nested properties, obviously)
- * found on the internet and tweaked moderately
+ * originaly from Matjaz on stackoverflow 
  * 
  * @param {object} obj the object to 'deconstruct'
  * @param {string} prevPath used by the recursion to dive deeper into the object

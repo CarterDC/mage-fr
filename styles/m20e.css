@@ -602,18 +602,18 @@
 .m20e .willpower .box {
   background-color: var(--m20e-goodGreenAlpha);
 }
-.m20e .health .box[data-state='bashing'],
-.m20e .willpower .box[data-state='bashing'] {
+.m20e .health .box[data-state='1'],
+.m20e .willpower .box[data-state='1'] {
   background-color: var(--m20e-badRedAlpha);
 }
-.m20e .health .box[data-state='lethal'],
-.m20e .willpower .box[data-state='lethal'] {
+.m20e .health .box[data-state='2'],
+.m20e .willpower .box[data-state='2'] {
   background-color: var(--m20e-badRedAlpha);
   background-image: url('../assets/ui/strike1.png');
   background-size: contain;
 }
-.m20e .health .box[data-state='aggravated'],
-.m20e .willpower .box[data-state='aggravated'] {
+.m20e .health .box[data-state='3'],
+.m20e .willpower .box[data-state='3'] {
   background-color: var(--m20e-badRedAlpha);
   background-image: url('../assets/ui/strike2.png');
   background-size: contain;

@@ -166,6 +166,18 @@ export const registerSystemSettings = function() {
   })
 
   /**
+   * Whether players can remove aggravated wounds
+   */
+   game.settings.register("mage-fr", "playersCanRemoveAggravated", {
+    name: "SETTINGS.playersCanRemoveAggravated",
+    hint: "SETTINGS.playersCanRemoveAggravatedHint",
+    scope: "world",
+    config: true,
+    default: true,
+    type: Boolean
+  });
+
+  /**
    * Whether players can see their paradox points(and interract with them)
    */
    game.settings.register("mage-fr", "playersCanSeeParadoxPoints", {

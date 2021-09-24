@@ -169,12 +169,14 @@ export default class M20eActorSheet extends ActorSheet {
    */
   getResourceData(resourceName) {
     const rez = this.actor.data.data.resources[resourceName];
-
+    const WT = CONFIG.M20E.WOUNDTYPE;
+//todo : add clickable property fn of aggravated and isGM
     return [...Array(rez.max)].map((element, index) => {
-      const state = (rez.max - rez.aggravated) > index ? 'aggravated' : 
-        ( (rez.max - rez.lethal) > index ? 'lethal' : 
-          ( (rez.max - rez.bashing) > index ? 'bashing' : '' ));
-      const title = state !== '' ? game.i18n.localize(`M20E.wounds.${state}`) : '';
+      const state = index < rez[WT.AGGRAVATED] ? WT.AGGRAVATED : 
+        ( index < rez[WT.LETHAL] ? WT.LETHAL : 
+          ( index < rez[WT.BASHING] ? WT.BASHING : 0 ));
+          //todo: move localization to hints.wounds
+      const title = state !== 0 ? game.i18n.localize(`M20E.wounds.${state}`) : '';
       return {state: state, title: title};
     });
   }
@@ -330,15 +332,22 @@ export default class M20eActorSheet extends ActorSheet {
   _onResourceBoxClick(event) {
     event.preventDefault();
     const element = event.currentTarget;
-    const index = parseInt(element.dataset.index);
+    const state = parseInt(element.dataset.state);
     const resourceName = element.closest('.resource-panel').dataset.resource;
-    
+    //todo : maybe add shiftKey for permanent wounds ?
     switch ( event.which ) {
       case 1://left button
-        this.actor.addWound(resourceName, index);
+        if ( state < CONFIG.M20E.WOUNDTYPE.AGGRAVATED) {
+          this.actor.wound(resourceName, 1, state + 1);
+        }
         break;
       case 3://right button
-        this.actor.removeWound(resourceName, index);
+        if ( state >= CONFIG.M20E.WOUNDTYPE.BASHING ) {
+          const canHealAggravated = game.settings.get("mage-fr", "playersCanRemoveAggravated");
+          if ( state !== CONFIG.M20E.WOUNDTYPE.AGGRAVATED || canHealAggravated ) {
+            this.actor.heal(resourceName, 1, state);
+          }
+        }
         break;
     }
   }

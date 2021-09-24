@@ -1,9 +1,11 @@
 // Namespace
 export const M20E = {};
 
-M20E.WOUND_TYPE_BASHING = 1; //not used atm
-M20E.WOUND_TYPE_LETHAL = 2;
-M20E.WOUND_TYPE_AGGRAVATED = 3;
+M20E.WOUNDTYPE = {
+  BASHING: 1,
+  LETHAL: 2,
+  AGGRAVATED: 3
+}
 
 M20E.abilitySubTypes = {
     talent: "M20E.subType.talent",
