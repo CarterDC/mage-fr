@@ -379,6 +379,18 @@ export default class M20eActor extends Actor {
     return await paraItem.setLexiconEntry(relativePath, newValue);
   }
 
+  /** 
+   * Might be pretty useless ?
+   * TODO : remove that ! 
+   *  'Safe' update as in 
+   * "if value is a number, parseInt it just to be on the 'safe' side"
+   * assumes the value as already been checked against min & max
+   */
+  async safeUpdateProperty(relativePath, newValue){
+    //beware of floats !!!
+    const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
+    return await this.update({[`data.${relativePath}`]: propertyValue});
+  }
   /**
    * Adds the amount amount of wounds of type woundType to the resource resourceName
    * Has a built in overflow to apply remaining wounds to the directly above woundtype.
