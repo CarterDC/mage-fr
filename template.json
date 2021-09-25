@@ -48,104 +48,100 @@
         }
       },
       "attributes":{
-        "traits": {
-          "attributes":{
-            "stre":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "char":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "perc":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "dext":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "mani":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            },    
-            "inte":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            },   
-            "stam":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "appa":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "wits":{
-              "value": 1,
-              "specialisation": "",
-              "displayDescription":""
-            }
+        "attributes":{
+          "stre":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "char":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "perc":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "dext":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "mani":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
+          },    
+          "inte":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
+          },   
+          "stam":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "appa":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "wits":{
+            "value": 1,
+            "specialisation": "",
+            "displayDescription": ""
           }
         }
       },
       "spheres":{
-        "traits":{
-          "spheres":{
-            "forc":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "corr":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "spir":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "matt":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "entr":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "prim":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "life":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "time":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            },
-            "mind":{
-              "value": 0,
-              "specialisation": "",
-              "displayDescription":""
-            }
+        "spheres":{
+          "forc":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "corr":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "spir":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "matt":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "entr":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "prim":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "life":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "time":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
+          },
+          "mind":{
+            "value": 0,
+            "specialisation": "",
+            "displayDescription": ""
           }
         }
       }
@@ -160,11 +156,18 @@
         "spheres"
       ],
 
-      "traits":{
+      "magick": {
         "arete": {
           "value": 1,
           "specialisation": "",
-          "displayDescription":""
+          "displayDescription": ""
+        },
+        "resonance": {
+          "value": 0,
+          "displayDescription": "",
+          "signature": "",
+          "resonnanceFlavor": "pious",
+          "synergyFlavor": "dynamic" 
         }
       },
 
@@ -219,9 +222,9 @@
         }
       },
 
-      "description":"",
-      "possessedStuff":"",
-      "carriedStuff":"",
+      "description": "",
+      "possessedStuff": "",
+      "carriedStuff": "",
 
       "aliases": [],
       "link": {},
@@ -236,11 +239,18 @@
         "spheres"
       ],
 
-      "traits":{
+      "magick": {
         "arete": {
           "value": 1,
           "specialisation": "",
-          "displayDescription":""
+          "displayDescription": ""
+        },
+        "resonance": {
+          "value": 0,
+          "displayDescription": "",
+          "signature": "",
+          "resonnanceFlavor": "pious",
+          "synergyFlavor": "dynamic" 
         }
       },
 
@@ -382,8 +392,8 @@
       "weapon"
     ],
     "templates":{
-      "virtualTrait":{
-        "isTrait": true,
+      "stat":{
+        "isStat": true,
         "value": 0
       },
       "rollable":{
@@ -408,7 +418,7 @@
     },
     "ability":{
       "templates":[
-        "virtualTrait"
+        "stat"
       ],
       "subType": "talent",
       "specialisation": "",
@@ -419,7 +429,7 @@
     },
     "background":{
       "templates":[
-        "virtualTrait",
+        "stat",
         "active"
       ],
       "displayName":"",

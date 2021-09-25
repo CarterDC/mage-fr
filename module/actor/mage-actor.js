@@ -20,6 +20,24 @@ export default class M20eMageActor extends M20eActor {
     super(data, context);
   }
 
+  _prepareActorStats() {
+    super._prepareActorStats();
+
+    const actorData = this.data;
+    for( const key in actorData.data.spheres ) {
+      const path = `spheres.${key}`;
+      //add entry to actor's stats with path and statData
+      foundry.utils.setProperty(actorData.stats, path, {
+        value: actorData.data.spheres[key].value
+      });
+      //also add entry to CONFIG with item's path and name, if necessary
+      if ( !foundry.utils.hasProperty(CONFIG.M20E.stats, path) ) {
+        foundry.utils.setProperty(CONFIG.M20E.stats, path, game.i18n.localize(`M20E.${path}`));
+      }
+    }
+    //todo : add arete value (and resonance maybe ?)
+  }
+
   /** @override */
   prepareResources() {
     super.prepareResources();
@@ -37,22 +55,6 @@ export default class M20eMageActor extends M20eActor {
     return true;
   }
 
-  /**
-   * check whether dropped item can be 'safely' created on this actor
-   * @param  {M20eItem} item item being dropped
-   */
-  isDropAllowed(item) {
-    if ( !super.isDropAllowed(item) ) { return false; }
-    const itemData = item.data;
-    //check against spheres levels
-    if ( itemData.type === 'rote' && !item._isActuallyRollable(this) ){
-      ui.notifications.error(game.i18n.format('M20E.notifications.unrollableRote',
-        {actorName:this.name, itemName: item.name}));
-      return false;
-    }
-    return true;
-  }
-
   getThrowFlavor(xTraitsToRoll=[]) {
     if ( DiceThrow.getIsEffectRoll(xTraitsToRoll) ) {
       //pure magical throw => arete roll + all spheres with value in the effect 
@@ -66,6 +68,7 @@ export default class M20eMageActor extends M20eActor {
     }
   }
 
+  //todo : redo that shit !
   increaseMagepower(index){
     if( ! utils.canSeeParadox() ) { return; }
     const base1Index = index + 1;

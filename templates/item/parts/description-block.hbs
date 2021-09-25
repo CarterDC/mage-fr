@@ -1,10 +1,6 @@
 <section class="tab" data-group="primary" data-tab="description">
     <div class= "field" title="{{localize 'M20E.hints.systemDescription'}}">
         <label>{{localize "M20E.labels.systemDescription"}} : </label>
-        {{#if isDescEditable}}
         {{editor content=data.systemDescription target='data.systemDescription' button=true owner=owner editable= true}}
-        {{else}}
-        <div class="fake-editor">{{{data.systemDescription}}}</div>
-        {{/if}}
     </div>
 </section>

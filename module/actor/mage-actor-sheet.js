@@ -122,7 +122,7 @@ export default class M20eMageActorSheet extends M20eActorSheet {
    * based on quintessence and paradox values (as well as whether players can see their own paradox)
    * 
    * @returns {Array} [{state:'', title:''},]
-   */
+  */
   getMagepowerData() {
     const mp = this.actor.data.data.resources['magepower'];
     const canSeePara = utils.canSeeParadox();
@@ -133,6 +133,24 @@ export default class M20eMageActorSheet extends M20eActorSheet {
       const title = canSeePara ? game.i18n.localize(`M20E.hints.magepower.${state}`) : '';
       return {state: state, title: title};
     });
+  }
+
+  /**
+   * checks whether dropped item can be 'safely' created on this actor
+   * @override
+   * @param  {M20eItem} item item being dropped
+   * @return {Boolean}
+  */
+  _isDropAllowed(item) {
+    if ( !super.isDropAllowed(item) ) { return false; }
+    const itemData = item.data;
+    //check against spheres levels
+    if ( itemData.type === 'rote' && !item._isActuallyRollable(this.actor) ) {
+      ui.notifications.error(game.i18n.format('M20E.notifications.unrollableRote',
+        {actorName:this.actor.name, itemName: item.name}));
+      return false;
+    }
+    return true;
   }
 
 }

@@ -47,7 +47,6 @@ Hooks.once('init', async function () {
 
   game.m20e = { //store some things here for later access
     config: M20E,
-    traits: {},
     mageMacro: DiceThrow.fromMacro,
     socketCallbacks: {
       sacrificeWillpower: (messageId) => chat.sacrificeWillpower(messageId)
@@ -55,6 +54,7 @@ Hooks.once('init', async function () {
   };
 
   CONFIG.M20E = M20E;
+  CONFIG.M20E.stats = {}; //list of stats used by stats selection App (GM tools + rollables) 
   CONFIG.Actor.documentClass = M20eActor;
   //add references to subclasses for use in the M20eActor constructor
   CONFIG.Actor.documentClasses = {
@@ -150,7 +150,7 @@ Hooks.once('ready', async function () {
 /*  Other usefull Hooks                         */
 /* -------------------------------------------- */
 Hooks.on('renderSidebar', function(sideBarApp, html, appData) {
-  log("ça avance");
+  log("onRenderSidebar");
 });
 
 Hooks.on("chatMessage", (chatLog, message, chatData) => {

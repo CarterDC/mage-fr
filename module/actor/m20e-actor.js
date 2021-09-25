@@ -5,8 +5,18 @@ import { M20E } from '../config.js'
 import { Trait } from '../dice/dice.js'
 
 /**
- * Actor class for base sleeper NPCs, 
- * also provides base functions for all derived actor class (char and npc alike)
+ * The base actor class for the mage System, extends Foundry's Actor.
+ * Natively used by NPC sleepers, and extended by every other actor types.
+ * 
+ * Implements a custom constructor in order to allow for inheritance of actor classes (not natively possible).
+ * Also adds, extends and overrides a number of functions specific to the system (obviously). 
+ * 
+ * Notes : during preparation, usefull items values are duplicated in the actor's data.traits object.
+ * usefull actor traits and derived data (attributes, willpower, initiative, etc) are also duplicated in data.traits.
+ * So that every rollable value (and associated data) stands in one place with one common accessible structure.
+ * 
+ * ActiveEffects are applied to theses duplicates and not the original values.
+ * 
  * @extends {Actor}
  */
 export default class M20eActor extends Actor {
@@ -26,7 +36,7 @@ export default class M20eActor extends Actor {
   }
 
   /* -------------------------------------------- */
-  /*  Actor Preparation                           */
+  /*  Actor Preparation (prepareData sequence)    */
   /* -------------------------------------------- */
 
   /**
@@ -34,93 +44,70 @@ export default class M20eActor extends Actor {
    *  @override
    */
   prepareBaseData() {
+    //investigate the difference between the 2 calls to prepareData on actor creation
     super.prepareBaseData();
 
-    this.prepareResources();
-    this.prepareTraits();
+    //populates a tree of stats in actorData from every item that is a virtualStat
+    //Also populate a tree of all stats in the config for future reference (stats selection in rollables and GM panel)
+    //create the stats property before populating
+    this.data.stats = {};
+    this._prepareActorStats();
+    this._prepareItemStats();
   }
 
-  /**
-   * third function in the prepareData sequence
-   *  @override
-   */
-  prepareDerivedData() {
-    super.prepareDerivedData();
-
+  _prepareActorStats() {
     const actorData = this.data;
-    actorData.items.forEach( 
-      item => item._prepareOwnedItem()
-    );
-  }
-
-  /**
-   * add dummy resources in actorData in the form {value, max}, to be used by token bars
-   * also computes secondary health stats 'status' and 'malus'
-   * according to health values and the list of maluses
-   */
-  prepareResources() {
-    const WT = CONFIG.M20E.WOUNDTYPE;
-    const actorData = this.data;
-
-    //create willpower property with {value, max} pair
-    const willpower = actorData.data.resources.willpower;
-    actorData.data.willpower = {
-      value: willpower.max - willpower[WT.BASHING],
-      max: willpower.max
+    for( const key in actorData.data.attributes ) {
+      const path = `attributes.${key}`;
+      //add entry to actor's stats with path and statData
+      foundry.utils.setProperty(actorData.stats, path, {
+        value: actorData.data.attributes[key].value
+      });
+      //also add entry to CONFIG with item's path and name, if necessary
+      if ( !foundry.utils.hasProperty(CONFIG.M20E.stats, path) ) {
+        foundry.utils.setProperty(CONFIG.M20E.stats, path, game.i18n.localize(`M20E.${path}`));
+      }
     }
-
-    //create health property with {value, max} pair
-    const health = actorData.data.resources.health;
-    actorData.data.health = {
-      value: health.max - health[WT.BASHING],
-      max: health.max
-    }
-    //prepare an array of integers from the comma separated string
-    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
-    //create derived data for health resource, to be displayed and used later
-    health.status = utils.safeLocalize(`M20E.healthStatus.${health[WT.BASHING]}`);
-    health.malus = health[WT.BASHING] > 0 ? maluses[(health[WT.BASHING] - 1)] : 0;
-  }
-
-  /**
-   * called at the end of prepareBaseData()
-   * populates a tree of traits in actorData from every item that is a virtualTrait
-   * Also populate a tree of all traits in the config
-   */
-  prepareTraits() {
-    const actorData = this.data;
-    //add/update config with all item traits
-    utils.traitsToPaths(actorData.data.traits).forEach( path => {
-      foundry.utils.setProperty(CONFIG.M20E.traits, path, game.i18n.localize(`M20E.traits.${path}`));
-    });
+    //todo : add willpower, init etc... or maybe later in the prep ? 
+    /*
     //add initiative to the traits 
     const dext = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.dext.value'));
     const wits = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.wits.value'));
     foundry.utils.setProperty(actorData.data.traits, 'initiative.value', dext + wits);
     foundry.utils.setProperty(CONFIG.M20E.traits, 'initiative', game.i18n.localize('M20E.traits.initiative'));
 
-    actorData.items.forEach( item => {
-      if ( item.isTrait ) {
-        const traitData = item.getTraitData();
-        const relativePath = traitData.subType ? 
-          `${traitData.cat}.${traitData.subType}.${traitData.key}` : 
-          `${traitData.cat}.${traitData.key}`;
-        foundry.utils.setProperty(actorData.data.traits, relativePath, traitData.data);
-        //add/update config with all item traits
-        foundry.utils.setProperty(CONFIG.M20E.traits, relativePath, traitData.data.name);
-      } else if (item.data.type === 'paradigm') {
-        //not a trait but since we're iterrating items...
-        actorData.data.paraItem = item;
-      }
-    });
     //add willpower property in the traits array (for roll purposes)
     foundry.utils.setProperty(actorData.data.traits, 'willpower', {value: actorData.data.resources.willpower.max});
+  */
   }
 
   /**
-   * @override
+   * populates the actor's stats object with path and statData from 'stat' items 
+   */
+  _prepareItemStats() {
+    const actorData = this.data;
+    for( const item of actorData.items ) {
+      if ( item.isStat ) {
+        const {path, name, statData} = item.getStatData();
+        //add entry to actor's stats with path and statData
+        foundry.utils.setProperty(actorData.stats, path, statData);
+        //also add entry to CONFIG with item's path and name, if necessary
+        if ( !foundry.utils.hasProperty(CONFIG.M20E.stats, path) ) {
+          foundry.utils.setProperty(CONFIG.M20E.stats, path, name);
+        }
+      } else if (item.data.type === 'paradigm') {
+        //not a stat but since we're iterrating items...
+        actorData.data.paraItem = item;
+      }
+    }
+  }
+
+  /**
+   * Called by prepareEmbeddedEntities() during the second phase of data preparation
    * mostly vanilla function
-   * adds a _sourceValue to properties that are gonna be changed by the override
+   * adds a _sourceValue to properties that are gonna be changed by the data override
+   * 
+   * @override
    */
   applyActiveEffects() {
     const overrides = {};
@@ -142,18 +129,21 @@ export default class M20eActor extends Actor {
       const sourceValue = foundry.utils.getProperty(this.data, change.key);
       const result = change.effect.apply(this, change);
       if ( result !== null ) {
+        //Mage-Fr specific
+        //todo : redo with check for AE other than on stats
         //add _sourceValue to the overriden property
-        const keys = change.key.split('.');
-        keys[keys.length-1] = '_sourceValue';
-        if ( !foundry.utils.hasProperty(this.data, keys.join('.')) ) {
+        const path = change.key.match(/(?<=\.)(.+)(?=\.)/g);
+        if ( !foundry.utils.hasProperty(this.data.stats, `${path}._sourceValue`) ) {
           //don't set sourceValue if it has already been set before
-          foundry.utils.setProperty(this.data, keys.join('.'), sourceValue);
-          //also add the property to the item if trait's actually an item
-          keys[keys.length-1] = 'itemId';
-          if ( foundry.utils.hasProperty(this.data, keys.join('.')) ) {
-            const item = this.items.get(foundry.utils.getProperty(this.data, keys.join('.')));
-            item.data.data._overrideValue = result;
-          }
+          foundry.utils.setProperty(this.data.stats, `${path}._sourceValue`, sourceValue);
+        }
+        //also add the property to the item if stat is actually an item
+        const itemId = foundry.utils.getProperty(this.data.stats, `${path}.itemId`);
+        if ( itemId ) {
+          const item = this.items.get(itemId);
+          item.data.data._overrideValue = result;
+        } else {
+          foundry.utils.setProperty(this.data.data, `${path}._overrideValue`, result);
         }
         //vanilla
         overrides[change.key] = result;
@@ -162,6 +152,50 @@ export default class M20eActor extends Actor {
 
     // Expand the set of final overrides
     this.overrides = foundry.utils.expandObject(overrides);
+  }
+
+  /**
+   * third function in the prepareData sequence
+   *  @override
+   */
+  prepareDerivedData() {
+    super.prepareDerivedData();
+
+    this._prepareResources(); 
+
+    const actorData = this.data;
+    for( let item of actorData.items ) {
+      item._prepareOwnedItem()
+    }
+  }
+
+  /**
+   * add dummy resources in actorData in the form {value, max}, to be used by token bars.
+   * also computes secondary health stats 'status' and 'malus',
+   * according to health values and the list of maluses.
+   */
+    _prepareResources() {
+    const WT = CONFIG.M20E.WOUNDTYPE;
+    const actorData = this.data;
+
+    //create willpower property with {value, max} pair
+    const willpower = actorData.data.resources.willpower;
+    actorData.data.willpower = {
+      value: willpower.max - willpower[WT.BASHING],
+      max: willpower.max
+    }
+
+    //create health property with {value, max} pair
+    const health = actorData.data.resources.health;
+    actorData.data.health = {
+      value: health.max - health[WT.BASHING],
+      max: health.max
+    }
+    //prepare an array of integers from the comma separated string
+    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
+    //create derived data for health resource, to be displayed and used later
+    health.status = utils.safeLocalize(`M20E.healthStatus.${health[WT.BASHING]}`);
+    health.malus = health[WT.BASHING] > 0 ? maluses[(health[WT.BASHING] - 1)] : 0;
   }
 
   /* -------------------------------------------- */
@@ -291,9 +325,15 @@ export default class M20eActor extends Actor {
   }
 
   /* -------------------------------------------- */
-  /*  Sheet or other external                     */
+  /*  Exposed : used by sheets and other apps     */
   /* -------------------------------------------- */
 
+  /**
+   * Returns item from Id, with check.
+   * In case item's not found, displays notification and return null.
+   * @param  {String} itemId
+   * @returns {M20eItem|null}
+   */
   getItemFromId(itemId) {
     const item = this.items.get(itemId);
     if ( !item ) {
@@ -301,40 +341,9 @@ export default class M20eActor extends Actor {
         itemRef: itemId,
         actorName: this.name
       }));
+      return null;
     }
     return item;
-  }
-
-  //todo : write this !
-  getItemFromName(itemName, itemType='', itemSubType= '') {
-
-  }
-
-  /**
-   * check whether dropped item can be 'safely' created on this actor
-   * @param  {M20eItem} item item being dropped
-   */
-   isDropAllowed(item) {
-    const itemData = item.data;
-    //check name against all names in same itemType
-    const duplicates = this.items.filter(item => (item.type === itemData.type) && (item.name === itemData.name));
-    if ( duplicates.length ) {
-      ui.notifications.error(game.i18n.format(`M20E.notifications.duplicateName`, {name: itemData.name}));
-      return;
-    }
-    //check against 'creation mode'
-    if ( this.data.data.creationDone && !game.user.isGM && itemData.protectedType ) {
-        ui.notifications.error(game.i18n.localize('M20E.notifications.notOutsideCreation'));
-        return false;
-    }
-    //check against restricted
-    if ( itemData.data.restricted && !itemData.data.restricted.includes(this.data.type) ) {
-      const itemType = game.i18n.localize(`ITEM.Type${item.type.capitalize()}`);
-      ui.notifications.error(game.i18n.format('M20E.notifications.restrictedItem',
-        {actorName:this.name, itemType: itemType}));
-      return false;
-    }
-    return true;
   }
 
   /**
@@ -380,9 +389,8 @@ export default class M20eActor extends Actor {
   }
 
   /** 
-   * Might be pretty useless ?
-   * TODO : remove that ! 
-   *  'Safe' update as in 
+   * 'Safe' update as in
+   * todo : do better !
    * "if value is a number, parseInt it just to be on the 'safe' side"
    * assumes the value as already been checked against min & max
    */
@@ -391,6 +399,7 @@ export default class M20eActor extends Actor {
     const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
     return await this.update({[`data.${relativePath}`]: propertyValue});
   }
+
   /**
    * Adds the amount amount of wounds of type woundType to the resource resourceName
    * Has a built in overflow to apply remaining wounds to the directly above woundtype.
@@ -418,7 +427,6 @@ export default class M20eActor extends Actor {
     //create & populate the updateObj
     let updateObj = overflow(this.data.data.resources[resourceName], amount, woundType);
     standardize(this.data.data.resources[resourceName], updateObj, woundType);
-
     return await this.update(updateObj);
   }
 
@@ -443,7 +451,6 @@ export default class M20eActor extends Actor {
     //create & populate the updateObj
     const rez = this.data.data.resources[resourceName];
     let updateObj = overflow(rez, amount, woundType, (rez[woundType + 1] ?? 0));
-
     return await this.update(updateObj);
   }
 
@@ -464,7 +471,6 @@ export default class M20eActor extends Actor {
       await this.update({[`data.currentXP`]: newValue});
     }
   }
-
 
   /* -------------------------------------------- */
   /*  Roll related                                */

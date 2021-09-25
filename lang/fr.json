@@ -17,6 +17,20 @@
   "ITEM.TypeThrow": "Jet",
   "ITEM.TypeWeapon": "Arme",
   "M20E": {
+    "attributes": {
+      "appa": "Apparence",
+      "char": "Charisme",
+      "dext": "Dexterité",
+      "inte": "Intelligence",
+      "mani": "Manipulation",
+      "mental": "Mental",
+      "perc": "Perception",
+      "physical": "Physique",
+      "social": "Social",
+      "stam": "Vigueur",
+      "stre": "Force",
+      "wits": "Astuce"
+    },
     "blabla": "Blabla...",
     "health": "Santé",
     "paradigmName": "Paradigme de {name}",
@@ -424,7 +438,12 @@
       "unlockToEdit": "Basculez en 'mode édition'(🔓) pour remplir ce champ.",
       "untrained": "Non Entrainé !",
       "useSpecialisation": "Utiliser la spécialisation.",
-      "value0to5": "Une valeur généralement entre 0 et 5."
+      "value0to5": "Une valeur 'généralement' entre 0 et 5.",
+      "wounds": {
+        "1": "Blessure étourdissante",
+        "2": "Blessure létale",
+        "3": "Blessure aggravéé"
+      }
     },
     "labels": {
       "aeDisabled": "Désactivé",
@@ -465,6 +484,10 @@
       "trait": "Trait",
       "type": "Type",
       "value": "Valeur"
+    },
+    "magick": {
+      "arete": "Arété",
+      "resonance": "Résonnance"
     },
     "navtabs": {
       "bio": "BIO",
@@ -543,6 +566,17 @@
       "selectTraitTitle": "Sélection de Trait pour {name}",
       "subTypeContent": "<p>Choisissez un <b>sous-type de {type}</b><br>Cet item sera crée avec les paramètres par défault du sous-type choisi.</p>"
     },
+    "spheres": {
+      "corr": "Corresp.",
+      "entr": "Entropie",
+      "forc": "Forces",
+      "life": "Vie",
+      "matt": "Matière",
+      "mind": "Psyché",
+      "prim": "Prime",
+      "spir": "Esprit",
+      "time": "Temps"
+    },
     "subType": {
       "flaw": "Handicap",
       "flaws": "Handicaps",
@@ -570,33 +604,7 @@
       "crit": "Échec critique"
     },
     "traits": {
-      "arete": "Arété",
       "initiative": "Initiative",
-      "attributes": {
-        "appa": "Apparence",
-        "char": "Charisme",
-        "dext": "Dexterité",
-        "inte": "Intelligence",
-        "mani": "Manipulation",
-        "mental": "Mental",
-        "perc": "Perception",
-        "physical": "Physique",
-        "social": "Social",
-        "stam": "Vigueur",
-        "stre": "Force",
-        "wits": "Astuce"
-      },
-      "spheres": {
-        "corr": "Corresp.",
-        "entr": "Entropie",
-        "forc": "Forces",
-        "life": "Vie",
-        "matt": "Matière",
-        "mind": "Psyché",
-        "prim": "Prime",
-        "spir": "Esprit",
-        "time": "Temps"
-      },
       "willpower": "Volonté"
     },
     "welcomeMessage": {
@@ -606,11 +614,6 @@
       "noModule": "<p>Le système n'a pas trouvé de module de contenu activé.<br>Pas d'inquiétude, il fonctionne très bien sans. Néanmoins le module de contenu apporte de nombreux journaux et items déjà préparés et vous pouvez le trouver dans Foundy en cherchant 'Mage Packs'.</p>",
       "settings": "<p>Vous trouverez, en cliquant <a href='' id='linkToOptions'>ici</a>, des options à modifier selon vos besoins.</p>",
       "clickMe": "Cliquez moi !"
-    },
-    "wounds": {
-      "1": "Blessure étourdissante",
-      "2": "Blessure létale",
-      "3": "Blessure aggravéé"
     }
   },
   "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",

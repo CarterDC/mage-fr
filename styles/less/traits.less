@@ -17,7 +17,7 @@
       margin: 0 5px 0 0;
       background-image: radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));
     }
-    .trait-label:hover {//TODO : Maybe not all trait labels should behave like that ?
+    .stat-label:hover {
       text-shadow: 0 0 1px var(--hoverColor);
     }
     .ligne{
@@ -81,7 +81,7 @@
       height:fit-content;
     }
   }
-  .trait[data-active='true'] .trait-label{
+  .trait[data-active='true'] .stat-label{
     color: var(--highlightColor);
     text-shadow: 0 0 1px var(--m20e-darkGrey);
   }
@@ -119,10 +119,10 @@
     height:20px;
     margin: 3px 0;
 
-    .trait-label[data-value="0"]{
+    .stat-label[data-value="0"]{
       color: var(--m20e-badRed);
     }
-    .trait-label:hover{
+    .stat-label:hover{
         text-shadow: none;
     }
     .mini-button[data-action="remove"]{
@@ -404,6 +404,7 @@
   .trait.lexicon:nth-child(even){
     background-color: rgba(0,0,0,0.1);
   }
+
   /* -------------------------------------------- */
   /*  Fields                                      */
   /* -------------------------------------------- */

@@ -66,7 +66,7 @@ export const registerHandlebarsHelpers = function() {
     return locked ? 'disabled' : '';
   })
 
-  Handlebars.registerHelper("clickableBullet", function(availEffects, key) {
+  Handlebars.registerHelper("m20e-clickableBullet", function(availEffects, key) {
     if ( !availEffects ) { return; }
     const valueMax = availEffects.filter(effect => effect.key === key)[0].valueMax || 0;
     //index of 'this' is base 0
@@ -97,31 +97,16 @@ export const registerHandlebarsHelpers = function() {
     return returnString;
   })
 
-  Handlebars.registerHelper("bulletState", function(currValue, index) {
+  Handlebars.registerHelper("m20e-bulletState", function(currValue, index) {
     return (currValue > index) ? "active" : "";
   })
 
-  Handlebars.registerHelper('in', function() {
+  Handlebars.registerHelper('m20e-in', function() {
     let entryToFind = arguments[0];
     for(let i = 1; i < arguments.length; i++){
       if(entryToFind === arguments[i]){return true;}
     }
     return false;
   })
-
-  //not used anymore but kept for sentimental reasons
-  /*Handlebars.registerHelper('res', function(resource, index) {
-    if ( (resource.max - resource.aggravated) > index ) { return 3; }
-    if ( (resource.max - resource.lethal) > index ) { return 2; }
-    if ( (resource.max - resource.value) > index ) { return 1; }
-    return 0;
-  })
-
-  Handlebars.registerHelper('magepower', function(magepower, index) {
-    let returnValue = 0;
-    if ( magepower.quintessence > index ) { return 1; }
-    if ( utils.canSeeParadox() && (20 - magepower.paradox) <= index ) { return 2; }
-    return returnValue;
-  })*/
 
 }
