@@ -669,7 +669,7 @@
   margin: 0 5px 0 0;
   background-image: radial-gradient(rgba(130, 81, 20, 0.4), rgba(0, 0, 0, 0));
 }
-.m20e .trait .trait-label:hover {
+.m20e .trait .stat-label:hover {
   text-shadow: 0 0 1px var(--hoverColor);
 }
 .m20e .trait .ligne {
@@ -731,7 +731,7 @@
 .m20e .trait .one-liner-desc[data-expanded="true"] {
   height: fit-content;
 }
-.m20e .trait[data-active='true'] .trait-label {
+.m20e .trait[data-active='true'] .stat-label {
   color: var(--highlightColor);
   text-shadow: 0 0 1px var(--m20e-darkGrey);
 }
@@ -762,10 +762,10 @@
   height: 20px;
   margin: 3px 0;
 }
-.m20e .trait.dice-throw .trait-label[data-value="0"] {
+.m20e .trait.dice-throw .stat-label[data-value="0"] {
   color: var(--m20e-badRed);
 }
-.m20e .trait.dice-throw .trait-label:hover {
+.m20e .trait.dice-throw .stat-label:hover {
   text-shadow: none;
 }
 .m20e .trait.dice-throw .mini-button[data-action="remove"] {

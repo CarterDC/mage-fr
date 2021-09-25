@@ -21,11 +21,6 @@ export class FakeItem extends DocumentSheet {
     this.actor = actor;
     this.itemData = itemData;
 
-    /*const  itemSheetOptions = CONFIG.M20E.itemSheetOptions['fakeitem'];
-    if ( itemSheetOptions ) {
-      this.options.width = this.position.width = itemSheetOptions.width;
-      this.options.height = this.position.height = itemSheetOptions.height;
-    }*/
     //add the paradigm css class if any to the default options.
     const paraItem = this.actor.paradigm;
     if ( paraItem ) {
@@ -49,7 +44,8 @@ export class FakeItem extends DocumentSheet {
   getData() {
     const superData = super.getData();
     const actorData = this.actor.data.toObject(false);
-    const traitData = foundry.utils.getProperty(actorData, `data.traits.${this.itemData.category}.${this.itemData.key}`);
+    const {category, key} = this.itemData;
+    const traitData = foundry.utils.getProperty(actorData.data, `${category}.${key}`);
 
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
@@ -65,9 +61,21 @@ export class FakeItem extends DocumentSheet {
     super.activateListeners(html);
   }
 
+  _activateEditor(div) {
+    super._activateEditor(div);
+    const button = div.nextElementSibling;
+    const hasButton = button && button.classList.contains("editor-edit");
+    if (hasButton) button.onclick = this._onEditorButton;
+  }
+
+  _onEditorButton() {
+    log("ça avance très bien !")
+  }
+
   /** @inheritdoc */
   async _updateObject(event, formData) {
     if ( !this.object.id ) return;
+    delete formData.lexiconName;
     return this.object.update(formData);
   }
 

@@ -4,16 +4,16 @@
       <label>{{m20e-locadigm paraData "categories." "arete"}}</label>
   </div>
   <div class="trait arete linkable" data-path="arete" data-active= "false">
-    <a class="trait-label">
-      {{m20e-locadigm paraData "traits.arete"}}
+    <a class="stat-label">
+      {{m20e-locadigm paraData "magick.arete"}}
     </a>
     <div class="ligne"></div>
     <div class="edit-bar" data-locked="{{locks.spheres}}">
-      <input name="data.traits.arete.value" type="text" value="{{data.traits.arete.value}}" data-dtype="Number" min="0" max="10"/>
+      <input name="data.magick.arete.value" type="text" value="{{data.magick.arete.value}}" data-dtype="Number" min="0" max="10"/>
     </div>
     <div class="bullet-display" data-locked="{{locks.spheres}}">                        
       {{#m20e-forLoop 10}}
-      <span class="bullet" data-index="{{this}}" data-state="{{bulletState ../data.traits.arete.value this}}"></span>
+      <span class="bullet" data-index="{{this}}" data-state="{{m20e-bulletState ../data.magick.arete.value this}}"></span>
       {{/m20e-forLoop}}
     </div>
   </div>
@@ -22,17 +22,17 @@
   {{!-- spheres --}}
   {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="spheres" lock = locks.spheres}}
   <div class="grid three-col">
-    {{#each data.traits.spheres as |sphere key|}}
+    {{#each data.spheres as |sphere key|}}
     <div class="trait sphere linkable" data-path="spheres.{{key}}" data-active= "false">
-      <a class="trait-label tooltip">
-        {{m20e-locadigm ../paraData "traits.spheres." key}}
+      <a class="stat-label tooltip">
+        {{m20e-locadigm ../paraData "spheres." key}}
         {{#if sphere.specialisation}}
         <span class="righttooltiptext">{{localize "M20E.labels.spe"}} : {{sphere.specialisation}}</span>
         {{/if}}
       </a>
       <div class="ligne"></div>
       <div class="edit-bar" data-locked="{{../locks.spheres}}">
-        <input name="data.traits.spheres.{{key}}.value" type="text" value="{{sphere.value}}" data-dtype="Number" min="0" max="10"/>
+        <input name="data.spheres.{{key}}.value" type="text" value="{{sphere.value}}" data-dtype="Number" min="0" max="10"/>
         <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a> 
       </div>
       <div class="bullet-display" data-locked="{{../locks.spheres}}">

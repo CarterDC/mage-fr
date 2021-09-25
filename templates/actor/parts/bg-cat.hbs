@@ -5,7 +5,7 @@
         {{#each items.backgrounds as |background key|}}
         <div class="trait background linkable" data-path="backgrounds.{{m20e-sanitize background.name}}" data-item-id="{{background._id}}" data-active= "false"> 
             <img class="trait-img" src="{{background.img}}"/>
-            <a class="trait-label tooltip" data-item-id="{{background._id}}">
+            <a class="stat-label tooltip" data-item-id="{{background._id}}">
                 {{#if background.data.displayName}}
                 {{background.data.displayName}}
                 {{else}}
@@ -21,11 +21,9 @@
                 <a class="mini-button" data-action="edit"><i class="fas fa-pencil-alt"></i></a>
                 <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
             </div>
-            <div class="bullet-display" data-locked="{{../locks.backgrounds}}">
-                {{#m20e-forLoop 5}}
-                <span class="bullet" data-index="{{this}}" data-state="{{bulletState background.data.value this}}"></span>
-                {{/m20e-forLoop}}
-            </div>
+              <div class="bullet-display" data-locked="{{../locks.backgrounds}}">
+                  {{{m20e-bulletDisplay background.data 5}}}
+              </div>
         </div>
         {{/each}}
     </div>

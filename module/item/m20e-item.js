@@ -89,19 +89,18 @@ export default class M20eItem extends Item {
   /* -------------------------------------------- */
 
   /**
-   * todo : maybe migrate in the item prepareData with actor owned check ?
+   * returns a pair {path, data} to populate the actor's stats in the _prepateItemStats()
    */
-   getTraitData() {
+   getStatData() {
     const itemData = this.data;
+    const cat = CONFIG.M20E.traitToCat[itemData.type];
+    const subType = CONFIG.M20E.traitToCat[itemData.data.subType];
+    const key = utils.sanitize(itemData.name);
     return {
-      cat: CONFIG.M20E.traitToCat[itemData.type],
-      subType: CONFIG.M20E.traitToCat[itemData.data.subType] || null,
-      key: utils.sanitize(itemData.name),
-      data: {
-        name: itemData.name,
-        displayName: itemData.data.displayName || '',
+      path: `${cat}.${subType ? subType + '.' : ''}${key}`,
+      name: itemData.name,
+      statData: {
         value: parseInt(itemData.data.value),
-        specName:  itemData.data.specialisation || '',
         itemId: itemData._id
       }
     }
@@ -132,8 +131,8 @@ export default class M20eItem extends Item {
     return this.data.data.isRollable === true;
   }
 
-  get isTrait() {
-    return this.data.data.isTrait === true;
+  get isStat() {
+    return this.data.data.isStat === true;
   }
 
   get isActive() { // todo : not sure atm

@@ -45,7 +45,7 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-   * overridden by extended actorSheet classes that use a different template
+   * overridden by extensions of M20eActorSheet that use a different template
    * @override
    */
     get template() {
@@ -57,7 +57,8 @@ export default class M20eActorSheet extends ActorSheet {
     const sheetData = super.getData(options);
     //sheetData.data is a standard js Object created from the actor's PREPARED data
     const actorData = sheetData.data; 
-    sheetData.data = actorData.data; //shorthand for convenience to avoid 'data.data' all the time
+    //override sheetData.data for convenience (to avoid 'data.data' in the templates all the time)
+    sheetData.data = actorData.data;
 
     //pre-digest some data to be usable by handlbars (avoid some helpers)
     sheetData.resources = {};
@@ -65,22 +66,23 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.resources.willpower = this.getResourceData('willpower');
 
     //dispatch items into categories and subtypes
+    //at this point sheetData.items is already an array of standard js objects made from the individual itemData of each actor's item.
     //sheetData.items is already sorted on item.sort in the super
     //Abilities
     sheetData.items.abilities = {};
-    sheetData.items.abilities.talents = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "talent") ));
-    sheetData.items.abilities.skills = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "skill") ));
-    sheetData.items.abilities.knowledges = sheetData.items.filter((item) => ( (item.type === "ability") && (item.data.subType === "knowledge") ));
+    sheetData.items.abilities.talents = sheetData.items.filter((itemData) => ( (itemData.type === "ability") && (itemData.data.subType === "talent") ));
+    sheetData.items.abilities.skills = sheetData.items.filter((itemData) => ( (itemData.type === "ability") && (itemData.data.subType === "skill") ));
+    sheetData.items.abilities.knowledges = sheetData.items.filter((itemData) => ( (itemData.type === "ability") && (itemData.data.subType === "knowledge") ));
     //merits and flaws
     sheetData.items.meritsflaws = {};
-    sheetData.items.meritsflaws.merits = sheetData.items.filter((item) => ( (item.type === "meritflaw") && (item.data.subType === "merit") ));
-    sheetData.items.meritsflaws.flaws = sheetData.items.filter((item) => ( (item.type === "meritflaw") && (item.data.subType === "flaw") ));
+    sheetData.items.meritsflaws.merits = sheetData.items.filter((itemData) => ( (itemData.type === "meritflaw") && (itemData.data.subType === "merit") ));
+    sheetData.items.meritsflaws.flaws = sheetData.items.filter((itemData) => ( (itemData.type === "meritflaw") && (itemData.data.subType === "flaw") ));
     //the rest of the items
-    sheetData.items.backgrounds = sheetData.items.filter((item) => item.type === "background");
-    sheetData.items.events = sheetData.items.filter((item) => item.type === "event");
+    sheetData.items.backgrounds = sheetData.items.filter((itemData) => itemData.type === "background");
+    sheetData.items.events = sheetData.items.filter((itemData) => itemData.type === "event");
     //gear & other possessions
-    sheetData.items.equipables = sheetData.items.filter((item) => item.data.isEquipable === true);
-    sheetData.items.miscs = sheetData.items.filter((item) => ( item.type === 'misc' && item.data.isEquipable === false ));
+    sheetData.items.equipables = sheetData.items.filter((itemData) => itemData.data.isEquipable === true);
+    sheetData.items.miscs = sheetData.items.filter((itemData) => ( itemData.type === 'misc' && itemData.data.isEquipable === false ));
     //todo : sort equipables according to type and isEquiped ?
     //todo : sort misc according to isConsumable ?
 
@@ -95,7 +97,31 @@ export default class M20eActorSheet extends ActorSheet {
     }
     sheetData.dsnUserActive = utils.dsnUserActive();
 
+    if (this.actor.type === 'npcsleeper') { log({sheetData: sheetData});}
     return sheetData;
+  }
+
+  /**
+   * Returns an Array with pre-digested data for direct use by handlebars.
+   * Populates the array with the relevant number of entries, based on resource properties.
+   * Called in the getData().
+   * 
+   * @returns {Array} [{state, clickable, title},]
+   */
+   getResourceData(resourceName) {
+    const rez = this.actor.data.data.resources[resourceName];
+    const WT = CONFIG.M20E.WOUNDTYPE;
+    return [...Array(rez.max)].map((element, index) => {
+      const state = index < rez[WT.AGGRAVATED] ? WT.AGGRAVATED : 
+        ( index < rez[WT.LETHAL] ? WT.LETHAL : 
+          ( index < rez[WT.BASHING] ? WT.BASHING : WT.NONE ));
+
+      return {
+        state: state,
+        clickable: (state !== WT.AGGRAVATED || game.settings.get("mage-fr", "playersCanRemoveAggravated")),
+        title: state !== WT.NONE ? game.i18n.localize(`M20E.hints.wounds.${state}`) : ''
+      };
+    });
   }
 
   /** @override */
@@ -105,14 +131,12 @@ export default class M20eActorSheet extends ActorSheet {
     if ( this.actor.data.data.creationDone && !game.user.isGM ) {
       this._protectElements(html);
     }
-    //actions for everyone
-
+    //actions for everyone go here
+    
     //editable only (roughly equals 'isOwner')
     if ( this.isEditable ) {
-      //dice throwing
-      html.find('.dice-button').click(this._onDiceClick.bind(this));
       //highlighting of traits
-      html.find('a.trait-label').click(this._onTraitLabelClick.bind(this));
+      html.find('a.stat-label').click(this._onStatLabelClick.bind(this));
       //every interraction with a button (except for the dice-button)
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       //left & right clicks on resource boxes
@@ -121,6 +145,9 @@ export default class M20eActorSheet extends ActorSheet {
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
       //click on the 'i' buttons (blue or grey)
       html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
+      //dice throwing (Big Dice Button)
+      html.find('.dice-button').click(this._onDiceClick.bind(this));
+
       //ctx menu on the character name (paradigm edition...)
       new ContextMenu(html, '.header-row.charname', this._getNameContextOptions());
       //ctx menu on traits (edition / link)
@@ -129,7 +156,6 @@ export default class M20eActorSheet extends ActorSheet {
       new ContextMenu(html, '.currXP', this._getXPContextOptions());
       //ctx menu for rollable items
       new DynaCtx(html, '.trait[data-rollable="true"]', (traitElem) => this._getRollableContextOptions(traitElem));
-      //html.find('.vertical-wrapper[data-rollable="true"]').mousedown(this._onRollableClick.bind(this));
     }
     
     if ( game.user.isGM ) {
@@ -137,7 +163,6 @@ export default class M20eActorSheet extends ActorSheet {
     }
 
     //testing shit here :
-    //html.on('dragover','section', this._onDragOver.bind(this));
     
     super.activateListeners(html);
   }
@@ -160,30 +185,175 @@ export default class M20eActorSheet extends ActorSheet {
     });
   }
 
+  /* -------------------------------------------- */
+  /*  Event Handlers                              */
+  /* -------------------------------------------- */
+
   /**
-   * Returns an Array with pre-digested data for direct use by handlebars in order to renders some helpers superfluous
-   * Populates the array with the relevant number of entries like {state: '', title: ''},
-   * based on resource properties (max, bashing, lethal and aggravated)
-   * 
-   * @returns {Array} [{state:'', title:''},]
-   */
-  getResourceData(resourceName) {
-    const rez = this.actor.data.data.resources[resourceName];
-    const WT = CONFIG.M20E.WOUNDTYPE;
-//todo : add clickable property fn of aggravated and isGM
-    return [...Array(rez.max)].map((element, index) => {
-      const state = index < rez[WT.AGGRAVATED] ? WT.AGGRAVATED : 
-        ( index < rez[WT.LETHAL] ? WT.LETHAL : 
-          ( index < rez[WT.BASHING] ? WT.BASHING : 0 ));
-          //todo: move localization to hints.wounds
-      const title = state !== 0 ? game.i18n.localize(`M20E.wounds.${state}`) : '';
-      return {state: state, title: title};
-    });
+  * Toggles the active state of a trait element when it's label has been clicked.
+  * traits with a dataset.active === true are picked up when rolling dice
+  * any render of the sheet resets the active state to false (which is desired behavior)
+  * 
+  * @param {object} event the event that triggered (from a click on 'a.stat-label')
+  */
+   _onStatLabelClick(event) {
+    event.preventDefault();
+    const statElem = event.currentTarget.closest(".trait");
+    //just toggle the active status
+    statElem.dataset.active = !(statElem.dataset.active === 'true');
   }
 
-  /* -------------------------------------------- */
-  /*  Event Handlers & Context Menus Callbacks    */
-  /* -------------------------------------------- */
+  /**
+  * Dispatches mini-buttons clicks according to their dataset.action
+  * 
+  * @param {object} event the event that triggered (from div '.mini-button')
+  */
+   _onMiniButtonClick(event) {
+    event.preventDefault();
+    const buttonElem = event.currentTarget;
+    const dataset = buttonElem.dataset;
+
+    //check if action is allowed before going any further
+    if ( dataset.disabled ) {
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
+      return;
+    }
+    // get a trait from the buttonElem (might be null if not applicable)
+    const trait = Trait.fromElement(buttonElem);
+    //dispatch 
+    switch ( dataset.action ) {
+      case 'lock': //deal with locks & dragDrop
+        this._toggleCategoryLock(dataset.category);
+        break;
+      
+      case 'add':
+        //itemType can end up being a list of avail types for the category
+        const itemType = CONFIG.M20E.categoryToType[dataset.category];
+        const itemSubtype = CONFIG.M20E.categoryToType[dataset.subCategory];
+        this._addEmbedded(itemType, itemSubtype); //todo : redo more clever !
+        break;
+      
+      case 'edit': //edit regular or virtual Trait (item)
+        if ( trait.itemId ) {
+          this._editEmbedded(trait);
+        } else {
+          this._editTrait(trait);
+        }
+        break;
+      
+      case 'remove'://rename for embedded
+        this._removeEmbedded(trait);
+        break;
+      
+      case 'roll-item':
+        const rollableId = buttonElem.closest(".trait").dataset.itemId;
+        const rollableItem = this.actor.items.get(rollableId);
+        rollableItem.roll(event.shiftKey); //throwIndex is 0 by default
+        break;
+      
+      case 'expand':
+        this._expandDescription(buttonElem);
+        break;
+
+      case 'check':
+        //atm, only used to update the disabled value of an active affect
+        this._toggleEmbeddedProperty(trait, dataset.updatePath);
+        break;
+
+      case 'plus':
+      case 'minus':
+        const mod = dataset.action === 'minus' ? -1 : 1;
+        this._modEmbeddedProperty(trait, dataset.updatePath, mod);
+      default:
+    }
+  }
+
+  /**
+  * Dispatches clicks on resource panel boxes acording to resource type and mouse button press
+  * 
+  * @param {object} event the mousedown-event that triggered (from div '.box')
+  */
+   _onResourceBoxClick(event) {
+    event.preventDefault();
+    const element = event.currentTarget;
+    const state = parseInt(element.dataset.state);
+    const resourceName = element.closest('.resource-panel').dataset.resource;
+    //todo : maybe add shiftKey for permanent wounds ?
+    switch ( event.which ) {
+      case 1://left button
+        if ( state < CONFIG.M20E.WOUNDTYPE.AGGRAVATED) {
+          this.actor.wound(resourceName, 1, state + 1);
+        }
+        break;
+      case 3://right button
+        if ( state >= CONFIG.M20E.WOUNDTYPE.BASHING ) {
+          const canHealAggravated = game.settings.get("mage-fr", "playersCanRemoveAggravated");
+          if ( state !== CONFIG.M20E.WOUNDTYPE.AGGRAVATED || canHealAggravated ) {
+            this.actor.heal(resourceName, 1, state);
+          }
+        }
+        break;
+    }
+  }
+
+  /**
+  * Updates an owned item's data.value from within the character sheet.
+  * validates input value against dtype min max before updating
+  * 
+  * @param {object} event the event that triggered (from an input '.inline-input')
+  */
+   async _onInlineEditChange(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const inputElem = event.currentTarget;
+    if ( ! utils.isValidUpdate(inputElem) ) {
+      return this.render();
+    }
+    const trait = Trait.fromElement(inputElem);
+    this._updateEmbeddedProperty(trait, inputElem.dataset.updatePath, inputElem.value);
+  }
+
+  /**
+   * Intercepts a click on an entity link before it's processed by vanilla sheet
+   * displays a warning upon clicking an empty link and prevents vanilla behavior
+   * triggers the creation of personnal JE upon clicking an empty link for that specific one
+   */
+  _onEntityLinkClick(event){
+    const linkElem = event.currentTarget;
+    const dataset = linkElem.dataset;
+    const id = dataset.id;
+    if ( !id ) {
+      event.preventDefault();
+      event.stopPropagation();
+      if ( linkElem.classList.contains('personnal-je') && game.user.isGM) {
+        this._createPersonnalJE();
+      } else {
+        ui.notifications.warn(game.i18n.localize(`M20E.notifications.noJournal`));
+      }
+    }
+  }
+
+  /**
+   * On a click on the big dice, round up every highlighted trait on the sheet
+   * send it to a new DiceThrow object and either render it for further options or
+   * just throw the dice
+   * 
+   * @param  {} event
+   */
+   _onDiceClick(event) {
+    //retrieve traits to roll
+    const diceThrow = new DiceThrow({
+      document: this.actor,
+      stats: this.getStatsToRoll()
+    });
+    if ( event.shiftKey ) {
+      //throw right away
+      diceThrow.throwDice();
+    } else {
+      //display dice throw dialog
+      diceThrow.render(true);
+    }
+  }
 
   /**
   * Locks/Unlocks a category for edition - Only one cat is open a a time
@@ -267,52 +437,13 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  * Toggles the active state of a trait element when it's label has been clicked.
-  * traits with a dataset.active === true are picked up when rolling dice
-  * any render of the sheet resets the active state to false (which is desired behavior)
-  * 
-  * @param {object} event the event that triggered (from a click on 'a.trait-label')
-  */
-   _onTraitLabelClick(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const traitElem = element.closest(".trait");
-    //just toggle the active status
-    const toggle = (traitElem.dataset.active === 'true');
-    traitElem.dataset.active = !toggle;
-  }
-
-  /**
-   * On a click on the big dice, round up every highlighted trait on the sheet
-   * send it to a new DiceThrow object and either render it for further options or
-   * just throw the dice
-   * 
-   * @param  {} event
-   */
-  _onDiceClick(event) {
-    //retrieve traits to roll
-    const traits = this.getTraitsToRoll();
-    const diceThrow = new DiceThrow({
-      document: this.actor,
-      traits: traits
-    });
-    if ( event.shiftKey ) {
-      //throw right away
-      diceThrow.throwDice();
-    } else {
-      //display dice throw dialog
-      diceThrow.render(true);
-    }
-  }
-
-  /**
   * Check all rollable categories for highlighted elements (ie data-active="true")
-  * return said elements as Trait objects for later consumption by Throw app.
+  * return said elements as Stat instances for later consumption by Throw app.
   * also toggle the active status of highlighted elements after we got them
   * 
-  * @return {Array} an Array of Traits objects that correspond to the previously highlighted elements
+  * @return {Array} an Array of Stat instances that match chosen (highlighted) stats.
   */
-   getTraitsToRoll() { 
+   getStatsToRoll() { 
     //overly complicated statement that could be easily understood if coded with twice the lines
     return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
       const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
@@ -322,134 +453,6 @@ export default class M20eActorSheet extends ActorSheet {
           return Trait.fromElement(traitElem);
         })];
     }, []);
-  }
-
-  /**
-  * Dispatches clicks on resource panel boxes acording to resource type and mouse button press
-  * 
-  * @param {object} event the mousedown-event that triggered (from div '.box')
-  */
-  _onResourceBoxClick(event) {
-    event.preventDefault();
-    const element = event.currentTarget;
-    const state = parseInt(element.dataset.state);
-    const resourceName = element.closest('.resource-panel').dataset.resource;
-    //todo : maybe add shiftKey for permanent wounds ?
-    switch ( event.which ) {
-      case 1://left button
-        if ( state < CONFIG.M20E.WOUNDTYPE.AGGRAVATED) {
-          this.actor.wound(resourceName, 1, state + 1);
-        }
-        break;
-      case 3://right button
-        if ( state >= CONFIG.M20E.WOUNDTYPE.BASHING ) {
-          const canHealAggravated = game.settings.get("mage-fr", "playersCanRemoveAggravated");
-          if ( state !== CONFIG.M20E.WOUNDTYPE.AGGRAVATED || canHealAggravated ) {
-            this.actor.heal(resourceName, 1, state);
-          }
-        }
-        break;
-    }
-  }
-
-  /**
-  * Updates an owned item's data.value from within the character sheet.
-  * validates input value against dtype min max before updating
-  * 
-  * @param {object} event the event that triggered (from an input '.inline-input')
-  */
-  async _onInlineEditChange(event) {
-    event.preventDefault();
-    event.stopPropagation();
-    const inputElem = event.currentTarget;
-    if ( ! utils.isValidUpdate(inputElem) ) {
-      return this.render();
-    }
-    //value has been validated => update the item
-    const updatePath = inputElem.dataset.updatePath || 'data.value';
-    const updateValue = inputElem.value;
-    const itemId = inputElem.closest(".trait").dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    return await item.update({[`${updatePath}`]: updateValue});
-  }
-
-  /**
-   * Intercepts a click on an entity link before it's processed by vanilla sheet
-   * displays a warning upon clicking an empty link and prevents vanilla behavior
-   * triggers the creation of personnal JE upon clicking an empty link for that specific one
-   */
-  _onEntityLinkClick(event){
-    const linkElem = event.currentTarget;
-    const dataset = linkElem.dataset;
-    const id = dataset.id;
-    if ( !id ) {
-      event.preventDefault();
-      event.stopPropagation();
-      if ( linkElem.classList.contains('personnal-je') && game.user.isGM) {
-        this._createPersonnalJE();
-      } else {
-        ui.notifications.warn(game.i18n.localize(`M20E.notifications.noJournal`));
-      }
-    }
-  }
-
-  /**
-  * Dispatches mini-buttons clicks according to their dataset.action
-  * 
-  * @param {object} event the event that triggered (from div '.mini-button')
-  */
-  _onMiniButtonClick(event) {
-    event.preventDefault();
-    const buttonElem = event.currentTarget;
-    const dataset = buttonElem.dataset;
-
-    //check if action is allowed before going any further
-    if ( dataset.disabled ) {
-      ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
-      return;
-    }
-
-    switch ( dataset.action ) {
-      case 'lock': //deal with locks & dragDrop
-        this._toggleCategoryLock(dataset.category);
-        break;
-      
-      case 'add':
-        //itemType can end up being a list of avail types for the category
-        const itemType = CONFIG.M20E.categoryToType[dataset.category];
-        const itemSubtype = CONFIG.M20E.categoryToType[dataset.subCategory];
-        this._addEmbedded(itemType, itemSubtype);
-        break;
-      
-      case 'edit': //edit regular or virtual Trait (item)
-        this._editTrait(Trait.fromElement(buttonElem));
-        break;
-      
-      case 'remove'://rename for embedded
-        this._removeEmbedded(Trait.fromElement(buttonElem));
-        break;
-      
-      case 'roll-item':
-        const rollItemId = buttonElem.closest(".trait").dataset.itemId;
-        const rollItem = this.actor.items.get(rollItemId);
-        rollItem.roll(event.shiftKey); //throwIndex is 0 by default
-        break;
-      
-      case 'expand':
-        this._expandDescription(buttonElem);
-        break;
-
-      case 'check':
-        //updates the disabled value of an active affect
-        this._toggleEmbeddedProperty(Trait.fromElement(buttonElem), dataset.updatePath);
-        break;
-
-      case 'plus':
-      case 'minus':
-        const mod = dataset.action === 'minus' ? -1 : 1;
-        this._modEmbeddedProperty(Trait.fromElement(buttonElem), dataset.updatePath, mod);
-      default:
-    }
   }
 
   /**
@@ -570,32 +573,6 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /**
-  * Call for the display of a sheet to edit a trait
-  * trait can either be an item (=> display it's item.sheet) or 
-  * an ActiveEffect (=> display it's ActiveEffectConfig)
-  * an actor template property (=> display a 'fakeitem' sheet)
-  * 
-  * @param {Trait} trait  the Trait to be edited
-  */
-  _editTrait(trait) {
-    const {category, itemId, key } = trait.split();
-    if ( itemId ) {
-      if ( category === 'aeffects' ) {
-        //item is in fact an activeEffect
-        const effect = this.actor.effects.get(itemId);
-        effect.sheet.render(true);
-      } else {
-        //regular item edit
-        const item = this.actor.items.get(itemId);
-        item.sheet.render(true);
-      }
-    } else {
-      //use a fakeItem dialog to edit attribute (or sphere)
-      this._editFakeItem(category, key);
-    }
-  }
-
-  /**
   * Prompts user for a name for the new embedded document
   * either create a new embeddedItem or and ActiveEffect according to 'itemType'
   * 
@@ -652,74 +629,109 @@ export default class M20eActorSheet extends ActorSheet {
     const effectData = {
       label: name,
       icon: CONFIG.M20E.defaultImg['ActiveEffect'],
-      origin: 'added-manually'
+      origin: 'added-manually',
+      tint: '#000000'
     };
     this.actor.createEmbeddedDocuments('ActiveEffect', [effectData], {renderSheet: true});
   }
 
   /**
-  * Prompts user for confirmation before deleting the item/AEffect from this.actor embedded collection
+   * Prompts user for confirmation before deleting the item/AEffect from this.actor embedded collection
    * 
-  * @param {Trait} trait a trait containing the category and the itemId of the embedded doc to be deleted
+   * @param {Trait} trait a Trait containing the category and the itemId of the embedded doc to be deleted
   */
   async _removeEmbedded(trait) {
-    const {category, itemId, key } = trait.split();
-    const embedded = category === 'aeffects' ? this.actor.effects.get(itemId) : this.actor.items.get(itemId);
-    if ( !embedded ) { return; }
+    let embeddedDoc, docName, docClass;
 
-    const name = category === 'aeffects' ? embedded.label : embedded.name;
+    if ( trait.category === 'aeffects' ) {
+      embeddedDoc = this.actor.effects.get(trait.itemId);
+      if ( !embeddedDoc ) { return; }
+      docName = embedded.label;
+      docClass = 'ActiveEffect';
+    } else {
+      embeddedDoc = this.actor.items.get(trait.itemId);
+      if ( !embeddedDoc ) { return; }
+      docName = embedded.name;
+      docClass = 'Item';
+    } 
+
     const confirmation = await Dialog.confirm({
       options: {classes: ['dialog', 'm20e']},
-      title: game.i18n.format("M20E.prompts.deleteTitle", {name: name}),
-      content: game.i18n.format("M20E.prompts.deleteContent", {name: name})
+      title: game.i18n.format("M20E.prompts.deleteTitle", {name: docName}),
+      content: game.i18n.format("M20E.prompts.deleteContent", {name: docName})
     });
+
     if ( confirmation ) {
-      if ( category === 'aeffects' ) { 
-        this.actor.deleteEmbeddedDocuments('ActiveEffect', [embedded.id]);
-      } else {
-        this.actor.deleteEmbeddedDocuments('Item', [embedded.id]);
-      }
+      this.actor.deleteEmbeddedDocuments(docClass, [embedded.id]);
     }
   }
 
-  async _toggleEmbeddedProperty(trait, editPath) {
-    const {category, itemId, key } = trait.split();
+  async _updateEmbeddedProperty(trait, updatePath='data.value', updateValue) {
+    const {category, itemId} = trait.split();
     const embeddedDoc = category === 'aeffects' ? 
       this.actor.effects.get(itemId) : this.actor.items.get(itemId);
-    const currValue = foundry.utils.getProperty(embeddedDoc.data, editPath);
-    return await embeddedDoc.update({[`${editPath}`]: !currValue});
+    if ( !embeddedDoc ) { return; }
+    
+    updateValue = utils.isNumeric(updateValue) ? parseInt(updateValue) : updateValue;
+    return await embeddedDoc.update({[`${updatePath}`]: updateValue});
   }
 
-  async _modEmbeddedProperty(trait, editPath, mod) {
-    const {category, itemId, key } = trait.split();
+  async _toggleEmbeddedProperty(trait, updatePath) {
+    const {category, itemId} = trait.split();
     const embeddedDoc = category === 'aeffects' ? 
       this.actor.effects.get(itemId) : this.actor.items.get(itemId);
-    const currValue = foundry.utils.getProperty(embeddedDoc.data, editPath);
-    return await embeddedDoc.update({[`${editPath}`]: currValue + mod});
+    
+      if ( !embeddedDoc ) { return; }
+    const currValue = foundry.utils.getProperty(embeddedDoc.data, updatePath);
+    return await embeddedDoc.update({[`${updatePath}`]: !currValue});
+  }
+
+  async _modEmbeddedProperty(trait, updatePath, mod) {
+    const {category, itemId} = trait.split();
+    const embeddedDoc = category === 'aeffects' ? 
+      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
+    
+    if ( !embeddedDoc ) { return; }
+    const currValue = foundry.utils.getProperty(embeddedDoc.data, updatePath);
+    return await embeddedDoc.update({[`${updatePath}`]: currValue + mod});
   }
 
   /**
-  * Displays a "fake item-sheet" from actor's attributes or spheres
+   * Call for the display of a sheet to edit an embedded document
+   * can either be an item or an ActiveEffect
+   * @param  {Trait} trait
+   */
+  _editEmbedded(trait) {
+    const {category, itemId} = trait.split();
+    const embeddedDoc = category === 'aeffects' ? 
+      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
+    if ( !embeddedDoc ) { return; }
+
+    embeddedDoc.sheet.render(true);
+  }
+
+  /**
+  * Displays a "fake item-sheet" from actor's attributes, spheres or ? 
   * Enables edition of misc values : paradigmic name (actually stored in the lexicon),
   * specialisation and description, along with main value.
   * also displays the associated systemDescription sourced from matching compendium.
   * 
-  * @param {String} category  actor's property name either "attributes" or "spheres"
-  * @param {String} key       category's propertyName (ie: 'stre', 'forc', 'spir' ...)
+  * @param {Trait} trait  the Trait to be edited
   */
-  async _editFakeItem(category, key) {
+  async _editTrait(trait) {
+    const {category, key} = trait.split();
     //retrieve attribute (or sphere) name from paradigm item's lexicon if any
-    const lexiconEntry = this.actor.getLexiconEntry(`traits.${category}.${key}`);
+    const lexiconEntry = this.actor.getLexiconEntry(`${category}.${key}`);
     //get systemDescription from compendium or localization given category and key
     const sysDesc = await utils.getSystemDescription(category, key);
     
     const itemData = {
       category: category,
       key: key,
-      relativePath: `traits.${category}.${key}`,
+      relativePath: `${category}.${key}`,
       type: game.i18n.localize(`M20E.category.${category}`),
       lexiconName: lexiconEntry || '',
-      placeholderName : game.i18n.localize(`M20E.traits.${category}.${key}`),
+      placeholderName : game.i18n.localize(`M20E.${category}.${key}`),
       systemDescription: sysDesc
     }
     //display fake sheet
@@ -1013,9 +1025,37 @@ export default class M20eActorSheet extends ActorSheet {
     if (sameActor) return this._onSortItem(event, itemData);
 
     //check if drop is allowed
-    if ( !await this.actor.isDropAllowed(item) ) { return false; }
+    if ( !await this._isDropAllowed(item) ) { return false; }
     // Create the owned item
     return super._onDropItemCreate(itemData);
+  }
+
+  /**
+   * checks whether dropped item can be 'safely' created on this actor
+   * @param  {M20eItem} item item being dropped
+   * @return {Boolean}
+   */
+   _isDropAllowed(item) {
+    const itemData = item.data;
+    //check name against all names in same itemType
+    const duplicates = this.actor.items.filter(item => (item.type === itemData.type) && (item.name === itemData.name));
+    if ( duplicates.length ) {
+      ui.notifications.error(game.i18n.format(`M20E.notifications.duplicateName`, {name: itemData.name}));
+      return;
+    }
+    //check against 'creation mode'
+    if ( this.actor.data.data.creationDone && !game.user.isGM && itemData.protectedType ) {
+        ui.notifications.error(game.i18n.localize('M20E.notifications.notOutsideCreation'));
+        return false;
+    }
+    //check against restricted
+    if ( itemData.data.restricted && !itemData.data.restricted.includes(this.actor.data.type) ) {
+      const itemType = game.i18n.localize(`ITEM.Type${item.type.capitalize()}`);
+      ui.notifications.error(game.i18n.format('M20E.notifications.restrictedItem',
+        {actorName:this.name, itemType: itemType}));
+      return false;
+    }
+    return true;
   }
 
   /**

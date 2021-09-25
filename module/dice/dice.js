@@ -45,6 +45,7 @@ import { log } from "../utils/utils.js";
    */
   static fromElement(htmlElem) {
     const traitElem = htmlElem.closest(".trait");
+    if ( !traitElem ) { return null; }
     const path = traitElem.dataset.path;
     const itemId = traitElem.dataset.itemId
 

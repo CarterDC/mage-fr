@@ -15,26 +15,27 @@
             <div class="grid two-col">
                  <div class= "field" title="{{localize 'M20E.hints.value0to5'}}">
                     <label>{{localize "M20E.labels.value"}} : </label>
-                    <input name="{{m20e-concat "data.traits." category "." key ".value"}}" type="text" value="{{value}}" data-dtype="Number" min="0" max="10"/>
+                    <input name="data.{{category}}.{{key}}.value"  type="text" value="{{value}}" data-dtype="Number" min="0" max="10"/>
                 </div>
                 <div class= "field" title="{{localize 'M20E.hints.specialisation'}}">
                     <label>{{localize "M20E.labels.specialisation"}} : </label>
-                    <input name="{{m20e-concat "data.traits." category "." key ".specialisation"}}" type="text" value="{{specialisation}}" data-dtype="String"/>
+                    <input name="data.{{category}}.{{key}}.specialisation" type="text" value="{{specialisation}}" data-dtype="String"/>
                 </div>
                 <div class= "field" title="{{localize 'M20E.hints.nonEditable'}}">
                     <label>{{localize "M20E.labels.systemName"}} : </label>
-                    <input name="sysname" type="text" value="{{localize (m20e-concat "M20E.traits." category "." key)}}" data-dtype="String" disabled/>
+                    <input type="text" value="{{localize (m20e-concat "M20E." category "." key)}}" data-dtype="String" disabled/>
                 </div>
             </div>
             <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
                 <label>{{localize "M20E.labels.displayDescription"}} : </label>
-<textarea name="{{m20e-concat "data.traits." category "." key ".displayDescription"}}">{{{displayDescription}}}</textarea>
+<textarea name="data.{{category}}.{{key}}.displayDescription">{{{displayDescription}}}</textarea>
             </div>
         </section>
         <section class="tab" data-group="primary" data-tab="description">
             <div class= "field" title="{{localize 'M20E.hints.compendiumEdit'}}">
                 <label>{{localize "M20E.labels.systemDescription"}} : </label>
-                <div class="fake-editor">{{{systemDescription}}}</div>
+                {{editor content=systemDescription target='dummy' button=true owner=owner editable= true}}
+                {{!--<div class="fake-editor">{{{systemDescription}}}</div>--}}
             </div>
         </section>
     </section>

@@ -2,20 +2,20 @@
   {{!-- Attributes --}}
   {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="attributes" lock = locks.attributes}}
   <div class="grid three-col">
-    <label class="column-header">{{m20e-locadigm paraData "traits.attributes.physical"}}</label>
-    <label class="column-header">{{m20e-locadigm paraData "traits.attributes.social"}}</label>
-    <label class="column-header">{{m20e-locadigm paraData "traits.attributes.mental"}}</label>
-    {{#each data.traits.attributes as |attribute key|}}
+    <label class="column-header">{{m20e-locadigm paraData "attributes.physical"}}</label>
+    <label class="column-header">{{m20e-locadigm paraData "attributes.social"}}</label>
+    <label class="column-header">{{m20e-locadigm paraData "attributes.mental"}}</label>
+    {{#each data.attributes as |attribute key|}}
     <div class="trait attribute linkable" data-path="attributes.{{key}}" data-active= "false">
-      <a class="trait-label tooltip">
-        {{m20e-locadigm ../paraData "traits.attributes." key}}
+      <a class="stat-label tooltip">
+        {{m20e-locadigm ../paraData "attributes." key}}
         {{#if attribute.specialisation}}
         <span class="righttooltiptext">{{localize "M20E.labels.spe"}} : {{attribute.specialisation}}</span>
         {{/if}}
       </a>
       <div class="ligne"></div>
       <div class="edit-bar" data-locked="{{../locks.attributes}}">
-        <input name="data.traits.attributes.{{key}}.value" value="{{attribute.value}}" type="text" title="{{localize "M20E.hints.value0to5"}}" data-dtype="Number" min="0" max="10"/>
+        <input name="data.attributes.{{key}}.value" value="{{attribute.value}}" type="text" title="{{localize "M20E.hints.value0to5"}}" data-dtype="Number" min="0" max="10"/>
         <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a> 
       </div>
       <div class="bullet-display" data-locked="{{../locks.attributes}}">

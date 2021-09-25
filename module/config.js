@@ -2,6 +2,7 @@
 export const M20E = {};
 
 M20E.WOUNDTYPE = {
+  NONE: 0,
   BASHING: 1,
   LETHAL: 2,
   AGGRAVATED: 3
@@ -227,5 +228,3 @@ M20E.itemSheetOptions = {
     height: 600
   }
 }
-
-M20E.traits = {};

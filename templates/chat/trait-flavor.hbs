@@ -8,7 +8,7 @@
     {{/if}}
   </div>
   <div class="ligne"></div>
-  {{#if (in item.type 'event' 'rote')}}
+  {{#if (m20e-in item.type 'event' 'rote')}}
   {{else}}
     {{#if (eq item.type 'meritflaw')}}
       <div class="trait-label">
@@ -21,7 +21,7 @@
     {{else}}
       <div class="bullet-display" data-value="{{item.data.data.value}}">
         {{#m20e-forLoop 5}}
-        <span class="bullet" data-index="{{this}}" data-state="{{bulletState ../item.data.data.value this}}"></span>
+        <span class="bullet" data-index="{{this}}" data-state="{{m20e-bulletState ../item.data.data.value this}}"></span>
         {{/m20e-forLoop}}
       </div>
     {{/if}}
@@ -44,7 +44,7 @@
       <div class="ligne"></div>
       <div class="bullet-display">
         {{#m20e-forLoop 5}}
-        <span class="bullet" data-index="{{this}}" data-state="{{bulletState effect.value this}}"></span>
+        <span class="bullet" data-index="{{this}}" data-state="{{m20e-bulletState effect.value this}}"></span>
         {{/m20e-forLoop}}
       </div>
     </div>
