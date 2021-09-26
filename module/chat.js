@@ -239,7 +239,7 @@ export async function welcomeMessage() {
   ChatMessage.create({
     type: CONST.CHAT_MESSAGE_TYPES.OTHER,
     content: htmlContent,
-    flavor: templateData.welcome,
+    flavor: templateData.flavor,
     speaker: { alias: "Carter_DC" },
     whisper: [game.user.id]
   });
@@ -247,6 +247,30 @@ export async function welcomeMessage() {
   game.user.setFlag("mage-fr", "welcomeMessageShown", true);
 }
 
+/**
+ * Creates and send a version-warning Message
+ * flags the user so the message is displayed only once
+ */
+export async function versionWarningMessage(sysVersion) {
+  const msgTemplate = "systems/mage-fr/templates/chat/welcome-message.hbs";
+  //prepare the template Data
+  const templateData = game.i18n.localize('M20E.versionWarning');
+  templateData.header = game.i18n.format('M20E.versionWarning.header', {sysVersion: sysVersion});
+  templateData.isGM = game.user.isGM;
+  templateData.isVersionWarning = true;
+
+  const htmlContent = await renderTemplate(msgTemplate, templateData);
+  //send message
+  ChatMessage.create({
+    type: CONST.CHAT_MESSAGE_TYPES.OTHER,
+    content: htmlContent,
+    flavor: templateData.flavor,
+    speaker: { alias: "Carter_DC" },
+    whisper: [game.user.id]
+  });
+  //flag the user
+  //game.user.setFlag("mage-fr", "welcomeMessageShown", true);
+}
 
 /* -------------------------------------------- */
 /*  ChatMessage Override                        */

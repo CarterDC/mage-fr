@@ -125,8 +125,13 @@ Hooks.once('init', async function () {
 Hooks.once('ready', async function () {
 
   //display welcome message if needed
-  if (!game.user.getFlag("mage-fr", "welcomeMessageShown")) {
+  if (!game.user.getFlag("mage-fr", "welcomeMessageShown") ) {
     chat.welcomeMessage();
+  }
+  //display version warning
+  const sysVersion = game.system.data.version;
+  if (!game.user.getFlag("mage-fr", `versionWarning-${sysVersion}`) ) {
+    chat.versionWarningMessage(sysVersion);
   }
 
   Hooks.on('hotbarDrop', DiceThrow.toMacro);

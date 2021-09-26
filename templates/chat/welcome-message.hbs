@@ -3,19 +3,28 @@
         <div class="tooltip-part item-ddesc">
           {{{header}}}
         </div>
-        <div class="tooltip-part item-ddesc">
-          {{{licence}}}
-          <img class="item-img" src="systems/mage-fr/assets/images/darkpack_tranparent_logo.png"/>
-        </div>
-        {{#if isGM}}
-        {{#unless packModuleActivated}}
-        <div class="tooltip-part item-ddesc">
-          {{{noModule}}}
-        </div>
-        {{/unless}}
-        <div class="tooltip-part item-ddesc">
-          {{{settings}}}
-        </div>
+        {{#if isVersionWarning}}
+            <div class="tooltip-part item-ddesc">
+              {{{warning}}}
+            </div>
+            <div class="tooltip-part item-ddesc">
+              {{{changelogURL}}}
+            </div>
+        {{else}}
+            <div class="tooltip-part item-ddesc">
+              {{{licence}}}
+              <img class="item-img" src="systems/mage-fr/assets/images/darkpack_tranparent_logo.png"/>
+            </div>
+            {{#if isGM}}
+            {{#unless packModuleActivated}}
+            <div class="tooltip-part item-ddesc">
+              {{{noModule}}}
+            </div>
+            {{/unless}}
+            <div class="tooltip-part item-ddesc">
+              {{{settings}}}
+            </div>
+            {{/if}}
         {{/if}}
     </header>
     <header class="card-footer">
