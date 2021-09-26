@@ -607,8 +607,15 @@
       "initiative": "Initiative",
       "willpower": "Volonté"
     },
+    "versionWarning": {
+      "flavor": "⚠ Avertissement ⚠",
+      "header": "<p>Changement de version : {sysVersion}</p>",
+      "warning": "<p>⚠ Ce système est encore en version alpha, mis à disposition uniquement pour des tests !</p><p>Ne l'utiliser que si vous êtes prêts à refaire votre monde, actors et items à chaque mise à jour !!!</p>",
+      "changelogURL" : "<p><a href='https://github.com/CarterDC/mage-fr/wiki'>change log</a></p>",
+      "clickMe": "Cliquez moi !"
+    },
     "welcomeMessage": {
-      "welcome": "Bienvenue !",
+      "flavor": "Bienvenue !",
       "header": "<p>Vous voyez ce message car c'est la première fois que vous vous connectez sur ce monde, alors, bienvenue !</p><p>J'espère que vous passerez de bons moments en utilisant mon système pour Mage M20e.</p>",
       "licence": "<p>Ce système est en accord avec les termes et conditions établis par le <a href='https://www.worldofdarkness.com/dark-pack'>Dark Pack !</a></p>",
       "noModule": "<p>Le système n'a pas trouvé de module de contenu activé.<br>Pas d'inquiétude, il fonctionne très bien sans. Néanmoins le module de contenu apporte de nombreux journaux et items déjà préparés et vous pouvez le trouver dans Foundy en cherchant 'Mage Packs'.</p>",
