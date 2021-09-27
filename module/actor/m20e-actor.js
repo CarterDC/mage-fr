@@ -52,45 +52,37 @@ export default class M20eActor extends Actor {
     //create the stats property before populating
     this.data.stats = {};
     this._prepareActorStats();
-    this._prepareItemStats();
+    this._prepareItemsStats();
   }
 
   _prepareActorStats() {
     const actorData = this.data;
-    for( const key in actorData.data.attributes ) {
-      const path = `attributes.${key}`;
+    this._prepareCategoryStats('attributes');
+  }
+
+  _prepareCategoryStats(category) {
+    const actorData = this.data;
+    for( const key in actorData.data[category]) {
+      const path = `${category}.${key}`;
       //add entry to actor's stats with path and statData
-      foundry.utils.setProperty(actorData.stats, path, {
-        value: actorData.data.attributes[key].value
-      });
+      this._setStat(path, {value: foundry.utils.getProperty(actorData.data,`${path}.value`)});
       //also add entry to CONFIG with item's path and name, if necessary
       if ( !foundry.utils.hasProperty(CONFIG.M20E.stats, path) ) {
         foundry.utils.setProperty(CONFIG.M20E.stats, path, game.i18n.localize(`M20E.${path}`));
       }
     }
-    //todo : add willpower, init etc... or maybe later in the prep ? 
-    /*
-    //add initiative to the traits 
-    const dext = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.dext.value'));
-    const wits = parseInt(foundry.utils.getProperty(actorData.data.traits,'attributes.wits.value'));
-    foundry.utils.setProperty(actorData.data.traits, 'initiative.value', dext + wits);
-    foundry.utils.setProperty(CONFIG.M20E.traits, 'initiative', game.i18n.localize('M20E.traits.initiative'));
-
-    //add willpower property in the traits array (for roll purposes)
-    foundry.utils.setProperty(actorData.data.traits, 'willpower', {value: actorData.data.resources.willpower.max});
-  */
   }
 
   /**
    * populates the actor's stats object with path and statData from 'stat' items 
    */
-  _prepareItemStats() {
+  _prepareItemsStats() {
     const actorData = this.data;
     for( const item of actorData.items ) {
       if ( item.isStat ) {
         const {path, name, statData} = item.getStatData();
         //add entry to actor's stats with path and statData
-        foundry.utils.setProperty(actorData.stats, path, statData);
+        this._setStat(path, statData);
         //also add entry to CONFIG with item's path and name, if necessary
         if ( !foundry.utils.hasProperty(CONFIG.M20E.stats, path) ) {
           foundry.utils.setProperty(CONFIG.M20E.stats, path, name);
@@ -156,6 +148,7 @@ export default class M20eActor extends Actor {
 
   /**
    * third function in the prepareData sequence
+   * preparation of data and stats that might be dependant on items and AE being prepared/applied
    *  @override
    */
   prepareDerivedData() {
@@ -163,9 +156,19 @@ export default class M20eActor extends Actor {
 
     this._prepareResources(); 
 
+   //Add willpower, init etc... to the stats
+   const wiilpowerMax = this.data.data.resources.willpower.max;
+   this._setStat('secondary.willpower', {value: wiilpowerMax});
+   foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
+
+    const dext = this._getStat('attributes.dext','value');
+    const wits = this._getStat('attributes.wits','value');
+    this._setStat('secondary.initiative', {value: dext + wits});
+    foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.initiative', game.i18n.localize('M20E.secondary.initiative'));
+
     const actorData = this.data;
     for( let item of actorData.items ) {
-      item._prepareOwnedItem()
+      item._prepareOwnedItem();
     }
   }
 
@@ -180,22 +183,34 @@ export default class M20eActor extends Actor {
 
     //create willpower property with {value, max} pair
     const willpower = actorData.data.resources.willpower;
-    actorData.data.willpower = {
-      value: willpower.max - willpower[WT.BASHING],
-      max: willpower.max
-    }
+    foundry.utils.setProperty(actorData.data,
+        game.i18n.localize('M20E.resources.willpower'), {
+        value: willpower.max - willpower[WT.BASHING],
+        max: willpower.max
+    });
 
     //create health property with {value, max} pair
     const health = actorData.data.resources.health;
-    actorData.data.health = {
-      value: health.max - health[WT.BASHING],
-      max: health.max
-    }
+    foundry.utils.setProperty(actorData.data,
+      game.i18n.localize('M20E.resources.health'), {
+        value: health.max - health[WT.BASHING],
+        max: health.max
+    });
+
     //prepare an array of integers from the comma separated string
     const maluses = health.malusList.split(',').map(v => (parseInt(v)));
     //create derived data for health resource, to be displayed and used later
     health.status = utils.safeLocalize(`M20E.healthStatus.${health[WT.BASHING]}`);
     health.malus = health[WT.BASHING] > 0 ? maluses[(health[WT.BASHING] - 1)] : 0;
+  }
+
+  _getStat(path, propKey=null) {
+    const stat = foundry.utils.getProperty(this.data.stats, (propKey ? `${path}.${propKey}` : path));
+    return utils.isNumeric(stat) ? parseInt(stat) : stat;
+  }
+
+  _setStat(path, stat) {
+    foundry.utils.setProperty(this.data.stats, path, stat);
   }
 
   /* -------------------------------------------- */
@@ -248,6 +263,7 @@ export default class M20eActor extends Actor {
     if ( actorData.data.isCharacter === true ) {
       actorData.token.update(CONFIG.M20E.characterTokenConfig);
     }
+    actorData.token.update({bar1: {attribute: game.i18n.localize('M20E.resources.health')}});
   }
 
   /**

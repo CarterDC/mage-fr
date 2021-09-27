@@ -32,9 +32,7 @@
       "wits": "Astuce"
     },
     "blabla": "Blabla...",
-    "health": "Santé",
     "paradigmName": "Paradigme de {name}",
-    "willpower": "Volonté",
     "bio": {
       "appearance": "Apparence",
       "apparentAge": "Age<br>apparent",
@@ -77,6 +75,7 @@
       "magick": "Magye",
       "meritsflaws": "Atout & Handicap",
       "rotes": "Routine",
+      "secondary": "Stat secondaire",
       "spheres": "Sphère",
       "story": "Background",
       "willpower": "Volonté"
@@ -109,7 +108,7 @@
       "aggravated": "Aggravé"
     },
     "defaultAbilities": {
-      "academics": "Erudition",
+      "academics": "Érudition",
       "alertness": "Vigilance",
       "art": "Art",
       "athletics": "Athlétisme",
@@ -120,9 +119,9 @@
       "crafts": "Artisanats",
       "drive": "Conduite",
       "empathy": "Empathie",
-      "enigmas": "Enigmes",
-      "esoterica": "Esotérisme",
-      "etiquette": "Etiquette",
+      "enigmas": "Énigmes",
+      "esoterica": "Ésotérisme",
+      "etiquette": "Étiquette",
       "expression": "Expression",
       "firearms": "Armes à feu",
       "intimidation": "Intimidation",
@@ -469,11 +468,15 @@
       "pool": "Grpt.",
       "quantity": "Quantité",
       "range": "Portée",
+      "resonnanceFlavor": "Saveur de le résonance",
       "sheetLogo": "Logo fiche de perso",
+      "signature": "Signature",
       "spe": "Spé",
       "specialisation": "Spécialisation",
+      "stat": "Stat",
       "studyPoints": "Points d'étude",
       "subType": "Sous-Type",
+      "synergyFlavor": "Saveur de la synergie",
       "systemDescription": "⚠ Description Système",
       "systemName": "⚠ Nom système",
       "threshold": "Difficulté",
@@ -487,7 +490,7 @@
     },
     "magick": {
       "arete": "Arété",
-      "resonance": "Résonnance"
+      "resonance": "Résonance"
     },
     "navtabs": {
       "bio": "BIO",
@@ -566,6 +569,17 @@
       "selectTraitTitle": "Sélection de Trait pour {name}",
       "subTypeContent": "<p>Choisissez un <b>sous-type de {type}</b><br>Cet item sera crée avec les paramètres par défault du sous-type choisi.</p>"
     },
+    "resonnanceFlavor": {
+      "devotional": "Pieuse",
+      "elemental": "Élémentaire",
+      "stabilizing": "Stabilisatrice",
+      "temperamental": "Émotive"
+    },
+    "resources": {
+      "health": "Santé",
+      "willpower": "Volonté",
+      "magepower": "Puissance"
+    },
     "spheres": {
       "corr": "Corresp.",
       "entr": "Entropie",
@@ -576,6 +590,10 @@
       "prim": "Prime",
       "spir": "Esprit",
       "time": "Temps"
+    },
+    "secondary": {
+      "initiative": "Initiative",
+      "willpower": "Volonté"
     },
     "subType": {
       "flaw": "Handicap",
@@ -594,6 +612,11 @@
       "lightfire": "Arme à feu (légère)",
       "heavyfire": "Arme à feu (lourde)"
     },
+    "synergyFlavor": {
+      "dynamic": "Dynamique",
+      "entropic": "Entropique",
+      "static": "Statique"
+    },
     "throwresult": {
       "isWillpowered": "+ 1 Succès (Volonté)",
       "failure": "Échec !",
@@ -602,10 +625,6 @@
       "fail": "Échec",
       "succ": "Succès",
       "crit": "Échec critique"
-    },
-    "traits": {
-      "initiative": "Initiative",
-      "willpower": "Volonté"
     },
     "versionWarning": {
       "flavor": "⚠ Avertissement ⚠",

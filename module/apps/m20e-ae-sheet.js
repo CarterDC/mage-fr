@@ -93,10 +93,10 @@ export default class M20eAeSheet extends DocumentSheet {
 
     //prepare effects array with predigested data
     sheetData.effects = this.effect.data.changes.map(effect => {
-      const reducedKey = effect.key.split('.').filter((elem, index, arr) => index >= 2 && index < (arr.length - 1)).join('.');
-      let localizedKey = this.actor.locadigm(`traits.${reducedKey}`);
-      if ( localizedKey === `M20E.traits.${reducedKey}` ) {
-        localizedKey = foundry.utils.getProperty(CONFIG.M20E.traits, reducedKey);
+      const {traitKey} = M20eAeSheet.splitKey(effect.key);
+      let localizedKey = this.actor.locadigm(traitKey);
+      if ( localizedKey === `M20E.${traitKey}` ) {
+        localizedKey = foundry.utils.getProperty(CONFIG.M20E.stats, traitKey);
       }
       return {
         key: localizedKey,
@@ -268,7 +268,7 @@ export default class M20eAeSheet extends DocumentSheet {
   //In this instance 'item' is a change entry in the changes array for this ActiveEffect
   async addItem(buttonElem) {
     const changes = duplicate(this.effect.data.changes);
-    changes.push({key: "data.traits.attributes.stre.value", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "0"});
+    changes.push({key: "stats.attributes.stre.value", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "0"});
     return await this.effect.update({'changes': changes});
   }
 
@@ -295,8 +295,8 @@ export default class M20eAeSheet extends DocumentSheet {
     const keys = key.split('.');
     return {
       suffix: keys[keys.length - 1],
-      prefix: `${keys[0]}.${keys[1]}`,
-      traitKey: keys.filter( (key, index, arr) => index >= 2 && index < arr.length - 1).join('.')
+      prefix: keys[0],
+      traitKey: keys.filter( (key, index, arr) => index >= 1 && index < arr.length - 1).join('.')
     }
   }
 

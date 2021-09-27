@@ -53,7 +53,7 @@ import { log } from "../utils/utils.js";
   getKeys(keyIndex) {
     if ( keyIndex >= this.keys.length ) { return null; }
     const locaPrefix = ['category', 'subType'];
-    const relativePath = ['traits', ...this.keys.filter((element, index) => index < keyIndex)].join('.');
+    const relativePath = ['stats', ...this.keys.filter((element, index) => index < keyIndex)].join('.');
     const obj = foundry.utils.getProperty(CONFIG.M20E, relativePath);
     return Object.keys(obj).reduce((acc, cur) => {
       const value = typeof obj[cur] === 'string' ? obj[cur] : game.i18n.localize(`M20E.${locaPrefix[keyIndex]}.${cur}`);
@@ -85,10 +85,10 @@ import { log } from "../utils/utils.js";
     const keys = this.data.key.split('.');
     keys[index] = value;
     keys.length = index + 1;
-    let tmp = Object.keys(foundry.utils.getProperty(CONFIG.M20E, ['traits', ...keys].join('.')));
+    let tmp = Object.keys(foundry.utils.getProperty(CONFIG.M20E, ['stats', ...keys].join('.')));
     if ( tmp[0] !== '0' ) {
       keys.push(tmp[0]);
-      tmp = Object.keys(foundry.utils.getProperty(CONFIG.M20E, ['traits', ...keys].join('.')));
+      tmp = Object.keys(foundry.utils.getProperty(CONFIG.M20E, ['stats', ...keys].join('.')));
       if ( tmp[0] !== '0' ) {
         keys.push(tmp[0]);
       }

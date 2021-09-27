@@ -33,6 +33,19 @@ M20E.weaponSubTypes = {
   heavyfire: "M20E.subType.heavyfire"
 }
 
+M20E.resonnanceFlavors = {
+  devotional: "M20E.resonnanceFlavor.devotional",
+  elemental: "M20E.resonnanceFlavor.elemental",
+  stabilizing: "M20E.resonnanceFlavor.stabilizing",
+  temperamental: "M20E.resonnanceFlavor.temperamental"
+}
+
+M20E.synergyFlavors = {
+  dynamic: "M20E.synergyFlavor.dynamic",
+  entropic: "M20E.synergyFlavor.entropic",
+  static: "M20E.synergyFlavor.static"
+}
+
 M20E.spheres = [
   "forc",
   "matt",

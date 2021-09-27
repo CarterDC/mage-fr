@@ -15,12 +15,31 @@
             <div class="grid two-col">
                  <div class= "field" title="{{localize 'M20E.hints.value0to5'}}">
                     <label>{{localize "M20E.labels.value"}} : </label>
-                    <input name="data.{{category}}.{{key}}.value"  type="text" value="{{value}}" data-dtype="Number" min="0" max="10"/>
+                    <input name="data.{{category}}.{{key}}.value" type="text" value="{{value}}" data-dtype="Number" min="0" max="10"/>
                 </div>
+                {{#if (eq key 'resonance')}} 
+                <div class= "field">
+                    <label>{{localize "M20E.labels.signature"}} : </label>
+                    <input name="data.{{category}}.{{key}}.signature" type="text" value="{{signature}}" data-dtype="String"/>
+                </div>
+                <div class= "field">
+                  <label>{{localize "M20E.labels.resonnanceFlavor"}} : </label>
+                  <select name="data.{{category}}.{{key}}.resonnanceFlavor">
+                      {{selectOptions config.resonnanceFlavors selected=resonnanceFlavor localize=true}}
+                  </select>
+                </div>
+                <div class= "field">
+                  <label>{{localize "M20E.labels.synergyFlavor"}} : </label>
+                  <select name="data.{{category}}.{{key}}.synergyFlavor">
+                      {{selectOptions config.synergyFlavors selected=synergyFlavor localize=true}}
+                  </select>
+                </div>
+                {{else}}
                 <div class= "field" title="{{localize 'M20E.hints.specialisation'}}">
                     <label>{{localize "M20E.labels.specialisation"}} : </label>
                     <input name="data.{{category}}.{{key}}.specialisation" type="text" value="{{specialisation}}" data-dtype="String"/>
                 </div>
+                {{/if}}
                 <div class= "field" title="{{localize 'M20E.hints.nonEditable'}}">
                     <label>{{localize "M20E.labels.systemName"}} : </label>
                     <input type="text" value="{{localize (m20e-concat "M20E." category "." key)}}" data-dtype="String" disabled/>
