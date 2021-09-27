@@ -29,6 +29,8 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
+  /* -------------------------------------------- */
+
   /**
    * adds a default dragDrop (on top of the vanilla default one)
    * for any element that could be dragged to the macro hotbar
@@ -44,6 +46,8 @@ export default class M20eActorSheet extends ActorSheet {
     })
   }
 
+  /* -------------------------------------------- */
+
   /**
    * overridden by extensions of M20eActorSheet that use a different template
    * @override
@@ -51,6 +55,8 @@ export default class M20eActorSheet extends ActorSheet {
     get template() {
     return 'systems/mage-fr/templates/actor/actor-sheet.hbs';
   }
+
+  /* -------------------------------------------- */
 
   /** @override */
   getData(options) {
@@ -101,6 +107,8 @@ export default class M20eActorSheet extends ActorSheet {
     return sheetData;
   }
 
+  /* -------------------------------------------- */
+
   /**
    * Returns an Array with pre-digested data for direct use by handlebars.
    * Populates the array with the relevant number of entries, based on resource properties.
@@ -124,6 +132,8 @@ export default class M20eActorSheet extends ActorSheet {
     });
   }
 
+  /* -------------------------------------------- */
+
   /** @override */
   activateListeners(html) {
 
@@ -143,10 +153,10 @@ export default class M20eActorSheet extends ActorSheet {
       html.find('.resource-panel .box[data-clickable="true"]').mousedown(this._onResourceBoxClick.bind(this));
       //edition of item value when cat is unlocked
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
-      //click on the 'i' buttons (blue or grey)
-      html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
       //dice throwing (Big Dice Button)
       html.find('.dice-button').click(this._onDiceClick.bind(this));
+      //click on the 'i' buttons (blue or grey)
+      html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
 
       //ctx menu on the character name (paradigm edition...)
       new ContextMenu(html, '.header-row.charname', this._getNameContextOptions());
@@ -166,6 +176,26 @@ export default class M20eActorSheet extends ActorSheet {
     
     super.activateListeners(html);
   }
+
+  /* -------------------------------------------- */
+
+  /**
+  * @override
+  * added validation against dtype and min max before updating
+  * re-renders the sheet to display the previous value if update is invalid
+  * note: though data are validated against dtype by foundry,
+  * updating a number with a string would leave the input blank
+  */
+   async _onChangeInput(event) {
+    const element = event.target;
+    if ( ! utils.isValidUpdate(element) ) {
+      event.preventDefault();
+      return this.render();
+    }
+    super._onChangeInput(event);
+  }
+
+  /* -------------------------------------------- */
 
   /**
    * 'disables' some elements (input/buttons) for actors whose creation phase is over.
@@ -203,6 +233,8 @@ export default class M20eActorSheet extends ActorSheet {
     statElem.dataset.active = !(statElem.dataset.active === 'true');
   }
 
+  /* -------------------------------------------- */
+
   /**
   * Dispatches mini-buttons clicks according to their dataset.action
   * 
@@ -226,14 +258,14 @@ export default class M20eActorSheet extends ActorSheet {
         this._toggleCategoryLock(dataset.category);
         break;
       
-      case 'add':
-        //itemType can end up being a list of avail types for the category
+      case 'add': //itemType can end up being a list of avail types for the category
+        //todo : redo !
         const itemType = CONFIG.M20E.categoryToType[dataset.category];
         const itemSubtype = CONFIG.M20E.categoryToType[dataset.subCategory];
         this._addEmbedded(itemType, itemSubtype); //todo : redo more clever !
         break;
       
-      case 'edit': //edit regular or virtual Trait (item)
+      case 'edit': //edit actor' own traits or trait items (also AEffects)
         if ( trait.itemId ) {
           this._editEmbedded(trait);
         } else {
@@ -241,32 +273,35 @@ export default class M20eActorSheet extends ActorSheet {
         }
         break;
       
-      case 'remove'://rename for embedded
+      case 'remove'://remove embedded doc item or AE
         this._removeEmbedded(trait);
         break;
-      
-      case 'roll-item':
+        
+      case 'check': //atm, only used to update the disabled value of an active affect
+        this._toggleEmbeddedProperty(trait, dataset.updatePath);
+        break;
+
+      case 'plus': //increment / decrement a property on an embedded doc 
+      case 'minus': //atm only used for qtty on consumable items
+        const mod = dataset.action === 'minus' ? -1 : 1;
+        this._modEmbeddedProperty(trait, mod, dataset.updatePath);
+    
+      case 'expand': //toggle expanded/collapsed status of a display description or other
+        this._expandDescription(buttonElem);
+        break;
+
+      case 'roll-item': // click on a mini-dice button roll the first throw of a rollable
+        //note that's the only throw on a rote
         const rollableId = buttonElem.closest(".trait").dataset.itemId;
         const rollableItem = this.actor.items.get(rollableId);
         rollableItem.roll(event.shiftKey); //throwIndex is 0 by default
         break;
       
-      case 'expand':
-        this._expandDescription(buttonElem);
-        break;
-
-      case 'check':
-        //atm, only used to update the disabled value of an active affect
-        this._toggleEmbeddedProperty(trait, dataset.updatePath);
-        break;
-
-      case 'plus':
-      case 'minus':
-        const mod = dataset.action === 'minus' ? -1 : 1;
-        this._modEmbeddedProperty(trait, dataset.updatePath, mod);
       default:
     }
   }
+
+  /* -------------------------------------------- */
 
   /**
   * Dispatches clicks on resource panel boxes acording to resource type and mouse button press
@@ -296,6 +331,8 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
+  /* -------------------------------------------- */
+
   /**
   * Updates an owned item's data.value from within the character sheet.
   * validates input value against dtype min max before updating
@@ -310,8 +347,34 @@ export default class M20eActorSheet extends ActorSheet {
       return this.render();
     }
     const trait = Trait.fromElement(inputElem);
-    this._updateEmbeddedProperty(trait, inputElem.dataset.updatePath, inputElem.value);
+    this._updateEmbeddedProperty(trait, inputElem.value, inputElem.dataset.updatePath);
   }
+
+  /* -------------------------------------------- */
+
+  /**
+   * On a click on the big dice, round up every highlighted trait on the sheet
+   * send it to a new DiceThrow object and either render it for further options or
+   * just throw the dice
+   * 
+   * @param  {} event
+   */
+  _onDiceClick(event) {
+    //retrieve traits to roll
+    const diceThrow = new DiceThrow({
+      document: this.actor,
+      stats: this.getStatsToRoll()
+    });
+    if ( event.shiftKey ) {
+      //throw right away
+      diceThrow.throwDice();
+    } else {
+      //display dice throw dialog
+      diceThrow.render(true);
+    }
+  }
+
+  /* -------------------------------------------- */
 
   /**
    * Intercepts a click on an entity link before it's processed by vanilla sheet
@@ -333,27 +396,9 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
-  /**
-   * On a click on the big dice, round up every highlighted trait on the sheet
-   * send it to a new DiceThrow object and either render it for further options or
-   * just throw the dice
-   * 
-   * @param  {} event
-   */
-   _onDiceClick(event) {
-    //retrieve traits to roll
-    const diceThrow = new DiceThrow({
-      document: this.actor,
-      stats: this.getStatsToRoll()
-    });
-    if ( event.shiftKey ) {
-      //throw right away
-      diceThrow.throwDice();
-    } else {
-      //display dice throw dialog
-      diceThrow.render(true);
-    }
-  }
+  /* -------------------------------------------- */
+  /*  Mini-Buttons Dispatch                       */
+  /* -------------------------------------------- */
 
   /**
   * Locks/Unlocks a category for edition - Only one cat is open a a time
@@ -397,180 +442,7 @@ export default class M20eActorSheet extends ActorSheet {
     this.render();
   }
 
-  /**
-   * Expands and Collapses descriptions for certain items
-   * collapse previously expanded description element before expanding a new one
-   * just toggle dataset.expanded and let the css do the rest
-   * 
-   * @param  {Element} buttonElem the mini-button that triggered the event
-   */
-   _expandDescription(buttonElem) {
-    const desc = buttonElem.closest('.one-liner-desc');
-    if ( desc.dataset.expanded === 'true' ) {
-      //only one expanded and we clicked on it, collapse it
-      desc.dataset.expanded = false;
-    } else {
-      //collapses the expanded one (shouldn't be more than one actually)
-      const expandedOne = $(this.buttonElem).find('.one-liner-desc[data-expanded ="true"]');
-      if ( expandedOne.length !== 0 ) {
-        expandedOne[0].dataset.expanded = false;
-      }
-      //then expand the one we just clicked
-      desc.dataset.expanded = true;
-    }
-  }
-
-  /**
-  *  @override
-  * added validation against dtype and min max before updating
-  * re-renders the sheet to display the previous value if update is invalid
-  * note: though data are validated against dtype by foundry,
-  * updating a number with a string would leave the input blank
-  */
-  async _onChangeInput(event) {
-    const element = event.target;
-    if ( ! utils.isValidUpdate(element) ) {
-      event.preventDefault();
-      return this.render();
-    }
-    super._onChangeInput(event);
-  }
-
-  /**
-  * Check all rollable categories for highlighted elements (ie data-active="true")
-  * return said elements as Stat instances for later consumption by Throw app.
-  * also toggle the active status of highlighted elements after we got them
-  * 
-  * @return {Array} an Array of Stat instances that match chosen (highlighted) stats.
-  */
-   getStatsToRoll() { 
-    //overly complicated statement that could be easily understood if coded with twice the lines
-    return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
-      const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
-      return elementList.length === 0 ? acc : 
-        [...acc, ...elementList.toArray().map(traitElem => {
-          traitElem.dataset.active = false;
-          return Trait.fromElement(traitElem);
-        })];
-    }, []);
-  }
-
-  /**
-  * Called in response to a contextMenu click on a resource label
-  * prompts user for a new value (max health, maxwillpower or health malus)
-  * validates and updates accordingly
-  * 
-  * @param {object} { relativePath, currentValue, name }
-  *                  prepared in the context menu callback
-  */
-   async _editResource({ relativePath, currentValue, name }) {
-    const promptData = new utils.PromptData({
-      title: game.i18n.format(`M20E.prompts.editTitle`, {name : name}),
-      name: name,
-      currentValue : currentValue
-    });
-    //enrich the prompData
-    if ( utils.isNumeric(currentValue) ) {
-      promptData.min = 0;
-      promptData.max = 10;
-    }
-
-    //prompt for new value
-    const inputElem = await utils.promptNewValue(promptData);
-    //validate before updating
-    if ( utils.isValidUpdate(inputElem) ) {
-      const newValue = isNaN(currentValue) ? inputElem.value : parseInt(inputElem.value);
-      //only update if it's actually a different value
-      if ( newValue !== currentValue ) {
-        await this.actor.safeUpdateProperty(relativePath, newValue);
-      }
-    }
-  }
-
-  /**
-  * Called in response to a contextMenu click on a '.trait'
-  * prepares real or 'fake' item data to be displayed in a chat message
-  * TODO : change template to use itemData instead of 'item'
-  * @param {Trait} trait  the Trait to be displayed in chat
-  */
-  async _linkInChat(trait) {
-    const {category, itemId, key } = trait.split();
-    let item = {};
-
-    if ( itemId ) {
-      //trait is actually a real item
-      //todo : let the item do it's own shit !
-      item = this.actor.items.get(itemId);
-    } else {
-      //trait is an attribute or sphere, build 'fake' itemData 
-      
-      //retrieve attribute (or sphere) name from paradigm item's lexicon if any
-      const lexiconEntry = this.actor.getLexiconEntry(`traits.${trait.path}`);
-      //get systemDescription from compendium given category and key
-      const sysDesc = await utils.getSystemDescription(category, key);
-      //build our fake item
-      item = {
-        type: game.i18n.localize(`M20E.category.${category}`),
-        name: game.i18n.localize(`M20E.traits.${trait.path}`),
-        data: {
-          data: foundry.utils.getProperty(this.actor.data.data.traits, `${trait.path}`)
-        }
-      };
-      item.data.data.displayName = lexiconEntry || '';
-      item.data.data.systemDescription = sysDesc;
-    }
-    //display the card whether trait is a real item or 'fake' one
-    chat.displayCard(this.actor, {
-      category : category,
-      itemId: itemId,
-      key: key,
-      item: item
-    });
-  }
-
-  /**
-  * Removes link parameters from a specific trait (actually only used on bio traits)
-  * Called in response to a contextMenu click on a '.trait' that has an active link
-  * 
-  * @param {Trait} trait  the Trait the link should be removed from
-  */
-  async _removeJELink(trait){
-     //prepare the update object
-    let updateObj = {};
-    const relativePath = `data.${trait.path}.link`;
-    updateObj[`${relativePath}.-=type`] = null;
-    updateObj[`${relativePath}.-=pack`] = null;
-    updateObj[`${relativePath}.-=id`] = null;
-
-    return this.actor.update(updateObj);
-  }
-
-  /**
-  * Create a new Journal Entry and link it to the actor.
-  * new journal is created with same permissions as the actor.
-  * so any player owner the the actor is also owner of the journal.
-  * Needs GM permission level in order to create
-  */
-  async _createPersonnalJE() {
-    if ( !game.user.isGM ) {
-      ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
-      return;
-    }
-    if ( !this.actor.hasPlayerOwner ) {
-      const confirmation = await Dialog.confirm({
-        options: {classes: ['dialog', 'm20e']},
-        title: `${game.i18n.localize('DOCUMENT.JournalEntry')} : ${this.actor.name}`,
-        content: game.i18n.format("M20E.prompts.actorHasNoOwner", {name: this.actor.name}),
-        rejectClose: false
-      });
-      if ( !confirmation ) { return; }
-    }
-    //create the Journal (creates a folder if needed)
-    const personnalJE = await utils.createPersonnalJE(this.actor, { renderSheet: true });
-    //update the actor with Journal Id
-    this.actor.update({[`data.link`]: {type:'JournalEntry', pack: '', id: personnalJE.id}});
-    ui.notifications.info(game.i18n.format(`M20E.notifications.journalLinked`,{name: this.actor.name}));
-  }
+  /* -------------------------------------------- */
 
   /**
   * Prompts user for a name for the new embedded document
@@ -579,7 +451,7 @@ export default class M20eActorSheet extends ActorSheet {
   * @param {string} itemType type of the item to be created
   * @param {string} itemSubtype subType if any
   */
-  async _addEmbedded(itemType, itemSubtype = null) {
+   async _addEmbedded(itemType, itemSubtype = null) {
     if ( !itemType ) { return; }
 
     //prepare the promptData => prompt for the name of the item-to-be
@@ -621,9 +493,13 @@ export default class M20eActorSheet extends ActorSheet {
     this.actor.createEmbeddedDocuments('Item', [itemData], {renderSheet: true, fromActorSheet: true });
   }
 
-  _addEmbeddedItem() {
+  /* -------------------------------------------- */
 
+  _addEmbeddedItem() {
+    //todo : obvious !
   }
+
+  /* -------------------------------------------- */
 
   _addEmbeddedEffect(name) {
     const effectData = {
@@ -635,73 +511,14 @@ export default class M20eActorSheet extends ActorSheet {
     this.actor.createEmbeddedDocuments('ActiveEffect', [effectData], {renderSheet: true});
   }
 
-  /**
-   * Prompts user for confirmation before deleting the item/AEffect from this.actor embedded collection
-   * 
-   * @param {Trait} trait a Trait containing the category and the itemId of the embedded doc to be deleted
-  */
-  async _removeEmbedded(trait) {
-    let embeddedDoc, docName, docClass;
-
-    if ( trait.category === 'aeffects' ) {
-      embeddedDoc = this.actor.effects.get(trait.itemId);
-      if ( !embeddedDoc ) { return; }
-      docName = embedded.label;
-      docClass = 'ActiveEffect';
-    } else {
-      embeddedDoc = this.actor.items.get(trait.itemId);
-      if ( !embeddedDoc ) { return; }
-      docName = embedded.name;
-      docClass = 'Item';
-    } 
-
-    const confirmation = await Dialog.confirm({
-      options: {classes: ['dialog', 'm20e']},
-      title: game.i18n.format("M20E.prompts.deleteTitle", {name: docName}),
-      content: game.i18n.format("M20E.prompts.deleteContent", {name: docName})
-    });
-
-    if ( confirmation ) {
-      this.actor.deleteEmbeddedDocuments(docClass, [embedded.id]);
-    }
-  }
-
-  async _updateEmbeddedProperty(trait, updatePath='data.value', updateValue) {
-    const {category, itemId} = trait.split();
-    const embeddedDoc = category === 'aeffects' ? 
-      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
-    if ( !embeddedDoc ) { return; }
-    
-    updateValue = utils.isNumeric(updateValue) ? parseInt(updateValue) : updateValue;
-    return await embeddedDoc.update({[`${updatePath}`]: updateValue});
-  }
-
-  async _toggleEmbeddedProperty(trait, updatePath) {
-    const {category, itemId} = trait.split();
-    const embeddedDoc = category === 'aeffects' ? 
-      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
-    
-      if ( !embeddedDoc ) { return; }
-    const currValue = foundry.utils.getProperty(embeddedDoc.data, updatePath);
-    return await embeddedDoc.update({[`${updatePath}`]: !currValue});
-  }
-
-  async _modEmbeddedProperty(trait, updatePath, mod) {
-    const {category, itemId} = trait.split();
-    const embeddedDoc = category === 'aeffects' ? 
-      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
-    
-    if ( !embeddedDoc ) { return; }
-    const currValue = foundry.utils.getProperty(embeddedDoc.data, updatePath);
-    return await embeddedDoc.update({[`${updatePath}`]: currValue + mod});
-  }
+  /* -------------------------------------------- */
 
   /**
    * Call for the display of a sheet to edit an embedded document
    * can either be an item or an ActiveEffect
    * @param  {Trait} trait
    */
-  _editEmbedded(trait) {
+   _editEmbedded(trait) {
     const {category, itemId} = trait.split();
     const embeddedDoc = category === 'aeffects' ? 
       this.actor.effects.get(itemId) : this.actor.items.get(itemId);
@@ -709,6 +526,8 @@ export default class M20eActorSheet extends ActorSheet {
 
     embeddedDoc.sheet.render(true);
   }
+
+  /* -------------------------------------------- */
 
   /**
   * Displays a "fake item-sheet" from actor's attributes, spheres or ? 
@@ -739,38 +558,118 @@ export default class M20eActorSheet extends ActorSheet {
     fakeItem.render(true);
   }
 
-  /**
-   * Prompts user for a positive xp value to add
-   * let the actor update the current and total XP values
-   */
-  async addXP() {
-    const promptData = new utils.PromptData({
-      title: this.actor.name,
-      promptContent: game.i18n.format('M20E.prompts.addXPContent', {name: this.actor.name}),
-      placeHolder: 0
-    });
-    //prompt for new value
-    const inputElem = await utils.promptNewValue(promptData);
-    if ( inputElem === null ) { return; } //promptDialog was escaped
+  /* -------------------------------------------- */
 
-    this.actor.addXP(parseInt(inputElem.value));
+  /**
+   * Prompts user for confirmation before deleting the item/AEffect from this.actor embedded collection
+   * 
+   * @param {Trait} trait a Trait containing the category and the itemId of the embedded doc to be deleted
+  */
+   async _removeEmbedded(trait) {
+    let embeddedDoc, docName, docClass;
+
+    if ( trait.category === 'aeffects' ) {
+      embeddedDoc = this.actor.effects.get(trait.itemId);
+      if ( !embeddedDoc ) { return; }
+      docName = embeddedDoc.label;
+      docClass = 'ActiveEffect';
+    } else {
+      embeddedDoc = this.actor.items.get(trait.itemId);
+      if ( !embeddedDoc ) { return; }
+      docName = embeddedDoc.name;
+      docClass = 'Item';
+    } 
+
+    const confirmation = await Dialog.confirm({
+      options: {classes: ['dialog', 'm20e']},
+      title: game.i18n.format("M20E.prompts.deleteTitle", {name: docName}),
+      content: game.i18n.format("M20E.prompts.deleteContent", {name: docName})
+    });
+
+    if ( confirmation ) {
+      this.actor.deleteEmbeddedDocuments(docClass, [embeddedDoc.id]);
+    }
   }
 
-  /**
-   * Prompts user for a positive xp value to remove
-   * let the actor update the current XP value (and not the total one)
-   */
-  async removeXP() {
-    const promptData = new utils.PromptData({
-      title: this.actor.name,
-      promptContent: game.i18n.format('M20E.prompts.removeXPContent', {name: this.actor.name}),
-      placeHolder: 0
-    });
-    //prompt for new value
-    const inputElem = await utils.promptNewValue(promptData);
-    if ( inputElem === null ) { return; } //promptDialog was escaped
+  /* -------------------------------------------- */
 
-    this.actor.removeXP(parseInt(inputElem.value));
+  /**
+   * Updates a property on an embeddedDoc given a path relative to the documentData
+   * atm used to update inline values on stat items
+   * @param  {Trait} trait
+   * @param  {String|Number} updateValue a valid value for that property
+   * @param  {String} updatePath='data.value' path to the property (relative to documentData)
+   */
+  async _updateEmbeddedProperty(trait, updateValue, updatePath='data.value') {
+    const {category, itemId} = trait.split();
+    const embeddedDoc = category === 'aeffects' ? 
+      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
+    if ( !embeddedDoc ) { return; }
+    
+    updateValue = utils.isNumeric(updateValue) ? parseInt(updateValue) : updateValue;
+    return await embeddedDoc.update({[`${updatePath}`]: updateValue});
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Toggles a boolean property on an embeddedDoc given a path relative to the documentData
+   * mostly used for equipable Items and ActiveEffects
+   * @param  {Trait} trait
+   * @param  {String} updatePath
+   */
+  async _toggleEmbeddedProperty(trait, updatePath) {
+    const {category, itemId} = trait.split();
+    const embeddedDoc = category === 'aeffects' ? 
+      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
+    
+      if ( !embeddedDoc ) { return; }
+    const currValue = foundry.utils.getProperty(embeddedDoc.data, updatePath);
+    return await embeddedDoc.update({[`${updatePath}`]: !currValue});
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Modify a numeric property on an embeddedDoc given a path relative to it's documentData
+   * mostly used for equipable Items and ActiveEffects
+   * @param  {Trait} trait
+   * @param  {Number} mod the value to be added to the property (usually +1 or -1)
+   * @param  {String} updatePath
+   */
+  async _modEmbeddedProperty(trait, mod, updatePath) {
+    const {category, itemId} = trait.split();
+    const embeddedDoc = category === 'aeffects' ? 
+      this.actor.effects.get(itemId) : this.actor.items.get(itemId);
+    
+    if ( !embeddedDoc ) { return; }
+    const currValue = foundry.utils.getProperty(embeddedDoc.data, updatePath);
+    return await embeddedDoc.update({[`${updatePath}`]: currValue + mod});
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Expands and Collapses descriptions for certain items
+   * collapse previously expanded description element before expanding a new one
+   * just toggle dataset.expanded and let the css do the rest
+   * 
+   * @param  {Element} buttonElem the mini-button that triggered the event
+   */
+   _expandDescription(buttonElem) {
+    const desc = buttonElem.closest('.one-liner-desc');
+    if ( desc.dataset.expanded === 'true' ) {
+      //only one expanded and we clicked on it, collapse it
+      desc.dataset.expanded = false;
+    } else {
+      //collapses the expanded one (shouldn't be more than one actually)
+      const expandedOne = $(this.buttonElem).find('.one-liner-desc[data-expanded ="true"]');
+      if ( expandedOne.length !== 0 ) {
+        expandedOne[0].dataset.expanded = false;
+      }
+      //then expand the one we just clicked
+      desc.dataset.expanded = true;
+    }
   }
 
   /* -------------------------------------------- */
@@ -780,10 +679,11 @@ export default class M20eActorSheet extends ActorSheet {
   /**
    * @return the context menu options for the '.header-row.charname' element
    * atm only paradigm item stuff
+   * TODO : add aliases edit here !
    */
    _getNameContextOptions() {
     return [
-      {
+      { //displays item sheet for paradigm item
         name: game.i18n.localize('M20E.context.editParadigm'),
         icon: '<i class="fas fa-pencil-alt"></i>',
         callback: () => {
@@ -794,83 +694,27 @@ export default class M20eActorSheet extends ActorSheet {
           return this.actor.paradigm; 
         }
       },
-      {
+      { //removes the paradigm Item - not allowed atm
         name: game.i18n.localize('M20E.context.removeParadigm'),
         icon: '<i class="fas fa-trash"></i>',
         callback: () => {
           const paradigm = this.actor.paradigm;
-          this._removeEmbedded(paradigm);
+          this._removeEmbedded(paradigm.toTrait());
         },
         condition: () => {
-          return this.actor.paradigm; 
+          return this.actor.paradigm && false; 
         }
       }
     ]
   }
 
-  /**
-   * @return the context menu options for the '.trait' elements
-   * link trait in chat, edit trait, remove JE link from trait that have one
-   */
-  _getTraitContextOptions() {
-    return [
-      {//link actor trait or item in chat
-        name: game.i18n.localize('M20E.context.linkInChat'),
-        icon: '<i class="fas fa-share"></i>',
-        callback: element => {
-          this._linkInChat(Trait.fromElement(element[0]));
-        },
-        condition: element => {
-          return element[0].classList.contains('linkable');
-        }
-      },
-      {//edit actor trait in fakeitem sheet or edit item (in itemSheet)
-        name: game.i18n.localize('M20E.context.editTrait'),
-        icon: '<i class="fas fa-pencil-alt"></i>',
-        callback: element => {
-          this._editTrait(Trait.fromElement(element[0]));
-        },//todo : maybe find different condition ?
-        condition: element => {
-          return element[0].classList.contains('linkable');
-        }
-      },
-      {//remove a link to a journal entry from an actor trait (bio category)
-        name: game.i18n.localize('M20E.context.removeLink'),
-        icon: '<i class="fas fa-trash"></i>',
-        callback: element => {
-          this._removeJELink(Trait.fromElement(element[0]));
-        },
-        condition: element => {
-          return element[0].dataset.linkId;
-        }
-      }
-    ]
-  }
-
-  _getRollableContextOptions(traitElem) {
-    const itemId = traitElem.dataset.itemId;
-    const item = this.actor.items.get(itemId);
-    if ( !item.data.data.equiped ) { return null;} //useless, no ctx menu on unequiped rollables^^
-    //prepare context menu options
-    return item.data.data.throws.map( (mageThrow, throwIndex) => {
-      return {
-        name: mageThrow.name,
-        itemId: itemId,
-        throwIndex: throwIndex,
-        icon: '<i class="fas fa-dice"></i>',
-        callback: (target, event) => {
-          item.roll(event.shiftKey, throwIndex);
-        },
-        dragDropCallbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDrop.bind(this) }
-      }
-    });
-  }
+  /* -------------------------------------------- */
 
   /**
    * @return the context menu options for the '.resource-context' elements
    * edit health max, edit heal malus list, edit willpower max.
    */
-  _getResourceContextOptions() {
+   _getResourceContextOptions() {
     return [
       {
         name: game.i18n.localize('M20E.context.editWillpowerMax'),
@@ -917,6 +761,80 @@ export default class M20eActorSheet extends ActorSheet {
     ]
   }
 
+  /* -------------------------------------------- */
+
+  /**
+   * @return the context menu options for the '.trait' elements
+   * link trait in chat, edit trait, remove JE link from trait that have one
+   */
+  _getTraitContextOptions() {
+    return [
+      {//link actor trait or item in chat
+        name: game.i18n.localize('M20E.context.linkInChat'),
+        icon: '<i class="fas fa-share"></i>',
+        callback: element => {
+          const trait = Trait.fromElement(element[0]);
+          if ( trait.itemId ) {
+            const item = this.actor.items.get(trait.itemId);
+            item.linkInChat();
+          } else {
+            this._linkInChat(trait);
+          }
+        },
+        condition: element => {
+          return element[0].classList.contains('linkable');
+        }
+      },
+      {//edit actor trait in fakeitem sheet or edit item (in itemSheet)
+        name: game.i18n.localize('M20E.context.editTrait'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: element => {
+          const trait = Trait.fromElement(element[0]);
+          if ( trait.itemId ) {
+            this._editEmbedded(trait);
+          } else {
+            this._editTrait(trait);
+          }
+        },
+        condition: element => {//todo : maybe find different a condition if any ?
+          return element[0].classList.contains('linkable');
+        }
+      },
+      {//remove a link to a journal entry from an actor trait (bio category)
+        name: game.i18n.localize('M20E.context.removeLink'),
+        icon: '<i class="fas fa-trash"></i>',
+        callback: element => {
+          this._removeJELink(Trait.fromElement(element[0]));
+        },
+        condition: element => {
+          return element[0].dataset.linkId;
+        }
+      }
+    ]
+  }
+
+  /* -------------------------------------------- */
+
+  _getRollableContextOptions(traitElem) {
+    const itemId = traitElem.dataset.itemId;
+    const item = this.actor.items.get(itemId);
+    //prepare context menu options from list of throws in this rollable
+    return item.data.data.throws.map( (mageThrow, throwIndex) => {
+      return {
+        name: mageThrow.name,
+        itemId: itemId,
+        throwIndex: throwIndex,
+        icon: '<i class="fas fa-dice"></i>',
+        callback: (target, event) => {
+          item.roll(event.shiftKey, throwIndex);
+        },
+        dragDropCallbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDrop.bind(this) }
+      }
+    });
+  }
+
+  /* -------------------------------------------- */
+
   _getXPContextOptions() {
     return [
       {
@@ -940,6 +858,184 @@ export default class M20eActorSheet extends ActorSheet {
         }
       }
     ]
+  }
+
+  /* -------------------------------------------- */
+  /*  Context Menus Callbacks                     */
+  /*  some implemented in 'mini-button dispatch'  */
+  /* -------------------------------------------- */
+
+  /**
+  * Called in response to a contextMenu click on a resource label
+  * prompts user for a new value (max health, maxwillpower or health malus)
+  * validates and updates accordingly
+  * 
+  * @param {object} { relativePath, currentValue, name }
+  *                  prepared in the context menu callback
+  */
+   async _editResource({ relativePath, currentValue, name }) {
+    const promptData = new utils.PromptData({
+      title: game.i18n.format(`M20E.prompts.editTitle`, {name : name}),
+      name: name,
+      currentValue : currentValue
+    });
+    //enrich the prompData
+    if ( utils.isNumeric(currentValue) ) {
+      promptData.min = 0;
+      promptData.max = 10;
+    }
+
+    //prompt for new value
+    const inputElem = await utils.promptNewValue(promptData);
+    //validate before updating
+    if ( utils.isValidUpdate(inputElem) ) {
+      const newValue = isNaN(currentValue) ? inputElem.value : parseInt(inputElem.value);
+      //only update if it's actually a different value
+      if ( newValue !== currentValue ) {
+        await this.actor.safeUpdateProperty(relativePath, newValue);
+      }
+    }
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Displays an actor trait in chat.
+   * Prepares some templateData before feeding the to chat.displayCard
+   * @param {Trait} trait  the Trait to be displayed in chat
+  */
+  async _linkInChat(trait) {
+    const templateData = trait.split(); //{category, subType, key, itemId}
+
+    //retrieve attribute (or sphere) name from paradigm item's lexicon if any
+    const lexiconEntry = this.actor.getLexiconEntry(trait.path);
+    //get systemDescription from compendium given category and key
+    const sysDesc = await utils.getSystemDescription(templateData.category, templateData.key);
+
+    //build the trait's data
+    templateData.traitData = {
+      type: game.i18n.localize(`M20E.category.${templateData.category}`),
+      name: game.i18n.localize(`M20E.${trait.path}`),
+      img: '',
+      data: {
+        ...foundry.utils.getProperty(this.actor.data.data, trait.path),
+        displayName: lexiconEntry || '',
+        systemDescription: sysDesc
+      }
+    };
+    templateData.path = trait.path;
+
+    //display the card
+    chat.displayCard(this.actor, templateData);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+  * Removes link parameters from a specific trait (actually only used on bio traits)
+  * Called in response to a contextMenu click on a '.trait' that has an active link
+  * 
+  * @param {Trait} trait  the Trait the link should be removed from
+  */
+  async _removeJELink(trait){
+     //prepare the update object
+    let updateObj = {};
+    const relativePath = `data.${trait.path}.link`;
+    updateObj[`${relativePath}.-=type`] = null;
+    updateObj[`${relativePath}.-=pack`] = null;
+    updateObj[`${relativePath}.-=id`] = null;
+
+    return this.actor.update(updateObj);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Prompts user for a positive xp value to add
+   * let the actor update the current and total XP values
+   */
+   async addXP() {
+    const promptData = new utils.PromptData({
+      title: this.actor.name,
+      promptContent: game.i18n.format('M20E.prompts.addXPContent', {name: this.actor.name}),
+      placeHolder: 0
+    });
+    //prompt for new value
+    const inputElem = await utils.promptNewValue(promptData);
+    if ( inputElem === null ) { return; } //promptDialog was escaped
+
+    this.actor.addXP(parseInt(inputElem.value));
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Prompts user for a positive xp value to remove
+   * let the actor update the current XP value (and not the total one)
+   */
+  async removeXP() {
+    const promptData = new utils.PromptData({
+      title: this.actor.name,
+      promptContent: game.i18n.format('M20E.prompts.removeXPContent', {name: this.actor.name}),
+      placeHolder: 0
+    });
+    //prompt for new value
+    const inputElem = await utils.promptNewValue(promptData);
+    if ( inputElem === null ) { return; } //promptDialog was escaped
+
+    this.actor.removeXP(parseInt(inputElem.value));
+  }
+
+  /* -------------------------------------------- */
+  /*  other implementations                       */
+  /* -------------------------------------------- */
+
+  /**
+  * Check all rollable categories for highlighted elements (ie data-active="true")
+  * return said elements as Stat instances for later consumption by Throw app.
+  * also toggle the active status of highlighted elements after we got them
+  * 
+  * @return {Array} an Array of Stat instances that match chosen (highlighted) stats.
+  */
+   getStatsToRoll() { 
+    //overly complicated statement that could be easily understood if coded with twice the lines
+    return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
+      const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
+      return elementList.length === 0 ? acc : 
+        [...acc, ...elementList.toArray().map(traitElem => {
+          traitElem.dataset.active = false;
+          return Trait.fromElement(traitElem);
+        })];
+    }, []);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+  * Create a new Journal Entry and link it to the actor.
+  * new journal is created with same permissions as the actor.
+  * so any player owner the the actor is also owner of the journal.
+  * Needs GM permission level in order to create
+  */
+   async _createPersonnalJE() {
+    if ( !game.user.isGM ) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.gmPermissionNeeded`));
+      return;
+    }
+    if ( !this.actor.hasPlayerOwner ) {
+      const confirmation = await Dialog.confirm({
+        options: {classes: ['dialog', 'm20e']},
+        title: `${game.i18n.localize('DOCUMENT.JournalEntry')} : ${this.actor.name}`,
+        content: game.i18n.format("M20E.prompts.actorHasNoOwner", {name: this.actor.name}),
+        rejectClose: false
+      });
+      if ( !confirmation ) { return; }
+    }
+    //create the Journal (creates a folder if needed)
+    const personnalJE = await utils.createPersonnalJE(this.actor, { renderSheet: true });
+    //update the actor with Journal Id
+    this.actor.update({[`data.link`]: {type:'JournalEntry', pack: '', id: personnalJE.id}});
+    ui.notifications.info(game.i18n.format(`M20E.notifications.journalLinked`,{name: this.actor.name}));
   }
 
   /* -------------------------------------------- */
@@ -978,6 +1074,8 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
+  /* -------------------------------------------- */
+
   /**
    * added Journal Entry management
    *  @override
@@ -1006,6 +1104,8 @@ export default class M20eActorSheet extends ActorSheet {
     }
   }
 
+  /* -------------------------------------------- */
+
   /**
    * added paradigm item management
    *  @override
@@ -1029,6 +1129,8 @@ export default class M20eActorSheet extends ActorSheet {
     // Create the owned item
     return super._onDropItemCreate(itemData);
   }
+
+  /* -------------------------------------------- */
 
   /**
    * checks whether dropped item can be 'safely' created on this actor
@@ -1058,6 +1160,8 @@ export default class M20eActorSheet extends ActorSheet {
     return true;
   }
 
+  /* -------------------------------------------- */
+
   /**
    * Prompts user before deleting current paradigm item before adding newly dropped one
    * @param  {ItemData} itemData proper ItemData from _onDropItem
@@ -1083,6 +1187,8 @@ export default class M20eActorSheet extends ActorSheet {
     itemData.name = game.i18n.format(`M20E.paradigmName`, {name: actor.name});
     return actor.createEmbeddedDocuments('Item', [itemData]);
   }
+
+  /* -------------------------------------------- */
 
   /**
   * Manages drops of JournalEntries on the actor sheet.

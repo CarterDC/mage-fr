@@ -2,41 +2,41 @@
     <header class="card-header">
     </header>
     <header class="card-tooltip">
-      {{#if item.data.data.systemDescription}}
-        {{#if item.data.data.displayDescription}}
+      {{#if traitData.data.systemDescription}}
+        {{#if traitData.data.displayDescription}}
         <div class="display-desc-button" data-action="display-desc">
           <span>{{localize "M20E.labels.displayDesc"}} <i class="fas fa-chevron-down"></i></span>
         </div>
         <div class="tooltip-part item-ddesc hidden-field">
-          {{{item.data.data.displayDescription}}}
+          {{{traitData.data.displayDescription}}}
         </div>
         {{/if}}
       <div class="tooltip-part">
-        {{{item.data.data.systemDescription}}}
+        {{{traitData.data.systemDescription}}}
       </div>
       {{else}}
-        {{#if item.data.data.displayDescription}}
+        {{#if traitData.data.displayDescription}}
         <div class="tooltip-part item-ddesc">
-          {{{item.data.data.displayDescription}}}
+          {{{traitData.data.displayDescription}}}
         </div>
         {{/if}}
       {{/if}}
     </header>
-    {{#if (eq item.type 'rote')}}
+    {{#if (eq traitData.type 'rote')}}
     <div class="card-buttons">
-      <button class="throw" data-action="throw-rote" data-item-id="{{item.id}}" data-actor-id="{{item.actor.id}}">
+      <button class="throw" data-action="throw-rote" data-item-id="{{traitData.itemId}}" data-actor-id="{{traitData.actorId}}">
         <span>{{localize "M20E.labels.throw"}} <i class="fas fa-dice"></i></span>
       </button>
     </div>
     {{/if}}
     <header class="card-footer">
-        {{#if item.data.data.subType}}
-        <span class="item-type">{{localize (m20e-concat 'M20E.subType.' item.data.data.subType)}}</span>
+        {{#if traitData.data.subType}}
+        <span class="item-type">{{localize (m20e-concat 'M20E.subType.' traitData.data.subType)}}</span>
         {{else}}
         <span class="item-type">{{localize (m20e-concat 'M20E.category.' category)}}</span>
         {{/if}}
         {{#if (m20e-in category ['background', 'meritsflaws', 'events'])}}
-        <img class="item-img" src="{{item.img}}"/>
+        <img class="item-img" src="{{traitData.img}}"/>
         {{/if}}
     </header>
 </section>

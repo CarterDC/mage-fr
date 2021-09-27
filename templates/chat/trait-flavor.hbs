@@ -1,42 +1,42 @@
 <section class="m20e">
 <div class="trait chat-flavor">
   <div class="trait-label">
-    {{#if item.data.data.displayName}}
-      {{item.data.data.displayName}}
+    {{#if traitData.data.displayName}}
+      {{traitData.data.displayName}}
     {{else}}
-      {{item.name}}
+      {{traitData.name}}
     {{/if}}
   </div>
   <div class="ligne"></div>
-  {{#if (m20e-in item.type 'event' 'rote')}}
+  {{#if (m20e-in traitData.type 'event' 'rote')}}
   {{else}}
-    {{#if (eq item.type 'meritflaw')}}
+    {{#if (eq traitData.type 'meritflaw')}}
       <div class="trait-label">
-      {{#if (eq item.data.data.subType "flaw")}}
-          {{m20e-sign item.data.data.value "-"}}
+      {{#if (eq traitData.data.subType "flaw")}}
+          {{m20e-sign traitData.data.value "-"}}
       {{else}}
-          {{m20e-sign item.data.data.value}}
+          {{m20e-sign traitData.data.value}}
       {{/if}}
       </div>
     {{else}}
-      <div class="bullet-display" data-value="{{item.data.data.value}}">
+      <div class="bullet-display" data-value="{{traitData.data.value}}">
         {{#m20e-forLoop 5}}
-        <span class="bullet" data-index="{{this}}" data-state="{{m20e-bulletState ../item.data.data.value this}}"></span>
+        <span class="bullet" data-index="{{this}}" data-state="{{m20e-bulletState ../traitData.data.value this}}"></span>
         {{/m20e-forLoop}}
       </div>
     {{/if}}
   {{/if}}
 
 </div>
-{{#if item.data.data.specialisation}}
+{{#if traitData.data.specialisation}}
 <div class="trait chat-flavor">
   <div class="trait-label">
-    &nbsp;&nbsp;⮱ {{localize "M20E.labels.spe"}} : {{item.data.data.specialisation}}
+    &nbsp;&nbsp;⮱ {{localize "M20E.labels.spe"}} : {{traitData.data.specialisation}}
   </div>
 </div>
 {{/if}}
-{{#if item.data.data.magyeEffects}}
-  {{#each item.data.data.magyeEffects as |effect index|}}
+{{#if traitData.data.magyeEffects}}
+  {{#each traitData.data.magyeEffects as |effect index|}}
     <div class="trait chat-flavor">
       <label class="trait-label">
         &nbsp;&nbsp;⮱ {{localize (m20e-concat "M20E.spheres." effect.key)}}
