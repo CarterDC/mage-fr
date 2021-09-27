@@ -723,7 +723,7 @@ export default class M20eActorSheet extends ActorSheet {
           this._editResource({
             relativePath: 'resources.willpower.max',
             currentValue: foundry.utils.getProperty(this.actor.data.data, 'resources.willpower.max'),
-            name: `${game.i18n.localize('M20E.willpower')} Max`
+            name: `${game.i18n.localize('M20E.resources.willpower')} Max`
           });
         },
         condition: element => {
@@ -737,7 +737,7 @@ export default class M20eActorSheet extends ActorSheet {
           this._editResource({
             relativePath: 'resources.health.max',
             currentValue: foundry.utils.getProperty(this.actor.data.data, 'resources.health.max'),
-            name: `${game.i18n.localize('M20E.health')} Max`
+            name: `${game.i18n.localize('M20E.resources.health')} Max`
           });
         },
         condition: element => {
@@ -751,7 +751,7 @@ export default class M20eActorSheet extends ActorSheet {
           this._editResource({
             relativePath: 'resources.health.malusList',
             currentValue: foundry.utils.getProperty(this.actor.data.data, 'resources.health.malusList'),
-            name: `Malus ${game.i18n.localize("M20E.health")}`
+            name: `Malus ${game.i18n.localize("M20E.resources.health")}`
           });
         },
         condition: element => {

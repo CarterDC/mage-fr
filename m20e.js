@@ -114,8 +114,11 @@ Hooks.once('init', async function () {
   dice.registerDieModifier(); //adds the 'xs' (success on explode) modifier
   dice.registerInitiative();
 
-  //test shit here !
+  //declare socket
   game.socket.on('system.mage-fr', chat.onSocketReceived);
+
+  //test shit here !
+
 })
 
 /* -------------------------------------------- */

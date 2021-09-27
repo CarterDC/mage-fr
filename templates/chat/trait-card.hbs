@@ -35,7 +35,7 @@
         {{else}}
         <span class="item-type">{{localize (m20e-concat 'M20E.category.' category)}}</span>
         {{/if}}
-        {{#if (m20e-in category ['background', 'meritsflaws', 'events'])}}
+        {{#if traitData.img}}
         <img class="item-img" src="{{traitData.img}}"/>
         {{/if}}
     </header>

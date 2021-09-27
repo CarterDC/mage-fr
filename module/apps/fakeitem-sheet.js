@@ -49,6 +49,7 @@ export class FakeItem extends DocumentSheet {
 
     const sheetData = {...superData, ...this.itemData, ...traitData};
     sheetData.owner = this.actor.isOwner;
+    sheetData.config = CONFIG.M20E;
     return sheetData;
   }
 

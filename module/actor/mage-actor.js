@@ -22,32 +22,23 @@ export default class M20eMageActor extends M20eActor {
 
   _prepareActorStats() {
     super._prepareActorStats();
-
-    const actorData = this.data;
-    for( const key in actorData.data.spheres ) {
-      const path = `spheres.${key}`;
-      //add entry to actor's stats with path and statData
-      foundry.utils.setProperty(actorData.stats, path, {
-        value: actorData.data.spheres[key].value
-      });
-      //also add entry to CONFIG with item's path and name, if necessary
-      if ( !foundry.utils.hasProperty(CONFIG.M20E.stats, path) ) {
-        foundry.utils.setProperty(CONFIG.M20E.stats, path, game.i18n.localize(`M20E.${path}`));
-      }
-    }
-    //todo : add arete value (and resonance maybe ?)
+    //prepare spheres stats
+    this._prepareCategoryStats('spheres');
+    this._prepareCategoryStats('magick');
   }
 
   /** @override */
-  prepareResources() {
-    super.prepareResources();
+  _prepareResources() {
+    super._prepareResources();
     if( utils.canSeeParadox() ) {
       const actorData = this.data;
       //add dummy resource magepower in the form {value, max} to be used by token bars
-      actorData.data.magepower = {
+      foundry.utils.setProperty(actorData.data,
+        game.i18n.localize('M20E.resources.magepower'), {
         value: actorData.data.resources.magepower.quintessence,
-        max: actorData.data.resources.magepower.quintessence + actorData.data.resources.magepower.paradox
-      }
+        max: 20 + actorData.data.resources.magepower.paradox
+        //max: actorData.data.resources.magepower.quintessence + actorData.data.resources.magepower.paradox
+      });
     }
   }
 

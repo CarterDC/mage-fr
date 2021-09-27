@@ -367,7 +367,7 @@ export function registerInitiative() {
   Combatant.prototype._getInitiativeFormula = function () {
 
     const actorData = this.actor.data;
-    const initiative = foundry.utils.getProperty(actorData.data.traits, 'initiative.value');
+    const initiative = foundry.utils.getProperty(actorData.stats, 'initiative.value');
 
     const formula = `1d10 + ${initiative}`;
     return formula;
