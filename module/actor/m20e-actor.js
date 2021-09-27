@@ -525,23 +525,23 @@ export default class M20eActor extends Actor {
 
   /**
    * Extends an array of {@link Trait} with relevant values to Throw dices
-   * @return {Array} an array of {@link ExtendedTrait} 
    */
-  extendTraits(traits) {
+   extendTraits(traits) {
     traits.map(trait => {
-      trait.data = {...trait.data, ...this.getExtendedTraitData(trait)};
+      if ( trait.isItem ) {
+        trait.data = {...trait.data, ...this.getItemFromId(trait.itemId).getExtendedTraitData(trait.path)};
+      } else {
+        trait.data = {...trait.data, ...this.getExtendedTraitData(trait.path)};
+      }
     });
   }
 
-  getExtendedTraitData(trait) {
-    const extendedTraitData = foundry.utils.getProperty(this.data.data.traits,
-      trait.path);
-
+  getExtendedTraitData(path) {
     return {
-      name: extendedTraitData.name || game.i18n.localize(`M20E.traits.${trait.path}`),
-      displayName: extendedTraitData.displayName || this.getLexiconEntry(`traits.${trait.path}`),
-      value: extendedTraitData.value,
-      specialisation: extendedTraitData.specialisation
-    }
+      name: game.i18n.localize(`M20E.${path}`),
+      displayName: this.getLexiconEntry(path),
+      value: this._getStat(path, 'value'),
+      specialisation: foundry.utils.getProperty(this.data.data, `${path}.specialisation`)
+    };
   }
 }

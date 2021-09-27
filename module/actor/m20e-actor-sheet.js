@@ -363,7 +363,7 @@ export default class M20eActorSheet extends ActorSheet {
     //retrieve traits to roll
     const diceThrow = new DiceThrow({
       document: this.actor,
-      stats: this.getStatsToRoll()
+      traits: this.getActiveTraits()
     });
     if ( event.shiftKey ) {
       //throw right away
@@ -992,12 +992,12 @@ export default class M20eActorSheet extends ActorSheet {
 
   /**
   * Check all rollable categories for highlighted elements (ie data-active="true")
-  * return said elements as Stat instances for later consumption by Throw app.
+  * return said elements as Trait instances for later consumption by Throw app.
   * also toggle the active status of highlighted elements after we got them
   * 
-  * @return {Array} an Array of Stat instances that match chosen (highlighted) stats.
+  * @return {Array} an Array of Trait instances that match chosen (highlighted) stats.
   */
-   getStatsToRoll() { 
+   getActiveTraits() { 
     //overly complicated statement that could be easily understood if coded with twice the lines
     return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
       const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');
