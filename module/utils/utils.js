@@ -381,6 +381,7 @@ const addDelimiter = (a, b) =>
   a ? `${a}.${b}` : b;
 
 /**
+ * TODO : recode from foundry's flattenObject utils/helper.mjs if possible
  * Recursive function that creates an array of {fullPath: value} pairs
  * given an object (with nested properties, obviously)
  * originaly from Matjaz on stackoverflow 

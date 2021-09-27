@@ -199,7 +199,6 @@ function onCardFooterClick(event) {
   else tip.slideUp(200);*/
 }
 
-
 /**
  * Displays a Trait Card in the chat
  * @param  {M20eActor} actor The actor from which the message should originate
@@ -268,8 +267,8 @@ export async function versionWarningMessage(sysVersion) {
     speaker: { alias: "Carter_DC" },
     whisper: [game.user.id]
   });
-  //flag the user
-  //game.user.setFlag("mage-fr", "welcomeMessageShown", true);
+  //flag the user 
+  //game.user.setFlag("mage-fr", "versionWarning", true); //^^
 }
 
 /* -------------------------------------------- */

@@ -47,7 +47,7 @@ export const registerHandlebarsHelpers = function() {
       }
     }
     const paraData = arguments[0];
-    const lexiconValue = foundry.utils.getProperty(paraData.lexicon, concatStr) || null;
+    const lexiconValue = foundry.utils.getProperty(paraData?.lexicon, concatStr) || null;
     return lexiconValue || game.i18n.localize(`M20E.${concatStr}`);
   })
 

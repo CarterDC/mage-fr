@@ -48,6 +48,7 @@ M20E.spheres = [
 M20E.lockedCategories = [
   "attributes",
   "abilities",
+  "magick",
   "spheres",
   "description",
   "backgrounds",
@@ -64,10 +65,10 @@ M20E.lockedCategories = [
 M20E.protectedCategories = [
   "attributes",
   "abilities",
+  "magick",
   "spheres",
   "backgrounds",
-  "meritsflaws",
-  "arete"
+  "meritsflaws"
 ]
 
 
@@ -104,9 +105,9 @@ M20E.equipablesTypes = { //itemtypes that are equipable=true
 M20E.rollableCategories = [
   "attribute",
   "ability",
+  "magick",
   "sphere",
   "willpower",
-  "arete",
   "background",
   "contact"
 ]

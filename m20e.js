@@ -124,13 +124,13 @@ Hooks.once('init', async function () {
 
 Hooks.once('ready', async function () {
 
-  //display welcome message if needed
+  //display welcome message
   if (!game.user.getFlag("mage-fr", "welcomeMessageShown") ) {
     chat.welcomeMessage();
   }
   //display version warning
   const sysVersion = game.system.data.version;
-  if (!game.user.getFlag("mage-fr", `versionWarning-${sysVersion}`) ) {
+  if ( sysVersion !== game.user.getFlag("mage-fr", `versionWarning`) ) {
     chat.versionWarningMessage(sysVersion);
   }
 
@@ -141,6 +141,7 @@ Hooks.once('ready', async function () {
     ChatLog._setRollMode(newRollMode);
     Hooks.callAll('updateCoreRollMode', newRollMode);
   };
+  //todo : maybe put that in libwraper
   //replace the original onChange function (_setRollMode) with our own that has an extra Hooks call
   const rollModeSetting = game.settings.settings.get('core.rollMode');
   rollModeSetting.onChange = onRollModeChange;
@@ -164,5 +165,5 @@ Hooks.on("chatMessage", (chatLog, message, chatData) => {
 Hooks.on('renderChatLog', chat.addChatListeners);
 Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
 
-//testing shit
+//test shit here !
 

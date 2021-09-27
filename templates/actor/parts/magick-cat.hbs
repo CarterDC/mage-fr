@@ -1,0 +1,38 @@
+<section class="category magick" data-category="magick">
+  {{!-- magick --}}
+  {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="magick" lock = locks.magick}}
+  <div class="grid two-col">
+    <div class="trait magick linkable" data-path="magick.arete" data-active= "false">
+      <a class="stat-label tooltip">
+        {{m20e-locadigm paraData "magick." "arete"}}
+        {{#if data.magick.arete.specialisation}}
+        <span class="righttooltiptext">{{localize "M20E.labels.spe"}} : {{data.magick.arete.specialisation}}</span>
+        {{/if}}
+      </a>
+      <div class="ligne"></div>
+      <div class="edit-bar" data-locked="{{locks.magick}}">
+        <input name="data.magick.arete.value" type="text" value="{{data.magick.arete.value}}" data-dtype="Number" min="0" max="10"/>
+        <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a> 
+      </div>
+      <div class="bullet-display" data-locked="{{locks.magick}}">
+          {{{m20e-bulletDisplay data.magick.arete 10}}}
+      </div>
+    </div>
+    <div class="trait magick linkable" data-path="magick.resonance" data-active= "false">
+      <a class="stat-label tooltip">
+        {{m20e-locadigm paraData "magick." "resonance"}}
+        {{#if data.magick.resonance.signature}}
+        <span class="righttooltiptext">{{localize "M20E.labels.spe"}} : {{data.magick.resonance.signature}}</span>
+        {{/if}}
+      </a>
+      <div class="ligne"></div>
+      <div class="edit-bar" data-locked="{{locks.magick}}">
+        <input name="data.magick.resonance.value" type="text" value="{{data.magick.resonance.value}}" data-dtype="Number" min="0" max="5"/>
+        <a class="mini-button" data-action="edit" title="{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a> 
+      </div>
+      <div class="bullet-display" data-locked="{{locks.magick}}">
+          {{{m20e-bulletDisplay data.magick.resonance 5}}}
+      </div>
+    </div>
+  </div>
+</section>

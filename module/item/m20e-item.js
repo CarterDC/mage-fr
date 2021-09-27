@@ -88,22 +88,32 @@ export default class M20eItem extends Item {
   /*  Item Preparation                            */
   /* -------------------------------------------- */
 
+  getPath() {
+    const cat = CONFIG.M20E.traitToCat[this.data.type];
+    const subType = CONFIG.M20E.traitToCat[this.data.data.subType];
+    const key = utils.sanitize(this.data.name);
+    return `${cat}.${subType ? subType + '.' : ''}${key}`;
+  }
+
   /**
    * returns a pair {path, data} to populate the actor's stats in the _prepateItemStats()
    */
    getStatData() {
     const itemData = this.data;
-    const cat = CONFIG.M20E.traitToCat[itemData.type];
-    const subType = CONFIG.M20E.traitToCat[itemData.data.subType];
-    const key = utils.sanitize(itemData.name);
     return {
-      path: `${cat}.${subType ? subType + '.' : ''}${key}`,
+      path: this.getPath(),
       name: itemData.name,
       statData: {
         value: parseInt(itemData.data.value),
         itemId: itemData._id
       }
     }
+  }
+
+  toTrait() {
+    debugger
+    const itemData = this.data;
+    return new Trait({path: this.getPath(), itemId: this.data._id});
   }
 
   /** @override */

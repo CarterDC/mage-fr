@@ -13,6 +13,7 @@
     "systems/mage-fr/templates/actor/parts/cat-banner.hbs",
     "systems/mage-fr/templates/actor/parts/attributes-cat.hbs",
     "systems/mage-fr/templates/actor/parts/abilities-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/magick-cat.hbs",
     "systems/mage-fr/templates/actor/parts/spheres-cat.hbs",
     "systems/mage-fr/templates/actor/parts/bio-cat.hbs",
     "systems/mage-fr/templates/actor/parts/bg-cat.hbs",
