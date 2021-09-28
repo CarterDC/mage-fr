@@ -83,6 +83,7 @@
     "context": {
       "addJournal": "Créer un journal personnel.",
       "addXP": "Ajouter de l'XP.",
+      "editAliases" : "Éditer la liste d'alias",
       "editHealthMalus": "Éditer Malus Santé.",
       "editHealthMax": "Éditer Santé Max.",
       "editParadigm": "Éditer le paradigme.",
@@ -390,6 +391,7 @@
       "add": "Ajouter",
       "addDice": "Ajouter un Dé.",
       "aeToggleDisabled": "Activer/désactiver l'Active Effect.",
+      "aliasFrequency": "Fréquence d'apparition d'un alias",
       "canDropJE": "Saisissez une valeur ou bien glissez/déposez un Journal.",
       "compendiumEdit": "Éditable uniquement via Compendium.",
       "createJE": "Créer un journal pour ce perso.",
@@ -418,6 +420,7 @@
       "removeDice": "Supprimer un Dé.",
       "removeFromThrow": "Supprimer pour ce jet.",
       "specialisation": "Utilisé uniquement à partir du rang 4.",
+      "switch": "Intervertir",
       "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags.",
       "systemName": "Sert de référence, éditable par un GM.",
       "threshold": "Les bonus/malus ne peuvent pas changer la difficulté au delà de +3/-3.",
@@ -493,6 +496,7 @@
       "resonance": "Résonance"
     },
     "navtabs": {
+      "aliases": "ALIAS",
       "bio": "BIO",
       "description": "DESCRIPTION",
       "detail": "DETAILS",
@@ -511,6 +515,7 @@
         "knowledge": "Nvelle Connaissance"
       },
       "ActiveEffect": "Nvel ActiveEffect",
+      "alias": "Nvel alias",
       "background": "Nvel Historique",
       "consumable": "Nv Consommable",
       "contact": "Nv Contact",
@@ -555,6 +560,7 @@
       "addItemTitle": "Ajout d'un nouvel Item.",
       "addItemWarning": "<p>⚠ Les noms sont susceptibles d'être référencés par des règles <br> et ne peuvent, par conséquent, être modifiés <strong>que par un GM</strong>.</p>",
       "addXPContent": "<p>Saisissez le <b>Gain d'XP</b> pour '{name}'<br><i>valeur positive uniquement</i></p>",
+      "aliasesTitle": "Alias de {actorName}",
       "deleteContent": "<p>La suppression de '{name}' est <b>définitive</b>.<br>Confirmez-vous ?</p>",
       "deleteTitle": "Suppression de {name}",
       "dropParadigm": "<p>Écraser le paradigme existant ?</p>",
@@ -642,6 +648,8 @@
       "clickMe": "Cliquez moi !"
     }
   },
+  "SETTINGS.allowAliases": "Autoriser l'utilisation des alias.",
+  "SETTINGS.allowAliasesHint": "Les alias remplacement le nom du perso de façon aléatoire, décocher pour empecher de voir des alias.",
   "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",
   "SETTINGS.compendiumScope": "Nom du module de Compendiums.",
   "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",
@@ -652,6 +660,8 @@
   "SETTINGS.M20E.rulesHeader": "Règles M20E.",
   "SETTINGS.None": "Vous n'avez pas les permissions nécessaires pour voir / modifier les options de ce système.",
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
+  "SETTINGS.openWiki": "Consulter le Wiki",
+  "SETTINGS.openWikiHint": "Ouvre le wiki Mage-Fr dans une fenetre externe.",
   "SETTINGS.playersCanRemoveAggravated": "Peut soigner les blessures aggravées.",
   "SETTINGS.playersCanRemoveAggravatedHint": "Si déssactivé les joueurs ne pourront plus enlever eux-même leurs blessures aggravées, mais pourront encore en mettre.",
   "SETTINGS.playersCanSeeParadoxPoints": "Peut voir les points de Paradoxe.",

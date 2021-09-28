@@ -7,12 +7,12 @@
         <div class="mini-banner">
           <a class="mini-button decoy" data-locked="{{../locks.abilities}}"></a>
           <label class="column-header">{{localize (m20e-concat "M20E.subType." stKey)}}</label>
-          <a class="mini-button" data-category="abilities" data-sub-category="{{stKey}}" data-action="add" data-locked="{{../locks.abilities}}"><i class="fas fa-plus"></i></a>
+          <a class="mini-button" data-category="abilities" data-sub-category="{{stKey}}" data-action="add" data-locked="{{../locks.abilities}}" title="{{localize 'M20E.hints.add'}}"><i class="fas fa-plus"></i></a>
         </div>
         {{#each subTypes as |ability key|}}
         <div class="trait ability linkable" data-path="abilities.{{stKey}}.{{m20e-sanitize ability.name}}" data-item-id="{{ability._id}}" data-active= "false"> 
           <div class="trait-extra">{{ability.data.extra}}</div>
-          <a class="stat-label tooltip" data-item-id="{{ability._id}}">
+          <a class="stat-label drag-ready tooltip" data-item-id="{{ability._id}}">
             {{#if ability.data.displayName}}
             {{ability.data.displayName}}
             {{else}}

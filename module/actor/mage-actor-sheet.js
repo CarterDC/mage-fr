@@ -142,7 +142,7 @@ export default class M20eMageActorSheet extends M20eActorSheet {
    * @return {Boolean}
   */
   _isDropAllowed(item) {
-    if ( !super.isDropAllowed(item) ) { return false; }
+    if ( !super._isDropAllowed(item) ) { return false; }
     const itemData = item.data;
     //check against spheres levels
     if ( itemData.type === 'rote' && !item._isActuallyRollable(this.actor) ) {

@@ -217,6 +217,16 @@ export default class M20eActor extends Actor {
   /*  Shorthands                                  */
   /* -------------------------------------------- */
 
+  get name() {
+    if ( this.data.data.aliases.list.length > 0 && game.settings.get("mage-fr", "allowAliases") ) {
+      if ( Math.ceil(CONFIG.Dice.randomUniform() * 100) <= this.data.data.aliases.frequency ) {
+        const aliasIndex = Math.ceil(CONFIG.Dice.randomUniform() * this.data.data.aliases.list.length) - 1;
+        return this.data.data.aliases.list[aliasIndex];
+      }
+    }
+    return this.data.name;
+  }
+
   get isCharacter() {
     return this.data.data.isCharacter === true;
   }

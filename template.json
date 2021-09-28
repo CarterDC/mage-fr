@@ -144,11 +144,18 @@
             "displayDescription": ""
           }
         }
+      },
+      "aliases":{
+        "aliases": {
+          "list": [],
+          "frequency": 50
+        }
       }
     },
     "charmage": {
       "templates":[
         "playable",
+        "aliases",
         "resourceHealth",
         "resourceWillpower",
         "resourceMagePower",
@@ -226,12 +233,12 @@
       "possessedStuff": "",
       "carriedStuff": "",
 
-      "aliases": [],
       "link": {},
       "extra" : {}
     },
     "npcmage": {
       "templates":[
+        "aliases",
         "resourceHealth",
         "resourceWillpower",
         "resourceMagePower",
@@ -309,12 +316,12 @@
       "possessedStuff":"",
       "carriedStuff":"",
 
-      "aliases": [],
       "link": {},
       "extra" : {}
     },
     "npcsleeper": {
       "templates":[
+        "aliases",
         "resourceHealth",
         "resourceWillpower",
         "attributes"
@@ -375,7 +382,6 @@
       "possessedStuff":"",
       "carriedStuff":"",
 
-      "aliases": [],
       "link": {},
       "extra" : {}
     }
@@ -409,8 +415,8 @@
         "quantity": 0
       },
       "active": {
-        "isActive": false,
-        "isActivated": true
+        "isActive": true,
+        "isActivated": false
       },
       "mageRestricted": {
         "restricted" : ["charmage", "npcmage"]
