@@ -110,8 +110,17 @@ export default class M20eItem extends Item {
     }
   }
 
+  getExtendedTraitData(path) {
+    const itemData = this.data;
+    return {
+      name: itemData.name,
+      displayName: itemData.displayName,
+      value: this.actor._getStat(path, 'value'),
+      specialisation: itemData.specialisation
+    };
+  }
+
   toTrait() {
-    debugger
     const itemData = this.data;
     return new Trait({path: this.getPath(), itemId: this.data._id});
   }

@@ -36,8 +36,8 @@ export default class M20eMageActor extends M20eActor {
       foundry.utils.setProperty(actorData.data,
         game.i18n.localize('M20E.resources.magepower'), {
         value: actorData.data.resources.magepower.quintessence,
-        max: 20 + actorData.data.resources.magepower.paradox
-        //max: actorData.data.resources.magepower.quintessence + actorData.data.resources.magepower.paradox
+        //max: 20 + actorData.data.resources.magepower.paradox
+        max: actorData.data.resources.magepower.quintessence + actorData.data.resources.magepower.paradox
       });
     }
   }
@@ -93,8 +93,6 @@ export default class M20eMageActor extends M20eActor {
       }
     }
   }
-
-  
 /*
   async modQuintessence(mod) {
     const {quintessence, paradox}  = this.data.data.magepower;
@@ -111,6 +109,6 @@ export default class M20eMageActor extends M20eActor {
     if ( newValue + quintessence > 20 ) { newValue = 20 - quintessence; }
     //TODO : maybe add whisp to GM on certain paradox values
     return this.safeUpdateProperty('magepower.paradox', newValue);
-  }*/
-
+  }
+*/
 }

@@ -266,6 +266,12 @@
         background: rgba(0, 0, 0, 0.05);
         border-radius: 3px;
         padding: 3px;
+        input{
+          border: none;
+          font-size: var(--itemNameFontSize);
+          text-align: center;
+          background: none;
+        }
     }
     img {
         height: auto;
@@ -293,6 +299,22 @@
     min-height: 100px;
     height:auto;
     max-width: 100%;
+  }
+  .aliases-wrapper{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .grid{
+        width: 80%;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 6px;
+        padding: 5px 10px;
+        min-height: 26px;
+        input{
+          height: 20px;
+          margin: 2px 5px 2px 0px;
+        }
+      }
   }
   .rote-effect-wrapper{
     display: flex;

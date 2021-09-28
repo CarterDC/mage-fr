@@ -16,7 +16,7 @@
             <div class="ligne"></div>
             <div class="bullet-display" data-locked="true">
                 {{#m20e-forLoop 5}}
-                <span class="bullet" data-index="{{this}}" data-state="{{bulletState trait.value this}}" {{#if ../../bulletsClickLock}} data-clickable="false" {{else}} data-clickable="{{gt trait.data.value this}}" {{/if}}></span>
+                <span class="bullet" data-index="{{this}}" data-state="{{m20e-bulletState trait.value this}}" {{#if ../../bulletsClickLock}} data-clickable="false" {{else}} data-clickable="{{gt trait.data.value this}}" {{/if}}></span>
                 {{/m20e-forLoop}}
             </div>
             {{#if trait.canUseSpec}}

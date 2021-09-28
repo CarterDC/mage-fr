@@ -5,7 +5,7 @@
         {{#each items.backgrounds as |background key|}}
         <div class="trait background linkable" data-path="backgrounds.{{m20e-sanitize background.name}}" data-item-id="{{background._id}}" data-active= "false"> 
             <img class="trait-img" src="{{background.img}}"/>
-            <a class="stat-label tooltip" data-item-id="{{background._id}}">
+            <a class="stat-label drag-ready tooltip" data-item-id="{{background._id}}">
                 {{#if background.data.displayName}}
                 {{background.data.displayName}}
                 {{else}}

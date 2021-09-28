@@ -1,0 +1,40 @@
+<form class="{{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+      <div class="header-column">
+          <div class="header-row">
+              <input class="name" name="name" type="text" value="{{data.name}}" data-dtype="String"/>
+              <div class="item-type">
+                <input name="data.aliases.frequency" type="text" value="{{data.data.aliases.frequency}}" data-dtype="Number"  min="0" max="100" title="{{localize 'M20E.hints.aliasFrequency'}}"/>
+              </div>
+          </div>
+      </div>
+  </header>
+
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a data-tab="aliases">
+      <div class="mini-button decoy" data-hidden="false" data-locked="false"></div>
+      <label>{{localize "M20E.navtabs.aliases"}}</label>
+      <div class="mini-button" title="{{localize 'M20E.hints.add'}} {{localize 'M20E.new.alias'}}" data-action="add" data-hidden="false" data-locked="false"><i class="fas fa-plus"></i></div>
+    </a>
+    <a class="disabled"><label></label></a>
+  </nav>
+
+    <section class="sheet-body">
+        <section class="tab" data-group="primary" data-tab="aliases">
+          <br>
+          <div class="aliases-wrapper">
+            <div class="grid one-col">
+              {{#each aliases as |alias index|}}
+              <div class="trait" data-index="{{index}}" data-active="false">
+                  <input class="inline-edit" type="text" value="{{alias}}" data-dtype="String"/>
+                  <div class="edit-bar" data-locked="false">
+                      <a class="mini-button" data-action="switch" title = "{{localize 'M20E.hints.switch'}}"><i class="fas fa-sync-alt"></i></a>
+                      <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
+                  </div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </section>
+    </section>
+</form>

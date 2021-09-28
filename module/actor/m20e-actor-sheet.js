@@ -1,5 +1,6 @@
 // Import Applications
 import { FakeItem } from '../apps/fakeitem-sheet.js'
+import { AliasEditor } from '../apps/alias-edit.js'
 import DiceThrow from '../dice/dice-throw.js'
 import { Trait } from '../dice/dice.js'
 // Import Helpers
@@ -159,7 +160,7 @@ export default class M20eActorSheet extends ActorSheet {
       html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
 
       //ctx menu on the character name (paradigm edition...)
-      new ContextMenu(html, '.header-row.charname', this._getNameContextOptions());
+      new ContextMenu(html, '.name-wrapper', this._getNameContextOptions());
       //ctx menu on traits (edition / link)
       new ContextMenu(html, '.trait', this._getTraitContextOptions());
       //ctx menu for current xp field
@@ -363,7 +364,7 @@ export default class M20eActorSheet extends ActorSheet {
     //retrieve traits to roll
     const diceThrow = new DiceThrow({
       document: this.actor,
-      stats: this.getStatsToRoll()
+      traits: this.getActiveTraits()
     });
     if ( event.shiftKey ) {
       //throw right away
@@ -431,8 +432,8 @@ export default class M20eActorSheet extends ActorSheet {
       if ( CONFIG.M20E.dragDropCategories.includes(category) ) {
         const itemType = CONFIG.M20E.categoryToType[category];
         const newDragDrop = new DragDrop({
-          dragSelector:`.${itemType} .trait-label`,
-          dropSelector:`.${itemType} .trait-label`,
+          dragSelector:`.${itemType} .drag-ready`,
+          dropSelector:`.${itemType} .drag-ready`,
           callbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDrop.bind(this) }
         })
         this._dragDrop.push(newDragDrop);
@@ -703,6 +704,14 @@ export default class M20eActorSheet extends ActorSheet {
         },
         condition: () => {
           return this.actor.paradigm && false; 
+        }
+      },
+      { //Open the aliases edit app
+        name: game.i18n.localize('M20E.context.editAliases'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: () => {
+          const aliasEdit = new AliasEditor(this.actor);
+          aliasEdit.render(true);
         }
       }
     ]
@@ -992,12 +1001,12 @@ export default class M20eActorSheet extends ActorSheet {
 
   /**
   * Check all rollable categories for highlighted elements (ie data-active="true")
-  * return said elements as Stat instances for later consumption by Throw app.
+  * return said elements as Trait instances for later consumption by Throw app.
   * also toggle the active status of highlighted elements after we got them
   * 
-  * @return {Array} an Array of Stat instances that match chosen (highlighted) stats.
+  * @return {Array} an Array of Trait instances that match chosen (highlighted) stats.
   */
-   getStatsToRoll() { 
+   getActiveTraits() { 
     //overly complicated statement that could be easily understood if coded with twice the lines
     return CONFIG.M20E.rollableCategories.reduce((acc, cur) => {
       const elementList = $(this.element).find('.trait.' + cur + '[data-active ="true"]');

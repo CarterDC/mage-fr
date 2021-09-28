@@ -26,7 +26,7 @@ export default class DiceThrow {
     this._app = null;
     this._document = document; //either an actor or owned item
     this._traits = traits;
-    this._thowIndex = throwIndex;
+    this._thowIndex = throwIndex;//todo : put throwindex in the options !
     this.options = options;
     this._initialized = false;
   }
@@ -218,7 +218,7 @@ export default class DiceThrow {
     if ( this.isEffectRoll ) {
       //dice pool base is just arete
       //items might have an arete score (ie Wonders, Talismans...)
-      return this._document.data.data.arete || this.actor.data.data.traits.arete.value;
+      return this._document.data.data.arete || this.actor.data.stats.magick.arete.value;
     } else {
       //dice pool base is sum of all values
       return this._traits.reduce((acc, cur) => {

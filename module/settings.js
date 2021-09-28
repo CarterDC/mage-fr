@@ -1,12 +1,21 @@
-import { RulesConfig } from './apps/rules-config.js'
+//import { RulesConfig } from './apps/rules-config.js'
 
-class Dummy extends FormApplication {
-  render(){
+class DummyDiscord extends FormApplication {
+  render() {
     window.open("https://discord.gg/er4TUtV", "_blank");
   }
 }
 
-export const registerSystemSettings = function() {
+class DummyWiki extends FormApplication {
+  render() {
+    window.open("https://github.com/CarterDC/mage-fr/wiki", "_blank");
+    /*new FrameViewer("https://github.com/CarterDC/mage-fr/wiki", {
+      title: "Wiki Mage-Fr"
+    }).render(true);*/
+  }
+}
+
+export const registerSystemSettings = function () {
 
   Hooks.on('renderSettingsConfig', async function (app, html, data) {
     html.on('change', 'input', onInputChange);
@@ -17,67 +26,58 @@ export const registerSystemSettings = function() {
    * Note : as a conséquence, form is sumbitted and rerendered bypassing the submit button.
    * also, using the 'reset' button would F everything up, till world reload ^^
    */
-  const onInputChange = async function(event) {
+  const onInputChange = async function (event) {
     const inputElem = event.currentTarget;
     const [moduleName, settingName] = inputElem.name.split('.');
-    if ( moduleName !== game.system.id ) { return ;}
-    if ( inputElem.dataset.dtype !== 'Boolean' ) { return; }
+    if (moduleName !== game.system.id) { return; }
+    if (inputElem.dataset.dtype !== 'Boolean') { return; }
 
     //all settings that have the 'clicked setting' as a dependency
     const dependents = Array.from(game.settings.settings, ([key, value]) => (
-      {key, value}
-      )).filter( setting => (
-        setting.key.split('.')[0] === moduleName && setting.value.dependency === settingName
-      ));
+      { key, value }
+    )).filter(setting => (
+      setting.key.split('.')[0] === moduleName && setting.value.dependency === settingName
+    ));
     //if we got dependencies, update their config status, submit the form and rerender
-    if ( dependents.length > 0 ) {
-      dependents.forEach( dependent => {
-        const newValue = {...dependent.value,...{config:inputElem.checked}};
+    if (dependents.length > 0) {
+      dependents.forEach(dependent => {
+        const newValue = { ...dependent.value, ...{ config: inputElem.checked } };
         game.settings.settings.set(dependent.key, newValue);
       });
-      await game.settings.sheet._onSubmit(event, {updateData:{[inputElem.name]:inputElem.checked},preventClose: true});
+      await game.settings.sheet._onSubmit(event, { updateData: { [inputElem.name]: inputElem.checked }, preventClose: true });
       game.settings.sheet.render(true);
     }
   }
 
-  const onSettingChange = async function(newValue, settingName) {
+  const onSettingChange = async function (newValue, settingName) {
     Hooks.callAll('systemSettingChanged', newValue, settingName);
   }
 
   /**
    * Display button to open a link to Mage-fr discord server
-   * uses dummy formApp
+   * uses Dummy formApp
    */
   game.settings.registerMenu("mage-fr", "discordInvite", {
     name: "SETTINGS.discordInvite",
     label: "SETTINGS.discordInvite",
     hint: "SETTINGS.discordInviteHint",
     icon: "fab fa-discord",
-    type: Dummy,
+    type: DummyDiscord,
     restricted: false
   });
 
   /**
-   * Display button to open the rules config panel
+   * Display button to open an ingame frame of the wiki
+   * uses Dummy formApp
    */
-/*   game.settings.registerMenu("mage-fr", "rulesConfig", {
-    name: "SETTINGS.rulesConfig",
-    label: "SETTINGS.rulesConfig",
-    hint: "SETTINGS.rulesConfigHint",
-    icon: "fas fa-dice",
-    type: RulesConfig,
+   game.settings.registerMenu("mage-fr", "openWiki", {
+    name: "SETTINGS.openWiki",
+    label: "SETTINGS.openWiki",
+    hint: "SETTINGS.openWikiHint",
+    icon: "fab fa-github",
+    type: DummyWiki,
     restricted: false
-  });*/
-
-  /**
-   * Display button to open the rules config panel
-   */
-/*   game.settings.register("mage-fr", "rules", {
-    scope: "world",
-    config: false,
-    default: [{type: 'talent', value: 2}, {type: 'skill', value: 3}],
-    type: Object
-  });*/
+  });
 
   /**
    * Chosen compendium module name (scope of the compendiumCollections)
@@ -107,7 +107,7 @@ export const registerSystemSettings = function() {
    * Choice of 5 malus sets for untrained Talent, Skills and Knowledges
    * penalty to the threshold
    */
-   game.settings.register("mage-fr", "untrainedMalus", {
+  game.settings.register("mage-fr", "untrainedMalus", {
     name: "SETTINGS.untrainedMalus",
     hint: "SETTINGS.untrainedMalusHint",
     scope: "world",
@@ -168,7 +168,7 @@ export const registerSystemSettings = function() {
   /**
    * Whether players can remove aggravated wounds
    */
-   game.settings.register("mage-fr", "playersCanRemoveAggravated", {
+  game.settings.register("mage-fr", "playersCanRemoveAggravated", {
     name: "SETTINGS.playersCanRemoveAggravated",
     hint: "SETTINGS.playersCanRemoveAggravatedHint",
     scope: "world",
@@ -180,7 +180,7 @@ export const registerSystemSettings = function() {
   /**
    * Whether players can see their paradox points(and interract with them)
    */
-   game.settings.register("mage-fr", "playersCanSeeParadoxPoints", {
+  game.settings.register("mage-fr", "playersCanSeeParadoxPoints", {
     name: "SETTINGS.playersCanSeeParadoxPoints",
     hint: "SETTINGS.playersCanSeeParadoxPointsHint",
     scope: "world",
@@ -189,16 +189,50 @@ export const registerSystemSettings = function() {
     type: Boolean
   });
 
-    /**
-   * Whether players will see visual cues of effect threshold recommandations
+  /**
+ * Whether players will see visual cues of effect threshold recommandations
+ */
+  game.settings.register("mage-fr", "displayThresholdCues", {
+    name: "SETTINGS.displayThresholdCues",
+    hint: "SETTINGS.displayThresholdCuesHint",
+    scope: "world",
+    config: true,
+    default: true,
+    type: Boolean
+  });
+
+  /**
+   * Whether actor names can use the aliases system
    */
-     game.settings.register("mage-fr", "displayThresholdCues", {
-      name: "SETTINGS.displayThresholdCues",
-      hint: "SETTINGS.displayThresholdCuesHint",
+  game.settings.register("mage-fr", "allowAliases", {
+    name: "SETTINGS.allowAliases",
+    hint: "SETTINGS.allowAliasesHint",
+    scope: "world",
+    config: true,
+    default: true,
+    type: Boolean
+  });
+
+    /**
+   * Display button to open the rules config panel
+   */
+  /*   game.settings.registerMenu("mage-fr", "rulesConfig", {
+      name: "SETTINGS.rulesConfig",
+      label: "SETTINGS.rulesConfig",
+      hint: "SETTINGS.rulesConfigHint",
+      icon: "fas fa-dice",
+      type: RulesConfig,
+      restricted: false
+    });*/
+
+  /**
+   * Display button to open the rules config panel
+   */
+  /*   game.settings.register("mage-fr", "rules", {
       scope: "world",
-      config: true,
-      default: true,
-      type: Boolean
-    });
+      config: false,
+      default: [{type: 'talent', value: 2}, {type: 'skill', value: 3}],
+      type: Object
+    });*/
 
 }
