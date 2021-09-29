@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import DiceThrow from '../dice/dice-throw.js'
+import DiceThrower from '../dice/dice-thrower.js'
 import { Trait, MageThrow } from '../dice/dice.js'
 import M20eItem from './m20e-item.js'
 
@@ -94,7 +94,7 @@ export default class M20eRollableItem extends M20eItem {
  
      //retrieve traits to roll
      const traits = this.getTraitsToRoll(throwIndex);
-     const diceThrow = new DiceThrow({
+     const diceThrower = new DiceThrower({
        document: this,
        traits: traits,
        throwIndex: throwIndex,
@@ -102,10 +102,10 @@ export default class M20eRollableItem extends M20eItem {
      });
      if ( shiftKey ) {
        //throw right away
-       diceThrow.throwDice();
+       diceThrower.throwDice();
      } else {
        //display dice throw dialog
-       diceThrow.render(true);
+       diceThrower.render(true);
      }
    }
 

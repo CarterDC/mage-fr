@@ -62,8 +62,12 @@ export const registerHandlebarsHelpers = function() {
     return forcePrefix !== num ? `${forcePrefix}${num}` : `+${num}`;
   })
 
-  Handlebars.registerHelper('m20e-disabled', function(locked) {
-    return locked ? 'disabled' : '';
+  Handlebars.registerHelper('m20e-disabled', function(isDisabled) {
+    return isDisabled ? 'disabled' : '';
+  })
+
+  Handlebars.registerHelper('m20e-enabled', function(isEnabled) {
+    return isEnabled ? '' : 'disabled';
   })
 
   Handlebars.registerHelper("m20e-clickableBullet", function(availEffects, key) {

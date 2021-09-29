@@ -443,6 +443,10 @@
   flex: 10 10;
   text-align: center;
 }
+.m20e .category.magick .category-banner,
+.m20e .category.spheres .category-banner {
+  margin-bottom: 12px;
+}
 .m20e .category.rotes .grid,
 .m20e .category.aeffects .grid,
 .m20e .category.events .grid {
@@ -1182,7 +1186,23 @@ li.chat-message .card .card-footer .item-img {
   color: var(--m20e-badRed);
 }
 .mage {
-  --titleColor: var(--titleColor);
+  --titleColor: #4c39ae;
+  --highlightColor: #4c39ae;
+  --hoverColor: #4c39ae;
+  --titleFontFam: "Abbess";
+  --charNameFontSize: 20px;
+  --itemNameFontSize: 18px;
+  --navFontSize: 15px;
+  --catFontSize: 16px;
+  --mainFontFam: "signika", sans-serif;
+  --mainFontSize: 14px;
+  --smallFontSize: 12px;
+}
+@font-face {
+  font-family: "Abbess";
+  src: url("../assets/fonts/AbbessRegular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
 }
 .tech {
   --titleColor: #3a537a;

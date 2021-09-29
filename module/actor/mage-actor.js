@@ -1,7 +1,7 @@
 // Import Documents
 import M20eActor from './m20e-actor.js'
 
-import DiceThrow from '../dice/dice-throw.js'
+import DiceThrower from '../dice/dice-thrower.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
@@ -47,7 +47,7 @@ export default class M20eMageActor extends M20eActor {
   }
 
   getThrowFlavor(xTraitsToRoll=[]) {
-    if ( DiceThrow.getIsEffectRoll(xTraitsToRoll) ) {
+    if ( DiceThrower.getIsEffectRoll(xTraitsToRoll) ) {
       //pure magical throw => arete roll + all spheres with value in the effect 
       const throwEffect = xTraitsToRoll.map(effect => 
         `${effect.name} (${effect.value})`

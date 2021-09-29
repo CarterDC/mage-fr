@@ -24,8 +24,8 @@ import M20eAeSheet from './module/apps/m20e-ae-sheet.js'
 import M20eParadigmSheet from './module/item/paradigm-sheet.js'
 import M20eRoteSheet from './module/item/rote-sheet.js'
 import M20eRollableSheet from './module/item/rollable-sheet.js'
-import DiceThrow from './module/dice/dice-throw.js'
-import DiceDialog from './module/dice/dice-throw-dialog.js'
+import DiceThrower from './module/dice/dice-thrower.js'
+
 // Other Imports
 import { M20E } from './module/config.js'
 import { registerSystemSettings } from "./module/settings.js";
@@ -47,7 +47,7 @@ Hooks.once('init', async function () {
 
   game.m20e = { //store some things here for later access
     config: M20E,
-    mageMacro: DiceThrow.fromMacro,
+    mageMacro: DiceThrower.fromMacro,
     socketCallbacks: {
       sacrificeWillpower: (messageId) => chat.sacrificeWillpower(messageId)
     }
@@ -108,8 +108,7 @@ Hooks.once('init', async function () {
 
   //DICE thingies
   CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later access
-  CONFIG.Dice.rolls.push(dice.MageRoll); //make it official
-  CONFIG.M20E.diceThrowApp = DiceDialog; //store class here for later access
+  CONFIG.Dice.rolls.push(dice.MageRoll); //Add it to the list of roll classes
   CONFIG.Dice.terms["s"] = dice.DieSuccess; //new dice term
   dice.registerDieModifier(); //adds the 'xs' (success on explode) modifier
   dice.registerInitiative();
@@ -127,17 +126,16 @@ Hooks.once('init', async function () {
 
 Hooks.once('ready', async function () {
 
-  //display welcome message
+  const sysVersion = game.system.data.version;
+  //display welcome message or version warning
   if (!game.user.getFlag("mage-fr", "welcomeMessageShown") ) {
     chat.welcomeMessage();
-  }
-  //display version warning
-  const sysVersion = game.system.data.version;
-  if ( sysVersion !== game.user.getFlag("mage-fr", `versionWarning`) ) {
+  } else if ( sysVersion !== game.user.getFlag("mage-fr", `versionWarning`) ) {
     chat.versionWarningMessage(sysVersion);
   }
 
-  Hooks.on('hotbarDrop', DiceThrow.toMacro);
+  //manages drops on th ehotbar (macros or throws)
+  Hooks.on('hotbarDrop', DiceThrower.toMacro);
 
   //create a hook on rollMode setting change
   const onRollModeChange = function(newRollMode) {

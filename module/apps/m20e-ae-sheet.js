@@ -73,7 +73,8 @@ export default class M20eAeSheet extends DocumentSheet {
    * @type {Actor}
    */
   get actor() {
-    return this.object.parent.isOwned ? this.object.parent.actor : this.object.parent;
+    return this.object.parent.isOwned ? this.object.parent.actor :
+      (this.object.parent.documentName === "Actor" ? this.object.parent : null);
   }
 
   /* -------------------------------------------- */
@@ -94,7 +95,7 @@ export default class M20eAeSheet extends DocumentSheet {
     //prepare effects array with predigested data
     sheetData.effects = this.effect.data.changes.map(effect => {
       const {traitKey} = M20eAeSheet.splitKey(effect.key);
-      let localizedKey = this.actor.locadigm(traitKey);
+      let localizedKey = this.actor?.locadigm(traitKey) || game.i18n.localize(`M20E.${traitKey}`);
       if ( localizedKey === `M20E.${traitKey}` ) {
         localizedKey = foundry.utils.getProperty(CONFIG.M20E.stats, traitKey);
       }
@@ -151,7 +152,7 @@ export default class M20eAeSheet extends DocumentSheet {
     if ( this.options.editable ) {
 
     }
-    if ( game.user.isGM ) {
+    if ( game.user.isGM && !this.object.parent.isOwned) {
       html.find('img[data-edit]').click(ev => this._onEditImage(ev));
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
@@ -182,19 +183,6 @@ export default class M20eAeSheet extends DocumentSheet {
     return await this.effect.update({'changes': changes});
   }
 
-/* -------------------------------------------- */
-
-  /**
-   * Handle requests to configure the default sheet used by this Item
-   * @private
-   */
-  _onConfigureSheet(event) {
-  event.preventDefault();
-    new EntitySheetConfig(this.item, {
-      top: this.position.top + 40,
-      left: this.position.left + ((this.position.width - 400) / 2)
-    }).render(true);
-  }
 
   /* -------------------------------------------- */
 
@@ -218,6 +206,13 @@ export default class M20eAeSheet extends DocumentSheet {
       left: this.position.left + 10
     });
     return fp.browse();
+  }
+
+  /** @inheritdoc */
+  async _updateObject(event, formData) {
+    if ( !this.object.id ) return;
+    if ( this.object.parent.isOwned ) { return; }
+    return this.object.update(formData);
   }
 
   /* -------------------------------------------- */

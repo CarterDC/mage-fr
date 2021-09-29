@@ -415,8 +415,7 @@
         "quantity": 0
       },
       "active": {
-        "isActive": true,
-        "isActivated": false
+        "isActive": true
       },
       "mageRestricted": {
         "restricted" : ["charmage", "npcmage"]

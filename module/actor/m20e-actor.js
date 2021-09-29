@@ -53,12 +53,17 @@ export default class M20eActor extends Actor {
     this.data.stats = {};
     this._prepareActorStats();
     this._prepareItemsStats();
+    this._prepareResources(); 
   }
+
+  /* -------------------------------------------- */
 
   _prepareActorStats() {
     const actorData = this.data;
     this._prepareCategoryStats('attributes');
   }
+
+  /* -------------------------------------------- */
 
   _prepareCategoryStats(category) {
     const actorData = this.data;
@@ -72,6 +77,8 @@ export default class M20eActor extends Actor {
       }
     }
   }
+
+  /* -------------------------------------------- */
 
   /**
    * populates the actor's stats object with path and statData from 'stat' items 
@@ -94,6 +101,46 @@ export default class M20eActor extends Actor {
     }
   }
 
+  /* -------------------------------------------- */
+
+  /**
+   * add dummy resources in actorData in the form {value, max}, to be used by token bars.
+   * also computes secondary health stats 'status' and 'malus',
+   * according to health values and the list of maluses.
+   */
+   _prepareResources() {
+    const WT = CONFIG.M20E.WOUNDTYPE;
+    const actorData = this.data;
+    
+    //create willpower property with {value, max} pair
+    const willpower = actorData.data.resources.willpower;
+    foundry.utils.setProperty(actorData.data,
+        game.i18n.localize('M20E.resources.willpower'), {
+        value: willpower.max - willpower[WT.BASHING],
+        max: willpower.max
+    });
+    //Add willpower to the secondary stats
+    const willpowerMax = this.data.data.resources.willpower.max;
+    this._setStat('secondary.willpower', {value: willpowerMax});
+    foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
+    
+    
+    //create health property with {value, max} pair
+    const health = actorData.data.resources.health;
+    foundry.utils.setProperty(actorData.data,
+      game.i18n.localize('M20E.resources.health'), {
+        value: health.max - health[WT.BASHING],
+        max: health.max
+    });
+    //prepare an array of integers from the comma separated string
+    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
+    //create derived data for health resource, to be displayed and used later
+    health.status = utils.safeLocalize(`M20E.healthStatus.${health[WT.BASHING]}`);
+    health.malus = health[WT.BASHING] > 0 ? maluses[(health[WT.BASHING] - 1)] : 0;
+  }
+
+  /* -------------------------------------------- */
+
   /**
    * Called by prepareEmbeddedEntities() during the second phase of data preparation
    * mostly vanilla function
@@ -106,6 +153,8 @@ export default class M20eActor extends Actor {
 
     // Organize non-disabled effects by their application priority
     const changes = this.effects.reduce((changes, e) => {
+      //Mage-Fr specific
+      this.manageLinkedEffect(e);
       if ( e.data.disabled ) return changes;
       return changes.concat(e.data.changes.map(c => {
         c = foundry.utils.duplicate(c);
@@ -146,6 +195,21 @@ export default class M20eActor extends Actor {
     this.overrides = foundry.utils.expandObject(overrides);
   }
 
+  /* -------------------------------------------- */
+
+  manageLinkedEffect(effect) {
+    const origins = effect.data.origin.split('.');
+    if ( origins[2] !== 'Item' ) { return; }
+    const item = this.items.get(origins[3])
+    if ( !item ) { return; }
+
+    if ( item.isUnequiped ) {
+      effect.data.disabled = true;
+    }
+  }
+
+  /* -------------------------------------------- */
+
   /**
    * third function in the prepareData sequence
    * preparation of data and stats that might be dependant on items and AE being prepared/applied
@@ -154,11 +218,9 @@ export default class M20eActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData();
 
-    this._prepareResources(); 
-
    //Add willpower, init etc... to the stats
-   const wiilpowerMax = this.data.data.resources.willpower.max;
-   this._setStat('secondary.willpower', {value: wiilpowerMax});
+   const willpowerMax = this.data.data.resources.willpower.max;
+   this._setStat('secondary.willpower', {value: willpowerMax});
    foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
 
     const dext = this._getStat('attributes.dext','value');
@@ -172,42 +234,14 @@ export default class M20eActor extends Actor {
     }
   }
 
-  /**
-   * add dummy resources in actorData in the form {value, max}, to be used by token bars.
-   * also computes secondary health stats 'status' and 'malus',
-   * according to health values and the list of maluses.
-   */
-    _prepareResources() {
-    const WT = CONFIG.M20E.WOUNDTYPE;
-    const actorData = this.data;
-
-    //create willpower property with {value, max} pair
-    const willpower = actorData.data.resources.willpower;
-    foundry.utils.setProperty(actorData.data,
-        game.i18n.localize('M20E.resources.willpower'), {
-        value: willpower.max - willpower[WT.BASHING],
-        max: willpower.max
-    });
-
-    //create health property with {value, max} pair
-    const health = actorData.data.resources.health;
-    foundry.utils.setProperty(actorData.data,
-      game.i18n.localize('M20E.resources.health'), {
-        value: health.max - health[WT.BASHING],
-        max: health.max
-    });
-
-    //prepare an array of integers from the comma separated string
-    const maluses = health.malusList.split(',').map(v => (parseInt(v)));
-    //create derived data for health resource, to be displayed and used later
-    health.status = utils.safeLocalize(`M20E.healthStatus.${health[WT.BASHING]}`);
-    health.malus = health[WT.BASHING] > 0 ? maluses[(health[WT.BASHING] - 1)] : 0;
-  }
+  /* -------------------------------------------- */
 
   _getStat(path, propKey=null) {
     const stat = foundry.utils.getProperty(this.data.stats, (propKey ? `${path}.${propKey}` : path));
     return utils.isNumeric(stat) ? parseInt(stat) : stat;
   }
+
+  /* -------------------------------------------- */
 
   _setStat(path, stat) {
     foundry.utils.setProperty(this.data.stats, path, stat);
@@ -217,7 +251,7 @@ export default class M20eActor extends Actor {
   /*  Shorthands                                  */
   /* -------------------------------------------- */
 
-  get name() {
+  get alias() {
     if ( this.data.data.aliases.list.length > 0 && game.settings.get("mage-fr", "allowAliases") ) {
       if ( Math.ceil(CONFIG.Dice.randomUniform() * 100) <= this.data.data.aliases.frequency ) {
         const aliasIndex = Math.ceil(CONFIG.Dice.randomUniform() * this.data.data.aliases.list.length) - 1;
@@ -230,12 +264,15 @@ export default class M20eActor extends Actor {
   get isCharacter() {
     return this.data.data.isCharacter === true;
   }
+
   get isNPC() {
-    return this.data.data.isCharacter !== true;
+    return !this.isCharacter;
   }
+
   get isMage() { //obviously overriden in mageActor
     return false;
   }
+
   get paradigm() {
     return this.data.data.paraItem || null;
   }
@@ -536,13 +573,16 @@ export default class M20eActor extends Actor {
   /**
    * Extends an array of {@link Trait} with relevant values to Throw dices
    */
-   extendTraits(traits) {
-    traits.map(trait => {
-      if ( trait.isItem ) {
-        trait.data = {...trait.data, ...this.getItemFromId(trait.itemId).getExtendedTraitData(trait.path)};
-      } else {
-        trait.data = {...trait.data, ...this.getExtendedTraitData(trait.path)};
-      }
+  getExtendedStats(stats) {
+    return stats.map( trait => {
+      const xData = trait.isItem ? 
+        this.getItemFromId(trait.itemId).getExtendedTraitData(trait.path) :
+        this.getExtendedTraitData(trait.path);
+      return new Trait({
+        path: trait.path,
+        itemId: trait.itemId,
+        data: {...trait.data, ...xData}
+      });
     });
   }
 

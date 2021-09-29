@@ -10,6 +10,17 @@
                   <label>{{localize "M20E.labels.value"}} : </label>
                   <input name="data.value" type="text" value="{{data.value}}" data-dtype="Number" min="0" max="5"/>
               </div>
+              {{#if showEffectField}}
+              <div class= "field" title="{{localize 'M20E.hints.itemEffect'}}">
+                  <label>{{localize "M20E.labels.itemEffect"}} : </label><br>
+                  {{#if hasEffect}}
+                  <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
+                  <a class="mini-button" data-action="remove" data-disabled="{{m20e-not isGM}}" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
+                  {{else}}
+                  <a class="mini-button" data-action="add" data-disabled="{{m20e-not isGM}}" title="{{localize 'M20E.hints.add'}} {{localize 'M20E.new.ActiveEffect'}}"><i class="fas fa-plus"></i></a>
+                  {{/if}}
+              </div>
+              {{/if}}
               {{#if isGM}}
               <div class= "field" title="{{localize 'M20E.hints.systemName'}}">
                   <label>{{localize "M20E.labels.systemName"}} : </label>

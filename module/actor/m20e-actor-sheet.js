@@ -1,7 +1,8 @@
 // Import Applications
 import { FakeItem } from '../apps/fakeitem-sheet.js'
 import { AliasEditor } from '../apps/alias-edit.js'
-import DiceThrow from '../dice/dice-throw.js'
+import DiceThrower from '../dice/dice-thrower.js'
+import BaseThrow from '../dice/base-throw.js'
 import { Trait } from '../dice/dice.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
@@ -155,7 +156,7 @@ export default class M20eActorSheet extends ActorSheet {
       //edition of item value when cat is unlocked
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
       //dice throwing (Big Dice Button)
-      html.find('.dice-button').click(this._onDiceClick.bind(this));
+      html.find('.dice-button').click(this._onBigDiceButtonClick.bind(this));
       //click on the 'i' buttons (blue or grey)
       html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
 
@@ -247,7 +248,7 @@ export default class M20eActorSheet extends ActorSheet {
     const dataset = buttonElem.dataset;
 
     //check if action is allowed before going any further
-    if ( dataset.disabled ) {
+    if ( dataset.disabled == false) {
       ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
       return;
     }
@@ -323,7 +324,7 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       case 3://right button
         if ( state >= CONFIG.M20E.WOUNDTYPE.BASHING ) {
-          const canHealAggravated = game.settings.get("mage-fr", "playersCanRemoveAggravated");
+          const canHealAggravated = game.user.isGM || game.settings.get("mage-fr", "playersCanRemoveAggravated");
           if ( state !== CONFIG.M20E.WOUNDTYPE.AGGRAVATED || canHealAggravated ) {
             this.actor.heal(resourceName, 1, state);
           }
@@ -360,18 +361,19 @@ export default class M20eActorSheet extends ActorSheet {
    * 
    * @param  {} event
    */
-  _onDiceClick(event) {
-    //retrieve traits to roll
-    const diceThrow = new DiceThrow({
-      document: this.actor,
-      traits: this.getActiveTraits()
+   _onBigDiceButtonClick(event) {
+    //try and get a new DiceThrow instance from our actor and chosen traits
+    const baseThrow = new BaseThrow({
+      stats: this.getActiveTraits()
     });
+    const diceThrower = DiceThrower.create(this.actor, baseThrow);
+    if ( !diceThrower ) { return; }
     if ( event.shiftKey ) {
       //throw right away
-      diceThrow.throwDice();
+      diceThrower.throwDice();
     } else {
       //display dice throw dialog
-      diceThrow.render(true);
+     // diceThrow.render(true);
     }
   }
 
@@ -579,7 +581,7 @@ export default class M20eActorSheet extends ActorSheet {
       if ( !embeddedDoc ) { return; }
       docName = embeddedDoc.name;
       docClass = 'Item';
-    } 
+    }
 
     const confirmation = await Dialog.confirm({
       options: {classes: ['dialog', 'm20e']},
@@ -664,7 +666,8 @@ export default class M20eActorSheet extends ActorSheet {
       desc.dataset.expanded = false;
     } else {
       //collapses the expanded one (shouldn't be more than one actually)
-      const expandedOne = $(this.buttonElem).find('.one-liner-desc[data-expanded ="true"]');
+      const gridElem = buttonElem.closest('.grid');
+      const expandedOne = $(gridElem).find('.one-liner-desc[data-expanded ="true"]');
       if ( expandedOne.length !== 0 ) {
         expandedOne[0].dataset.expanded = false;
       }

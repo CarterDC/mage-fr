@@ -1,4 +1,10 @@
 // Namespace
+export const THROWMODE = {
+  DEDUCT_FAILURES: 0b001,
+  XPLODE_SUCCESS: 0b010,
+  RESULT_CRITICAL: 0b100
+}
+
 export const M20E = {};
 
 M20E.WOUNDTYPE = {

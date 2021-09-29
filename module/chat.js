@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from './utils/utils.js'
 import { log } from "./utils/utils.js";
-import DiceThrow from './dice/dice-throw.js'
+import DiceThrower from './dice/dice-thrower.js'
 import ParadoxDialog from './apps/paradox-dlg.js'
 import { Trait, MageThrow } from './dice/dice.js'
 
@@ -110,7 +110,7 @@ export async function sacrificeWillpower(messageId) {
 
   //check if actor still has willpower to spend
   const willpower = actor.data.data.resources.willpower;
-  if ( willpower.aggravated > 0 ) {
+  if ( willpower[CONFIG.M20E.WOUNDTYPE.AGGRAVATED] < willpower.max) {
     //update message with modified roll
     const roll = message._roll;
     roll._total += 1;
@@ -120,7 +120,7 @@ export async function sacrificeWillpower(messageId) {
       roll: roll.toJSON()
     });
     //remove the sacrificed willpower point
-    actor.addWound('willpower');
+    actor.wound('willpower', 1);
   } else {
     ui.notifications.error(game.i18n.localize('M20E.notifications.notEnoughWillpower'));
   }
@@ -143,12 +143,12 @@ async function sameThrow(liElem) {
     return Trait.fromData(traitData.path, traitData.data, traitData.itemId);
   });
   //todo add some of the throwData as options of the new throw ?
-  const diceThrow = new DiceThrow({
+  const diceThrower = new DiceThrower({
     document: actor,
     traits: traits,
     options: throwData.options
   });
-  diceThrow.render(true);
+  diceThrower.render(true);
 }
 
 async function rollParadox(liElem) {
@@ -285,6 +285,29 @@ export class M20eChatMessage extends ChatMessage {
     super(data, context);
   }
 
+  /**
+   * Allows for the use of actor.alias in lieu of actor.name
+   * actor.alias is a getter using mage-fr's aliases system.
+   * @override
+   */
+   /*get alias() {
+    const speaker = this.data.speaker;
+    if ( speaker.alias ) return speaker.alias;
+    else if ( game.actors.has(speaker.actor) ) return game.actors.get(speaker.actor).alias;
+    else return this.user?.name ?? "";
+  }*/
+  /*static getSpeaker({scene, actor, token, alias}={}) {
+    if ( !alias ) {
+
+    }
+    super.getSpeaker({scene, actor, token, alias});
+  }*/
+
+  /**
+   * Allows for stealth rolls (are not displayed at all, instead of "???" messages)
+   * Also allows for other uses of the same principle
+   * @override
+   */
   applyRollMode(rollMode) {
     if (rollMode === 'stealthroll') {
       this.data.update({['flags.stealthroll']: true});

@@ -51,6 +51,9 @@ export default class M20eItemSheet extends ItemSheet {
     //sheetData.data is a standard js Object created from the item's PREPARED data
     const itemData = sheetData.data; 
     sheetData.data = itemData.data; //shorthand for convenience to avoid 'data.data' all the time
+    
+    sheetData.showEffectField = !this.item.isOwned || this.item.effects.size;
+    sheetData.hasEffect = this.item.effects.size;
 
     //other usefull data
     sheetData.config = CONFIG.M20E;
@@ -75,7 +78,6 @@ export default class M20eItemSheet extends ItemSheet {
     if ( this.options.editable ) {
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
       html.find('.meritflaw select').change(this._onSubtypeChange.bind(this));
-      html.on('blur', '.header-edit-name', this._onChangeInput.bind(this));
     }
     if ( game.user.isGM ) {
       
@@ -94,6 +96,12 @@ export default class M20eItemSheet extends ItemSheet {
     event.preventDefault();
     const buttonElem = event.currentTarget;
     const dataset = buttonElem.dataset;
+
+    //check if action is allowed before going any further
+    if ( dataset.disabled == false ) {
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.gmPermissionNeeded'));
+      return;
+    }
 
     switch (dataset.action) {
       case 'lock':
@@ -118,11 +126,37 @@ export default class M20eItemSheet extends ItemSheet {
   }
 
   //to be implemented by subClasses
-  async addItem(buttonElem) {}
+  async addItem(buttonElem) {
+    if ( this.item.isOwned ) {
+      ui.notifications.error(game.i18n.localize('M20E.notifications.aEffectOwnedItem'));
+      return;
+    }
+    const effectData = {
+      label: game.i18n.format('M20E.effectName', {name: this.item.data.name}),
+      icon: CONFIG.M20E.defaultImg['ActiveEffect'],
+      origin: 'added-manually',
+      tint: '#000000'
+    };
+    this.item.createEmbeddedDocuments('ActiveEffect', [effectData], {renderSheet: true});
+  }
   //to be implemented by subClasses
-  async editItem(buttonElem) {}
+  async editItem(buttonElem) {
+    if ( this.item.isOwned ) {
+      ui.notifications.error(game.i18n.localize('M20E.notifications.aEffectOwnedItem'));
+    }
+    const effectId = Array.from(this.item.effects.keys())[0];
+    const aEffect = this.item.effects.get(effectId);
+    aEffect.sheet.render(true);
+  }
   //to be implemented by subClasses
-  async removeItem(buttonElem) {}
+  async removeItem(buttonElem) {
+    if ( this.item.isOwned ) {
+      ui.notifications.error(game.i18n.localize('M20E.notifications.aEffectOwnedItem'));
+      return;
+    }
+    const effectId = Array.from(this.item.effects.keys())[0];
+    this.item.deleteEmbeddedDocuments('ActiveEffect', [effectId]);
+  }
 
   /**
   *  @override
