@@ -1,13 +1,12 @@
 /**************************************************************
  * Classes and functions related to dice rolls                 
  * class Trait
- * class MageThrow
+ * class BaseThrow
  * class DieSuccess extends Die
  * class MageRoll extends Roll
  * function registerInitiative()
  * function registerDieModifier() adds a new die modifier 'XS'
  */
-
 
 // Import Helpers
 import * as utils from '../utils/utils.js'
@@ -16,12 +15,8 @@ import { log } from "../utils/utils.js";
 
 /**
  * Helper class
- * Uniquely defines a Trait object by it's path relative to ActorData.data.traits.
- * Traits can be 'extended' storing roll necessary infos in the 'data' property.
- * can also contain an itemId associated to the trait path.
- * 
- * Note : a path could be 1 of 3 forms "category", "category.key" or "category.subType.key"
- * "willpower", "spheres.corr", "abilities.talent.art"
+ * Uniquely defines a Trait object by it's path and/or itemId
+ * they can be used relative to actorData.data or actorData.stats depending on the context
  */
  export class Trait {
 
@@ -58,14 +53,14 @@ import { log } from "../utils/utils.js";
 
   /**
    * Returns an instance of a Trait created from arguments
-   * not sure it's usefull to do this that way, might drop it.
-   * @param  {String} path
-   * @param  {Object} data={} 
-   * @param  {String} itemId='' super optionnal
+   * checks for truthy path property
+   * usually called from BaseThrow.fromData()
+   * @param  {Object} obj {path, data={}, itemId=''}
    * 
    * @returns {Trait|null} a Trait object made from the arguments or null
    */
-  static fromData(path, data={}, itemId='') { 
+  static fromData(obj) { 
+    const {path, data={}, itemId=''} = obj;
     if ( !path ) { return null; }
     return new Trait({path: path, data: data, itemId: itemId});
   }
@@ -171,43 +166,142 @@ import { log } from "../utils/utils.js";
   }
 }
 
-
 /**
- * helper class 
- * Defines a throw usually stored in rollable items (rotes, weapons etc...)
+ * Helper class
+ * Defines a throw by an array of Traits, some data and some throw options
+ * Used by rollable Items and the DiceThrower
  */
- export class MageThrow {
-  constructor(obj={}) {
-    this.name = obj.name || '';
-    this.description = obj.description || '';
-    this.traits = obj.traits || [];
-    this.options = obj.options || {};
-  }
+export class BaseThrow {
+
   /**
-   * Check whether actor is able to/allowed to perform this throw according to the rules
-   * @param  {M20eActor} actor
+   * @param  {[Trait,]} stats an array of {@link Trait} instances
    */
-  isRollable(actor) {
-    if( this.traits.every( trait => trait.category === "spheres" ) ) {
-      //throw is a magical effect => actor MUST have all spheres at the requiered level
-      return this.traits.every( trait => {
-        const actorValue = foundry.utils.getProperty(actor.data.data.traits, `${trait.path}.value`);
-        return actorValue >= trait.value;
-      });
-    } else {
-      const settings = game.settings.get("mage-fr", "untrainedMalus");
-      const abilities = this.traits.filter( trait => trait.category === 'abilities');
-      if ( !settings.includes('X') || abilities.length === 0 ) { return true; }
-      //if throw constains a 0 level ability => check settings regarding ability subType
-      const subTypes = {talents: 0, skills: 1, knowledges: 2};
-      return !abilities.some( ability => {
-        const actorValue = foundry.utils.getProperty(actor.data.data.traits, `${ability.path}.value`);
-        return actorValue === 0 && settings.substr(subTypes[ability.subType],1) === 'X';
-      });
+  constructor(stats, data={}, options={}) {
+    this.stats = stats || [];
+    this.data = foundry.utils.mergeObject(this.constructor.defaultData, data);
+    this.options = foundry.utils.mergeObject(this.constructor.defaultOptions, options);
+  }
+
+  static get defaultData() {
+    return {
+      name: '',
+      type: 'default',
+      displayDescription: ''
     }
   }
 
-  getFlavor(actor) {
+  static get defaultOptions() {
+    return {
+      difficultyBase: game.settings.get("mage-fr", "difficultyBase"),
+      difficultyMods: {
+        throwMod: 0
+      },
+      dicePoolMods: {
+        throwMod: 0
+      },
+      successMods: {
+        throwMod: 0
+      }
+    }
+  }
+
+  /**
+   * Returns a new BaseThrow instance from raw throwData
+   * usually called from rollable item prepareData()
+   * @param  {Object} obj {stats, data={}, options={}}
+   * 
+   * @returns {BaseThrow}
+   */
+  static fromData(obj) {
+    let {stats=[], data={}, options={}} = obj;
+    stats = stats.map( traitData => {
+      return traitData instanceof Trait ? traitData : Trait.fromData(traitData);
+    });
+    return new BaseThrow(stats, data, options);
+  }
+
+  /**
+   * Throw is magick only if it's a fully fledged magick effect or
+   * if it's just an arete throw.
+   * @param {[Trait,]} stats an array of Traits instances
+   * 
+   * @returns {Boolean}
+   */
+  static isMagickThrow(stats) {
+    if ( BaseThrow.isEffectThrow(stats) ) {
+      return true;
+    } else {
+      return stats.length === 1 && stats[0]?.path === "magick.arete";
+    }
+  }
+
+  /**
+   * A Magick Effect is defined by there being only 'spheres' in the throw
+   * @param {[Trait,]} stats an array of Traits instances
+   * 
+   * @returns {Boolean} whether every Trait in the throw constitutes a magical effect
+   */
+  static isEffectThrow(stats) {
+    return stats.length !== 0 && stats.every( stat => stat.category === "spheres" );
+  }
+
+  /**
+   * Magick Effect Level is the max value of a sphere traits in the throw
+   * @param {[Trait,]} stats an array of Traits instances (theses must be extended with correct data)
+   * 
+   * @returns {Number} max level in the magick effect
+   */
+  static getThrowLevel(stats) {
+    return stats.reduce((acc, cur) => (Math.max(acc, cur.value)), 0);
+  }
+
+  isAbleToThrow(actor) {
+    try {
+      this.stats.forEach( stat => M20eThrow.validateStat(actor, stat, true));
+    } catch (e) {
+      if (e.msg) { //todo : maybe add error params
+        ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
+      } else {
+        ui.notifications.error(game.i18n.localize(`M20E.notifications.impossibleThrow`));
+      }
+      return false;
+    }
+    return true;
+  }
+
+  static validateStat(actor, stat, strict=true) { //strict only applies to untrained malus
+
+    if ( !stat || !stat instanceof Trait ) { throw { msg: 'traitInvalid' }; } //when in doubt...
+    const { category, subType } = stat.split();
+    const statValue = actor._getStat(stat.path, 'value');
+
+    if (category === 'spheres') {
+      //cannot use a sphere in an effect if it's value null or not high enough
+      if ( !statValue ) {
+        throw { msg: 'insufficentStatValue' };
+      } else if (stat?.data?.valueOverride) { //in case of a rote
+        if ( statValue < stat.data.valueOverride) {
+          throw { msg: 'insufficentStatValue' };
+        }
+      }
+    } else if ( category === 'abilities' && !statValue ) {
+      //untrained ability subTypes might be forbidden in system settings
+      const settings = game.settings.get("mage-fr", "untrainedMalus");
+      //settings is 3 digit string => first char for talents, second char for skills and third char for knowledges
+      const subTypes = { talents: 0, skills: 1, knowledges: 2 };
+      const malus = settings.substr(subTypes[subType], 1);
+      if (strict && isNaN(malus)) {
+        throw { msg: 'insufficentStatValue' };
+      }
+    }
+  }
+
+    //todo : flavor ?
+    getFlavor(actor) {
+      let flavor = 'blabla';
+      return flavor;
+    }
+  /*getFlavor(actor) {
     let flavor = '';
     if ( actor ) {
       flavor = this.traits.map(trait => {
@@ -223,8 +317,19 @@ import { log } from "../utils/utils.js";
     const thresholdMod = this.options.thresholdMod || 0;
     const thresholdTotal = parseInt(thresholdBase) + parseInt(thresholdMod);
     return `(${flavor} ${game.i18n.localize('M20E.labels.thrsh')}${thresholdTotal})`;
+  }*/
+  //todo : create throw from string containing @paths & jsoned options (from element dataset)
+  static fromElement(elem) {
+
   }
+  //todo : create full element from data & options
+  toElement() {
+    return null;
+  }
+
 }
+
+
 
 
 /**

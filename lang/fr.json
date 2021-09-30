@@ -33,6 +33,7 @@
     },
     "blabla": "Blabla...",
     "paradigmName": "Paradigme de {name}",
+    "effectName": "Effet de {name}",
     "bio": {
       "appearance": "Apparence",
       "apparentAge": "Age<br>apparent",
@@ -75,7 +76,7 @@
       "magick": "Magye",
       "meritsflaws": "Atout & Handicap",
       "rotes": "Routine",
-      "secondary": "Stat secondaire",
+      "secondary": "Secondaire",
       "spheres": "Sphère",
       "story": "Background",
       "willpower": "Volonté"
@@ -403,6 +404,7 @@
       "edit": "Éditer",
       "extra": "Inutile et variable.",
       "imgClick": "Cliquer pour choisir une image",
+      "itemEffect": "Limité à 1 ActiveEffect par item. ⚠ Modifiable uniquement hors d'un actor.",
       "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
       "lexiconValue": "Nouvelle traduction/paradigme pour le chemin ci-dessus.",
       "magepower": {
@@ -423,8 +425,8 @@
       "switch": "Intervertir",
       "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags.",
       "systemName": "Sert de référence, éditable par un GM.",
-      "threshold": "Les bonus/malus ne peuvent pas changer la difficulté au delà de +3/-3.",
-      "thresholdCue": {
+      "difficulty": "Les bonus/malus ne peuvent pas changer la difficulté au delà de +3/-3.",
+      "difficultyCue": {
         "coincidental": "Effet coincidental.",
         "vulgar": "Effet vulgaire.",
         "vulgarWitness": "Effet vulgaire avec témoins."
@@ -458,16 +460,22 @@
       "damage": "Dégâts",
       "date": "Date",
       "dicePool": "Grpt. de Dés",
+      "dicePoolMod": "Modificateur au Grpt.",
+      "difficultyBase": "Diff. de base",
+      "difficultyMod": "Modificateur à la diff.",
       "displayDescription": "Description Personnalisée",
       "displayDesc": "Description Perso.",
       "equipable": "Équipable",
       "equiped": "Équipé",
       "extra": "Extra",
+      "faction": "Faction",
+      "itemEffect": "⚠ Active Effect",
       "key": "Clef",
       "mode": "Mode",
       "opacity": "Opacité",
       "origin": "origin",
       "personnalJEs": "Journaux Personnels",
+      "picture": "Photo",
       "pool": "Grpt.",
       "quantity": "Quantité",
       "range": "Portée",
@@ -479,13 +487,14 @@
       "stat": "Stat",
       "studyPoints": "Points d'étude",
       "subType": "Sous-Type",
+      "successMod": "Seuil de succès",
       "synergyFlavor": "Saveur de la synergie",
       "systemDescription": "⚠ Description Système",
       "systemName": "⚠ Nom système",
-      "threshold": "Difficulté",
+      "difficulty": "Difficulté",
       "throw": "LANCER",
       "throwOptions": "⚠ Options du jet",
-      "thrsh": "Diff.",
+      "diff": "Diff.",
       "totalXP": "Total XP",
       "trait": "Trait",
       "type": "Type",
@@ -494,6 +503,11 @@
     "magick": {
       "arete": "Arété",
       "resonance": "Résonance"
+    },
+    "magickType": {
+      "coincidental": "Coincidental",
+      "vulgar": "Vulgaire",
+      "vulgarWitness": "Vulgaire avec témoins"
     },
     "navtabs": {
       "aliases": "ALIAS",
@@ -504,6 +518,8 @@
       "extra": "EXTRA",
       "lexicon": "LEXIQUE",
       "magye": "MAGYE",
+      "picture": "PHOTO",
+      "stats": "STATS",
       "stuff": "MATOS",
       "traits": "TRAITS",
       "throws": "JETS"
@@ -530,6 +546,7 @@
     },
     "notifications": {
       "actorNotFound": "L'acteur '{actorRef}' n'est pas trouvable !",
+      "aEffectOwnedItem": "Foundry ne permet pas de modifier les ActiveEffects sur un item possédé par un acteur.<br> En revanche vous pouvez drag-drop l'item dans la sidebar puis l'éditer.",
       "duplicateName": "Il existe déjà un item de ce type nommé '{name}' !",
       "gmPermissionNeeded": "Vous devez demander à un GM de faire celà !",
       "impossibleThrow": "Ce jet est irréalisable !",
@@ -612,7 +629,7 @@
       "skills": "Compétences",
       "talent": "Talent",
       "talents": "Talents",
-      "handtohand": "Corps-à-corps",
+      "handtohand": "Mains nues",
       "melee": "Arme de Mêlée",
       "throw": "Arme de jet",
       "lightfire": "Arme à feu (légère)",
@@ -622,6 +639,13 @@
       "dynamic": "Dynamique",
       "entropic": "Entropique",
       "static": "Statique"
+    },
+    "throwMod": {
+      "base": "Base",
+      "userMod": "Utilisateur",
+      "throwMod": "Jet",
+      "healthMod": "Santé",
+      "untrainedMod": "Non-entraîné"
     },
     "throwresult": {
       "isWillpowered": "+ 1 Succès (Volonté)",
@@ -650,13 +674,13 @@
   },
   "SETTINGS.allowAliases": "Autoriser l'utilisation des alias.",
   "SETTINGS.allowAliasesHint": "Les alias remplacement le nom du perso de façon aléatoire, décocher pour empecher de voir des alias.",
-  "SETTINGS.baseRollThreshold": "Difficulté de base des jets de dés.",
+  "SETTINGS.difficultyBase": "Difficulté de base des jets de dés.",
   "SETTINGS.compendiumScope": "Nom du module de Compendiums.",
   "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",
   "SETTINGS.discordInvite": "Discord",
   "SETTINGS.discordInviteHint": "Rejoindre le server discord 'Mage-Fr' (Carter_DC#1097 pour me contacter).",
-  "SETTINGS.displayThresholdCues": "Aide visuelle à la difficulté des effets.",
-  "SETTINGS.displayThresholdCuesHint": "Recommandations de diff pour la magie coincidentale/vulgaire, indexées sur la difficulté de base et le niveau max dans l'effet.",
+  "SETTINGS.displayDifficultyCues": "Aide visuelle à la difficulté des effets.",
+  "SETTINGS.displayDifficultyCuesHint": "Recommandations de diff pour la magie coincidentale/vulgaire, indexées sur la difficulté de base et le niveau max dans l'effet.",
   "SETTINGS.M20E.rulesHeader": "Règles M20E.",
   "SETTINGS.None": "Vous n'avez pas les permissions nécessaires pour voir / modifier les options de ce système.",
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",

@@ -1,10 +1,10 @@
 // Import Documents
 import M20eItemSheet from './m20e-item-sheet.js'
-import {ThrowSheet} from '../apps/throw-sheet.js'
+import {ThrowSheet} from '../throw-sheet.js'
 // Import Helpers
-import { Trait, MageThrow } from '../dice/dice.js'
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+import { Trait, BaseThrow } from '../../dice/dice-helpers.js'
+import * as utils from '../../utils/utils.js'
+import { log } from "../../utils/utils.js";
 
 /**
  * @extends {M20eItemSheet}
@@ -24,8 +24,8 @@ export default class M20eRollableSheet extends M20eItemSheet {
   getData(options) {
     const sheetData = super.getData(options);
     sheetData.locks = this.locks;
-    sheetData.throws = sheetData.data.throws.map( mageThrow => {
-      return { ...duplicate(mageThrow), flavor: mageThrow.getFlavor(this.actor)}
+    sheetData.throws = sheetData.data.throws.map( baseThrow => {
+      return { ...duplicate(baseThrow), flavor: baseThrow.getFlavor(this.actor)}
     });
     return sheetData;
   }
@@ -45,17 +45,17 @@ export default class M20eRollableSheet extends M20eItemSheet {
 
 
   /**
-   * Note : In this context 'Item' refers to a MageThrow object int he data.throws array
+   * Note : In this context 'Item' refers to a BaseThrow object int he data.throws array
    *  @override
    */
   async addItem(buttonElem) {
     const throws = duplicate(this.item.data.data.throws);
-    throws.push(new MageThrow({name: game.i18n.localize('M20E.new.throw')}));
+    throws.push(new BaseThrow([], {name: game.i18n.localize('M20E.new.throw')}));
     return await this.item.update({['data.throws']: throws});
   }
 
   /**
-   * Note : In this context 'Item' refers to a MageThrow object int he data.throws array
+   * Note : In this context 'Item' refers to a BaseThrow object int he data.throws array
    *  @override
    */
   async editItem(buttonElem) {
@@ -65,7 +65,7 @@ export default class M20eRollableSheet extends M20eItemSheet {
   }
 
   /**
-   * Note : In this context 'Item' refers to a MageThrow object int he data.throws array
+   * Note : In this context 'Item' refers to a BaseThrow object int he data.throws array
    *  @override
    */
   async removeItem(buttonElem) {

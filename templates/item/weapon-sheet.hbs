@@ -49,12 +49,15 @@
                 {{#each throws as |throw index|}}
                 <div class="trait throw" data-index="{{index}}">
                     <label class="trait-label">
-                        {{throw.name}}
+                        {{throw.data.name}}
                     </label>
                     <div class="bullet-display" data-locked="{{../locks.throws}}">
                         {{throw.flavor}}
                     </div>
                     <div class="edit-bar" data-locked="{{../locks.throws}}">
+                        {{#if index}}
+                        <a class="mini-button" data-action="moveup" title = "{{localize 'M20E.hints.moveup'}}"><i class="fas fa-chevron-up"></i></a>
+                        {{/if}}
                         <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
                         <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
                     </div>

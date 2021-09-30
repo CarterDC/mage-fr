@@ -1,8 +1,8 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait } from '../dice/dice.js'
-import * as chat from "../chat.js";
+import { registerInitiative, Trait } from '../dice/dice-helpers.js'
+import * as chat from "../utils/chat.js";
 
 /**
  * Item class for base items (items that just contain data), 
@@ -155,7 +155,15 @@ export default class M20eItem extends Item {
   }
 
   get isActive() { // todo : not sure atm
-    return this.data.data.effects?.length > 0;
+    return this.data.data.isActive === true;
+  }
+
+  get isEquipable() {
+    return this.data.data.isEquipable === true;
+  }
+
+  get isUnequiped() {
+    return this.isEquipable && this.data.data.equiped === false;
   }
 }
 

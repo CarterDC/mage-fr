@@ -1,5 +1,21 @@
 .mage{
-  --titleColor: var(--titleColor);
+  @font-face {
+    font-family: "Abbess";
+    src: url("../assets/fonts/AbbessRegular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+  }
+  --titleColor: #4c39ae; // var(--titleColor);
+  --highlightColor: #4c39ae; // var(--highlightColor);
+  --hoverColor: #4c39ae; // var(--hoverColor);
+  --titleFontFam: "Abbess"; // var(--titleFontFam);
+  --charNameFontSize : 20px; // var(--charNameFontSize);
+  --itemNameFontSize : 18px; // var(--itemNameFontSize);
+  --navFontSize: 15px; // var(--navFontSize);
+  --catFontSize: 16px; // var(--catFontSize);
+  --mainFontFam: "signika", sans-serif; // var(--mainFontFam);
+  --mainFontSize: 14px; // var(--titleColor);
+  --smallFontSize: 12px; // var(--smallFontSize);
 }
 .tech{
   --titleColor: #3a537a; // var(--titleColor)

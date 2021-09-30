@@ -33,7 +33,7 @@ import { log } from "../utils/utils.js";
   /** @override */
   static get defaultOptions () {
     return mergeObject(super.defaultOptions, {
-      classes: ['m20e', 'dialogue'],
+      classes: ['m20e', 'dialog'],
       template: 'systems/mage-fr/templates/apps/dice-throw.hbs',
       title: game.i18n.localize('M20E.diceThrows.diceThrows'),
       width: 300,
@@ -50,9 +50,9 @@ import { log } from "../utils/utils.js";
     appData.dt = dt;
     appData.traits = dt._traits;
 
-    //creates an array for the radio options : value from 2 to 10, checked or ''
-    appData.radioOptions = [...Array(9)].map((value, index) => {
-      index = index + 2; //we start from 2 to 10
+    //creates an array for the radio options : value from 3 to 9, checked or ''
+    appData.radioOptions = [...Array(7)].map((value, index) => {
+      index = index + 3; //we start from 3 to 9
       const checked = dt.thresholdTotal === (index) ? 'checked' : '';
       return {value: `${index}`, visualCue: this.getVisualCue(index), ...{checked}};
     });

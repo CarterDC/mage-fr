@@ -2,56 +2,65 @@
     <header class="sheet-header">
         <div class="header-column">
             <div class="header-row">
-                <input class="name" name="name" type="text" value="{{data.name}}" data-dtype="String" title="{{localize 'M20E.hints.name'}}"/>
+                <input class="name" name="data.name" type="text" value="{{data.data.name}}" data-dtype="String" title="{{localize 'M20E.hints.name'}}"/>
                 <span class="item-type">{{{localize 'ITEM.TypeThrow'}}}</span>
             </div>
         </div>
     </header>
-    {{> "systems/mage-fr/templates/item/parts/nav-block.hbs" secondTab='traits'}}
+    {{> "systems/mage-fr/templates/item/parts/nav-block.hbs" secondTab='stats'}}
 
     <section class="sheet-body">
         <section class="tab" data-group="primary" data-tab="detail">
             <br> {{!-- todo replace br with css rule on item section tab margintop --}}
             <div class="grid two-col">
                 <div class= "field">
-                    <label>{{localize "M20E.labels.threshold"}} : </label>
-                    <input name="options.thresholdBase" type="text" value="{{data.options.thresholdBase}}" data-dtype="Number" min="2" max="10"/>
+                    <label>{{localize "M20E.labels.difficultyBase"}} : </label>
+                    <input name="options.difficultyBase" type="text" value="{{data.options.difficultyBase}}" data-dtype="Number" min="0" max="9"/>
                 </div>
                 <div class= "field">
-                    <label>{{localize "M20E.labels.thresholdMod"}} : </label>
-                    <input name="options.thresholdMod" type="text" value="{{data.options.thresholdMod}}" data-dtype="Number" min="-3" max="3"/>
+                    <label>{{localize "M20E.labels.difficultyMod"}} : </label>
+                    <input name="options.difficultyMods.throwMod" type="text" value="{{data.options.difficultyMods.throwMod}}" data-dtype="Number" min="-3" max="3"/>
                 </div>
                 <div class= "field">
                     <label>{{localize "M20E.labels.dicePoolMod"}} : </label>
-                    <input name="options.dicePoolMod" type="text" value="{{data.options.dicePoolMod}}" data-dtype="Number" min="-3" max="3"/>
+                    <input name="options.dicePoolMods.throwMod" type="text" value="{{data.options.dicePoolMods.throwMod}}" data-dtype="Number" min="-3" max="3"/>
                 </div>
                 <div class= "field">
-                    <label>{{localize "M20E.labels.throwOptions"}} : </label>
-                    <input class="inline-edit" data-update-path="options" type="text" value="{{data.throwOptions}}" data-dtype="String"/>
+                    <label>{{localize "M20E.labels.successMod"}} : </label>
+                    <input name="options.successMods.throwMod" type="text" value="{{data.options.successMods.throwMod}}" data-dtype="Number" min="-5" max="5"/>
                 </div>
             </div>
           <div class= "field">
               <label>{{localize "M20E.labels.displayDescription"}} : </label>
-<textarea name="description">{{data.description}}</textarea>
+<textarea name="data.description">{{data.data.description}}</textarea>
           </div>
+          {{#if isGM}}
+          <div class= "field">
+              <label>{{localize "M20E.labels.throwOptions"}} : </label>
+<textarea class="inline-edit" data-update-path="options">{{data.throwOptions}}</textarea>
+          </div>
+          {{/if}}
         </section>
 
-        <section class="tab" data-group="primary" data-tab="traits">
+        <section class="tab" data-group="primary" data-tab="stats">
           <br>
             <div class="throw-traits-wrapper">
             <div class="category grid one-col">
-                {{#each data.traits as |trait index|}}
+                {{#each data.stats as |stat index|}}
                 <div class="trait throw-trait" data-index="{{index}}" data-active="false">
                     <label class="trait-label">
-                        {{trait.path}}
+                        {{stat.path}}
                     </label>
                     <div class="ligne"></div>
-                    <div class="bullet-display" data-locked="{{../locks.traits}}">
+                    <div class="bullet-display" data-locked="{{../locks.stats}}">
                         <label class="trait-label">
-                            {{trait.localizedName}}
+                            {{stat.localizedName}}
                         </label>
                     </div>
-                    <div class="edit-bar" data-locked="{{../locks.traits}}">
+                    <div class="edit-bar" data-locked="{{../locks.stats}}">
+                        {{#if index}}
+                        <a class="mini-button" data-action="moveup" title = "{{localize 'M20E.hints.moveup'}}"><i class="fas fa-chevron-up"></i></a>
+                        {{/if}}
                         <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
                         <a class="mini-button" data-action="remove" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
                     </div>

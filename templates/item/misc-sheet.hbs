@@ -20,6 +20,19 @@
                   <input name="data.quantity" type="text" value="{{data.quantity}}" data-dtype="Number" min="0" max="100"/>
               </div>
               {{/if}}
+              {{#if data.isEquipable}}
+              {{#if showEffectField}}
+              <div class= "field" title="{{localize 'M20E.hints.itemEffect'}}">
+                  <label>{{localize "M20E.labels.itemEffect"}} : </label><br>
+                  {{#if hasEffect}}
+                  <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
+                  <a class="mini-button" data-action="remove" data-disabled="{{m20e-not isGM}}" title = "{{localize 'M20E.hints.remove'}}"><i class="fas fa-trash"></i></a>
+                  {{else}}
+                  <a class="mini-button" data-action="add" data-disabled="{{m20e-not isGM}}" title="{{localize 'M20E.hints.add'}} {{localize 'M20E.new.ActiveEffect'}}"><i class="fas fa-plus"></i></a>
+                  {{/if}}
+              </div>
+              {{/if}}
+              {{/if}}
           </div>
           <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
               <label>{{localize "M20E.labels.displayDescription"}} : </label>

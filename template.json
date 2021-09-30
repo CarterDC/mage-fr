@@ -390,6 +390,7 @@
     "types": [
       "ability",
       "background",
+      "contact",
       "event",
       "meritflaw",
       "misc",
@@ -415,8 +416,7 @@
         "quantity": 0
       },
       "active": {
-        "isActive": true,
-        "isActivated": false
+        "isActive": true
       },
       "mageRestricted": {
         "restricted" : ["charmage", "npcmage"]
@@ -441,6 +441,18 @@
       "displayName":"",
       "systemDescription": "",
       "displayDescription":""
+    },
+    "contact":{
+      "templates":[
+        "stat"
+      ],
+      "faction":{
+        "displayValue": "",
+        "link": {}
+      },
+      "displayName":"",
+      "displayDescription":"",
+      "link": {}
     },
     "event": {
       "displayDescription": "",

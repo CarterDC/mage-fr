@@ -1,8 +1,8 @@
 // Import Applications
 import M20eActorSheet from './m20e-actor-sheet.js'
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+import * as utils from '../../utils/utils.js'
+import { log } from "../../utils/utils.js";
 
 /**
 * Not really necessary atm but will be much cleaner if other actor types are added later on

@@ -1,5 +1,5 @@
 // Import Helpers
-import { Trait, MageThrow } from '../dice/dice.js'
+import { Trait, BaseThrow } from '../dice/dice-helpers.js'
 import { TraitSelect } from './trait-select-dialog.js'
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
@@ -13,7 +13,7 @@ export class ThrowSheet extends DocumentSheet {
   constructor(item, throwIndex = 0, options={}) {
     super(item, options);
     this.throwIndex = throwIndex;
-    this.locks = {traits: true};
+    this.locks = {stats: true};
 
     if ( this.item.isOwned ) {
       //add the paradigm css class (if any) to the default options.
@@ -50,14 +50,23 @@ export class ThrowSheet extends DocumentSheet {
 
   /** @inheritdoc */
   get title() {
-    return `${this.object.name} - ${game.i18n.localize('ITEM.TypeThrow')} : ${this.mageThrow.name}`;
+    return `${this.object.name} - ${game.i18n.localize('ITEM.TypeThrow')} : ${this.baseThrow.data.name}`;
   }
 
   get item() {
     return this.object;
   }
 
-  get mageThrow() {
+  /**
+   * The Actor instance which owns this item.
+   * might be null if item is not owned
+   * @type {Actor}
+   */
+  get actor() {
+  return this.object.isOwned ? this.object.actor : null;
+  }
+
+  get baseThrow() {
     return this.item.data.data.throws[this.throwIndex];
   }
 
@@ -68,17 +77,22 @@ export class ThrowSheet extends DocumentSheet {
       cssClass: isEditable ? "editable" : "locked",
       editable: isEditable,
       document: this.document,
+      data: duplicate(this.baseThrow),
       limited: this.document.limited,
       options: this.options,
       owner: this.document.isOwner,
       title: this.title
     };
 
-    sheetData.data = duplicate(this.mageThrow);
-    sheetData.data.traits.forEach( trait => {
-      trait.localizedName = foundry.utils.getProperty(CONFIG.M20E.traits, trait.path);
+    sheetData.data.stats.forEach( stat => {
+      stat.localizedName = this.actor?.locadigm(stat.path) || game.i18n.localize(`M20E.${stat.path}`);
+      if ( stat.localizedName === `M20E.${stat.path}` ) {
+        stat.localizedName = foundry.utils.getProperty(CONFIG.M20E.stats, stat.path);
+      }
     });
+
     sheetData.data.throwOptions = JSON.stringify(sheetData.data.options) || {};
+
     sheetData.locks = this.locks;
     sheetData.isGM = game.user.isGM;
 
@@ -104,7 +118,7 @@ export class ThrowSheet extends DocumentSheet {
     const updatePath = inputElem.dataset.updatePath || 'data.value';
     let updateValue = inputElem.value;
 
-    let currThrow = duplicate(this.mageThrow);
+    let currThrow = duplicate(this.baseThrow);
     if ( updatePath === 'options' ) {
       currThrow.options = {...currThrow.options, ...JSON.parse(inputElem.value)}
     } else {
@@ -120,7 +134,7 @@ export class ThrowSheet extends DocumentSheet {
   async _updateObject(event, formData) {
     if ( !this.object.id ) return;
     let dirty = false;
-    let currThrow = duplicate(this.mageThrow);
+    let currThrow = duplicate(this.baseThrow);
     for ( let [fieldName, value] of Object.entries(foundry.utils.flattenObject(formData)) ) {
       if ( foundry.utils.getProperty(currThrow, fieldName) !== value ) {
         //log({index, propertyName, value});
@@ -142,6 +156,7 @@ export class ThrowSheet extends DocumentSheet {
       event.preventDefault();
       return this.render();
     }
+    //todo cast basediff in a number if needed !
     super._onChangeInput(event);
   }
 
@@ -182,7 +197,7 @@ export class ThrowSheet extends DocumentSheet {
   //to be implemented by subClasses
   async addItem(buttonElem) {
     const throws = duplicate(this.item.data.data.throws);
-    throws[this.throwIndex].traits.push(new Trait({path: 'attributes.stre'}));
+    throws[this.throwIndex].stats.push(new Trait({path: 'attributes.stre'}));
     return await this.item.update({['data.throws']: throws});
   }
 
@@ -190,15 +205,15 @@ export class ThrowSheet extends DocumentSheet {
   async editItem(buttonElem) {
     const traitIndex = buttonElem.closest(".trait").dataset.index;
     const throws = duplicate(this.item.data.data.throws);
-    const currPath = throws[this.throwIndex].traits[traitIndex].path;
+    const currPath = throws[this.throwIndex].stats[traitIndex].path;
 
     const newTraitPath = await TraitSelect.prompt({
-      name: throws[this.throwIndex].name,
+      name: throws[this.throwIndex].data.name,
       key: currPath
     });
     if ( !newTraitPath || newTraitPath === currPath ) { return; }
 
-    throws[this.throwIndex].traits[traitIndex].path = newTraitPath;
+    throws[this.throwIndex].stats[traitIndex].path = newTraitPath;
     return await this.item.update({['data.throws']: throws});
   }
 
@@ -206,7 +221,7 @@ export class ThrowSheet extends DocumentSheet {
   async removeItem(buttonElem) {
     const traitIndex = buttonElem.closest(".trait").dataset.index;
     const throws = duplicate(this.item.data.data.throws);
-    throws[this.throwIndex].traitsToRoll.splice(traitIndex, 1);
+    throws[this.throwIndex].stats.splice(traitIndex, 1);
     return await this.item.update({['data.throws']: throws});
   }
 

@@ -11,7 +11,9 @@ class DummyWiki extends FormApplication {
     window.open("https://github.com/CarterDC/mage-fr/wiki", "_blank");
     /*new FrameViewer("https://github.com/CarterDC/mage-fr/wiki", {
       title: "Wiki Mage-Fr"
-    }).render(true);*/
+    }).render(true);
+    doesn't work, too bad
+    */
   }
 }
 
@@ -92,20 +94,20 @@ export const registerSystemSettings = function () {
   });
 
   /**
-   * Base roll difficulty (threshold)
+   * Base roll difficulty
    */
-  game.settings.register("mage-fr", "baseRollThreshold", {
-    name: "SETTINGS.baseRollThreshold",
+  game.settings.register("mage-fr", "difficultyBase", {
+    name: "SETTINGS.difficultyBase",
     scope: "world",
     config: true,
     default: 6,
     type: Number,
-    onChange: (newValue) => onSettingChange(newValue, 'baseRollThreshold')
+    onChange: (newValue) => onSettingChange(newValue, 'difficultyBase')
   });
 
   /**
    * Choice of 5 malus sets for untrained Talent, Skills and Knowledges
-   * penalty to the threshold
+   * penalty to the Difficulty
    */
   game.settings.register("mage-fr", "untrainedMalus", {
     name: "SETTINGS.untrainedMalus",
@@ -190,11 +192,11 @@ export const registerSystemSettings = function () {
   });
 
   /**
- * Whether players will see visual cues of effect threshold recommandations
+ * Whether players will see visual cues of effect Difficulty recommandations
  */
-  game.settings.register("mage-fr", "displayThresholdCues", {
-    name: "SETTINGS.displayThresholdCues",
-    hint: "SETTINGS.displayThresholdCuesHint",
+  game.settings.register("mage-fr", "displayDifficultyCues", {
+    name: "SETTINGS.displayDifficultyCues",
+    hint: "SETTINGS.displayDifficultyCuesHint",
     scope: "world",
     config: true,
     default: true,

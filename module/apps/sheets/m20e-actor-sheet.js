@@ -1,17 +1,17 @@
 // Import Applications
-import { FakeItem } from '../apps/fakeitem-sheet.js'
-import { AliasEditor } from '../apps/alias-edit.js'
-import DiceThrow from '../dice/dice-throw.js'
-import { Trait } from '../dice/dice.js'
+import { FakeItem } from '../fakeitem-sheet.js'
+import { AliasEditor } from '../alias-edit.js'
+import DiceThrower from '../../dice/dice-thrower.js'
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { DynaCtx } from "../utils/classes.js";
-import * as chat from "../chat.js";
+import * as utils from '../../utils/utils.js'
+import { log } from "../../utils/utils.js";
+import { Trait, BaseThrow } from '../../dice/dice-helpers.js'
+import { DynaCtx } from "../../utils/classes.js";
+import * as chat from "../../utils/chat.js";
 
 /**
  * Provides Sheet interraction management for npcsleepers type actors
- * also base sheet class for all other actor sheets.
+ * also base sheet class for all other actor types.
  * @extends {ActorSheet}
  */
 export default class M20eActorSheet extends ActorSheet {
@@ -86,6 +86,7 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.items.meritsflaws.flaws = sheetData.items.filter((itemData) => ( (itemData.type === "meritflaw") && (itemData.data.subType === "flaw") ));
     //the rest of the items
     sheetData.items.backgrounds = sheetData.items.filter((itemData) => itemData.type === "background");
+    sheetData.items.contacts = sheetData.items.filter((itemData) => itemData.type === "contact");
     sheetData.items.events = sheetData.items.filter((itemData) => itemData.type === "event");
     //gear & other possessions
     sheetData.items.equipables = sheetData.items.filter((itemData) => itemData.data.isEquipable === true);
@@ -155,7 +156,7 @@ export default class M20eActorSheet extends ActorSheet {
       //edition of item value when cat is unlocked
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
       //dice throwing (Big Dice Button)
-      html.find('.dice-button').click(this._onDiceClick.bind(this));
+      html.find('.dice-button').click(this._onBigDiceButtonClick.bind(this));
       //click on the 'i' buttons (blue or grey)
       html.find('.entity-link').click(this._onEntityLinkClick.bind(this));
 
@@ -247,7 +248,7 @@ export default class M20eActorSheet extends ActorSheet {
     const dataset = buttonElem.dataset;
 
     //check if action is allowed before going any further
-    if ( dataset.disabled ) {
+    if ( dataset.disabled == false) {
       ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
       return;
     }
@@ -323,7 +324,7 @@ export default class M20eActorSheet extends ActorSheet {
         break;
       case 3://right button
         if ( state >= CONFIG.M20E.WOUNDTYPE.BASHING ) {
-          const canHealAggravated = game.settings.get("mage-fr", "playersCanRemoveAggravated");
+          const canHealAggravated = game.user.isGM || game.settings.get("mage-fr", "playersCanRemoveAggravated");
           if ( state !== CONFIG.M20E.WOUNDTYPE.AGGRAVATED || canHealAggravated ) {
             this.actor.heal(resourceName, 1, state);
           }
@@ -360,18 +361,16 @@ export default class M20eActorSheet extends ActorSheet {
    * 
    * @param  {} event
    */
-  _onDiceClick(event) {
-    //retrieve traits to roll
-    const diceThrow = new DiceThrow({
-      document: this.actor,
-      traits: this.getActiveTraits()
-    });
+   _onBigDiceButtonClick(event) {
+    //try and get a new DiceThrow instance from our actor and chosen traits
+    const diceThrower = DiceThrower.create(this.actor, this.getThrow());
+    if ( !diceThrower ) { return; }
     if ( event.shiftKey ) {
       //throw right away
-      diceThrow.throwDice();
+      diceThrower.throwDice();
     } else {
       //display dice throw dialog
-      diceThrow.render(true);
+      diceThrower.render(true);
     }
   }
 
@@ -579,7 +578,7 @@ export default class M20eActorSheet extends ActorSheet {
       if ( !embeddedDoc ) { return; }
       docName = embeddedDoc.name;
       docClass = 'Item';
-    } 
+    }
 
     const confirmation = await Dialog.confirm({
       options: {classes: ['dialog', 'm20e']},
@@ -664,7 +663,8 @@ export default class M20eActorSheet extends ActorSheet {
       desc.dataset.expanded = false;
     } else {
       //collapses the expanded one (shouldn't be more than one actually)
-      const expandedOne = $(this.buttonElem).find('.one-liner-desc[data-expanded ="true"]');
+      const gridElem = buttonElem.closest('.grid');
+      const expandedOne = $(gridElem).find('.one-liner-desc[data-expanded ="true"]');
       if ( expandedOne.length !== 0 ) {
         expandedOne[0].dataset.expanded = false;
       }
@@ -828,9 +828,9 @@ export default class M20eActorSheet extends ActorSheet {
     const itemId = traitElem.dataset.itemId;
     const item = this.actor.items.get(itemId);
     //prepare context menu options from list of throws in this rollable
-    return item.data.data.throws.map( (mageThrow, throwIndex) => {
+    return item.data.data.throws.map( (baseThrow, throwIndex) => {
       return {
-        name: mageThrow.name,
+        name: baseThrow.data.name,
         itemId: itemId,
         throwIndex: throwIndex,
         icon: '<i class="fas fa-dice"></i>',
@@ -998,6 +998,20 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   /*  other implementations                       */
   /* -------------------------------------------- */
+
+  /**
+   * Returns a BaseThrow instance from user chosen stats
+   * Todo : maybe add some default data/options ?
+   * @returns {BaseThrow} 
+   */
+  getThrow() {
+    const throwData = {
+      type: 'manual'
+    };
+    const throwOptions = {};
+    return new BaseThrow( this.getActiveTraits(), throwData, throwOptions);
+  }
+
 
   /**
   * Check all rollable categories for highlighted elements (ie data-active="true")
