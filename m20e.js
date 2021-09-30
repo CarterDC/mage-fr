@@ -10,32 +10,31 @@
  */
 
 // Import Documents
-import M20eActor from './module/actor/m20e-actor.js'
-import M20eMageActor from './module/actor/mage-actor.js'
-import M20eItem from './module/item/m20e-item.js'
-import M20eParadigmItem from './module/item/paradigm-item.js'
-import M20eRoteItem from './module/item/rote-item.js'
-import M20eRollableItem from './module/item/rollable-item.js'
+import M20eActor from './module/documents/m20e-actor.js'
+import M20eMageActor from './module/documents/mage-actor.js'
+import M20eItem from './module/documents/m20e-item.js'
+import M20eParadigmItem from './module/documents/paradigm-item.js'
+import M20eRollableItem from './module/documents/rollable-item.js'
+import M20eRoteItem from './module/documents/rote-item.js'
 // Import Applications
-import M20eActorSheet from './module/actor/m20e-actor-sheet.js'
-import M20eMageActorSheet from './module/actor/mage-actor-sheet.js'
-import M20eItemSheet from './module/item/m20e-item-sheet.js'
-import M20eAeSheet from './module/apps/m20e-ae-sheet.js'
-import M20eParadigmSheet from './module/item/paradigm-sheet.js'
-import M20eRoteSheet from './module/item/rote-sheet.js'
-import M20eRollableSheet from './module/item/rollable-sheet.js'
+import M20eActorSheet from './module/apps/sheets/m20e-actor-sheet.js'
+import M20eMageActorSheet from './module/apps/sheets/mage-actor-sheet.js'
+import M20eItemSheet from './module/apps/sheets/m20e-item-sheet.js'
+import M20eAeSheet from './module/apps/sheets/m20e-ae-sheet.js'
+import M20eParadigmSheet from './module/apps/sheets/paradigm-sheet.js'
+import M20eRollableSheet from './module/apps/sheets/rollable-sheet.js'
+import M20eRoteSheet from './module/apps/sheets/rote-sheet.js'
+
 import DiceThrower from './module/dice/dice-thrower.js'
 
 // Other Imports
-import { M20E } from './module/config.js'
-import { registerSystemSettings } from "./module/settings.js";
-import { registerHotbarOverride } from "./module/macro.js";
-import * as dice from "./module/dice/dice.js";
+import { M20E } from './module/utils/config.js'
+import { registerSystemSettings } from "./module/utils/settings.js";
+import { registerHotbarOverride } from "./module/utils/macro.js";
+import * as dice from "./module/dice/dice-helpers.js";
 import * as utils from './module/utils/utils.js';
 import { log } from "./module/utils/utils.js";
-import { registerHandlebarsHelpers } from "./module/utils/hb-helpers.js";
-import { preloadHandlebarsTemplates } from "./module/utils/hb-templates.js";
-import * as chat from "./module/chat.js";
+import * as chat from "./module/utils/chat.js";
 
 
 /* -------------------------------------------- */
@@ -82,15 +81,14 @@ Hooks.once('init', async function () {
   });
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('m20e', M20eItemSheet, {
-    types: ["ability", "background", "meritflaw", "event", "misc"], //todo , add all the other base item types
+    types: ["ability", "background", "meritflaw", "event", "misc", "contact"], //todo , add all the other base item types
     makeDefault: true
   });
   Items.registerSheet("m20e", M20eParadigmSheet, {
     types: ["paradigm"],
     makeDefault: true
   });
-  //TODO : make rotes share the same item class and item sheet as other rollables.
-  Items.registerSheet("m20e", M20eRoteSheet, {
+  Items.registerSheet("m20e", M20eRoteSheet, { //todo, make rotesheet an extension of rollable
     types: ["rote"],
     makeDefault: true
   });
@@ -103,8 +101,8 @@ Hooks.once('init', async function () {
 
   registerSystemSettings(); //system settings
   registerHotbarOverride(); //hack on the hotbar for shifKey on macros
-  registerHandlebarsHelpers(); //all of our HB helpers
-  preloadHandlebarsTemplates(); //preload all partials and some templates
+  utils.registerHandlebarsHelpers(); //all of our HB helpers
+  utils.preloadHandlebarsTemplates(); //preload all partials and some templates
 
   //DICE thingies
   CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later access

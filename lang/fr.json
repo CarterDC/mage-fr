@@ -460,17 +460,22 @@
       "damage": "Dégâts",
       "date": "Date",
       "dicePool": "Grpt. de Dés",
+      "dicePoolMod": "Modificateur au Grpt.",
+      "difficultyBase": "Diff. de base",
+      "difficultyMod": "Modificateur à la diff.",
       "displayDescription": "Description Personnalisée",
       "displayDesc": "Description Perso.",
       "equipable": "Équipable",
       "equiped": "Équipé",
       "extra": "Extra",
+      "faction": "Faction",
       "itemEffect": "⚠ Active Effect",
       "key": "Clef",
       "mode": "Mode",
       "opacity": "Opacité",
       "origin": "origin",
       "personnalJEs": "Journaux Personnels",
+      "picture": "Photo",
       "pool": "Grpt.",
       "quantity": "Quantité",
       "range": "Portée",
@@ -482,6 +487,7 @@
       "stat": "Stat",
       "studyPoints": "Points d'étude",
       "subType": "Sous-Type",
+      "successMod": "Seuil de succès",
       "synergyFlavor": "Saveur de la synergie",
       "systemDescription": "⚠ Description Système",
       "systemName": "⚠ Nom système",
@@ -498,6 +504,11 @@
       "arete": "Arété",
       "resonance": "Résonance"
     },
+    "magickType": {
+      "coincidental": "Coincidental",
+      "vulgar": "Vulgaire",
+      "vulgarWitness": "Vulgaire avec témoins"
+    },
     "navtabs": {
       "aliases": "ALIAS",
       "bio": "BIO",
@@ -507,6 +518,8 @@
       "extra": "EXTRA",
       "lexicon": "LEXIQUE",
       "magye": "MAGYE",
+      "picture": "PHOTO",
+      "stats": "STATS",
       "stuff": "MATOS",
       "traits": "TRAITS",
       "throws": "JETS"
@@ -626,6 +639,13 @@
       "dynamic": "Dynamique",
       "entropic": "Entropique",
       "static": "Statique"
+    },
+    "throwMod": {
+      "base": "Base",
+      "userMod": "Utilisateur",
+      "throwMod": "Jet",
+      "healthMod": "Santé",
+      "untrainedMod": "Non-entraîné"
     },
     "throwresult": {
       "isWillpowered": "+ 1 Succès (Volonté)",

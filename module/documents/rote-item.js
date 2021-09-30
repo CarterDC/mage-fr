@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, MageThrow } from '../dice/dice.js'
+import { Trait, BaseThrow } from '../dice/dice-helpers.js'
 import M20eRollableItem from './rollable-item.js'
 
 /**
@@ -21,7 +21,7 @@ export default class M20eRoteItem extends M20eRollableItem {
     //check if item is from existing item (going in or out a compendiumColl or drag from actorSheet)
     if ( itemData.flags.core?.sourceId || itemData._id ) { return; }
     //update the throws array with one single entry
-    const throws = [new MageThrow()];
+    const throws = [new BaseThrow()];
     itemData.update({['data.throws']: throws});
   }
 

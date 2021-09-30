@@ -1,7 +1,7 @@
-import { TraitSelect } from './trait-select-dialog.js'
+import { TraitSelect } from '../trait-select-dialog.js'
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+import * as utils from '../../utils/utils.js'
+import { log } from "../../utils/utils.js";
 
 /**
  * a fake itemsheet to edit ActiveEffects in lieu of ActiveEffectConfig

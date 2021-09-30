@@ -1,8 +1,8 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { registerInitiative, Trait } from '../dice/dice.js'
-import * as chat from "../chat.js";
+import { registerInitiative, Trait } from '../dice/dice-helpers.js'
+import * as chat from "../utils/chat.js";
 
 /**
  * Item class for base items (items that just contain data), 

@@ -1,18 +1,17 @@
 // Import Applications
-import { FakeItem } from '../apps/fakeitem-sheet.js'
-import { AliasEditor } from '../apps/alias-edit.js'
-import DiceThrower from '../dice/dice-thrower.js'
-import BaseThrow from '../dice/base-throw.js'
-import { Trait } from '../dice/dice.js'
+import { FakeItem } from '../fakeitem-sheet.js'
+import { AliasEditor } from '../alias-edit.js'
+import DiceThrower from '../../dice/dice-thrower.js'
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { DynaCtx } from "../utils/classes.js";
-import * as chat from "../chat.js";
+import * as utils from '../../utils/utils.js'
+import { log } from "../../utils/utils.js";
+import { Trait, BaseThrow } from '../../dice/dice-helpers.js'
+import { DynaCtx } from "../../utils/classes.js";
+import * as chat from "../../utils/chat.js";
 
 /**
  * Provides Sheet interraction management for npcsleepers type actors
- * also base sheet class for all other actor sheets.
+ * also base sheet class for all other actor types.
  * @extends {ActorSheet}
  */
 export default class M20eActorSheet extends ActorSheet {
@@ -87,6 +86,7 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.items.meritsflaws.flaws = sheetData.items.filter((itemData) => ( (itemData.type === "meritflaw") && (itemData.data.subType === "flaw") ));
     //the rest of the items
     sheetData.items.backgrounds = sheetData.items.filter((itemData) => itemData.type === "background");
+    sheetData.items.contacts = sheetData.items.filter((itemData) => itemData.type === "contact");
     sheetData.items.events = sheetData.items.filter((itemData) => itemData.type === "event");
     //gear & other possessions
     sheetData.items.equipables = sheetData.items.filter((itemData) => itemData.data.isEquipable === true);
@@ -363,17 +363,14 @@ export default class M20eActorSheet extends ActorSheet {
    */
    _onBigDiceButtonClick(event) {
     //try and get a new DiceThrow instance from our actor and chosen traits
-    const baseThrow = new BaseThrow({
-      stats: this.getActiveTraits()
-    });
-    const diceThrower = DiceThrower.create(this.actor, baseThrow);
+    const diceThrower = DiceThrower.create(this.actor, this.getThrow());
     if ( !diceThrower ) { return; }
     if ( event.shiftKey ) {
       //throw right away
       diceThrower.throwDice();
     } else {
       //display dice throw dialog
-     // diceThrow.render(true);
+      diceThrower.render(true);
     }
   }
 
@@ -831,9 +828,9 @@ export default class M20eActorSheet extends ActorSheet {
     const itemId = traitElem.dataset.itemId;
     const item = this.actor.items.get(itemId);
     //prepare context menu options from list of throws in this rollable
-    return item.data.data.throws.map( (mageThrow, throwIndex) => {
+    return item.data.data.throws.map( (baseThrow, throwIndex) => {
       return {
-        name: mageThrow.name,
+        name: baseThrow.data.name,
         itemId: itemId,
         throwIndex: throwIndex,
         icon: '<i class="fas fa-dice"></i>',
@@ -1001,6 +998,20 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   /*  other implementations                       */
   /* -------------------------------------------- */
+
+  /**
+   * Returns a BaseThrow instance from user chosen stats
+   * Todo : maybe add some default data/options ?
+   * @returns {BaseThrow} 
+   */
+  getThrow() {
+    const throwData = {
+      type: 'manual'
+    };
+    const throwOptions = {};
+    return new BaseThrow( this.getActiveTraits(), throwData, throwOptions);
+  }
+
 
   /**
   * Check all rollable categories for highlighted elements (ie data-active="true")

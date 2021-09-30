@@ -16,7 +16,7 @@ import { log } from "../utils/utils.js";
   /** @override */
   static get defaultOptions () {
     return mergeObject(super.defaultOptions, {
-      classes: ['m20e', 'dialog', 'dialogue'],
+      classes: ['m20e', 'dialog', 'dialog'],
       template: 'systems/mage-fr/templates/apps/trait-select.hbs',
       width: 400,
       height: 'fit-content',

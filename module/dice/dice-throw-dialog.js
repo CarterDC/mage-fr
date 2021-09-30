@@ -33,7 +33,7 @@ import { log } from "../utils/utils.js";
   /** @override */
   static get defaultOptions () {
     return mergeObject(super.defaultOptions, {
-      classes: ['m20e', 'dialogue'],
+      classes: ['m20e', 'dialog'],
       template: 'systems/mage-fr/templates/apps/dice-throw.hbs',
       title: game.i18n.localize('M20E.diceThrows.diceThrows'),
       width: 300,

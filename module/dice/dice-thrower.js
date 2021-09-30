@@ -1,9 +1,8 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { THROWMODE as TM } from '../config.js'
-import BaseThrow from './base-throw.js'
-import { Trait, MageThrow } from './dice.js'
+import { Trait, BaseThrow } from './dice-helpers.js'
+import { M20E } from '../utils/config.js'
 
 /**
  * Manages everything dice throws related in mage-fr.
@@ -45,7 +44,7 @@ export default class DiceThrower {
       throwIndex: 0,
       difficultyOverride: null,
       ignoreHealthMod: false,
-      throwMode : TM.DEDUCT_FAILURES & TM.RESULT_CRITICAL
+      throwMode : M20E.THROWMODE.DEDUCT_FAILURES & M20E.THROWMODE.RESULT_CRITICAL
     };
   }
 
@@ -64,7 +63,8 @@ export default class DiceThrower {
  
       if ( !DiceThrower.isItemThrow(document) ) {
         //only check actor thrown stats
-        baseThrow.stats.forEach( stat => BaseThrow.validateStat(document, stat, true));
+        const actor = document.isEmbedded ? document.parent : document;
+        baseThrow.stats.forEach( stat => BaseThrow.validateStat(actor, stat));
       }
 
     } catch (e) {
@@ -89,16 +89,19 @@ export default class DiceThrower {
    */
   prepareData() {
     this.data.isMagickThrow = BaseThrow.isMagickThrow(this.stats);
-    debugger
+
     //Dice Pool
     this.data.dicePoolBase = this.getDicePoolBase();
     this.data.dicePoolMods['healthMod'] = this.getHealthMod();
-    this.data.dicePoolTotal = Math.max(this.data.dicePoolBase + this.getDicePoolMod(), 0);
+    const dpModTotal = this.getDicePoolModTotal();
+    this.data.dicePoolTotal = Math.max(this.data.dicePoolBase + dpModTotal, 0);
 
     //Difficulty
-    //this.data.difficultyMods.untrainedMod = this.getUntrainedMod();
-    this.data.difficultyTotal = this.data.difficultyBase;
-    //this.thresholdTotal = Math.clamped(this.thresholdChosen + this.thresholdMod, 2, 10);
+    this.data.difficultyMods['untrainedMod'] = this.getUntrainedMod();
+    const diffModTotal = this.getDifficultyModTotal();
+    this.data.difficultyTotal = this.data.difficultyOverride ?? 
+      Math.clamped(this.data.difficultyBase + diffModTotal, 3, 9); //todo, have diff limits in config
+
     //flavor
     //this.flavor = this._document.getThrowFlavor(this._traits, this._thowIndex);
     this._prepared = true;
@@ -147,17 +150,77 @@ export default class DiceThrower {
   }
 
   /**
-   * @returns {Number} sum of ALL dice pool modifiers
+   * @param {Boolean} ignoreHealthMod if true => doesn't add the healthmod
+   * @returns {Number} sum of all relevant dice pool modifiers
    */
-  getDicePoolMod() {
+   getDicePoolModTotal(ignoreHealthMod = false) {
     let totalMod = 0;
     for( const mod in this.data.dicePoolMods) {
-      if ( mod !== 'healthMod' || !this.data.ignoreHealthMod) {
-        totalMod += this.data.dicePoolMods[mod]
+      if ( mod !== 'healthMod' || !ignoreHealthMod) {
+        totalMod += this.data.dicePoolMods[mod];
       }
     }
     return totalMod;
   }
+
+  /**
+   * @returns {Number} sum of ALL Difficulty modifiers
+   */
+   getDifficultyModTotal() {
+    let totalMod = 0;
+    for( const mod in this.data.difficultyMods) {
+        totalMod += this.data.difficultyMods[mod];
+    }
+    return totalMod;
+  }
+
+  /**
+   * computes a positive modifier to the difficulty threshold
+   * only 0 value abilities are concerned
+   * actual malus depends on settings and ability subType
+   * 
+   * @returns {Number} a positive modifier
+   */
+   getUntrainedMod() {
+    let untrainedMod = 0;
+    const settings = game.settings.get("mage-fr", "untrainedMalus");
+    if ( settings === "000" ) { return 0; }
+    //settings is 3 digit string => first char for talents, second char for skills and third char for knowledges
+    const subTypes = {talents: 0, skills: 1, knowledges: 2};
+    //check if untrained ability
+    this.stats.forEach( stat => {
+      const { category, subType } = stat.split();
+      if ( category === "abilities" && !stat.value) {
+        //get specific game setting relative to untrained abilities
+        const malus = settings.substr(subTypes[subType],1);
+        if ( isNaN(malus) ) { throw {msg:'impossibleThrow'}; }
+        untrainedMod += parseInt(malus);
+      }
+    })
+    return untrainedMod;
+  }
+
+   /**
+   * Whether the items own stats are used in lieue of the actor's
+   * Atm only wonders / talismans qualify as itemThrows (using their own arete value)
+   * @param  {Document} document
+   * 
+   * @returns {Boolean} false unless document is a owned item of type 'wonder'
+   */
+    static isItemThrow(document) {
+      if ( document.isEmbedded ) {//idem .isOwned
+        return ['wonder'].includes(document.type);
+      }
+      return false;
+    }
+
+  /**
+   * @returns the document itself or it's parent if document is an owned item
+   */
+   get actor() {
+    return this._document.isEmbedded ? this._document.parent : this._document;
+  }
+
 
   /* -------------------------------------------- */
   /*  Throw implementation                        */
@@ -209,62 +272,41 @@ export default class DiceThrower {
 
   getRoll() {
     //nicely pack everything we gonna need for our roll and our message
-    //todo : populate rollData.options with current values, pass less parameters but better ones
-    //ie store booleans, not strings ^^
-    const rollOptions = {};/*
+    const rollOptions = {
       documentId: this._document.id,
       actorId: this.actor.id,
-      traits: this._traits,
-      throwIndex: this._thowIndex,
-      options: this.options,
-      isEffectRoll: this.isEffectRoll,
-      deductFailures: (this.throwSettings === TROWSETTINGS_BLANDROLL) ? '' :  'df=1',
-      tenXplodeSuccess: this.getExplodeSuccess() ? "xs=10" : "",
-      dicePoolBase: this.dicePoolBase,
-      dicePoolMods: this.dicePoolMods,
-      dicePoolTotal: this.dicePoolTotal,
-      thresholdBase: this.thresholdBase,
-      thresholdChosen: this.thresholdChosen,
-      thresholdMods: this.thresholdMods,
-      thresholdTotal: this.thresholdTotal
-    }*/
-
+      stats: this.stats,
+      data: this.data
+    };
+    //prepare the formula
     const {dicePoolTotal, difficultyTotal} = this.data;
-    const tenXplodeSuccess = this.data.throwMode & TM.XPLODE_SUCCESS ? 'xs=10' : '';
-    const deductFailures = this.data.throwMode & TM.DEDUCT_FAILURES ? 'df=1' : '';
+    const tenXplodeSuccess = this.data.throwMode & M20E.THROWMODE.XPLODE_SUCCESS ? 'xs=10' : '';
+    const deductFailures = this.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES ? 'df=1' : '';
     const formula = `${dicePoolTotal}d10${tenXplodeSuccess}cs>=${difficultyTotal}${deductFailures}`;
     
     return new CONFIG.Dice.MageRoll(formula, null, rollOptions);
   }
 
-  /**
-   * @returns the document itself or it's parent is document is an owned item
-   */
-   get actor() {
-    return this._document.isEmbedded ? this._document.parent : this._document;
-  }
-
-   /**
-   * Whether the items own stats are used in lieue of the actor's
-   * Atm only wonders / talismans qualify as itemThrows (using their own arete value)
-   * @param  {Document} document
-   * 
-   * @returns {Boolean} false unless document is a owned item of type 'wonder'
-   */
-    static isItemThrow(document) {
-      if ( document.isEmbedded ) {//idem .isOwned
-        return ['wonder'].includes(document.type);
-      }
-      return false;
-    }
-
-
-
-
   /* -------------------------------------------- */
   /*  {DiceDialog} App Handlers                 */
   /* -------------------------------------------- */
 
+  /**
+   * Only non 0 mods
+   */
+  static getTooltipModsData(mods, invert=false) {
+    let data = {};
+    for( const mod in mods) {
+      const value = mods[mod];
+      if ( value ) {
+        data[mod] = {
+          name: game.i18n.localize(`M20E.throwMod.${mod}`),
+          class: (invert ? -1 * value : value) < 0 ? 'red-thingy' : 'green-thingy',
+          value: (value > 0) ? `+${value}` : `${value}`
+        };
+      }
+    }
+  }
 
   /* -------------------------------------------- */
   /*  Macro to and from                           */

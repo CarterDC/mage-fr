@@ -390,6 +390,7 @@
     "types": [
       "ability",
       "background",
+      "contact",
       "event",
       "meritflaw",
       "misc",
@@ -440,6 +441,18 @@
       "displayName":"",
       "systemDescription": "",
       "displayDescription":""
+    },
+    "contact":{
+      "templates":[
+        "stat"
+      ],
+      "faction":{
+        "displayValue": "",
+        "link": {}
+      },
+      "displayName":"",
+      "displayDescription":"",
+      "link": {}
     },
     "event": {
       "displayDescription": "",

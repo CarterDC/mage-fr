@@ -1,7 +1,7 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { Trait, MageThrow } from '../dice/dice.js'
+import { Trait, BaseThrow } from '../dice/dice-helpers.js'
 
 const MAGICK_TYPE_COINCIDENTAL = 0;
 const MAGICK_TYPE_VULGAR = 1;

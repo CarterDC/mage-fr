@@ -1,8 +1,8 @@
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
-import { M20E } from '../config.js'
-import { Trait } from '../dice/dice.js'
+import { M20E } from '../utils/config.js'
+import { Trait } from '../dice/dice-helpers.js'
 
 /**
  * The base actor class for the mage System, extends Foundry's Actor.

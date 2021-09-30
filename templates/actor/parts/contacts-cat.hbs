@@ -1,0 +1,39 @@
+<section class="category contacts" data-category="contacts">
+    {{!-- CONTACTS --}}
+    {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="contacts" lock = locks.contacts addButton = true}}
+    <div class="grid two-col">
+        {{#each items.contacts as |contact key|}}
+        <div class="trait contact linkable" data-path="contacts.{{m20e-sanitize contact.name}}" data-item-id="{{contact._id}}" data-active= "false"> 
+            <div class="vertical-wrapper">
+                <div class="horizontal-wrapper">
+                    <a class="stat-label drag-ready tooltip" data-item-id="{{contact._id}}">
+                        {{#if contact.data.displayName}}
+                        {{contact.data.displayName}}
+                        {{else}}
+                        {{contact.name}}
+                        {{/if}}
+                        {{#if (ne contact.img ../config.defaultImg.contact)}}
+                        <span class="bottomtooltiptext"><img class="" src="{{contact.img}}"/></span>
+                        {{/if}}
+                    </a>
+                    <div class="ligne"></div>
+                    <div class="edit-bar" data-locked="{{../locks.contacts}}">
+                        <input class="inline-edit" type="text" value="{{contact.data.value}}" data-dtype="Number" min="0" max="5"/>
+                        <a class="mini-button" data-action="edit"><i class="fas fa-pencil-alt"></i></a>
+                        <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
+                    </div>
+                    <div class="bullet-display" data-locked="{{../locks.contacts}}">
+                        {{{m20e-bulletDisplay contact.data 5}}}
+                    </div>
+                </div>
+                <div class="one-liner-desc" data-expanded="false">
+                  <a class="mini-button" data-action="expand">
+                    <i class="fas fa-ellipsis-h"></i>
+                  </a>
+                  {{{contact.data.displayDescription}}}
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</section>
