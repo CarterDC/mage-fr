@@ -35,7 +35,7 @@ export default class M20eMageActorSheet extends M20eActorSheet {
     return sheetData;
   }
 
-  /** @inheritdoc */
+  /** @override */
   _getHeaderButtons() {
     let buttons = super._getHeaderButtons();
     if ( this.actor.isCharacter ) {

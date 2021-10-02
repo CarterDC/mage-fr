@@ -645,7 +645,9 @@
       "userMod": "Utilisateur",
       "throwMod": "Jet",
       "healthMod": "Santé",
-      "untrainedMod": "Non-entraîné"
+      "untrainedMod": "Non-entraîné",
+      "systemMod": "Système",
+      "gmMod": "GM"
     },
     "throwresult": {
       "isWillpowered": "+ 1 Succès (Volonté)",

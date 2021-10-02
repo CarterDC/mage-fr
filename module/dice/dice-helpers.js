@@ -13,20 +13,24 @@ import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
 
+/* -------------------------------------------- */
+/*  Trait Class                                 */
+/* -------------------------------------------- */
+
 /**
  * Helper class
  * Uniquely defines a Trait object by it's path and/or itemId
  * they can be used relative to actorData.data or actorData.stats depending on the context
  */
- export class Trait {
+export class Trait {
 
   /**
    * @param  {Object} obj {path, itemId, data}
    */
   constructor(obj) {
-      this.path = obj.path;
-      this.itemId = obj.itemId || '';
-      this.data = obj.data || null;
+    this.path = obj.path;
+    this.itemId = obj.itemId || '';
+    this.data = obj.data || null;
   }
 
   /**
@@ -40,11 +44,11 @@ import { log } from "../utils/utils.js";
    */
   static fromElement(htmlElem) {
     const traitElem = htmlElem.closest(".trait");
-    if ( !traitElem ) { return null; }
+    if (!traitElem) { return null; }
     const path = traitElem.dataset.path;
     const itemId = traitElem.dataset.itemId
 
-    if ( !path && !itemId) { return null; }
+    if (!path && !itemId) { return null; }
     return new Trait({
       path: path || '',
       itemId: itemId || ''
@@ -59,10 +63,10 @@ import { log } from "../utils/utils.js";
    * 
    * @returns {Trait|null} a Trait object made from the arguments or null
    */
-  static fromData(obj) { 
-    const {path, data={}, itemId=''} = obj;
-    if ( !path ) { return null; }
-    return new Trait({path: path, data: data, itemId: itemId});
+  static fromData(obj) {
+    const { path, data = {}, itemId = '' } = obj;
+    if (!path) { return null; }
+    return new Trait({ path: path, data: data, itemId: itemId });
   }
 
   /* -------------------------------------------- */
@@ -89,7 +93,7 @@ import { log } from "../utils/utils.js";
    * @returns {object} {category, subType|null, key|null}
    */
   split() {
-    return {...Trait.splitPath(this.path), itemId: this.itemId};
+    return { ...Trait.splitPath(this.path), itemId: this.itemId };
   }
 
   /**
@@ -145,7 +149,7 @@ import { log } from "../utils/utils.js";
    * returns traits name, displayName or specialisation depending on circumstances
    */
   get name() {
-    return this.useSpec ? this.data.specialisation : 
+    return this.useSpec ? this.data.specialisation :
       (this.data.displayName ? this.data.displayName : this.data.name);
   }
 
@@ -164,7 +168,29 @@ import { log } from "../utils/utils.js";
   get isExtended() {
     return this.data.value >= 0;
   }
+
+  getLocalizedName(actor) {
+    let localizedName = '';
+    if ( actor ) {
+      const item = actor.items.get(actor._getStat(this.path, 'itemId'));
+      if ( item ) {
+        localizedName = item.data.data.displayName || item.data.name;
+      } else {
+        localizedName = actor.locadigm(this.path);
+      }
+    } else {
+      localizedName = foundry.utils.getProperty(CONFIG.M20E.stats, this.path) || game.i18n.localize(`M20E.${this.path}`);
+    }
+    if ( localizedName === `M20E.${this.path}` ) {
+      localizedName = this.key;
+    }
+    return localizedName;
+  }
 }
+
+/* -------------------------------------------- */
+/*  BaseThrow Class                             */
+/* -------------------------------------------- */
 
 /**
  * Helper class
@@ -176,7 +202,7 @@ export class BaseThrow {
   /**
    * @param  {[Trait,]} stats an array of {@link Trait} instances
    */
-  constructor(stats, data={}, options={}) {
+  constructor(stats, data = {}, options = {}) {
     this.stats = stats || [];
     this.data = foundry.utils.mergeObject(this.constructor.defaultData, data);
     this.options = foundry.utils.mergeObject(this.constructor.defaultOptions, options);
@@ -192,7 +218,7 @@ export class BaseThrow {
 
   static get defaultOptions() {
     return {
-      difficultyBase: game.settings.get("mage-fr", "difficultyBase"),
+      difficultyBase: 0, //game.settings.get("mage-fr", "difficultyBase"),
       difficultyMods: {
         throwMod: 0
       },
@@ -213,8 +239,8 @@ export class BaseThrow {
    * @returns {BaseThrow}
    */
   static fromData(obj) {
-    let {stats=[], data={}, options={}} = obj;
-    stats = stats.map( traitData => {
+    let { stats = [], data = {}, options = {} } = obj;
+    stats = stats.map(traitData => {
       return traitData instanceof Trait ? traitData : Trait.fromData(traitData);
     });
     return new BaseThrow(stats, data, options);
@@ -228,7 +254,7 @@ export class BaseThrow {
    * @returns {Boolean}
    */
   static isMagickThrow(stats) {
-    if ( BaseThrow.isEffectThrow(stats) ) {
+    if (BaseThrow.isEffectThrow(stats)) {
       return true;
     } else {
       return stats.length === 1 && stats[0]?.path === "magick.arete";
@@ -242,7 +268,7 @@ export class BaseThrow {
    * @returns {Boolean} whether every Trait in the throw constitutes a magical effect
    */
   static isEffectThrow(stats) {
-    return stats.length !== 0 && stats.every( stat => stat.category === "spheres" );
+    return stats.length !== 0 && stats.every(stat => stat.category === "spheres");
   }
 
   /**
@@ -257,7 +283,7 @@ export class BaseThrow {
 
   isAbleToThrow(actor) {
     try {
-      this.stats.forEach( stat => M20eThrow.validateStat(actor, stat, true));
+      this.stats.forEach(stat => M20eThrow.validateStat(actor, stat, true));
     } catch (e) {
       if (e.msg) { //todo : maybe add error params
         ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
@@ -269,22 +295,22 @@ export class BaseThrow {
     return true;
   }
 
-  static validateStat(actor, stat, strict=true) { //strict only applies to untrained malus
+  static validateStat(actor, stat, strict = true) { //strict only applies to untrained malus
 
-    if ( !stat || !stat instanceof Trait ) { throw { msg: 'traitInvalid' }; } //when in doubt...
+    if (!stat || !(stat instanceof Trait)) { throw { msg: 'traitInvalid' }; } //when in doubt...
     const { category, subType } = stat.split();
     const statValue = actor._getStat(stat.path, 'value');
 
     if (category === 'spheres') {
       //cannot use a sphere in an effect if it's value null or not high enough
-      if ( !statValue ) {
+      if (!statValue) {
         throw { msg: 'insufficentStatValue' };
       } else if (stat?.data?.valueOverride) { //in case of a rote
-        if ( statValue < stat.data.valueOverride) {
+        if (statValue < stat.data.valueOverride) {
           throw { msg: 'insufficentStatValue' };
         }
       }
-    } else if ( category === 'abilities' && !statValue ) {
+    } else if (category === 'abilities' && !statValue) {
       //untrained ability subTypes might be forbidden in system settings
       const settings = game.settings.get("mage-fr", "untrainedMalus");
       //settings is 3 digit string => first char for talents, second char for skills and third char for knowledges
@@ -296,11 +322,65 @@ export class BaseThrow {
     }
   }
 
-    //todo : flavor ?
-    getFlavor(actor) {
-      let flavor = 'blabla';
-      return flavor;
+  /**
+   * Adds a new Trait to the stats array.
+   * creates a new Trait instance if needed.
+   * Limit the number of stats to 9.
+   * @param  {Trait|Object|null} stat a Trait instance or obj containing a path property or null
+   * 
+   * @returns {Trait|null} the newly added stat as a Trait instance.
+   */
+  addStat(stat) {
+    if ( this.stats.length >= 9 ) { return null; }
+    if ( !(stat instanceof Trait) ) {
+      if ( stat?.path ) {
+        //stat may contain some traitData,
+        //try and make a Trait out of it
+        stat = Trait.fromData(stat);
+      }
+      if ( !stat ) {
+        //stat is not a trait, make it a default one
+        stat = new Trait({path: 'attributes.stre'});
+      }
     }
+    this.stats.push(stat);
+    return stat;
+  }
+
+  /**
+   * Removes a stat at statIndex from the stats array
+   * @param  {Number} statIndex
+   * 
+   * @returns {Boolean} true or false, whether the stat has been removed or not
+   */
+  removeStat(statIndex) {
+    //check if index is within the range
+    if ( statIndex >= this.stats.length ) { return false; }
+    this.stats.splice(statIndex, 1);
+    return true;
+  }
+
+  moveUpStat(statIndex) {
+    //check if index is within the range (index cannot be 0, since 0 cant move up)
+    if ( !statIndex || statIndex >= this.stats.length ) { return false; }
+    
+    [this.stats[statIndex-1], this.stats[statIndex]] = [this.stats[statIndex], this.stats[statIndex-1]];
+    return true;
+  }
+
+  getMiniFlavor(actor) {
+    const names = this.getStatsLocalizedNames(actor);
+    if ( names.length <= 2 ) {
+      return names.join(' + ');
+    } else {
+      return names.join(' + ').substring(0, 30) + "...";
+    }
+  }
+
+  getStatsLocalizedNames(actor) {
+    return this.stats.map( stat => stat.getLocalizedName(actor) );
+  }
+
   /*getFlavor(actor) {
     let flavor = '';
     if ( actor ) {
@@ -329,8 +409,9 @@ export class BaseThrow {
 
 }
 
-
-
+/* -------------------------------------------- */
+/*  DieSuccess die class                        */
+/* -------------------------------------------- */
 
 /**
  * A Die DiceTerm that only has 'S' faces
@@ -338,25 +419,29 @@ export class BaseThrow {
  * @extends {Die}
  */
 export class DieSuccess extends Die {
-  constructor(termData={}) {
-    termData.faces=10;
+  constructor(termData = {}) {
+    termData.faces = 10;
     super(termData);
-    if ( termData.autoSuccess ) {
+    if (termData.autoSuccess) {
       this.results = [...Array(termData.number)].map(() => {
-        return {active: true, result:10, "success": true, "count": 1};
+        return { active: true, result: 10, "success": true, "count": 1 };
       });
       this._evaluated = true;
     }
   }
 
   /** @override */
-  static DENOMINATION = "s" ;
+  static DENOMINATION = "s";
 
   /** @override */
   getResultLabel(result) {
     return 'S';
   }
 }
+
+/* -------------------------------------------- */
+/*  MageRoll Class                              */
+/* -------------------------------------------- */
 
 /**
  * Extension of the roll class, defines it's own templates, 
@@ -378,32 +463,36 @@ export class MageRoll extends Roll {
    * if roll contains 'xs' dice adds new term
    * @override
    */
-  async toMessage(messageData={}, {rollMode, create=true}={}) {
-      // Perform the roll, if it has not yet been rolled
-      if (!this._evaluated) await this.evaluate({async: true});
-  
-      // Prepare chat data
-      messageData = foundry.utils.mergeObject({
-        user: game.user.id,
-        type: CONST.CHAT_MESSAGE_TYPES.ROLL,
-        content: this.total,
-        sound: CONFIG.sounds.dice,
-      }, messageData);
-      messageData.roll = this.getRollForMessage();
+  async toMessage(messageData = {}, { rollMode, create = true } = {}) {
+    // Perform the roll, if it has not yet been rolled
+    if (!this._evaluated) await this.evaluate({ async: true });
 
-      // Either create the message or just return the chat data
-      const cls = getDocumentClass("ChatMessage");
-      const msg = new cls(messageData);
-      if ( rollMode ) msg.applyRollMode(rollMode);
-      
-      // Either create or return the data
-      if ( create ) return cls.create(msg.data, {rollMode: rollMode});
-      else return msg.data;
+    // Prepare chat data
+    messageData = foundry.utils.mergeObject({
+      user: game.user.id,
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL,
+      content: this.total,
+      sound: CONFIG.sounds.dice,
+    }, messageData);
+    //get a modified roll stripped of the exploded dice
+    //and replaced with success dice instead
+    messageData.roll = this.getRollForMessage();
+
+    // Either create the message or just return the chat data
+    const cls = getDocumentClass("ChatMessage");
+    const msg = new cls(messageData);
+    if (rollMode) msg.applyRollMode(rollMode);
+
+    // Either create or return the data
+    if (create) return cls.create(msg.data, { rollMode: rollMode });
+    else return msg.data;
   }
 
+  //remove exploded dice from the first term
+  //add a new term with success dice instead
   getRollForMessage() {
     const explosions = this.terms[0].explosions;
-    if ( !explosions ) { return this; }
+    if (!explosions) { return this; }
 
     const roll = this;
     //remove results of exploded dice
@@ -411,7 +500,8 @@ export class MageRoll extends Roll {
     //add success dieterm
     roll.terms.push(new CONFIG.Dice.terms["s"]({
       number: explosions,
-      autoSuccess: true}));
+      autoSuccess: true
+    }));
     return roll;
   }
 
@@ -421,11 +511,42 @@ export class MageRoll extends Roll {
    */
   async getTooltip() {
     const parts = this.dice.map(d => d.getTooltipData());
+
     const part = parts.reduce((acc, cur) => {
-        return {total: acc.total + cur.total, rolls: [...acc.rolls, ...cur.rolls]};
-      },{total: 0, rolls:[]});
-      part.options= this.options;
+      return { total: acc.total + cur.total, rolls: [...acc.rolls, ...cur.rolls] };
+    }, { total: 0, rolls: [] });
+
+    part.data = {
+      dpTotal: this.dice[0].number,
+      diffTotal: this.getCsModifierValue(this.dice[0]),
+    };
+    if (this.options.data) { //todo : don't create tt data if total === base
+      part.data.dpTooltips = [{
+        name: game.i18n.localize(`M20E.throwMod.base`),
+        class: '',
+        value: this.options.data.dicePoolBase
+      }, ...utils.getModsTooltipData(this.options.data.dicePoolMods)];
+      part.data.diffTooltips = [{
+        name: game.i18n.localize(`M20E.throwMod.base`),
+        class: '',
+        value: this.options.data.difficultyBase
+      }, ...utils.getModsTooltipData(this.options.data.difficultyMods, true)];
+    }
+
+    part.options = this.options;
+
     return renderTemplate(this.constructor.TOOLTIP_TEMPLATE, { part });
+  }
+
+  getCsModifierValue(dice) {
+    for (let i = 0; i < dice.modifiers.length; i++) {
+      let match = dice.modifiers[i].match(/cs?([<>=]+)?([0-9]+)?/i);
+      if (match) {
+        const [comparison, target] = match.splice(1);
+        return comparison === '>=' ? parseInt(target) : parseInt(target) + 1;
+      }
+    }
+    return null
   }
 
   /**
@@ -433,7 +554,7 @@ export class MageRoll extends Roll {
    * @param {object} [chatOptions]      An object configuring the behavior of the resulting chat message.
    * @return {Promise<string>}          The rendered HTML template as a string
    */
-   async render(chatOptions={}) {
+  async render(chatOptions = {}) {
     chatOptions = foundry.utils.mergeObject({
       user: game.user.id,
       flavor: null,
@@ -447,8 +568,8 @@ export class MageRoll extends Roll {
 
     const total = Math.round(this.total * 100) / 100;
     const totalString = total === 0 ? game.i18n.localize('M20E.throwresult.failure') :
-      (total > 0 ? game.i18n.format('M20E.throwresult.success', {total: total}) : 
-        game.i18n.format('M20E.throwresult.critfailure', {total: total}));
+      (total > 0 ? game.i18n.format('M20E.throwresult.success', { total: total }) :
+        game.i18n.format('M20E.throwresult.critfailure', { total: total }));
 
     // Define chat data
     const chatData = {
@@ -457,14 +578,14 @@ export class MageRoll extends Roll {
       user: chatOptions.user,
       tooltip: isPrivate ? "" : await this.getTooltip(),
       total: isPrivate ? "?" : total,
-      totalString : isPrivate ? "?" : totalString
+      totalString: isPrivate ? "?" : totalString
     };
 
     // Render the roll display template
     return renderTemplate(chatOptions.template, chatData);
   }
 }
-  
+
 /**
  * todo : extend the whole combat class instead to deal with custom message template, tie breakers etc...
  */
@@ -485,16 +606,16 @@ export function registerInitiative() {
 export function registerDieModifier() {
   Die.prototype.constructor.MODIFIERS["xs"] = "explodeSuccess";
   //modified copy of Foundry's Die.explode()
-  Die.prototype.explodeSuccess = function(modifier) {
+  Die.prototype.explodeSuccess = function (modifier) {
 
     // Match the explode or "explode once" modifier
     const rgx = /xo?([0-9]+)?([<>=]+)?([0-9]+)?/i;
     const match = modifier.match(rgx);
-    if ( !match ) return false;
+    if (!match) return false;
     let [max, comparison, target] = match.slice(1);
 
     // If no comparison or target are provided, treat the max as the target
-    if ( max && !(target || comparison) ) {
+    if (max && !(target || comparison)) {
       target = max;
       max = null;
     }
@@ -507,23 +628,23 @@ export function registerDieModifier() {
     // Recursively explode until there are no remaining results to explode
     let checked = 0;
     let initial = this.results.length;
-    while ( checked < this.results.length ) {
+    while (checked < this.results.length) {
       let r = this.results[checked];
       checked++;
       if (!r.active) continue;
 
       // Maybe we have run out of explosions
-      if ( (max !== null) && (max <= 0) ) break;
+      if ((max !== null) && (max <= 0)) break;
 
       // Determine whether to explode the result and roll again!
-      if ( DiceTerm.compareResult(r.result, comparison, target) ) {
+      if (DiceTerm.compareResult(r.result, comparison, target)) {
         r.exploded = true;
         //register one more success & add a die
         this.explosions = (this.explosions || 0) + 1;
-        this.results.push({result: this.faces, active: true, autoSuccess: true});
-        if ( max !== null ) max -= 1;
+        this.results.push({ result: this.faces, active: true, autoSuccess: true });
+        if (max !== null) max -= 1;
       }
-      if ( checked >= initial ) checked = this.results.length;
+      if (checked >= initial) checked = this.results.length;
     }
   }
 }

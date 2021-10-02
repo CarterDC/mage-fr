@@ -93,6 +93,7 @@ export class ThrowSheet extends DocumentSheet {
 
     sheetData.data.throwOptions = JSON.stringify(sheetData.data.options) || {};
 
+    sheetData.addButtonDisabled = this.baseThrow.stats.length >= 9;
     sheetData.locks = this.locks;
     sheetData.isGM = game.user.isGM;
 
@@ -104,7 +105,24 @@ export class ThrowSheet extends DocumentSheet {
   activateListeners(html) {
     html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
     html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
+    new ContextMenu(html, '.trait', this._getTraitContextOptions());
     super.activateListeners(html);
+  }
+
+    /**
+   * @return the context menu options for the '.trait' elements
+   * link trait in chat, edit trait, remove JE link from trait that have one
+   */
+    _getTraitContextOptions() {
+    return [
+      {//edit actor trait in fakeitem sheet or edit item (in itemSheet)
+        name: game.i18n.localize('M20E.context.editTrait'),
+        icon: '<i class="fas fa-pencil-alt"></i>',
+        callback: element => {
+          this.editItem(element[0].closest(".trait").dataset.index);
+        }
+      }
+    ]
   }
 
   async _onInlineEditChange(event) {
@@ -160,7 +178,7 @@ export class ThrowSheet extends DocumentSheet {
     super._onChangeInput(event);
   }
 
-    /**
+  /**
   * Dispatches mini-buttons clicks according to their dataset.action
   * Note that base item sheets don't have mini-buttons
   * But this used by all subClasses of M20eItemSheet which MUST override the add, edit and remove functions
@@ -181,29 +199,39 @@ export class ThrowSheet extends DocumentSheet {
         break;
 
       case 'add':
-        this.addItem(buttonElem);
+        this.addItem();
         break;
 
       case 'edit':
-        this.editItem(buttonElem);
+        this.editItem(buttonElem.closest(".trait").dataset.index);
         break;
 
       case 'remove':
-        this.removeItem(buttonElem);
+        this.removeItem(buttonElem.closest(".trait").dataset.index);
         break;
+
+        case 'moveup':
+          this.moveUpItem(buttonElem.closest(".trait").dataset.index);
+          break;
     }
   }
 
-  //to be implemented by subClasses
-  async addItem(buttonElem) {
-    const throws = duplicate(this.item.data.data.throws);
-    throws[this.throwIndex].stats.push(new Trait({path: 'attributes.stre'}));
-    return await this.item.update({['data.throws']: throws});
+  /**
+   * Note : In this context 'Item' refers to a stat (Trait instance)
+   * in the throw's stats array
+   */
+  async addItem() {
+    if ( this.baseThrow.addStat() ) {
+      const throws = duplicate(this.item.data.data.throws);
+      return await this.item.update({['data.throws']: throws});
+    }
   }
 
-  //to be implemented by subClasses
-  async editItem(buttonElem) {
-    const traitIndex = buttonElem.closest(".trait").dataset.index;
+  /**
+   * Note : In this context 'Item' refers to a stat (Trait instance)
+   * in the throw's stats array
+   */
+  async editItem(traitIndex) {
     const throws = duplicate(this.item.data.data.throws);
     const currPath = throws[this.throwIndex].stats[traitIndex].path;
 
@@ -217,16 +245,29 @@ export class ThrowSheet extends DocumentSheet {
     return await this.item.update({['data.throws']: throws});
   }
 
-  //to be implemented by subClasses
-  async removeItem(buttonElem) {
-    const traitIndex = buttonElem.closest(".trait").dataset.index;
-    const throws = duplicate(this.item.data.data.throws);
-    throws[this.throwIndex].stats.splice(traitIndex, 1);
-    return await this.item.update({['data.throws']: throws});
+  /**
+   * Note : In this context 'Item' refers to a stat (Trait instance)
+   * in the throw's stats array
+   */
+  async removeItem(traitIndex) {
+    if ( this.baseThrow.removeStat(traitIndex) ) {
+      const throws = duplicate(this.item.data.data.throws);
+      return await this.item.update({['data.throws']: throws});
+    }
+  }
+
+  /**
+   * Note : In this context 'Item' refers to a stat (Trait instance)
+   * in the throw's stats array
+   */
+  async moveUpItem(traitIndex) {
+    if ( this.baseThrow.moveUpStat(traitIndex) ) {
+      const throws = duplicate(this.item.data.data.throws);
+      return await this.item.update({['data.throws']: throws});
+    }
   }
 
   async close(options) {
     return super.close(options);
   }
-
 }

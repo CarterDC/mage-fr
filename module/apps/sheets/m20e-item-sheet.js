@@ -14,11 +14,6 @@ export default class M20eItemSheet extends ItemSheet {
   constructor(...args) {
     super(...args);
    
-    /*const itemSheetOptions = CONFIG.M20E.itemSheetOptions[this.object.data.type];
-    if( itemSheetOptions ) {
-      this.options.width = this.position.width = itemSheetOptions.width;
-      this.options.height = this.position.height = itemSheetOptions.height;
-    }*/
     if ( this.item.isOwned ) {
       //add the paradigm css class (if any) to the default options.
       const paraItem = this.item.actor.paradigm;
@@ -41,6 +36,19 @@ export default class M20eItemSheet extends ItemSheet {
    /** @override */
    get template() {
     return `systems/mage-fr/templates/item/${this.item.data.type}-sheet.hbs`;
+  }
+
+  /**
+   * removal of the 'sheet' option in the header (since there's no use for it anyway)
+   * @override
+   */
+   _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+    const sheetIndex = buttons.findIndex( button => button.label === 'Sheet');
+    if ( sheetIndex !== -1 ) {
+      buttons.splice(sheetIndex, 1);
+    }
+    return buttons;
   }
 
   /* -------------------------------------------- */
@@ -67,17 +75,16 @@ export default class M20eItemSheet extends ItemSheet {
   /** @override */
   activateListeners(html) {
     //disable buttons/inputs given their 'protection status'
-    if ( this.item.isProtected && !game.user.isGM ) {
+    if ( this.item.data.isProtectedType && !game.user.isGM ) {
       this._protectElements(html);
     }
 
     //actions for everyone
-    
 
     //editable only (roughly equals 'isOwner')
     if ( this.options.editable ) {
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
-      html.find('.meritflaw select').change(this._onSubtypeChange.bind(this));
+      html.find('select.inline-edit').change(this._onSubtypeChange.bind(this));
     }
     if ( game.user.isGM ) {
       
@@ -98,7 +105,7 @@ export default class M20eItemSheet extends ItemSheet {
     const dataset = buttonElem.dataset;
 
     //check if action is allowed before going any further
-    if ( dataset.disabled == false ) {
+    if ( dataset.disabled == 'true' ) {
       ui.notifications.warn(game.i18n.localize('M20E.notifications.gmPermissionNeeded'));
       return;
     }
@@ -122,6 +129,10 @@ export default class M20eItemSheet extends ItemSheet {
       case 'remove':
         this.removeItem(buttonElem);
         break;
+
+      case 'moveup':
+        this.moveUpItem(buttonElem);
+        break;
     }
   }
 
@@ -139,6 +150,7 @@ export default class M20eItemSheet extends ItemSheet {
     };
     this.item.createEmbeddedDocuments('ActiveEffect', [effectData], {renderSheet: true});
   }
+
   //to be implemented by subClasses
   async editItem(buttonElem) {
     if ( this.item.isOwned ) {
@@ -148,6 +160,7 @@ export default class M20eItemSheet extends ItemSheet {
     const aEffect = this.item.effects.get(effectId);
     aEffect.sheet.render(true);
   }
+
   //to be implemented by subClasses
   async removeItem(buttonElem) {
     if ( this.item.isOwned ) {
@@ -156,6 +169,10 @@ export default class M20eItemSheet extends ItemSheet {
     }
     const effectId = Array.from(this.item.effects.keys())[0];
     this.item.deleteEmbeddedDocuments('ActiveEffect', [effectId]);
+  }
+
+  moveUpItem(buttonElem) {
+
   }
 
   /**

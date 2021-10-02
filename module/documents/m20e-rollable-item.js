@@ -32,13 +32,67 @@ export default class M20eRollableItem extends M20eItem {
    _prepareOwnedItem() {
     super._prepareOwnedItem();
     const itemData = this.data;
-    //itemData.data.flavor = this._getFlavor();
+    itemData.data.miniFlavor = this.getMiniFlavor();
     //itemData.data.isActuallyRollable = this._isActuallyRollable();
   }
 
-    /* -------------------------------------------- */
+  async addThrow() {
+    const itemData = this.data;
+    //check for the max throws authorized
+    //todo put the value in config
+    if ( itemData.data.throws.length >= 10 ) { return; }
+    
+    const throws = duplicate(itemData.data.throws);
+    //create a new throw
+    throws.push(new BaseThrow([
+      //stats
+    ], {
+      //data
+      name: game.i18n.localize('M20E.new.throw'),
+      type: itemData.type
+    }, {
+      //options
+      
+    }));
+    return await this.update({['data.throws']: throws});
+  }
+
+  async removeThrow(throwIndex) {
+    const itemData = this.data;
+    //check if index is within the range
+    if ( throwIndex >= itemData.data.throws.length ) { return; }
+    
+    const throws = duplicate(itemData.data.throws);
+    throws.splice(throwIndex, 1);
+    return await this.update({['data.throws']: throws});
+  }
+
+  async moveUpThrow(throwIndex) {
+    const itemData = this.data;
+    //check if index is within the range
+    if ( !throwIndex || throwIndex >= itemData.data.throws.length ) { return; }
+    
+    const throws = duplicate(itemData.data.throws);
+    [throws[throwIndex-1], throws[throwIndex]] = [throws[throwIndex], throws[throwIndex-1]];
+    return await this.update({['data.throws']: throws});
+  }
+
+  /* -------------------------------------------- */
   /*  Roll related                                */
   /* -------------------------------------------- */
+
+  //get that's displayed on the actorsheet
+  getMiniFlavor() {
+    const itemData = this.data;
+    let miniFlavor = '';
+    if ( this.data.type === 'weapon' ) {
+    //compute a string containing damages and damage type 
+    //(TODO : damages should be number or stat + number)
+      const damageType = game.i18n.localize(CONFIG.M20E.damageTypes[itemData.data.damageType]);
+      miniFlavor = `dmg : ${itemData.data.damage}D - ${damageType}`;
+    }
+    return miniFlavor;
+  }
 
   getStats(throwIndex) {
     return this.data.data.throws[throwIndex].stats;
@@ -57,25 +111,6 @@ export default class M20eRollableItem extends M20eItem {
     return this.data.data.throws.some( mageThrow => mageThrow.isRollable(actor));
   }*/
 
-
-
-
-  /**
-   * Extends an array of {@link Trait} with relevant values to Throw dices
-   */
-  getExtendedStats(stats) {
-    return stats.map( trait => {
-      const xData = trait.isItem ? 
-        this.actor.getItemFromId(trait.itemId).getExtendedTraitData(trait.path) :
-        this.actor.getExtendedTraitData(trait.path);
-      return new Trait({
-        path: trait.path,
-        itemId: trait.itemId,
-        data: {...trait.data, ...xData}
-      });
-    });
-  }
-
    /**
     * get traits from a rollable item for the specific throw index (ie rotes only have 1 throw so it's index 0)
     * create a new {@link DiceThrow} from traitsToRoll and either throw or open config App based on shiftkey status
@@ -84,7 +119,6 @@ export default class M20eRollableItem extends M20eItem {
     * @param  {Number} throwIndex=0 
     */
    roll(shiftKey, throwIndex = 0) {
-    debugger
     const baseThrow = BaseThrow.fromData(this.data.data.throws[throwIndex]);
     baseThrow.options.throwIndex = throwIndex;
     const diceThrower = DiceThrower.create(this, baseThrow);

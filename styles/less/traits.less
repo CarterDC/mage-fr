@@ -78,7 +78,8 @@
       }
     }
     .one-liner-desc[data-expanded="true"]{
-      height:fit-content;
+      height: fit-content;
+      height: -moz-fit-content;
     }
   }
   .trait[data-active='true'] .stat-label{
@@ -332,6 +333,9 @@
       opacity: 0;
       transition: opacity 1s;
     }
+    .mini-flavor{
+      margin-right: 10px;
+    }
   }
   .rote:hover .trait-dice{
     visibility: visible;
@@ -372,6 +376,22 @@
         margin-right:10px;
     }
   }
+/* -------------------------------------------- */
+.trait.throw {
+  width:100%;
+  justify-self: center;
+  height: 20px;
+  margin: 3px 0px 3px 0px;
+  .trait-label{
+    padding-left: 3px;
+  }
+  .bullet-display{
+    flex: 0 0 100px;
+    justify-content: flex-start;
+    padding-left: 3px;
+  }
+}
+
 /* -------------------------------------------- */
 .trait.throw-trait{
   width:100%;

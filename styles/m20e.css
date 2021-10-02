@@ -677,6 +677,7 @@
   /* -------------------------------------------- */
   /* -------------------------------------------- */
   /* -------------------------------------------- */
+  /* -------------------------------------------- */
   /*  Fields                                      */
   /* -------------------------------------------- */
 }
@@ -756,6 +757,7 @@
 }
 .m20e .trait .one-liner-desc[data-expanded="true"] {
   height: fit-content;
+  height: -moz-fit-content;
 }
 .m20e .trait[data-active='true'] .stat-label {
   color: var(--highlightColor);
@@ -986,6 +988,9 @@
   opacity: 0;
   transition: opacity 1s;
 }
+.m20e .trait.equipable .mini-flavor {
+  margin-right: 10px;
+}
 .m20e .rote:hover .trait-dice {
   visibility: visible;
   opacity: 1;
@@ -1015,6 +1020,20 @@
 .m20e .trait.rote-effect .mini-button {
   color: var(--m20e-badRed);
   margin-right: 10px;
+}
+.m20e .trait.throw {
+  width: 100%;
+  justify-self: center;
+  height: 20px;
+  margin: 3px 0px 3px 0px;
+}
+.m20e .trait.throw .trait-label {
+  padding-left: 3px;
+}
+.m20e .trait.throw .bullet-display {
+  flex: 0 0 100px;
+  justify-content: flex-start;
+  padding-left: 3px;
 }
 .m20e .trait.throw-trait {
   width: 100%;
@@ -1163,6 +1182,9 @@ li.chat-message .card .card-footer .item-img {
 }
 .m20e.dice-roll .dice-tooltip .part-header .tooltip-infos {
   display: flex;
+  position: relative;
+  font-size: var(--titleColor);
+  font-weight: bold;
 }
 .m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .tooltip-info {
   font-size: var(--titleColor);
@@ -1174,6 +1196,63 @@ li.chat-message .card .card-footer .item-img {
 }
 .m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .tooltip-info[data-value^="+"] {
   color: var(--m20e-goodGreen);
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .righttooltiptext {
+  visibility: hidden;
+  background: rgba(0, 0, 0, 0.8) url(../assets/ui/parchment-dark.jpg) repeat;
+  text-align: center;
+  text-decoration: none;
+  text-shadow: none;
+  border: 1px solid var(--m20e-lightGrey);
+  border-radius: 3px;
+  padding: 5px 10px;
+  position: fixed;
+  margin: -5px 0px 0px 5px;
+  z-index: 1;
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .righttooltiptext::after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent var(--m20e-darkGrey) transparent transparent;
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .bottomtooltiptext {
+  visibility: hidden;
+  background: rgba(0, 0, 0, 0.8) url(../assets/ui/parchment-dark.jpg) repeat;
+  text-align: left;
+  text-decoration: none;
+  text-shadow: none;
+  font-size: 12px;
+  font-weight: normal;
+  border: 1px solid var(--m20e-lightGrey);
+  border-radius: 3px;
+  padding: 5px 10px;
+  position: absolute;
+  width: 95%;
+  top: 100%;
+  left: 5%;
+  margin: 5px 0px 0px 0px;
+  z-index: 1;
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .bottomtooltiptext::after {
+  content: " ";
+  position: absolute;
+  bottom: 100%;
+  left: 10%;
+  margin-top: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent var(--m20e-darkGrey) transparent;
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos:hover .righttooltiptext {
+  visibility: visible;
+}
+.m20e.dice-roll .dice-tooltip .part-header .tooltip-infos:hover .bottomtooltiptext {
+  visibility: visible;
 }
 .m20e.dice-roll .dice-total {
   color: var(--m20e-goodGreen);
@@ -1224,12 +1303,6 @@ li.chat-message .card .card-footer .item-img {
   padding: 3px 5px;
   border-bottom: 1px solid var(--titleColor);
 }
-.m20e.dialog .red-thingy {
-  color: var(--m20e-badRed);
-}
-.m20e.dialog .green-thingy {
-  color: var(--m20e-goodGreen);
-}
 .m20e.dialog .dialog-block.dice-pool {
   display: flex;
   flex-direction: row;
@@ -1244,9 +1317,9 @@ li.chat-message .card .card-footer .item-img {
   height: 32px;
   width: 40px;
   margin: 0 0 0 0;
-  font-family: "Diablo";
+  font-family: var(--titleFontFam);
   font-weight: bold;
-  font-size: 20px;
+  font-size: var(--itemNameFontSize);
   text-align: center;
 }
 .m20e.dialog .radio-group {
@@ -1255,10 +1328,10 @@ li.chat-message .card .card-footer .item-img {
   flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  font-family: "Diablo";
+  font-family: var(--titleFontFam);
   font-weight: bold;
   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
-  font-size: 18px;
+  font-size: var(--catFontSize);
   text-align: center;
 }
 .m20e.dialog .radio-group div {
@@ -1435,6 +1508,12 @@ li.chat-message .card .card-footer .item-img {
 .m20e select:focus {
   box-shadow: 0 0 2px 1px var(--highlightColor);
   outline: none;
+}
+.m20e .red-thingy {
+  color: var(--m20e-badRed);
+}
+.m20e .green-thingy {
+  color: var(--m20e-goodGreen);
 }
 .m20e .hidden-field {
   display: none;

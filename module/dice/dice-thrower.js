@@ -18,11 +18,11 @@ export default class DiceThrower {
 
     this._document = document; //either an actor or owned item
     this._throw = baseThrow;
-    this.stats = this._document.getExtendedStats(baseThrow.stats);
+    this.stats = baseThrow.stats;
     this.data = foundry.utils.mergeObject(this.constructor.defaultData, baseThrow.options);
 
     this._app = null;
-    this._prepared = false;
+    this._initialized = false;
   }
 
   static get defaultData() {
@@ -44,7 +44,7 @@ export default class DiceThrower {
       throwIndex: 0,
       difficultyOverride: null,
       ignoreHealthMod: false,
-      throwMode : M20E.THROWMODE.DEDUCT_FAILURES & M20E.THROWMODE.RESULT_CRITICAL
+      throwMode : M20E.THROWMODE.DEDUCT_FAILURES | M20E.THROWMODE.RESULT_CRITICAL
     };
   }
 
@@ -83,6 +83,20 @@ export default class DiceThrower {
   /*  Initialisation                              */
   /* -------------------------------------------- */
 
+  initialize() {
+    this.prepareStats();
+    this.prepareData();
+    this._initialized = true;
+  }
+
+  prepareStats() {
+    if ( DiceThrower.isItemThrow(document) ) {
+    
+    } else {
+      this.stats = this.actor.getExtendedStats(this.stats);
+    }
+  }
+
   /**
    * Calculates the relevant data for display / roll
    * also called by every update method call in order to display accurate values in case diceThrow has an App
@@ -104,7 +118,6 @@ export default class DiceThrower {
 
     //flavor
     //this.flavor = this._document.getThrowFlavor(this._traits, this._thowIndex);
-    this._prepared = true;
   }
 
   /**
@@ -236,9 +249,9 @@ export default class DiceThrower {
    */
    async throwDice(closeOnRoll = true) {
     // do the init (might throw an error if throw is actually impossible)
-    if ( !this._prepared ) {
+    if ( !this._initialized ) {
       try {
-        this.prepareData();
+        this.initialize();
       } catch (e) {
         ui.notifications.error(game.i18n.localize(`M20E.notifications.${e}`));
         return;
@@ -278,34 +291,144 @@ export default class DiceThrower {
       stats: this.stats,
       data: this.data
     };
+    
     //prepare the formula
     const {dicePoolTotal, difficultyTotal} = this.data;
-    const tenXplodeSuccess = this.data.throwMode & M20E.THROWMODE.XPLODE_SUCCESS ? 'xs=10' : '';
-    const deductFailures = this.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES ? 'df=1' : '';
+    this.data.throwMode = this.data.throwMode | M20E.THROWMODE.XPLODE_SUCCESS
+    const tenXplodeSuccess = (this.data.throwMode & M20E.THROWMODE.XPLODE_SUCCESS) ? 'xs=10' : '';
+    const deductFailures = (this.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES) ? 'df=1' : '';
     const formula = `${dicePoolTotal}d10${tenXplodeSuccess}cs>=${difficultyTotal}${deductFailures}`;
     
     return new CONFIG.Dice.MageRoll(formula, null, rollOptions);
   }
 
+  static useCritical(throwMode) {
+    return !!(throwMode &  M20E.THROWMODE.RESULT_CRITICAL)
+  }
+
   /* -------------------------------------------- */
-  /*  {DiceDialog} App Handlers                 */
+  /*  {DiceThrowerApp} App Handlers               */
   /* -------------------------------------------- */
+
+  /**
+   * returns the (optionnal) application that drives the diceTrower
+   * create an instance if needed
+   * 
+   * @returns {DiceThrowerApp} an instance of a DiceThrowerApp Application
+   */
+   get app() {
+    //todo : maybe add game setting to prevent players from editing their throws ?
+    if ( !this._app ) {
+      const cls = CONFIG.M20E.DiceThrower.appClass;
+      this._app = new cls (this, {
+        editable: game.user.isGM || true 
+      });
+    }
+    return this._app;
+  }
+
+  /**
+   * remove a trait from both the traitToRoll array an it's extended counterpart
+   * from user interaction with an indexed remove button on the DiceDialog App
+   * 
+   * @param  {Number} index index of the trait in the throw's traits array
+   */
+  removeTrait(index) {
+    this._traits.splice(index, 1);
+    this.update();
+  }
+
+  /**
+   * updates the value of a trait from the extended traits array
+   * from user interaction with clickable bullets on the DiceDialog App
+   * note only allowed on actor magical effect throw
+   * 
+   * @param  {Number} index index of the trait in the throw's traits array
+   * @param  {Number} newValue 
+   */
+  updateTraitValue(index, newValue) {
+    this._traits[index].data.valueOverride = newValue;
+    this.update();
+  }
+
+  /**
+   * Updates the chosen threshold (it will be used for the roll)
+   * 
+   * @param  {Number} newValue
+   */
+   updateChosenThreshold(newValue) {
+    this.thresholdChosen = newValue;
+    //this.thresholdMods.userMod = this.thresholdChosen - this.thresholdBase;
+
+    this.update();
+  }
+
+  /**
+   * switch between the 3 throw settings in one way or the other (depending on mouse button)
+   * from user interaction with the throw settings button on the DiceDialog App
+   * 
+   * @param  {Number} mod either -1 or +1
+   */
+  rotateSetting(mod) {
+    this.throwSettings += mod;
+    if ( this.throwSettings < TROWSETTINGS_BLANDROLL ) {
+      this.throwSettings = TROWSETTINGS_DFXPLODESUCCESS;
+    } else if ( this.throwSettings > TROWSETTINGS_DFXPLODESUCCESS ) {
+      this.throwSettings = TROWSETTINGS_BLANDROLL;
+    }
+    this.render(true);
+  }
+
+  /**
+   * Reevaluates most of the diceThrow values and rerender the app
+   * 
+   * @param  {Boolean} fullUpdate forces the reevaluation of the traits too
+   */
+  update(fullUpdate=false) {
+    if ( fullUpdate ) {
+      //happens usually when actor is updated
+      this.prepareStats();
+    }
+    //recalc shit
+    this.prepareData();
+    //render
+    this.render(true);
+  }
+
+  /**
+   * called by ActorSheet or macro to display the DiceDialogue Application
+   * @param  {Boolean} force=false
+   */
+  render(force=false, options={}) {
+    // do the init (might throw an error if throw is actually impossible)
+    if ( !this._initialized ) {
+      try {
+        this.initialize();
+      } catch (e) {
+        ui.notifications.error(game.i18n.localize(`M20E.notifications.${e}`));
+        return;
+      }
+    }
+    this.app.render(force);
+  }
+
 
   /**
    * Only non 0 mods
    */
-  static getTooltipModsData(mods, invert=false) {
+  static getModsTooltipData(mods, invert=false) {
     let data = {};
     for( const mod in mods) {
       const value = mods[mod];
       if ( value ) {
         data[mod] = {
-          name: game.i18n.localize(`M20E.throwMod.${mod}`),
+          name: utils.safeLocalize(`M20E.throwMod.${mod}`, mod),
           class: (invert ? -1 * value : value) < 0 ? 'red-thingy' : 'green-thingy',
           value: (value > 0) ? `+${value}` : `${value}`
         };
       }
     }
+    return data;
   }
 
   /* -------------------------------------------- */

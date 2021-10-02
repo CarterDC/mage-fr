@@ -11,11 +11,11 @@
 
 // Import Documents
 import M20eActor from './module/documents/m20e-actor.js'
-import M20eMageActor from './module/documents/mage-actor.js'
+import M20eMageActor from './module/documents/m20e-mage-actor.js'
 import M20eItem from './module/documents/m20e-item.js'
-import M20eParadigmItem from './module/documents/paradigm-item.js'
-import M20eRollableItem from './module/documents/rollable-item.js'
-import M20eRoteItem from './module/documents/rote-item.js'
+import M20eParadigmItem from './module/documents/m20e-paradigm-item.js'
+import M20eRollableItem from './module/documents/m20e-rollable-item.js'
+import M20eRoteItem from './module/documents/m20e-rote-item.js'
 // Import Applications
 import M20eActorSheet from './module/apps/sheets/m20e-actor-sheet.js'
 import M20eMageActorSheet from './module/apps/sheets/mage-actor-sheet.js'
@@ -26,6 +26,7 @@ import M20eRollableSheet from './module/apps/sheets/rollable-sheet.js'
 import M20eRoteSheet from './module/apps/sheets/rote-sheet.js'
 
 import DiceThrower from './module/dice/dice-thrower.js'
+import DiceThrowerApp from './module/dice/dice-thrower-app.js'
 
 // Other Imports
 import { M20E } from './module/utils/config.js'
@@ -54,6 +55,7 @@ Hooks.once('init', async function () {
 
   CONFIG.M20E = M20E;
   CONFIG.M20E.stats = {}; //list of stats used by stats selection App (GM tools + rollables) 
+
   CONFIG.Actor.documentClass = M20eActor;
   //add references to subclasses for use in the M20eActor constructor
   CONFIG.Actor.documentClasses = {
@@ -98,13 +100,14 @@ Hooks.once('init', async function () {
   });
   //ActiveEffect sheet
   CONFIG.ActiveEffect.sheetClass = M20eAeSheet;
-
+  
   registerSystemSettings(); //system settings
   registerHotbarOverride(); //hack on the hotbar for shifKey on macros
   utils.registerHandlebarsHelpers(); //all of our HB helpers
   utils.preloadHandlebarsTemplates(); //preload all partials and some templates
-
+  
   //DICE thingies
+  CONFIG.M20E.DiceThrower.appClass = DiceThrowerApp; //store class here for later access
   CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later access
   CONFIG.Dice.rolls.push(dice.MageRoll); //Add it to the list of roll classes
   CONFIG.Dice.terms["s"] = dice.DieSuccess; //new dice term

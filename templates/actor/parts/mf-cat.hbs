@@ -12,7 +12,7 @@
             {{#each meritflawgroup as |meritflaw key|}}
             <div class="trait meritflaw linkable" data-item-id="{{meritflaw._id}}" data-active= "false"> 
                 <img class="trait-img" src="{{meritflaw.img}}"/>
-                <label class="trait-label tooltip" data-item-id="{{meritflaw._id}}">
+                <label class="trait-label drag-ready tooltip" data-item-id="{{meritflaw._id}}">
                     {{#if meritflaw.data.displayName}}
                     {{meritflaw.data.displayName}}
                     {{else}}

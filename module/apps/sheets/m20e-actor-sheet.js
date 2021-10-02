@@ -57,6 +57,19 @@ export default class M20eActorSheet extends ActorSheet {
     return 'systems/mage-fr/templates/actor/actor-sheet.hbs';
   }
 
+  /**
+   * removal of the 'sheet' option in the header (since there's no use for it anyway)
+   * @override
+   */
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+    const sheetIndex = buttons.findIndex( button => button.label === 'Sheet');
+    if ( sheetIndex !== -1 ) {
+      buttons.splice(sheetIndex, 1);
+    }
+    return buttons;
+  }
+
   /* -------------------------------------------- */
 
   /** @override */
@@ -163,7 +176,7 @@ export default class M20eActorSheet extends ActorSheet {
       //ctx menu on the character name (paradigm edition...)
       new ContextMenu(html, '.name-wrapper', this._getNameContextOptions());
       //ctx menu on traits (edition / link)
-      new ContextMenu(html, '.trait', this._getTraitContextOptions());
+      new ContextMenu(html, '.trait.linkable', this._getTraitContextOptions());
       //ctx menu for current xp field
       new ContextMenu(html, '.currXP', this._getXPContextOptions());
       //ctx menu for rollable items
@@ -248,7 +261,7 @@ export default class M20eActorSheet extends ActorSheet {
     const dataset = buttonElem.dataset;
 
     //check if action is allowed before going any further
-    if ( dataset.disabled == false) {
+    if ( dataset.disabled == 'true') {//'true' or true
       ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
       return;
     }
@@ -772,43 +785,54 @@ export default class M20eActorSheet extends ActorSheet {
 
   /* -------------------------------------------- */
 
+    /**
+   * @return the context menu options for the '.trait' elements
+   * link trait in chat, edit trait, remove JE link from trait that have one
+   */
+     _getBaseTraitContextOptions() {
+      return [
+        {//edit actor trait in fakeitem sheet or edit item (in itemSheet)
+          name: game.i18n.localize('M20E.context.editTrait'),
+          icon: '<i class="fas fa-pencil-alt"></i>',
+          callback: element => {
+            const trait = Trait.fromElement(element[0]);
+            if ( trait.itemId ) {
+              this._editEmbedded(trait);
+            } else {
+              this._editTrait(trait);
+            }
+          },
+          condition: element => {//todo : maybe find different a condition if any ?
+            return true;
+            //return element[0].classList.contains('linkable');
+          }
+        },
+        {//link actor trait or item in chat
+          name: game.i18n.localize('M20E.context.linkInChat'),
+          icon: '<i class="fas fa-share"></i>',
+          callback: element => {
+            const trait = Trait.fromElement(element[0]);
+            if ( trait.itemId ) {
+              const item = this.actor.items.get(trait.itemId);
+              item.linkInChat();
+            } else {
+              this._linkInChat(trait);
+            }
+          },
+          condition: element => {
+            return true;
+            //return element[0].classList.contains('linkable');
+          }
+        }
+      ]
+    }
+
   /**
    * @return the context menu options for the '.trait' elements
    * link trait in chat, edit trait, remove JE link from trait that have one
    */
   _getTraitContextOptions() {
-    return [
-      {//link actor trait or item in chat
-        name: game.i18n.localize('M20E.context.linkInChat'),
-        icon: '<i class="fas fa-share"></i>',
-        callback: element => {
-          const trait = Trait.fromElement(element[0]);
-          if ( trait.itemId ) {
-            const item = this.actor.items.get(trait.itemId);
-            item.linkInChat();
-          } else {
-            this._linkInChat(trait);
-          }
-        },
-        condition: element => {
-          return element[0].classList.contains('linkable');
-        }
-      },
-      {//edit actor trait in fakeitem sheet or edit item (in itemSheet)
-        name: game.i18n.localize('M20E.context.editTrait'),
-        icon: '<i class="fas fa-pencil-alt"></i>',
-        callback: element => {
-          const trait = Trait.fromElement(element[0]);
-          if ( trait.itemId ) {
-            this._editEmbedded(trait);
-          } else {
-            this._editTrait(trait);
-          }
-        },
-        condition: element => {//todo : maybe find different a condition if any ?
-          return element[0].classList.contains('linkable');
-        }
-      },
+    return [...this._getBaseTraitContextOptions(), 
       {//remove a link to a journal entry from an actor trait (bio category)
         name: game.i18n.localize('M20E.context.removeLink'),
         icon: '<i class="fas fa-trash"></i>',
@@ -828,18 +852,19 @@ export default class M20eActorSheet extends ActorSheet {
     const itemId = traitElem.dataset.itemId;
     const item = this.actor.items.get(itemId);
     //prepare context menu options from list of throws in this rollable
-    return item.data.data.throws.map( (baseThrow, throwIndex) => {
-      return {
-        name: baseThrow.data.name,
-        itemId: itemId,
-        throwIndex: throwIndex,
-        icon: '<i class="fas fa-dice"></i>',
-        callback: (target, event) => {
-          item.roll(event.shiftKey, throwIndex);
-        },
-        dragDropCallbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDrop.bind(this) }
-      }
-    });
+    return [...this._getBaseTraitContextOptions(), 
+      ...item.data.data.throws.map( (baseThrow, throwIndex) => {
+          return {
+            name: baseThrow.data.name,
+            itemId: itemId,
+            throwIndex: throwIndex,
+            icon: '<i class="fas fa-dice"></i>',
+            callback: (target, event) => {
+              item.roll(event.shiftKey, throwIndex);
+            },
+            dragDropCallbacks: { dragstart: this._onDragStart.bind(this), drop: this._onDrop.bind(this) }
+          }
+      })]
   }
 
   /* -------------------------------------------- */
@@ -1130,7 +1155,8 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
-   * added paradigm item management
+   * added paradigm item management &
+   * check to see if item drop is allowed to continue with item creation
    *  @override
    */
   async _onDropItem(event, data) {
@@ -1142,13 +1168,14 @@ export default class M20eActorSheet extends ActorSheet {
     if ( itemData.type === 'paradigm' ) {
       return this._onDropParadigmItem(itemData);
     }
+    //check if drop is allowed
+    if ( !await this._isDropAllowed(item) ) { return false; }
+
     // Handle item sorting within the same Actor
     const actor = this.actor;
     let sameActor = (data.actorId === actor.id) || (actor.isToken && (data.tokenId === actor.token.id));
     if (sameActor) return this._onSortItem(event, itemData);
 
-    //check if drop is allowed
-    if ( !await this._isDropAllowed(item) ) { return false; }
     // Create the owned item
     return super._onDropItemCreate(itemData);
   }
@@ -1169,7 +1196,7 @@ export default class M20eActorSheet extends ActorSheet {
       return;
     }
     //check against 'creation mode'
-    if ( this.actor.data.data.creationDone && !game.user.isGM && itemData.protectedType ) {
+    if ( this.actor.data.data.creationDone && !game.user.isGM && itemData.isProtectedType ) {
         ui.notifications.error(game.i18n.localize('M20E.notifications.notOutsideCreation'));
         return false;
     }

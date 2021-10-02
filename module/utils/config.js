@@ -2,9 +2,12 @@
 export const M20E = {
   //
   THROWMODE: {
+    BLAND: 0b000,
     DEDUCT_FAILURES: 0b001,
     XPLODE_SUCCESS: 0b010,
-    RESULT_CRITICAL: 0b100
+    RESULT_CRITICAL: 0b100,
+    DEFAULT: 0b101,
+    XTRA: 0b111
   },
   WOUNDTYPE: {
     NONE: 0,
@@ -223,7 +226,9 @@ export const M20E = {
     extra7: "🗸",
     extra8: "⛧",
     extra9: "⛥"
-  }
+  },
+
+  DiceThrower: {} //for storing the app class
 };
 
 
