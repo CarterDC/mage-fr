@@ -9,14 +9,30 @@
             <header class="part-header flexrow">
                 <div class="tooltip-infos">
                     <span class="tooltip-info">
-                        {{localize "M20E.labels.pool"}} : {{part.options.dicePoolBase}}
+                        {{localize "M20E.labels.pool"}} : {{part.data.dpTotal}}
                     </span>
+                    {{#if part.data.dpTooltips}}
+                    <span class="bottomtooltiptext">
+                      {{#each part.data.dpTooltips as |tt key|}}
+                      <label class="{{tt.class}}"><b>{{tt.name}}: {{tt.value}}</b></label><br>
+                      {{/each}}
+                    </span>
+                    {{/if}}
                 </div>
+                {{#if part.data.diffTotal}}
                 <div class="tooltip-infos">
                     <span class="tooltip-info">
-                      {{localize "M20E.labels.thrsh"}} : {{part.options.thresholdTotal}}
+                      {{localize "M20E.labels.diff"}} : {{part.data.diffTotal}}
                     </span>
+                    {{#if part.data.diffTooltips}}
+                    <span class="bottomtooltiptext">
+                      {{#each part.data.diffTooltips as |tt key|}}
+                      <label class="{{tt.class}}"><b>{{tt.name}}: {{tt.value}}</b></label><br>
+                      {{/each}}
+                    </span>
+                    {{/if}}
                 </div>
+                {{/if}}
                 <span class="part-total">{{part.total}}</span>
             </header>
             <ol class="dice-rolls">

@@ -29,6 +29,16 @@ export default class M20eItem extends Item {
   /* -------------------------------------------- */
 
   /**
+   * Added sourceId when cloning
+   *  @override
+   */
+   clone(data, options) {
+    data = data || {};
+    data['flags.core.sourceId'] = this.uuid;
+    super.clone(data, options);
+  }
+
+  /**
    * adds image path and systemDescription before sending the whole thing to the database
    * prompts for subType if that particular item type does require one,
    * in order to get the matching img and systemDesc.
@@ -133,7 +143,7 @@ export default class M20eItem extends Item {
       const itemType = CONFIG.M20E.categoryToType[cur]
       return itemType ? [...acc, itemType] : acc;
     }, []);
-    this.data.protectedType = protectedTypes.includes(this.type);
+    this.data.isProtectedType = protectedTypes.includes(this.type);
   }
 
   /**

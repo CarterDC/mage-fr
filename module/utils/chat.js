@@ -236,6 +236,7 @@ export async function welcomeMessage() {
   const htmlContent = await renderTemplate(msgTemplate, templateData);
   //send message
   ChatMessage.create({
+    user: game.user.id,
     type: CONST.CHAT_MESSAGE_TYPES.OTHER,
     content: htmlContent,
     flavor: templateData.flavor,
@@ -261,6 +262,7 @@ export async function versionWarningMessage(sysVersion) {
   const htmlContent = await renderTemplate(msgTemplate, templateData);
   //send message
   ChatMessage.create({
+    user: game.user.id,
     type: CONST.CHAT_MESSAGE_TYPES.OTHER,
     content: htmlContent,
     flavor: templateData.flavor,

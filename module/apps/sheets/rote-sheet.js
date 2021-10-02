@@ -23,8 +23,8 @@ export default class M20eRoteSheet extends M20eItemSheet {
     const sheetData = super.getData(options);
     sheetData.locks = this.locks;
     sheetData.throw = sheetData.data.throws[0];
-    sheetData.traits = sheetData.throw.traits.map(trait => {
-      return {...trait.split(), value: trait.value}
+    sheetData.traits = sheetData.throw.stats.map(stat => {
+      return {...stat.split(), value: stat.value}
     });
     sheetData.availEffects = this.getAvailEffects();
     return sheetData;
@@ -125,7 +125,7 @@ export default class M20eRoteSheet extends M20eItemSheet {
     return CONFIG.M20E.spheres.map( key => (
       {
         key: key,
-        name: game.i18n.localize(`M20E.traits.spheres.${key}`),
+        name: game.i18n.localize(`M20E.spheres.${key}`),
         valueMax : 5
       }
     ));
@@ -137,12 +137,12 @@ export default class M20eRoteSheet extends M20eItemSheet {
    * @return {Array} [{key, name, valueMax},]
    */
   effectsFromActor() {
-    const spheres = this.actor.data.data.traits.spheres
+    const spheres = this.actor.data.data.spheres
     return Object.entries(spheres).reduce((acc, [key, sphere]) => {
       return sphere.value === 0 ? acc : 
       [...acc, {
         key: key,
-        name: this.actor.locadigm(`traits.spheres.${key}`),
+        name: this.actor.locadigm(`spheres.${key}`),
         valueMax : sphere.value
       }];
     }, []);

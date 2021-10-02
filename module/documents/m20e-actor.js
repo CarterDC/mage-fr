@@ -31,8 +31,13 @@ export default class M20eActor extends Actor {
       // and resume default behavior
       return new CONFIG.Actor.documentClasses[data.type](data,{...{isExtendedClass: true}, ...context});
     }
-  //default behavior, just call super and do all the default Item inits.
-  super(data, context);
+    //default behavior, just call super and do all the default Item inits.
+    super(data, context);
+    this.diceThrower = {
+      stats: [],
+      name: this.data.name
+    };
+    log(this.diceThrower)
   }
 
   /* -------------------------------------------- */
@@ -122,7 +127,9 @@ export default class M20eActor extends Actor {
     //Add willpower to the secondary stats
     const willpowerMax = this.data.data.resources.willpower.max;
     this._setStat('secondary.willpower', {value: willpowerMax});
-    foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
+    if ( !foundry.utils.hasProperty(CONFIG.M20E.stats, 'secondary.willpower') ) {
+      foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
+    }
     
     
     //create health property with {value, max} pair
@@ -218,11 +225,12 @@ export default class M20eActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData();
 
-   //Add willpower, init etc... to the stats
+   /*//todo : decide if willpower can be overridden before or after ?
    const willpowerMax = this.data.data.resources.willpower.max;
    this._setStat('secondary.willpower', {value: willpowerMax});
    foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
-
+*/
+   //add init to secondary stats
     const dext = this._getStat('attributes.dext','value');
     const wits = this._getStat('attributes.wits','value');
     this._setStat('secondary.initiative', {value: dext + wits});
@@ -282,6 +290,16 @@ export default class M20eActor extends Actor {
   /* -------------------------------------------- */
 
   /**
+   * Added sourceId when cloning
+   *  @override
+   */
+  clone(data, options) {
+    data = data || {};
+    data['flags.core.sourceId'] = this.uuid;
+    super.clone(data, options);
+  }
+
+  /**
    * Executed only once, just prior the actorData is actually sent to the database
    * Adds base options/items to the actor (only if created from scratch !)
    *  @override
@@ -289,8 +307,11 @@ export default class M20eActor extends Actor {
    async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     const actorData = this.data;
+
     //check if actor is from existing actor (going in or out a compendiumColl)
     if ( actorData.flags.core?.sourceId ) { return; }
+    //second check cuz apparently duplicating an actor doesn't put the sourceId flag !
+    //if ( actorData.items.size ) { return; }
 
     //get baseAbilities from compendium if any or defaultAbilities from config
     const baseAbilities = await this._getBaseAbilities();
@@ -575,12 +596,13 @@ export default class M20eActor extends Actor {
    */
   getExtendedStats(stats) {
     return stats.map( trait => {
-      const xData = trait.isItem ? 
-        this.getItemFromId(trait.itemId).getExtendedTraitData(trait.path) :
+      const itemId = trait.itemId || this._getStat(trait.path, 'itemId');
+      const xData = itemId ? 
+        this.getItemFromId(itemId).getExtendedTraitData(trait.path) :
         this.getExtendedTraitData(trait.path);
       return new Trait({
         path: trait.path,
-        itemId: trait.itemId,
+        itemId: itemId,
         data: {...trait.data, ...xData}
       });
     });

@@ -12,6 +12,26 @@ export function log(args) {
   return consoleTrace(args);
 }
 
+  /**
+   * todo put that somewhere else or not ?
+   * Only non 0 mods
+   */
+   export function getModsTooltipData(mods, invert=false) {
+    let data = [];
+    for( const mod in mods) {
+      const value = mods[mod];
+      if ( value ) {
+        data.push({
+          name: safeLocalize(`M20E.throwMod.${mod}`, mod),
+          class: (invert ? -1 * value : value) < 0 ? 'red-thingy' : 'green-thingy',
+          value: (value > 0) ? `+${value}` : `${value}`
+        });
+      }
+    }
+    return data;
+  }
+
+
 /**
  * Whether the passed variable is actually instanciated,
  * is not a primitive and is not an array-type object

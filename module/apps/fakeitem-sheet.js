@@ -14,11 +14,9 @@ export class FakeItem extends DocumentSheet {
     super(actor, {
       closeOnSubmit: false,
       submitOnChange: true,
-      submitOnClose: true,
-      title: actor.name
+      submitOnClose: true
      });
 
-    this.actor = actor;
     this.itemData = itemData;
 
     //add the paradigm css class if any to the default options.
@@ -39,6 +37,22 @@ export class FakeItem extends DocumentSheet {
       tabs: [{ navSelector: '.sheet-tabs', contentSelector: '.sheet-body', initial: 'detail' }]
     });
   }
+
+  /** @inheritdoc */
+  get title() {
+    const {type, placeholderName} = this.itemData;
+    return `${type} - ${placeholderName}`;
+  }
+
+  /**
+ * The Actor instance which owns this item.
+ * might be null if item is not owned
+ * @type {Actor}
+ */
+    get actor() {
+    return this.document;
+    }
+
 
   /** @override */
   getData() {
@@ -124,7 +138,6 @@ export class FakeItem extends DocumentSheet {
       //last update before closing
       this.actor.setLexiconEntry(this.itemData.relativePath, newValue);
     }
-    this.actor = null;
     this.itemData = null;
     return super.close(options);
   }

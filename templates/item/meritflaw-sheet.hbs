@@ -8,7 +8,7 @@
           <div class="grid two-col">
               <div class= "field meritflaw">
                   <label>{{localize "M20E.labels.subType"}} : </label>
-                  <select name="data.subType">
+                  <select class="inline-edit" name="data.subType">
                       {{#select data.subType}}
                           {{#each config.meritflawSubTypes as |value key|}}
                               <option value="{{key}}">{{localize value}}</option>

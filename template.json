@@ -491,8 +491,7 @@
       "templates":[
         "rollable",
         "mageRestricted"
-      ],
-      "displayDescription":""
+      ]
     },
     "weapon": {
       "templates":[

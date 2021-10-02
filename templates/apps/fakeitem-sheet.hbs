@@ -40,10 +40,12 @@
                     <input name="data.{{category}}.{{key}}.specialisation" type="text" value="{{specialisation}}" data-dtype="String"/>
                 </div>
                 {{/if}}
+                {{#if isGM}}
                 <div class= "field" title="{{localize 'M20E.hints.nonEditable'}}">
                     <label>{{localize "M20E.labels.systemName"}} : </label>
                     <input type="text" value="{{localize (m20e-concat "M20E." category "." key)}}" data-dtype="String" disabled/>
                 </div>
+                {{/if}}
             </div>
             <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
                 <label>{{localize "M20E.labels.displayDescription"}} : </label>

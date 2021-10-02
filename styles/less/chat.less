@@ -85,6 +85,9 @@ li.chat-message{
         border-bottom: 1px solid var(--titleColor);
         .tooltip-infos{
             display: flex;
+            position: relative;
+            font-size: var(--titleColor);
+            font-weight: bold;
             .tooltip-info{
                 font-size: var(--titleColor);
                 font-weight: bold;
@@ -96,6 +99,63 @@ li.chat-message{
             .tooltip-info[data-value^="+"]{
                 color:var(--m20e-goodGreen);
             }
+            .righttooltiptext {
+              visibility: hidden;        
+              background: rgba(0, 0, 0, 0.8) url(../assets/ui/parchment-dark.jpg) repeat;
+              text-align: center;
+              text-decoration: none;
+              text-shadow: none;
+              border: 1px solid var(--m20e-lightGrey);
+              border-radius: 3px;
+              padding: 5px 10px;
+              position: fixed;
+              margin: -5px 0px 0px 5px; 
+              z-index: 1;
+            }
+            .righttooltiptext::after {
+              content: " ";
+              position: absolute;
+              top: 50%;
+              right: 100%;
+              margin-top: -5px;
+              border-width: 5px;
+              border-style: solid;
+              border-color: transparent var(--m20e-darkGrey) transparent transparent;
+            }
+            .bottomtooltiptext {
+              visibility: hidden;
+              background: rgba(0, 0, 0, 0.8) url(../assets/ui/parchment-dark.jpg) repeat;
+              text-align: left;
+              text-decoration: none;
+              text-shadow: none;
+              font-size: 12px;
+              font-weight: normal;
+              border: 1px solid var(--m20e-lightGrey);
+              border-radius: 3px;
+              padding: 5px 10px;
+              position: absolute;
+              width:95%;
+              top: 100%;
+              left: 5%;
+              margin: 5px 0px 0px 0px; 
+              z-index: 1;
+            }
+            .bottomtooltiptext::after {
+              content: " ";
+              position: absolute;
+              bottom: 100%;
+              left: 10%;
+              margin-top: -5px;
+              border-width: 5px;
+              border-style: solid;
+              border-color: transparent transparent var(--m20e-darkGrey) transparent;
+            }
+        }
+        .tooltip-infos:hover .righttooltiptext {
+          visibility: visible;
+        }
+        .tooltip-infos:hover .bottomtooltiptext {
+          visibility: visible;
         }
     }
   }

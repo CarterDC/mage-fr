@@ -1,25 +1,25 @@
-import DiceThrow  from './dice-throw.js'
+import DiceThrower  from './dice-thrower.js'
 // Import Helpers
 import * as utils from '../utils/utils.js'
 import { log } from "../utils/utils.js";
 
 /**
- * User interface with a DiceThrow object, allowing for some throw options
- * modification of the traits to throw, threshold, dicepool, throwMode, rollMode...
+ * User interface with a DiceThrower object, allowing for some throw options
+ * modification of the traits to throw, difficulty, dicepool, throwMode, rollMode...
  * 
  * @extends {Application}
  */
- export default class DiceDialog extends Application {
+ export default class DiceThrowerApp extends Application {
   
   /** @override */
-  constructor(diceThrow, options){
+  constructor(diceThrower, options){
     super(options);
 
-    this.diceThrow = diceThrow;
+    this.dt = diceThrower;
     this.closeOnRoll = true;
 
     //add the paradigm css class if any to the default options.
-    const paraItem = this.diceThrow.actor.paradigm;
+    const paraItem = this.dt.actor.paradigm;
     if ( paraItem ) {
       this.options.classes.push(paraItem.data.data.cssClass);
     }
@@ -34,7 +34,7 @@ import { log } from "../utils/utils.js";
   static get defaultOptions () {
     return mergeObject(super.defaultOptions, {
       classes: ['m20e', 'dialog'],
-      template: 'systems/mage-fr/templates/apps/dice-throw.hbs',
+      template: 'systems/mage-fr/templates/apps/dice-thrower-app.hbs',
       title: game.i18n.localize('M20E.diceThrows.diceThrows'),
       width: 300,
       height: 'fit-content',
@@ -45,22 +45,23 @@ import { log } from "../utils/utils.js";
   /** @override */
   getData () {
     const appData = super.getData();
-    const dt = this.diceThrow;
-
-    appData.dt = dt;
-    appData.traits = dt._traits;
+    appData.dt = this.dt;
+    appData.data = {
+      dpModTotal: this.dt.getDicePoolModTotal(),
+      dpTooltips: utils.getModsTooltipData(this.dt.data.dicePoolMods)
+    };
 
     //creates an array for the radio options : value from 3 to 9, checked or ''
     appData.radioOptions = [...Array(7)].map((value, index) => {
       index = index + 3; //we start from 3 to 9
-      const checked = dt.thresholdTotal === (index) ? 'checked' : '';
+      const checked = this.dt.data.difficultyTotal === (index) ? 'checked' : '';
       return {value: `${index}`, visualCue: this.getVisualCue(index), ...{checked}};
     });
 
     //icon and title for the throw button
     appData.extras = CONFIG.M20E.rollModeExtras[game.settings.get("core", "rollMode")];
     //lock bullets for every thing but pure actor effects
-    appData.bulletsClickLock = !dt.isEffectRoll || dt.isItemThrow;
+    appData.bulletsClickLock = !this.dt.isEffectRoll || this.dt.isItemThrow;
 
     appData.closeOnRoll = this.closeOnRoll;
     log({appData})
@@ -97,8 +98,8 @@ import { log } from "../utils/utils.js";
         name: game.i18n.localize('M20E.context.throwStealthRoll'),
         icon: '<i class="fas fa-user-secret"></i>',
         callback: element => {
-          this.diceThrow.rollMode = "stealthroll";
-          this.diceThrow.throwDice(this.closeOnRoll);
+          this.dt.rollMode = "stealthroll";
+          this.dt.throwDice(this.closeOnRoll);
         },
         condition: element => {
           return game.user.isGM;
@@ -108,32 +109,32 @@ import { log } from "../utils/utils.js";
         name: game.i18n.localize('M20E.context.throwSelfRoll'),
         icon: '<i class="fas fa-user"></i>',
         callback: element => {
-          this.diceThrow.rollMode = "selfroll";
-          this.diceThrow.throwDice(this.closeOnRoll);
+          this.dt.rollMode = "selfroll";
+          this.dt.throwDice(this.closeOnRoll);
         }
       },
       {
         name: game.i18n.localize('M20E.context.throwBlindRoll'),
         icon: '<i class="fas fa-eye-slash"></i>',
         callback: element => {
-          this.diceThrow.rollMode = "blindroll";
-          this.diceThrow.throwDice(this.closeOnRoll);
+          this.dt.rollMode = "blindroll";
+          this.dt.throwDice(this.closeOnRoll);
         }
       },
       {
         name: game.i18n.localize('M20E.context.throwGmRoll'),
         icon: '<i class="fas fa-user-friends"></i>',
         callback: element => {
-          this.diceThrow.rollMode = "gmroll";
-          this.diceThrow.throwDice(this.closeOnRoll);
+          this.dt.rollMode = "gmroll";
+          this.dt.throwDice(this.closeOnRoll);
         }
       },
       {
         name: game.i18n.localize('M20E.context.throwPublicRoll'),
         icon: '<i class="fas fa-users"></i>',
         callback: element => {
-          this.diceThrow.rollMode = "roll";
-          this.diceThrow.throwDice(this.closeOnRoll);
+          this.dt.rollMode = "roll";
+          this.dt.throwDice(this.closeOnRoll);
         }
       }
     ];
@@ -149,7 +150,7 @@ import { log } from "../utils/utils.js";
    */
   _onRadioClick(event) {
     const labelElem = event.currentTarget;
-    this.diceThrow.updateChosenThreshold(parseInt(labelElem.innerHTML.trim()))
+    this.dt.updateChosenThreshold(parseInt(labelElem.innerHTML.trim()))
   }
 
   /**
@@ -165,23 +166,23 @@ import { log } from "../utils/utils.js";
 
     switch (dataset.action){
       case 'roll':
-        this.diceThrow.throwDice(this.closeOnRoll);
+        this.dt.throwDice(this.closeOnRoll);
         break;
       case 'remove':
-        this.diceThrow.removeTrait(traitElem.dataset.key);
+        this.dt.removeTrait(traitElem.dataset.key);
         break;
       case 'spe':
         const speToggle = (dataset.active === 'true');
-        this.diceThrow._traits[traitElem.dataset.key]._useSpec = !speToggle;
-        this.diceThrow.update();
+        this.dt.stats[traitElem.dataset.key].data.useSpec = !speToggle;
+        this.dt.update();
         break;
       case 'mod-plus':
-        this.diceThrow.dicePoolMods.userMod += 1;
-        this.diceThrow.update();
+        this.dt.data.dicePoolMods.userMod += 1;
+        this.dt.update();
         break;
       case 'mod-minus':
-        this.diceThrow.dicePoolMods.userMod -= 1;
-        this.diceThrow.update();
+        this.dt.data.dicePoolMods.userMod -= 1;
+        this.dt.update();
         break;
       case 'auto-close':
         this.closeOnRoll = !this.closeOnRoll;
@@ -202,7 +203,7 @@ import { log } from "../utils/utils.js";
     event.preventDefault();
     const element = event.currentTarget;
     const traitElem = element.closest('.trait');
-    this.diceThrow.updateTraitValue(traitElem.dataset.key, parseInt(element.dataset.index) + 1);
+    this.dt.updateTraitValue(traitElem.dataset.key, parseInt(element.dataset.index) + 1);
   }
 
   /**
@@ -211,11 +212,11 @@ import { log } from "../utils/utils.js";
    * @returns {String} whether the difficulty threshold is coincidental, or vulgar according to the rules
    */
   getVisualCue(thresholdValue) {
-    if ( !game.settings.get('mage-fr', 'displayThresholdCues') ) { return null; }
+    if ( !game.settings.get('mage-fr', 'displayDifficultyCues') ) { return null; }
 
-    if ( this.diceThrow.isEffectRoll ) {
+    if ( this.dt.isEffectRoll ) {
       const maxEffectLevel = this.getMaxEffectLevel();
-      switch ( thresholdValue - (maxEffectLevel + (this.diceThrow.thresholdBase - 3)) ) {
+      switch ( thresholdValue - (maxEffectLevel + (this.dt.thresholdBase - 3)) ) {
         case 0:
           return 'coincidental';
         case 1:
@@ -230,14 +231,6 @@ import { log } from "../utils/utils.js";
   }
 
   /**
-   * returns the max value of a trait (only used in the context of an effect roll)
-   * @returns {Number}
-   */
-   getMaxEffectLevel() {
-    return this.diceThrow._traits.reduce((acc, cur) => (Math.max(acc, cur.value)), 0);
-  }
-
-  /**
    * rotate between the 3 throw settings depending on the mouse button
    * throw settings drive the roll modifiers df=1 and xs=10 
    * @param  {} event
@@ -245,10 +238,10 @@ import { log } from "../utils/utils.js";
   _onSettingsClick(event) {
     switch ( event.which ) {
       case 1://left button
-        this.diceThrow.rotateSetting(-1);
+        this.dt.rotateSetting(-1);
         break;
       case 3://right button
-        this.diceThrow.rotateSetting(1);
+        this.dt.rotateSetting(1);
         break;
     };
   }
@@ -262,9 +255,9 @@ import { log } from "../utils/utils.js";
    * @param  {String} userId
    */
   onUpdateActor = (actor, data, options, userId) => {
-    if ( actor.id !== this.diceThrow.actor.id ) { return ; }
+    if ( actor.id !== this.dt.actor.id ) { return ; }
     if ( options.render === true ) {
-      this.diceThrow.update(true);
+      this.dt.update(true);
     }
   }
 
@@ -279,7 +272,7 @@ import { log } from "../utils/utils.js";
   //might not be ncessary
   onSystemSettingChanged = (newValue, settingName) => {
     /*if ( settingName === 'baseRollThreshold' ) {
-      this.diceThrow.update();
+      this.dt.update();
     }*/
   }
 
