@@ -1,8 +1,9 @@
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { Trait, BaseThrow } from '../dice/dice-helpers.js'
-import M20eRollableItem from './m20e-rollable-item.js'
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
+import Trait from '../trait.js'
+import M20eThrow from '../throw.js'
+import M20eRollableItem from './m20e-item-rollable.js'
 
 /**
  * @extends {M20eRollableItem}
@@ -26,7 +27,7 @@ export default class M20eRoteItem extends M20eRollableItem {
     if ( itemData.data.throws.length === 0 ) {
       //update the throws array with one single entry
 
-      const throws = [new BaseThrow([
+      const throws = [new M20eThrow([
         //stats
       ], {
         //data
@@ -48,7 +49,7 @@ export default class M20eRoteItem extends M20eRollableItem {
       return `${stat.getLocalizedName(this.actor)} (${stat.value})`;
     }).join(' + ');
 
-     return miniFlavor.length < 50 ? miniFlavor : miniFlavor.substring(0, 47) + "...";;
+     return miniFlavor.length < 40 ? miniFlavor : miniFlavor.substring(0, 37) + "...";;
   }
 
   /**

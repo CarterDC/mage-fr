@@ -1,6 +1,6 @@
 // Import Helpers
-import * as utils from '../../utils/utils.js'
-import { log } from "../../utils/utils.js";
+import * as utils from '../../utils.js'
+import { log } from "../../utils.js";
 
 /**
  * Implements M20eItemSheet as an extension of the ItemSheet class
@@ -56,7 +56,7 @@ export default class M20eItemSheet extends ItemSheet {
   /** @override */
   getData(options) {
     const sheetData = super.getData(options);
-    //sheetData.data is a standard js Object created from the item's PREPARED data
+    //sheetData.data is a standard js Object created from the PREPARED itemData
     const itemData = sheetData.data; 
     sheetData.data = itemData.data; //shorthand for convenience to avoid 'data.data' all the time
     

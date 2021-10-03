@@ -1,7 +1,7 @@
-import DiceThrower  from './dice-thrower.js'
+import DiceThrower  from '../dice-thrower.js'
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
 
 /**
  * User interface with a DiceThrower object, allowing for some throw options

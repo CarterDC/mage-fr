@@ -1,8 +1,8 @@
 // Import Helpers
-import { Trait, BaseThrow } from '../dice/dice-helpers.js'
-import { TraitSelect } from './trait-select-dialog.js'
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+//import { Trait, M20eThrow } from '../dice-helpers.js'
+import { TraitSelect } from './trait-select-dlg.js'
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
 
 /**
  * @extends {DocumentSheet}
@@ -50,7 +50,7 @@ export class ThrowSheet extends DocumentSheet {
 
   /** @inheritdoc */
   get title() {
-    return `${this.object.name} - ${game.i18n.localize('ITEM.TypeThrow')} : ${this.baseThrow.data.name}`;
+    return `${this.object.name} - ${game.i18n.localize('ITEM.TypeThrow')} : ${this.m20eThrow.data.name}`;
   }
 
   get item() {
@@ -66,7 +66,7 @@ export class ThrowSheet extends DocumentSheet {
   return this.object.isOwned ? this.object.actor : null;
   }
 
-  get baseThrow() {
+  get m20eThrow() {
     return this.item.data.data.throws[this.throwIndex];
   }
 
@@ -77,7 +77,7 @@ export class ThrowSheet extends DocumentSheet {
       cssClass: isEditable ? "editable" : "locked",
       editable: isEditable,
       document: this.document,
-      data: duplicate(this.baseThrow),
+      data: duplicate(this.m20eThrow),
       limited: this.document.limited,
       options: this.options,
       owner: this.document.isOwner,
@@ -93,7 +93,7 @@ export class ThrowSheet extends DocumentSheet {
 
     sheetData.data.throwOptions = JSON.stringify(sheetData.data.options) || {};
 
-    sheetData.addButtonDisabled = this.baseThrow.stats.length >= 9;
+    sheetData.addButtonDisabled = this.m20eThrow.stats.length >= 9;
     sheetData.locks = this.locks;
     sheetData.isGM = game.user.isGM;
 
@@ -136,7 +136,7 @@ export class ThrowSheet extends DocumentSheet {
     const updatePath = inputElem.dataset.updatePath || 'data.value';
     let updateValue = inputElem.value;
 
-    let currThrow = duplicate(this.baseThrow);
+    let currThrow = duplicate(this.m20eThrow);
     if ( updatePath === 'options' ) {
       currThrow.options = {...currThrow.options, ...JSON.parse(inputElem.value)}
     } else {
@@ -152,7 +152,7 @@ export class ThrowSheet extends DocumentSheet {
   async _updateObject(event, formData) {
     if ( !this.object.id ) return;
     let dirty = false;
-    let currThrow = duplicate(this.baseThrow);
+    let currThrow = duplicate(this.m20eThrow);
     for ( let [fieldName, value] of Object.entries(foundry.utils.flattenObject(formData)) ) {
       if ( foundry.utils.getProperty(currThrow, fieldName) !== value ) {
         //log({index, propertyName, value});
@@ -221,7 +221,7 @@ export class ThrowSheet extends DocumentSheet {
    * in the throw's stats array
    */
   async addItem() {
-    if ( this.baseThrow.addStat() ) {
+    if ( this.m20eThrow.addStat() ) {
       const throws = duplicate(this.item.data.data.throws);
       return await this.item.update({['data.throws']: throws});
     }
@@ -250,7 +250,7 @@ export class ThrowSheet extends DocumentSheet {
    * in the throw's stats array
    */
   async removeItem(traitIndex) {
-    if ( this.baseThrow.removeStat(traitIndex) ) {
+    if ( this.m20eThrow.removeStat(traitIndex) ) {
       const throws = duplicate(this.item.data.data.throws);
       return await this.item.update({['data.throws']: throws});
     }
@@ -261,7 +261,7 @@ export class ThrowSheet extends DocumentSheet {
    * in the throw's stats array
    */
   async moveUpItem(traitIndex) {
-    if ( this.baseThrow.moveUpStat(traitIndex) ) {
+    if ( this.m20eThrow.moveUpStat(traitIndex) ) {
       const throws = duplicate(this.item.data.data.throws);
       return await this.item.update({['data.throws']: throws});
     }

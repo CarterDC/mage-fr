@@ -1,8 +1,11 @@
+import Trait from './trait.js'
+import M20eThrow from './throw.js'
+import { M20E } from './config.js'
+
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { Trait, BaseThrow } from './dice-helpers.js'
-import { M20E } from '../utils/config.js'
+import * as utils from './utils.js'
+import { log } from "./utils.js";
+
 
 /**
  * Manages everything dice throws related in mage-fr.
@@ -12,14 +15,14 @@ export default class DiceThrower {
 
   /**
    * @param {M20eActor|M20eItem} document an Actor or Item
-   * @param {BaseThrow}
+   * @param {M20eThrow}
    */
-  constructor(document, baseThrow) {
+  constructor(document, m20eThrow) {
 
     this._document = document; //either an actor or owned item
-    this._throw = baseThrow;
-    this.stats = baseThrow.stats;
-    this.data = foundry.utils.mergeObject(this.constructor.defaultData, baseThrow.options);
+    this._throw = m20eThrow;
+    this.stats = m20eThrow.stats;
+    this.data = foundry.utils.mergeObject(this.constructor.defaultData, m20eThrow.options);
 
     this._app = null;
     this._initialized = false;
@@ -51,20 +54,20 @@ export default class DiceThrower {
   /**
    * Attemps to create a new DiceThrower instance with some checks
    * @param  {M20eActor|M20eItem} document an Actor or Item
-   * @param {BaseThrow}
+   * @param {M20eThrow}
    * 
    * @returns {DiceThrow|null} the new DiceThrower instance or null if validation failed
    */
-  static create(document, baseThrow) {
+  static create(document, m20eThrow) {
 
     try {
       if (!document) { throw { msg: 'noDocument' }; }
-      if (!baseThrow || !baseThrow instanceof BaseThrow ) { throw { msg: 'invalidThrow' }; }
+      if (!m20eThrow || !m20eThrow instanceof M20eThrow ) { throw { msg: 'invalidThrow' }; }
  
       if ( !DiceThrower.isItemThrow(document) ) {
         //only check actor thrown stats
         const actor = document.isEmbedded ? document.parent : document;
-        baseThrow.stats.forEach( stat => BaseThrow.validateStat(actor, stat));
+        m20eThrow.stats.forEach( stat => M20eThrow.validateStat(actor, stat));
       }
 
     } catch (e) {
@@ -76,7 +79,7 @@ export default class DiceThrower {
       return null;
     }
     //everything checks out, let's go !
-    return new DiceThrower(document, baseThrow);
+    return new DiceThrower(document, m20eThrow);
   }
 
   /* -------------------------------------------- */
@@ -102,7 +105,7 @@ export default class DiceThrower {
    * also called by every update method call in order to display accurate values in case diceThrow has an App
    */
   prepareData() {
-    this.data.isMagickThrow = BaseThrow.isMagickThrow(this.stats);
+    this.data.isMagickThrow = M20eThrow.isMagickThrow(this.stats);
 
     //Dice Pool
     this.data.dicePoolBase = this.getDicePoolBase();
@@ -299,7 +302,8 @@ export default class DiceThrower {
     const deductFailures = (this.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES) ? 'df=1' : '';
     const formula = `${dicePoolTotal}d10${tenXplodeSuccess}cs>=${difficultyTotal}${deductFailures}`;
     
-    return new CONFIG.Dice.MageRoll(formula, null, rollOptions);
+    const cls = CONFIG.Dice.M20eRoll;
+    return new cls(formula, null, rollOptions);
   }
 
   static useCritical(throwMode) {

@@ -1,8 +1,8 @@
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { registerInitiative, Trait } from '../dice/dice-helpers.js'
-import * as chat from "../utils/chat.js";
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
+import Trait from '../trait.js'
+import * as chat from "../chat-helpers.js";
 
 /**
  * Item class for base items (items that just contain data), 
@@ -37,6 +37,62 @@ export default class M20eItem extends Item {
     data['flags.core.sourceId'] = this.uuid;
     super.clone(data, options);
   }
+
+/**
+   * Mostly vanilla function with support for subType selection
+   * @override
+   */
+ static async createDialog(data={}, options={}) {
+
+  // Collect data
+  const documentName = this.metadata.name;
+  const types = game.system.entityTypes[documentName];
+  const folders = game.folders.filter(f => (f.data.type === documentName) && f.displayed);
+  const label = game.i18n.localize(this.metadata.label);
+  const title = game.i18n.localize('M20E.new.createItem');
+  //system specific
+  const itemTypes = types.reduce((obj, t) => {
+    const label = CONFIG[documentName]?.typeLabels?.[t] ?? t;
+    obj[t] = game.i18n.has(label) ? game.i18n.localize(label) : t;
+    return obj;
+  }, {});
+
+  // Render the entity creation form
+  const html = await renderTemplate(`systems/mage-fr/templates/sidebar/entity-create.html`, {
+    name: data.name || game.i18n.format("ENTITY.New", {entity: label}),
+    folder: data.folder,
+    folders: folders,
+    hasFolders: folders.length > 1,
+    isItem: true,
+    type: data.type || types[0],
+    types: itemTypes,
+    hasTypes: itemTypes.length > 1
+  });
+
+  // Render the confirmation dialog window
+  return Dialog.prompt({
+    title: title,
+    content: html,
+    label: title,
+    render: html => {
+      html.find(".listened").change( event => {
+        log(event);
+      });
+    },
+    callback: html => {
+      const form = html[0].querySelector("form");
+      const fd = new FormDataExtended(form);
+      data = foundry.utils.mergeObject(data, fd.toObject());
+      if ( !data.folder ) delete data["folder"];
+      if ( types.length === 1 ) data.type = types[0];
+      return this.create(data, {renderSheet: true});
+    },
+    rejectClose: false,
+    options: options
+  });
+}
+
+
 
   /**
    * adds image path and systemDescription before sending the whole thing to the database

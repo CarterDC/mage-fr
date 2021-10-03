@@ -1,0 +1,52 @@
+<form id="entity-create" autocomplete="off">
+    <div class="form-group">
+        <label>{{localize "Name"}}</label>
+        <div class="form-fields">
+            <input type="text" name="name" placeholder="{{name}}" required/>
+        </div>
+    </div>
+
+    {{#if hasTypes}}
+    <div class="form-group">
+        <label>{{localize "Type"}}</label>
+        <div class="form-fields listened">
+            <select name="type">
+                {{selectOptions types selected=type}}
+            </select>
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if hasPacks}}
+    <div class="form-group">
+        <label>{{ localize "SIDEBAR.TabCompendium" }}&nbsp;&nbsp;&nbsp;</label>
+        <div class="form-fields">
+            <select name="pack">
+                {{#select pack}}
+                <option value=""></option>
+                {{#each packs}}
+                <option value="{{ this.id }}">{{ this.name }}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if hasFolders}}
+    <div class="form-group">
+        <label>{{ localize "ENTITY.Folder" }}</label>
+        <div class="form-fields">
+            <select name="folder">
+                {{#select folder}}
+                <option value=""></option>
+                {{#each folders}}
+                <option value="{{ this.id }}">{{ this.name }}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+        </div>
+    </div>
+    {{/if}}
+    <br>
+</form>

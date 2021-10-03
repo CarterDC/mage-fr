@@ -1,13 +1,14 @@
 // Import Applications
 import { FakeItem } from '../fakeitem-sheet.js'
-import { AliasEditor } from '../alias-edit.js'
-import DiceThrower from '../../dice/dice-thrower.js'
+import { AliasEditor } from '../alias-edit-dlg.js'
+import DiceThrower from '../../dice-thrower.js'
 // Import Helpers
-import * as utils from '../../utils/utils.js'
-import { log } from "../../utils/utils.js";
-import { Trait, BaseThrow } from '../../dice/dice-helpers.js'
-import { DynaCtx } from "../../utils/classes.js";
-import * as chat from "../../utils/chat.js";
+import * as utils from '../../utils.js'
+import { log } from "../../utils.js"
+import Trait from '../../trait.js'
+import M20eThrow from '../../throw.js'
+import { DynaCtx } from "../../dyna-ctx.js"
+import * as chat from "../../chat-helpers.js"
 
 /**
  * Provides Sheet interraction management for npcsleepers type actors
@@ -853,9 +854,9 @@ export default class M20eActorSheet extends ActorSheet {
     const item = this.actor.items.get(itemId);
     //prepare context menu options from list of throws in this rollable
     return [...this._getBaseTraitContextOptions(), 
-      ...item.data.data.throws.map( (baseThrow, throwIndex) => {
+      ...item.data.data.throws.map( (m20eThrow, throwIndex) => {
           return {
-            name: baseThrow.data.name,
+            name: m20eThrow.data.name,
             itemId: itemId,
             throwIndex: throwIndex,
             icon: '<i class="fas fa-dice"></i>',
@@ -1025,16 +1026,16 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
-   * Returns a BaseThrow instance from user chosen stats
+   * Returns a M20eThrow instance from user chosen stats
    * Todo : maybe add some default data/options ?
-   * @returns {BaseThrow} 
+   * @returns {M20eThrow} 
    */
   getThrow() {
     const throwData = {
       type: 'manual'
     };
     const throwOptions = {};
-    return new BaseThrow( this.getActiveTraits(), throwData, throwOptions);
+    return new M20eThrow( this.getActiveTraits(), throwData, throwOptions);
   }
 
 
@@ -1168,13 +1169,14 @@ export default class M20eActorSheet extends ActorSheet {
     if ( itemData.type === 'paradigm' ) {
       return this._onDropParadigmItem(itemData);
     }
-    //check if drop is allowed
-    if ( !await this._isDropAllowed(item) ) { return false; }
 
     // Handle item sorting within the same Actor
     const actor = this.actor;
     let sameActor = (data.actorId === actor.id) || (actor.isToken && (data.tokenId === actor.token.id));
     if (sameActor) return this._onSortItem(event, itemData);
+
+    //not an item sorting, -> check if drop is allowed
+    if ( !await this._isDropAllowed(item) ) { return false; }
 
     // Create the owned item
     return super._onDropItemCreate(itemData);

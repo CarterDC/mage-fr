@@ -1,6 +1,6 @@
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
 
 /**
  * FormApp with actor as object

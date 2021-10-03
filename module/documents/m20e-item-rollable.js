@@ -1,11 +1,11 @@
 //
 import M20eItem from './m20e-item.js'
+import M20eThrow from '../throw.js'
+import DiceThrower from '../dice-thrower.js'
 
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { Trait, BaseThrow } from '../dice/dice-helpers.js'
-import DiceThrower from '../dice/dice-thrower.js'
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
 
 /**
  * @extends {M20eItem}
@@ -20,9 +20,9 @@ export default class M20eRollableItem extends M20eItem {
   /** @override */
   prepareData() {
     super.prepareData();
-    //recast each throw into a BaseThrow instance.(it will recast traitDatas into Traits as well)
+    //recast each throw into a M20eThrow instance.(it will recast traitDatas into Traits as well)
     this.data.data.throws = this.data.data.throws.map( throwData => {
-      return throwData instanceof BaseThrow ? throwData : BaseThrow.fromData(throwData);
+      return throwData instanceof M20eThrow ? throwData : M20eThrow.fromData(throwData);
     });
   }
 
@@ -44,7 +44,7 @@ export default class M20eRollableItem extends M20eItem {
     
     const throws = duplicate(itemData.data.throws);
     //create a new throw
-    throws.push(new BaseThrow([
+    throws.push(new M20eThrow([
       //stats
     ], {
       //data
@@ -119,9 +119,9 @@ export default class M20eRollableItem extends M20eItem {
     * @param  {Number} throwIndex=0 
     */
    roll(shiftKey, throwIndex = 0) {
-    const baseThrow = BaseThrow.fromData(this.data.data.throws[throwIndex]);
-    baseThrow.options.throwIndex = throwIndex;
-    const diceThrower = DiceThrower.create(this, baseThrow);
+    const m20eThrow = M20eThrow.fromData(this.data.data.throws[throwIndex]);
+    m20eThrow.options.throwIndex = throwIndex;
+    const diceThrower = DiceThrower.create(this, m20eThrow);
     if ( !diceThrower ) { return; }
     if ( shiftKey ) {
       //throw right away

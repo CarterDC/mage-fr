@@ -1,6 +1,6 @@
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
 import M20eItem from './m20e-item.js'
 
 /**
