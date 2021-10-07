@@ -1,13 +1,14 @@
 // Import Applications
 import { FakeItem } from '../fakeitem-sheet.js'
-import { AliasEditor } from '../alias-edit.js'
-import DiceThrower from '../../dice/dice-thrower.js'
+import { AliasEditor } from '../alias-edit-dlg.js'
+import DiceThrower from '../../dice-thrower.js'
 // Import Helpers
-import * as utils from '../../utils/utils.js'
-import { log } from "../../utils/utils.js";
-import { Trait, BaseThrow } from '../../dice/dice-helpers.js'
-import { DynaCtx } from "../../utils/classes.js";
-import * as chat from "../../utils/chat.js";
+import * as utils from '../../utils.js'
+import { log } from "../../utils.js"
+import Trait from '../../trait.js'
+import M20eThrow from '../../throw.js'
+import { DynaCtx } from "../../dyna-ctx.js"
+import * as chat from "../../chat-helpers.js"
 
 /**
  * Provides Sheet interraction management for npcsleepers type actors
@@ -85,6 +86,8 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.resources.health = this.getResourceData('health');
     sheetData.resources.willpower = this.getResourceData('willpower');
 
+    this.highlightTraits(sheetData);
+
     //dispatch items into categories and subtypes
     //at this point sheetData.items is already an array of standard js objects made from the individual itemData of each actor's item.
     //sheetData.items is already sorted on item.sort in the super
@@ -108,6 +111,12 @@ export default class M20eActorSheet extends ActorSheet {
     //todo : sort misc according to isConsumable ?
 
     //other usefull data
+    sheetData.dt = {
+      stats: this.actor.diceThrower._throw.stats,
+      length: this.actor.diceThrower._throw.stats.length,
+      flavor: this.actor.diceThrower.flavor
+    };
+
     sheetData.isGM = game.user.isGM;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
@@ -117,9 +126,27 @@ export default class M20eActorSheet extends ActorSheet {
       sheetData.paraData = paradigm.data.data;
     }
     sheetData.dsnUserActive = utils.dsnUserActive();
-
     if (this.actor.type === 'npcsleeper') { log({sheetData: sheetData});}
     return sheetData;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Adds a isHighlighted true property to sheetData elements
+   * if they are present in the diceThrower selected stats
+   * @param  {Object} sheetData
+   */
+  highlightTraits(sheetData) {
+    for ( const stat of this.actor.diceThrower._throw.stats ) {
+      const itemId = this.actor._getStat(stat.path, 'itemId');
+      if ( itemId ) {
+        const itemData = sheetData.items.filter( itemData => itemData._id === itemId )[0];
+        itemData.data.isHighlighted = true;
+      } else {
+        foundry.utils.setProperty(sheetData.data, `${stat.path}.isHighlighted`, true);
+      }
+    }
   }
 
   /* -------------------------------------------- */
@@ -244,8 +271,12 @@ export default class M20eActorSheet extends ActorSheet {
    _onStatLabelClick(event) {
     event.preventDefault();
     const statElem = event.currentTarget.closest(".trait");
-    //just toggle the active status
-    statElem.dataset.active = !(statElem.dataset.active === 'true');
+
+    if ( statElem.dataset.highlighted == 'true' ) {
+      this.actor.diceThrower.removeStatByPath(statElem.dataset.path);
+    } else {
+      this.actor.diceThrower.addStatByPath(statElem.dataset.path);
+    }
   }
 
   /* -------------------------------------------- */
@@ -376,14 +407,12 @@ export default class M20eActorSheet extends ActorSheet {
    */
    _onBigDiceButtonClick(event) {
     //try and get a new DiceThrow instance from our actor and chosen traits
-    const diceThrower = DiceThrower.create(this.actor, this.getThrow());
-    if ( !diceThrower ) { return; }
     if ( event.shiftKey ) {
       //throw right away
-      diceThrower.throwDice();
+      this.actor.diceThrower.throwDice();
     } else {
       //display dice throw dialog
-      diceThrower.render(true);
+      this.actor.diceThrower.render();
     }
   }
 
@@ -853,9 +882,9 @@ export default class M20eActorSheet extends ActorSheet {
     const item = this.actor.items.get(itemId);
     //prepare context menu options from list of throws in this rollable
     return [...this._getBaseTraitContextOptions(), 
-      ...item.data.data.throws.map( (baseThrow, throwIndex) => {
+      ...item.data.data.throws.map( (m20eThrow, throwIndex) => {
           return {
-            name: baseThrow.data.name,
+            name: m20eThrow.data.name,
             itemId: itemId,
             throwIndex: throwIndex,
             icon: '<i class="fas fa-dice"></i>',
@@ -1025,16 +1054,16 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
-   * Returns a BaseThrow instance from user chosen stats
+   * Returns a M20eThrow instance from user chosen stats
    * Todo : maybe add some default data/options ?
-   * @returns {BaseThrow} 
+   * @returns {M20eThrow} 
    */
   getThrow() {
     const throwData = {
       type: 'manual'
     };
     const throwOptions = {};
-    return new BaseThrow( this.getActiveTraits(), throwData, throwOptions);
+    return new M20eThrow( this.getActiveTraits(), throwData, throwOptions);
   }
 
 
@@ -1168,13 +1197,14 @@ export default class M20eActorSheet extends ActorSheet {
     if ( itemData.type === 'paradigm' ) {
       return this._onDropParadigmItem(itemData);
     }
-    //check if drop is allowed
-    if ( !await this._isDropAllowed(item) ) { return false; }
 
     // Handle item sorting within the same Actor
     const actor = this.actor;
     let sameActor = (data.actorId === actor.id) || (actor.isToken && (data.tokenId === actor.token.id));
     if (sameActor) return this._onSortItem(event, itemData);
+
+    //not an item sorting, -> check if drop is allowed
+    if ( !await this._isDropAllowed(item) ) { return false; }
 
     // Create the owned item
     return super._onDropItemCreate(itemData);

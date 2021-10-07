@@ -1,8 +1,9 @@
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { registerInitiative, Trait } from '../dice/dice-helpers.js'
-import * as chat from "../utils/chat.js";
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
+import Trait from '../trait.js'
+import * as chat from "../chat-helpers.js";
+import { ItemCreateDlg } from '../apps/item-create-dlg.js';
 
 /**
  * Item class for base items (items that just contain data), 
@@ -37,6 +38,27 @@ export default class M20eItem extends Item {
     data['flags.core.sourceId'] = this.uuid;
     super.clone(data, options);
   }
+
+/**
+   * Mostly vanilla function with support for subType selection
+   * @override
+   */
+  /*
+ static async createDialog(data={}, options={}) {
+   debugger
+  const documentName = this.metadata.name;
+  const types = game.system.entityTypes[documentName];
+  const folders = game.folders.filter(f => (f.data.type === documentName) && f.displayed);
+  const label = game.i18n.localize(this.metadata.label);
+  const title = game.i18n.localize('M20E.new.createItem');
+
+
+  const itemCreate = new ItemCreateDlg(data, options);
+  itemCreate.render(true);
+
+}
+*/
+
 
   /**
    * adds image path and systemDescription before sending the whole thing to the database
@@ -110,6 +132,7 @@ export default class M20eItem extends Item {
    */
    getStatData() {
     const itemData = this.data;
+
     return {
       path: this.getPath(),
       name: itemData.name,
@@ -138,6 +161,7 @@ export default class M20eItem extends Item {
   /** @override */
   prepareData() {
     super.prepareData();
+    this.data.data.path = this.getPath();
     //check if item type is amongst protected types
     const protectedTypes = CONFIG.M20E.protectedCategories.reduce( (acc, cur) => {
       const itemType = CONFIG.M20E.categoryToType[cur]
@@ -150,7 +174,9 @@ export default class M20eItem extends Item {
    * called at the end of actor._prepareData to deal with owned items whose data depend on the actor.
    * Implemented in subClasses
    */
-   _prepareOwnedItem() {}
+   _prepareOwnedItem() {
+
+   }
 
   /* -------------------------------------------- */
   /*  Shorthands                                  */

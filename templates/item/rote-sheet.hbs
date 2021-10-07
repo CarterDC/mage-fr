@@ -9,24 +9,24 @@
             <div class="grid two-col">
                 <div class= "field">
                     <label>{{localize "M20E.labels.difficultyBase"}} : </label>
-                    <input name="options.difficultyBase" type="text" value="{{data.options.difficultyBase}}" data-dtype="Number" min="0" max="9"/>
+                    <input class="inline-edit" data-update-path="options.difficultyBase" type="text" value="{{data.options.difficultyBase}}" data-dtype="Number" min="0" max="9"/>
                 </div>
                 <div class= "field">
                     <label>{{localize "M20E.labels.difficultyMod"}} : </label>
-                    <input name="options.difficultyMods.throwMod" type="text" value="{{data.options.difficultyMods.throwMod}}" data-dtype="Number" min="-3" max="3"/>
+                    <input class="inline-edit" data-update-path="options.difficultyMods.throwMod" type="text" value="{{data.options.difficultyMods.throwMod}}" data-dtype="Number" min="-3" max="3"/>
                 </div>
                 <div class= "field">
                     <label>{{localize "M20E.labels.dicePoolMod"}} : </label>
-                    <input name="options.dicePoolMods.throwMod" type="text" value="{{data.options.dicePoolMods.throwMod}}" data-dtype="Number" min="-3" max="3"/>
+                    <input class="inline-edit" data-update-path="options.dicePoolMods.throwMod" type="text" value="{{data.options.dicePoolMods.throwMod}}" data-dtype="Number" min="-3" max="3"/>
                 </div>
                 <div class= "field">
                     <label>{{localize "M20E.labels.successMod"}} : </label>
-                    <input name="options.successMods.throwMod" type="text" value="{{data.options.successMods.throwMod}}" data-dtype="Number" min="-5" max="5"/>
+                    <input class="inline-edit" data-update-path="options.successMods.throwMod" type="text" value="{{data.options.successMods.throwMod}}" data-dtype="Number" min="-5" max="5"/>
                 </div>
             </div>
           <div class= "field">
               <label>{{localize "M20E.labels.displayDescription"}} : </label>
-<textarea name="data.description">{{data.data.description}}</textarea>
+<textarea class="inline-edit" data-update-path="data.description">{{data.data.description}}</textarea>
           </div>
           {{#if isGM}}
           <div class= "field">
@@ -40,7 +40,7 @@
           <br>
             <div class="rote-effect-wrapper">
             <div class="category grid one-col">
-                {{#each traits as |trait index|}}
+                {{#each stats as |trait index|}}
                 <div class="trait rote-effect" data-index="{{index}}" data-active="false">
                     {{#if ../locks.effects}}
                     <div class="mini-button decoy"></div>

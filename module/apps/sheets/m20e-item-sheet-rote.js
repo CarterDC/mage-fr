@@ -1,8 +1,8 @@
 // Import Documents
 import M20eItemSheet from './m20e-item-sheet.js'
 // Import Helpers
-import * as utils from '../../utils/utils.js'
-import { log } from "../../utils/utils.js";
+import * as utils from '../../utils.js'
+import { log } from "../../utils.js";
 
 /**
  * @extends {M20eItemSheet}
@@ -13,19 +13,25 @@ export default class M20eRoteSheet extends M20eItemSheet {
   constructor(...args) {
     super(...args);
    
+    this.throwIndex = 0;
     this.locks = {effects: true};
   }
 
   /* -------------------------------------------- */
 
+  get m20eThrow() {
+    return this.item.data.data.throws[this.throwIndex];
+  }
+
   /** @override */
   getData(options) {
     const sheetData = super.getData(options);
     sheetData.locks = this.locks;
-    sheetData.throw = sheetData.data.throws[0];
-    sheetData.traits = sheetData.throw.stats.map(stat => {
+    sheetData.data = duplicate(this.m20eThrow);
+    sheetData.stats = this.m20eThrow.stats.map(stat => {
       return {...stat.split(), value: stat.value}
     });
+    sheetData.data.throwOptions = JSON.stringify(sheetData.data.options) || {};
     sheetData.availEffects = this.getAvailEffects();
     return sheetData;
   }
@@ -37,6 +43,7 @@ export default class M20eRoteSheet extends M20eItemSheet {
       html.find('select').change(this._onSelectChange.bind(this));
       //html.find('.listened-input').change(this._onInputChange.bind(this));
       html.find('.bullet[data-clickable="true"').click(this._onBulletClick.bind(this));
+      html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
     }
     super.activateListeners(html);
   }
@@ -45,7 +52,29 @@ export default class M20eRoteSheet extends M20eItemSheet {
   /*  Event Handlers                              */
   /* -------------------------------------------- */
 
-  
+  async _onInlineEditChange(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const inputElem = event.currentTarget;
+    if ( ! utils.isValidUpdate(inputElem) ) {
+      return this.render();
+    }
+    //value has been validated => update the item
+    const updatePath = inputElem.dataset.updatePath || 'data.value';
+    let updateValue = inputElem.value;
+
+    let currThrow = duplicate(this.m20eThrow);
+    if ( updatePath === 'options' ) {
+      currThrow.options = {...currThrow.options, ...JSON.parse(inputElem.value)}
+    } else {
+      foundry.utils.setProperty(currThrow, updatePath, updateValue);
+    }
+
+    const throws = duplicate(this.item.data.data.throws);
+    throws[this.throwIndex] = currThrow;
+    return await this.item.update({['data.throws']: throws});
+  }
+
   /**
    * @param  {} event
    */
@@ -147,4 +176,6 @@ export default class M20eRoteSheet extends M20eItemSheet {
       }];
     }, []);
   }
+
+  //todo: do an onclose to update the throw fields with special handling of full options
 }

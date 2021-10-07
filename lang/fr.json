@@ -535,6 +535,8 @@
       "background": "Nvel Historique",
       "consumable": "Nv Consommable",
       "contact": "Nv Contact",
+      "createActor": "Créer un nouveau Personnage",
+      "createItem": "Créer un nouvel Objet",
       "default": "Nvel Item",
       "event": "Nvel Évènement",
       "meritflaw": {

@@ -1,29 +1,106 @@
+import Trait from './trait.js'
+import M20eThrow from './throw.js'
+import { M20E } from './config.js'
+
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { Trait, BaseThrow } from './dice-helpers.js'
-import { M20E } from '../utils/config.js'
+import * as utils from './utils.js'
+import { log } from "./utils.js";
+
 
 /**
  * Manages everything dice throws related in mage-fr.
  * Can do standalone 'quick throw' or display it's own DiceDialog Application to drive throw options 
  */
-export default class DiceThrower {
+export default class DiceThrower{
 
   /**
-   * @param {M20eActor|M20eItem} document an Actor or Item
-   * @param {BaseThrow}
+   * @param {M20eActor} document an Actor or Item
+   * @param {M20eThrow}
    */
-  constructor(document, baseThrow) {
-
-    this._document = document; //either an actor or owned item
-    this._throw = baseThrow;
-    this.stats = baseThrow.stats;
-    this.data = foundry.utils.mergeObject(this.constructor.defaultData, baseThrow.options);
-
-    this._app = null;
-    this._initialized = false;
+  constructor(actor) {
+    this.actor = actor;
+    this._throw = this.getNewFreeThrow();
   }
+
+  getNewFreeThrow() {
+    return new M20eThrow([
+      //stats
+    ], {
+      //data
+      name: '',
+      type: 'manual'
+    }, {
+      //options
+      
+    });
+  }
+
+  resetAll() {
+    this._throw = this.getNewFreeThrow();
+    this.flavor = '';
+    this.data = {};
+    this.actor.sheet.render();
+  }
+
+  /* -------------------------------------------- */
+  /*  Throw implementation                        */
+  /* -------------------------------------------- */
+
+  /**
+   * Roll the dice
+   * packs everything usefull in the rollData for further use
+   * create the roll formula for use within a m20eRoll
+   * send roll to chat and autocloses the app if needed
+   * 
+   */
+   async throwDice(m20eThrow, options) {
+    // do the init (might throw an error if throw is actually impossible)
+    try {
+      this.initialize(m20eThrow, options);
+      if ( this.data.dicePoolTotal <= 0 ) { throw {msg: 'cannotThrow0Dice'}; }
+    } catch (e) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
+      return;
+    }
+
+    // get the m20eRoll instance
+    const m20eRoll = this.getRoll();
+
+    // send the message
+    const speaker = ChatMessage.getSpeaker({actor: this.actor});
+    /*if ( DiceThrower.isItemThrow(this._document) ) {
+      speaker.alias = this._document.name;
+    }*/
+
+    //the async evaluation is gonna be done by the toMessage()
+    await m20eRoll.toMessage({
+      speaker : speaker,
+      flavor : this.flavor
+    }, {rollMode: this.rollMode});
+
+    this.resetAll()
+  }
+
+  getRoll() {
+    //nicely pack everything we gonna need for our roll and our message
+    const rollOptions = {
+      actorId: this.actor.id,
+      stats: this._throw.stats,
+      data: this.data,
+      flavor: this.flavor
+    };
+    
+    //prepare the formula
+    const {dicePoolTotal, difficultyTotal} = this.data;
+    //this.data.throwMode = this.data.throwMode | M20E.THROWMODE.XPLODE_SUCCESS
+    const tenXplodeSuccess = (this.data.throwMode & M20E.THROWMODE.XPLODE_SUCCESS) ? 'xs=10' : '';
+    const deductFailures = (this.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES) ? 'df=1' : '';
+    const formula = `${dicePoolTotal}d10${tenXplodeSuccess}cs>=${difficultyTotal}${deductFailures}`;
+    
+    const cls = CONFIG.Dice.M20eRoll;
+    return new cls(formula, null, rollOptions);
+  }
+
 
   static get defaultData() {
     return {
@@ -48,53 +125,31 @@ export default class DiceThrower {
     };
   }
 
-  /**
-   * Attemps to create a new DiceThrower instance with some checks
-   * @param  {M20eActor|M20eItem} document an Actor or Item
-   * @param {BaseThrow}
-   * 
-   * @returns {DiceThrow|null} the new DiceThrower instance or null if validation failed
-   */
-  static create(document, baseThrow) {
-
-    try {
-      if (!document) { throw { msg: 'noDocument' }; }
-      if (!baseThrow || !baseThrow instanceof BaseThrow ) { throw { msg: 'invalidThrow' }; }
- 
-      if ( !DiceThrower.isItemThrow(document) ) {
-        //only check actor thrown stats
-        const actor = document.isEmbedded ? document.parent : document;
-        baseThrow.stats.forEach( stat => BaseThrow.validateStat(actor, stat));
-      }
-
-    } catch (e) {
-      if (e.msg) { //todo : maybe add error params
-        ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
-      } else {
-        ui.notifications.error(game.i18n.localize(`M20E.notifications.impossibleThrow`));
-      }
-      return null;
-    }
-    //everything checks out, let's go !
-    return new DiceThrower(document, baseThrow);
-  }
-
   /* -------------------------------------------- */
   /*  Initialisation                              */
   /* -------------------------------------------- */
 
-  initialize() {
-    this.prepareStats();
+  initialize(m20eThrow, options) {
+    //this.prepareStats();
+    if ( m20eThrow ) {
+      //first check if throw is feasible 
+      if ( !m20eThrow.isAbleToThrow(this.actor) ) { return; }
+      //process the throw data, stats and options
+      this._throw = m20eThrow;
+      this._throw.stats = this.actor.getExtendedStats(this._throw.stats);
+      //todo : get flavor from item
+      this.flavor = this._throw.getStatsLocalizedNames(this.actor).join(' + ');
+      //store item + throwindex + put statsLock
+      //sanitize the options before merging (we wouldn't want a 0 diff)
+      if ( m20eThrow.options.difficultyBase === 0 ) {
+        delete m20eThrow.options['difficultyBase'];
+      }
+      this.data = foundry.utils.mergeObject(this.constructor.defaultData, m20eThrow.options);
+    } else {
+      this.data = this.constructor.defaultData;
+    }
     this.prepareData();
     this._initialized = true;
-  }
-
-  prepareStats() {
-    if ( DiceThrower.isItemThrow(document) ) {
-    
-    } else {
-      this.stats = this.actor.getExtendedStats(this.stats);
-    }
   }
 
   /**
@@ -102,7 +157,7 @@ export default class DiceThrower {
    * also called by every update method call in order to display accurate values in case diceThrow has an App
    */
   prepareData() {
-    this.data.isMagickThrow = BaseThrow.isMagickThrow(this.stats);
+    this.data.isMagickThrow = M20eThrow.isMagickThrow(this._throw.stats);
 
     //Dice Pool
     this.data.dicePoolBase = this.getDicePoolBase();
@@ -130,10 +185,10 @@ export default class DiceThrower {
     if ( this.data.isMagickThrow ) {
       //dice pool base is just arete
       //items might have an arete score (ie Wonders, Talismans...)
-      return this._document.data.stats.magick.arete.value;
+      return this.actor.data.stats.magick.arete.value;
     } else {
       //dice pool base is sum of all values
-      return this.stats.reduce((acc, cur) => {
+      return this._throw.stats.reduce((acc, cur) => {
         return acc + cur.value;
       }, 0);
     }
@@ -147,7 +202,7 @@ export default class DiceThrower {
    * @returns {Number} a negative modifier
    */
    getHealthMod() {
-    if ( DiceThrower.isItemThrow(document) ) { return 0;} //wonders don't have a health malus
+    //if ( DiceThrower.isItemThrow(document) ) { return 0;} //wonders don't have a health malus
     const healthMalus = this.actor.data.data.resources.health.malus;
 
     if ( game.settings.get("mage-fr", "useHealthMalus") ) {
@@ -201,7 +256,7 @@ export default class DiceThrower {
     //settings is 3 digit string => first char for talents, second char for skills and third char for knowledges
     const subTypes = {talents: 0, skills: 1, knowledges: 2};
     //check if untrained ability
-    this.stats.forEach( stat => {
+    this._throw.stats.forEach( stat => {
       const { category, subType } = stat.split();
       if ( category === "abilities" && !stat.value) {
         //get specific game setting relative to untrained abilities
@@ -227,84 +282,50 @@ export default class DiceThrower {
       return false;
     }
 
-  /**
-   * @returns the document itself or it's parent if document is an owned item
-   */
-   get actor() {
-    return this._document.isEmbedded ? this._document.parent : this._document;
-  }
-
-
-  /* -------------------------------------------- */
-  /*  Throw implementation                        */
-  /* -------------------------------------------- */
-
-  /**
-   * Roll the dice
-   * packs everything usefull in the rollData for further use
-   * create the roll formula for use within a MageRoll
-   * send roll to chat and autocloses the app if needed
-   * 
-   * @param  {Boolean} closeOnRoll only set to false by user clic on the App
-   */
-   async throwDice(closeOnRoll = true) {
-    // do the init (might throw an error if throw is actually impossible)
-    if ( !this._initialized ) {
-      try {
-        this.initialize();
-      } catch (e) {
-        ui.notifications.error(game.i18n.localize(`M20E.notifications.${e}`));
-        return;
-      }
-    }
-    // get the MageRoll instance
-    const mageRoll = this.getRoll();
-
-    // send the message
-    const speaker = ChatMessage.getSpeaker({actor: this.actor});
-    if ( DiceThrower.isItemThrow(this._document) ) {
-      speaker.alias = this._document.name;
-    }
-
-    //the async evaluation is gonna be done by the toMessage()
-    await mageRoll.toMessage({
-      speaker : speaker,
-      flavor : this.flavor
-    }, {rollMode: this.rollMode});
-
-    //close app if exists or rerender it
-    if ( this._app ) {
-      if ( closeOnRoll ) {
-        await this.app.close();
-        this._app = null;
-      } else {
-        this.app.render(true);
-      }
-    }
-  }
-
-  getRoll() {
-    //nicely pack everything we gonna need for our roll and our message
-    const rollOptions = {
-      documentId: this._document.id,
-      actorId: this.actor.id,
-      stats: this.stats,
-      data: this.data
-    };
-    
-    //prepare the formula
-    const {dicePoolTotal, difficultyTotal} = this.data;
-    this.data.throwMode = this.data.throwMode | M20E.THROWMODE.XPLODE_SUCCESS
-    const tenXplodeSuccess = (this.data.throwMode & M20E.THROWMODE.XPLODE_SUCCESS) ? 'xs=10' : '';
-    const deductFailures = (this.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES) ? 'df=1' : '';
-    const formula = `${dicePoolTotal}d10${tenXplodeSuccess}cs>=${difficultyTotal}${deductFailures}`;
-    
-    return new CONFIG.Dice.MageRoll(formula, null, rollOptions);
-  }
 
   static useCritical(throwMode) {
     return !!(throwMode &  M20E.THROWMODE.RESULT_CRITICAL)
   }
+
+  /* -------------------------------------------- */
+  /*  Stats                                       */
+  /* -------------------------------------------- */
+
+  refreshStats() {
+    this._throw.stats = this.actor.getExtendedStats(this._throw.stats);
+    this.flavor = this._throw.getStatsLocalizedNames(this.actor).join(' + ');
+    this.actor.sheet.render();
+  }
+
+  addStatByPath(path) {
+    try {
+      //safe add, check it's not already in the stats array
+      if ( this._throw.stats.some( stat => stat.path === path ) ) {
+        throw { msg: 'alreadyAdded'};
+      }
+      const stat = new Trait({path : path});
+      M20eThrow.validateStat(this.actor, stat);
+      this._throw.addStat(stat);
+      this.refreshStats();
+
+    } catch (e) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
+      return;
+    }
+  }
+
+  removeStatByPath(path) {
+    const statIndex = this._throw.stats.findIndex( stat => stat.path === path);
+    if ( statIndex !== -1 ) {
+      this.removeStatByIndex(statIndex);
+    }
+  }
+
+  removeStatByIndex(statIndex) {
+    this._throw.removeStat(statIndex);
+    this.refreshStats();
+  }
+
 
   /* -------------------------------------------- */
   /*  {DiceThrowerApp} App Handlers               */

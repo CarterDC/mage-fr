@@ -1,10 +1,10 @@
 // Import Documents
 import M20eActor from './m20e-actor.js'
 
-import DiceThrower from '../dice/dice-thrower.js'
+import DiceThrower from '../dice-thrower.js'
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
 
 
 /**

@@ -1,8 +1,10 @@
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
-import { M20E } from '../utils/config.js'
-import { Trait } from '../dice/dice-helpers.js'
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
+import { M20E } from '../config.js'
+
+import Trait from '../trait.js'
+import DiceThrower from '../dice-thrower.js'
 
 /**
  * The base actor class for the mage System, extends Foundry's Actor.
@@ -33,11 +35,7 @@ export default class M20eActor extends Actor {
     }
     //default behavior, just call super and do all the default Item inits.
     super(data, context);
-    this.diceThrower = {
-      stats: [],
-      name: this.data.name
-    };
-    log(this.diceThrower)
+    this.diceThrower = new DiceThrower(this);
   }
 
   /* -------------------------------------------- */
@@ -178,21 +176,24 @@ export default class M20eActor extends Actor {
       const result = change.effect.apply(this, change);
       if ( result !== null ) {
         //Mage-Fr specific
-        //todo : redo with check for AE other than on stats
-        //add _sourceValue to the overriden property
-        const path = change.key.match(/(?<=\.)(.+)(?=\.)/g);
-        if ( !foundry.utils.hasProperty(this.data.stats, `${path}._sourceValue`) ) {
-          //don't set sourceValue if it has already been set before
-          foundry.utils.setProperty(this.data.stats, `${path}._sourceValue`, sourceValue);
+        const path = change.key.match(/(?<=stats\.)(.+)(?=\.)/g);
+        if ( path ) {
+          //only for AE on the stats array
+          
+          if ( !foundry.utils.hasProperty(this.data.stats, `${path}._sourceValue`) ) {
+            //don't set sourceValue if it has already been set before
+            foundry.utils.setProperty(this.data.stats, `${path}._sourceValue`, sourceValue);
+          }
+          //also add the property to the item if stat is actually an item
+          const itemId = foundry.utils.getProperty(this.data.stats, `${path}.itemId`);
+          if ( itemId ) {
+            const item = this.items.get(itemId);
+            item.data.data._overrideValue = result;
+          } else {
+            foundry.utils.setProperty(this.data.data, `${path}._overrideValue`, result);
+          }
         }
-        //also add the property to the item if stat is actually an item
-        const itemId = foundry.utils.getProperty(this.data.stats, `${path}.itemId`);
-        if ( itemId ) {
-          const item = this.items.get(itemId);
-          item.data.data._overrideValue = result;
-        } else {
-          foundry.utils.setProperty(this.data.data, `${path}._overrideValue`, result);
-        }
+
         //vanilla
         overrides[change.key] = result;
       }
@@ -300,6 +301,62 @@ export default class M20eActor extends Actor {
   }
 
   /**
+   * Added base abilities compendium support to vanilla function 
+   * @override
+   */
+   static async createDialog(data={}, options={}) {
+
+    // Collect data
+    const documentName = this.metadata.name;
+    const types = game.system.entityTypes[documentName];
+    const folders = game.folders.filter(f => (f.data.type === documentName) && f.displayed);
+    const label = game.i18n.localize(this.metadata.label);
+    const title = game.i18n.localize('M20E.new.createActor');
+    //system specific
+    const baseAbilitiesPacks = [...game.packs.entries()].reduce((acc, [key, value]) => {
+      return value.metadata.name.includes('base-abilities') ?
+       [...acc, {id: key, name: value.metadata.label}] : acc;
+    }, []);
+
+    // Render the entity creation form
+    const html = await renderTemplate(`systems/mage-fr/templates/sidebar/entity-create.html`, {
+      name: data.name || game.i18n.format("ENTITY.New", {entity: label}),
+      folder: data.folder,
+      folders: folders,
+      hasFolders: folders.length > 1,
+      pack: baseAbilitiesPacks[0].id,
+      packs: baseAbilitiesPacks,
+      hasPacks: baseAbilitiesPacks.length > 0,
+      type: data.type || types[0],
+      types: types.reduce((obj, t) => {
+        const label = CONFIG[documentName]?.typeLabels?.[t] ?? t;
+        obj[t] = game.i18n.has(label) ? game.i18n.localize(label) : t;
+        return obj;
+      }, {}),
+      hasTypes: types.length > 1
+    });
+
+    // Render the confirmation dialog window
+    return Dialog.prompt({
+      title: title,
+      content: html,
+      label: title,
+      callback: html => {
+        const form = html[0].querySelector("form");
+        const fd = new FormDataExtended(form);
+        data = foundry.utils.mergeObject(data, fd.toObject());
+        if ( !data.folder ) delete data["folder"];
+        if ( types.length === 1 ) data.type = types[0];
+        return this.create(data, {renderSheet: true});
+      },
+      rejectClose: false,
+      options: options
+    });
+  }
+
+
+
+  /**
    * Executed only once, just prior the actorData is actually sent to the database
    * Adds base options/items to the actor (only if created from scratch !)
    *  @override
@@ -310,11 +367,9 @@ export default class M20eActor extends Actor {
 
     //check if actor is from existing actor (going in or out a compendiumColl)
     if ( actorData.flags.core?.sourceId ) { return; }
-    //second check cuz apparently duplicating an actor doesn't put the sourceId flag !
-    //if ( actorData.items.size ) { return; }
 
     //get baseAbilities from compendium if any or defaultAbilities from config
-    const baseAbilities = await this._getBaseAbilities();
+    const baseAbilities = await this._getBaseAbilities(data.pack);
     //get some other items (atm only paradigm item)
     const otherBaseItems = [];
     otherBaseItems.push ({
@@ -339,12 +394,9 @@ export default class M20eActor extends Actor {
    * also sorts abilities alphabetically and adds values to the `sort`property
    * @return {Array} alpha sorted array of item data
    */
-   async _getBaseAbilities() {
-    //get the compendium module 'name' from the settings
-    const scope = game.settings.get("mage-fr", "compendiumScope");
-    //Todo : Maybe get packname from settings as well in the case of multiple compendium for different mage versions
-    const packName = `${scope}.base-abilities`;
-    const pack = game.packs.get(packName);
+   async _getBaseAbilities(fullPackName) {
+    //try and get the pack from given packname
+    const pack = game.packs.get(fullPackName);
     const baseAbilities = pack ? 
       await this._getAbilitiesFromPack(pack) :
       await this._getDefaultAbilities();

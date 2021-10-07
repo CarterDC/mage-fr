@@ -1,9 +1,9 @@
 // Import Helpers
 import * as utils from './utils.js'
 import { log } from "./utils.js";
-import { Trait, BaseThrow } from '../dice/dice-helpers.js'
-import DiceThrower from '../dice/dice-thrower.js'
-import ParadoxDialog from '../apps/paradox-dlg.js'
+import Trait from './trait.js'
+import DiceThrower from './dice-thrower.js'
+import ParadoxDialog from './apps/paradox-dlg.js'
 
 /* -------------------------------------------- */
 /*  Sockets                                     */
@@ -271,67 +271,6 @@ export async function versionWarningMessage(sysVersion) {
   });
   //flag the user 
   //game.user.setFlag("mage-fr", "versionWarning", true); //^^
-}
-
-/* -------------------------------------------- */
-/*  ChatMessage Override                        */
-/* -------------------------------------------- */
-
-/**
- * Modification of the ChatMessage class only meant to allow for stealth rolls.
- * Actually don't check for ._roll so could also be used for sending blind messages
- * (message from a user, that the sender won't see)
- */
-export class M20eChatMessage extends ChatMessage {
-  constructor(data, context) {
-    super(data, context);
-  }
-
-  /**
-   * Allows for the use of actor.alias in lieu of actor.name
-   * actor.alias is a getter using mage-fr's aliases system.
-   * @override
-   */
-   /*get alias() {
-    const speaker = this.data.speaker;
-    if ( speaker.alias ) return speaker.alias;
-    else if ( game.actors.has(speaker.actor) ) return game.actors.get(speaker.actor).alias;
-    else return this.user?.name ?? "";
-  }*/
-  /*static getSpeaker({scene, actor, token, alias}={}) {
-    if ( !alias ) {
-
-    }
-    super.getSpeaker({scene, actor, token, alias});
-  }*/
-
-  /**
-   * Allows for stealth rolls (are not displayed at all, instead of "???" messages)
-   * Also allows for other uses of the same principle
-   * @override
-   */
-  applyRollMode(rollMode) {
-    if (rollMode === 'stealthroll') {
-      this.data.update({['flags.stealthroll']: true});
-      rollMode = "blindroll";
-    }
-    super.applyRollMode(rollMode);
-  }
-
-  /**
-   * Allows for stealth rolls (are not displayed at all, instead of "???" messages)
-   * Also allows for other uses of the same principle
-   * @override
-   */
-  async getHTML() {
-    if ( this.data.flags.stealthroll && this.data.blind && this.data.whisper.length) {
-      if ( game.user.isGM ) {
-        return super.getHTML();
-      }
-    } else {
-      return super.getHTML();
-    }
-  }
 }
 
 /* -------------------------------------------- */

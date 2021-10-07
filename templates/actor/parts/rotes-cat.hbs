@@ -5,8 +5,8 @@
         {{#each items.rotes as |rote key|}}
         <div class="trait rote" data-item-id="{{rote._id}}">
             <div class="item-img" style="background-image: url({{rote.img}}), radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));">
-              {{#if rote.data.isActuallyRollable}}
-              <div class="mini-button trait-dice macro-ready" data-action="roll-item" data-item-id="{{rote._id}}"></div>
+              {{#if rote.data.hasThrows}}
+                  <div class="mini-button trait-dice macro-ready" data-action="roll-item" data-item-id="{{rote._id}}"></div>
               {{/if}}
             </div>
             <div class="vertical-wrapper">
@@ -20,14 +20,14 @@
                         <a class="mini-button" data-action="remove"><i class="fas fa-trash"></i></a>
                     </div>
                     <div class="bullet-display" data-locked="{{../locks.rotes}}">
-                        {{rote.data.flavor}}
+                        {{rote.data.miniFlavor}}
                     </div>
                 </div>
                 <div class="one-liner-desc" data-expanded="false">
                   <a class="mini-button" data-action="expand">
                     <i class="fas fa-ellipsis-h"></i>
                   </a>
-                  {{{rote.data.displayDescription}}}
+                  {{{rote.data.throws.0.data.description}}}
                 </div>
             </div>
         </div>

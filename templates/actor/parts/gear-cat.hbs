@@ -8,8 +8,8 @@
     <div class="trait equipable" data-item-id="{{equipable._id}}" data-rollable="{{equipable.data.isRollable}}">
       <div class="item-img"
         style="background-image: url({{equipable.img}}), radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));">
-        {{#if equipable.data.isActuallyRollable}}
-        <div class="mini-button trait-dice macro-ready" data-action="roll-item" data-item-id="{{equipable._id}}"></div>
+        {{#if equipable.data.hasThrows}}
+            <div class="mini-button trait-dice macro-ready" data-action="roll-item" data-item-id="{{equipable._id}}"></div>
         {{/if}}
       </div>
       <div class="vertical-wrapper" data-rollable="{{equipable.data.isRollable}}">

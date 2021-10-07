@@ -11,31 +11,33 @@
 
 // Import Documents
 import M20eActor from './module/documents/m20e-actor.js'
-import M20eMageActor from './module/documents/m20e-mage-actor.js'
+import M20eMageActor from './module/documents/m20e-actor-mage.js'
 import M20eItem from './module/documents/m20e-item.js'
-import M20eParadigmItem from './module/documents/m20e-paradigm-item.js'
-import M20eRollableItem from './module/documents/m20e-rollable-item.js'
-import M20eRoteItem from './module/documents/m20e-rote-item.js'
+import M20eParadigmItem from './module/documents/m20e-item-paradigm.js'
+import M20eRollableItem from './module/documents/m20e-item-rollable.js'
+import M20eRoteItem from './module/documents/m20e-item-rote.js'
+import M20eChatMessage from './module/documents/m20e-chat-message.js'
+
 // Import Applications
 import M20eActorSheet from './module/apps/sheets/m20e-actor-sheet.js'
-import M20eMageActorSheet from './module/apps/sheets/mage-actor-sheet.js'
+import M20eMageActorSheet from './module/apps/sheets/m20e-actor-sheet-mage.js'
 import M20eItemSheet from './module/apps/sheets/m20e-item-sheet.js'
 import M20eAeSheet from './module/apps/sheets/m20e-ae-sheet.js'
-import M20eParadigmSheet from './module/apps/sheets/paradigm-sheet.js'
-import M20eRollableSheet from './module/apps/sheets/rollable-sheet.js'
-import M20eRoteSheet from './module/apps/sheets/rote-sheet.js'
+import M20eParadigmSheet from './module/apps/sheets/m20e-item-sheet-paradigm.js'
+import M20eRollableSheet from './module/apps/sheets/m20e-item-sheet-rollable.js'
+import M20eRoteSheet from './module/apps/sheets/m20e-item-sheet-rote.js'
 
-import DiceThrower from './module/dice/dice-thrower.js'
-import DiceThrowerApp from './module/dice/dice-thrower-app.js'
+import DiceThrower from './module/dice-thrower.js'
+import DiceThrowerApp from './module/apps/dice-thrower-app.js'
 
 // Other Imports
-import { M20E } from './module/utils/config.js'
-import { registerSystemSettings } from "./module/utils/settings.js";
-import { registerHotbarOverride } from "./module/utils/macro.js";
-import * as dice from "./module/dice/dice-helpers.js";
-import * as utils from './module/utils/utils.js';
-import { log } from "./module/utils/utils.js";
-import * as chat from "./module/utils/chat.js";
+import { M20E } from './module/config.js'
+import { registerSystemSettings } from "./module/settings.js";
+import { registerHotbarOverride } from "./module/macro-helpers.js";
+import * as dice from "./module/dice-helpers.js";
+import * as utils from './module/utils.js';
+import { log } from "./module/utils.js";
+import * as chat from "./module/chat-helpers.js";
 
 
 /* -------------------------------------------- */
@@ -56,6 +58,7 @@ Hooks.once('init', async function () {
   CONFIG.M20E = M20E;
   CONFIG.M20E.stats = {}; //list of stats used by stats selection App (GM tools + rollables) 
 
+  //Documents overrides
   CONFIG.Actor.documentClass = M20eActor;
   //add references to subclasses for use in the M20eActor constructor
   CONFIG.Actor.documentClasses = {
@@ -69,9 +72,10 @@ Hooks.once('init', async function () {
     "rote": M20eRoteItem,
     "weapon": M20eRollableItem
   };
-  CONFIG.ChatMessage.documentClass = chat.M20eChatMessage;
+  CONFIG.ChatMessage.documentClass = M20eChatMessage;
 
-  // Register sheet application classes
+
+  // Actor Sheets overrides
   Actors.unregisterSheet('core', ActorSheet);
   Actors.registerSheet("m20e", M20eActorSheet, {
     types: ["npcsleeper"],
@@ -81,6 +85,7 @@ Hooks.once('init', async function () {
     types: ["charmage", "npcmage"],
     makeDefault: true
   });
+  //Item Sheets overrides
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('m20e', M20eItemSheet, {
     types: ["ability", "background", "meritflaw", "event", "misc", "contact"], //todo , add all the other base item types
@@ -98,9 +103,10 @@ Hooks.once('init', async function () {
     types: ["weapon"],//todo add other rollable types (wonders...)
     makeDefault: true
   });
-  //ActiveEffect sheet
+  //ActiveEffect Sheet override
   CONFIG.ActiveEffect.sheetClass = M20eAeSheet;
-  
+
+
   registerSystemSettings(); //system settings
   registerHotbarOverride(); //hack on the hotbar for shifKey on macros
   utils.registerHandlebarsHelpers(); //all of our HB helpers
@@ -108,8 +114,8 @@ Hooks.once('init', async function () {
   
   //DICE thingies
   CONFIG.M20E.DiceThrower.appClass = DiceThrowerApp; //store class here for later access
-  CONFIG.Dice.MageRoll = dice.MageRoll; //store class here for later access
-  CONFIG.Dice.rolls.push(dice.MageRoll); //Add it to the list of roll classes
+  CONFIG.Dice.M20eRoll = dice.M20eRoll; //store class here for later access
+  CONFIG.Dice.rolls.push(dice.M20eRoll); //Add it to the list of roll classes
   CONFIG.Dice.terms["s"] = dice.DieSuccess; //new dice term
   dice.registerDieModifier(); //adds the 'xs' (success on explode) modifier
   dice.registerInitiative();

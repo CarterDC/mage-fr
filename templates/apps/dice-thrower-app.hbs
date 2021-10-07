@@ -1,10 +1,13 @@
 <form class="{{cssClass}}" autocomplete="off" style="display:block;">
+
     <div class="dialog-block flavor">
-        {{{data.flavor}}}
+      <a class="mini-button" data-action="expand"><i class="fas fa-caret-up"></i></a>
+        {{{dt.flavor}}}
     </div>
-    {{#if dt.stats.length}}
+
+    {{#if stats.length}}
     <div class="dialog-block">
-        {{#each dt.stats as |stat key|}}
+        {{#each stats as |stat key|}}
         <div class="trait dice-throw" data-key="{{key}}">
             <a class="mini-button" title="{{localize 'M20E.hints.removeFromThrow'}}" data-action="remove" data-disabled="{{../dt.isItemThrow}}"><i class="fas fa-times-circle"></i></a>
             <label class="trait-label tooltip" data-value ="{{stat.value}}" {{#if (eq stat.value 0)}} title="{{localize 'M20E.hints.untrained'}}"{{/if}}>
@@ -28,6 +31,7 @@
         {{/each}}
     </div>
     {{/if}}
+
     <div class="dialog-block dice-pool">
         <label style="text-align: center; margin-left:-6px;" title="{{localize 'M20E.hints.dicePool'}}">{{localize "M20E.labels.dicePool"}} :</label>
         <input type="text" value="{{dt.data.dicePoolBase}}" data-dtype="Number" disabled/>
@@ -48,9 +52,10 @@
         <i class="fas fa-equals" style ="font-size: 16px;" ></i>
         <input name="dicePoolTotal" type="text" value="{{dt.data.dicePoolTotal}}" data-dtype="Number" readonly/>
     </div>
+
     <div class="dialog-block difficulty">
         <label title="{{localize 'M20E.hints.difficulty'}}">{{localize "M20E.labels.difficulty"}} :</label>
-        {{!--TODO : maybe add and display threshold mods  --}}
+
         <div class="radio-group">
             {{#each radioOptions as |radio key|}}
             <div>
@@ -66,9 +71,14 @@
         </div>
     </div>
 
+    <div class="dialog-block success">
+      <a class="mini-button" data-action="expand"><i class="fas fa-caret-up"></i></a>
+        Success
+    </div>
+
     <a class="mini-button throw-settings" title="{{localize (m20e-concat 'M20E.hints.throwSettings.' dt.throwSettings)}}" data-action="settings" data-settings="{{dt.throwSettings}}"><i class="fas fa-dice-d20"></i></a>
-    <a class="mini-button throw-dice" data-action="roll" title="{{localize extras.title}}">
-        <span>{{localize "M20E.labels.throw"}} <i class="fas fa-dice"></i></span> <i class="{{extras.icon}}"></i>
+    <a class="mini-button throw-dice" data-action="roll" title="{{localize extras.title}}" data-disabled="{{throwLock}}">
+        <span>{{localize "M20E.labels.throw"}}</span> <i class="{{extras.icon}}"></i>
     </a>
     <a class="mini-button auto-close" title="{{localize 'M20E.hints.toggleAutoClose'}}" data-action="auto-close" data-active="{{closeOnRoll}}"><i class="fas fa-ellipsis-h"></i></a>
 </form>

@@ -1,7 +1,7 @@
-import DiceThrower  from './dice-thrower.js'
+import DiceThrower  from '../dice-thrower.js'
 // Import Helpers
-import * as utils from '../utils/utils.js'
-import { log } from "../utils/utils.js";
+import * as utils from '../utils.js'
+import { log } from "../utils.js";
 
 /**
  * User interface with a DiceThrower object, allowing for some throw options
@@ -18,6 +18,15 @@ import { log } from "../utils/utils.js";
     this.dt = diceThrower;
     this.closeOnRoll = true;
 
+    this.expands = {
+      flavor: true,
+      stats: true,
+      pool: true, 
+      difficulty: true,
+      success: true,
+      buttons: true
+    }
+
     //add the paradigm css class if any to the default options.
     const paraItem = this.dt.actor.paradigm;
     if ( paraItem ) {
@@ -25,9 +34,9 @@ import { log } from "../utils/utils.js";
     }
 
     //register a hook on updateActor in order to refresh the diceThrow with updated actor values.
-    Hooks.on('updateActor', this.onUpdateActor);
-    Hooks.on('updateCoreRollMode', this.onUpdateCoreRollMode);
-    Hooks.on('systemSettingChanged', this.onSystemSettingChanged);
+    //Hooks.on('updateActor', this.onUpdateActor);
+    //Hooks.on('updateCoreRollMode', this.onUpdateCoreRollMode);
+    //Hooks.on('systemSettingChanged', this.onSystemSettingChanged);
   }
 
   /** @override */
@@ -35,20 +44,27 @@ import { log } from "../utils/utils.js";
     return mergeObject(super.defaultOptions, {
       classes: ['m20e', 'dialog'],
       template: 'systems/mage-fr/templates/apps/dice-thrower-app.hbs',
-      title: game.i18n.localize('M20E.diceThrows.diceThrows'),
-      width: 300,
+      width: 290,
       height: 'fit-content',
-      resizable: false
+      resizable: true
     });
+  }
+
+  get title() {
+    return this.dt.actor.name;
   }
 
   /** @override */
   getData () {
     const appData = super.getData();
+
     appData.dt = this.dt;
+    appData.stats = this.dt._throw.stats;
     appData.data = {
       dpModTotal: this.dt.getDicePoolModTotal(),
-      dpTooltips: utils.getModsTooltipData(this.dt.data.dicePoolMods)
+      dpTooltips: utils.getModsTooltipData(this.dt.data.dicePoolMods),
+      diffModTotal: this.dt.getDifficultyModTotal(),
+      diffTooltips: utils.getModsTooltipData(this.dt.data.difficultyMods, true)
     };
 
     //creates an array for the radio options : value from 3 to 9, checked or ''
@@ -60,8 +76,11 @@ import { log } from "../utils/utils.js";
 
     //icon and title for the throw button
     appData.extras = CONFIG.M20E.rollModeExtras[game.settings.get("core", "rollMode")];
+
     //lock bullets for every thing but pure actor effects
-    appData.bulletsClickLock = !this.dt.isEffectRoll || this.dt.isItemThrow;
+    appData.mainLock = false;
+    appData.bulletLock = true;
+    appData.throwLock = this.dt.dicePoolTotal === 0;
 
     appData.closeOnRoll = this.closeOnRoll;
     log({appData})
@@ -159,14 +178,16 @@ import { log } from "../utils/utils.js";
    */
   _onMiniButtonClick(event) {
     event.preventDefault();
-    const element = event.currentTarget;
-    const dataset = element.dataset;
-    const traitElem = element.closest('.trait');
-    if ( dataset.disabled === 'true' ) { return; }
+    const buttonElem = event.currentTarget;
+    const dataset = buttonElem.dataset;
+    if ( dataset.disabled == 'true' ) { return; }
 
-    switch (dataset.action){
+    const traitElem = buttonElem.closest('.trait');
+    //const statIndex = traitElem.dataset.key;
+
+    switch ( dataset.action ) {
       case 'roll':
-        this.dt.throwDice(this.closeOnRoll);
+        this.dt.throwDice(null, {closeOnRoll: this.closeOnRoll});
         break;
       case 'remove':
         this.dt.removeTrait(traitElem.dataset.key);
@@ -186,7 +207,7 @@ import { log } from "../utils/utils.js";
         break;
       case 'auto-close':
         this.closeOnRoll = !this.closeOnRoll;
-        element.dataset.active = this.closeOnRoll;
+        buttonElem.dataset.active = this.closeOnRoll;
         break;
       default :
         break;
@@ -282,10 +303,10 @@ import { log } from "../utils/utils.js";
    */
   async close(options={}) {
     //do some cleaning
-    Hooks.off('updateActor', this.onUpdateActor);
-    Hooks.off('updateCoreRollMode', this.onUpdateCoreRollMode);
-    Hooks.off('systemSettingChanged', this.onSystemSettingChanged);
-    this.diceThrow = null;
+    //Hooks.off('updateActor', this.onUpdateActor);
+    //Hooks.off('updateCoreRollMode', this.onUpdateCoreRollMode);
+    //Hooks.off('systemSettingChanged', this.onSystemSettingChanged);
+    this.dt = null;
     
     //call super
     return super.close(options);

@@ -2,9 +2,9 @@
 import M20eItemSheet from './m20e-item-sheet.js'
 import {ThrowSheet} from '../throw-sheet.js'
 // Import Helpers
-import { Trait, BaseThrow } from '../../dice/dice-helpers.js'
-import * as utils from '../../utils/utils.js'
-import { log } from "../../utils/utils.js";
+//import { Trait, M20eThrow } from '../../dice-helpers.js'
+import * as utils from '../../utils.js'
+import { log } from "../../utils.js";
 
 /**
  * @extends {M20eItemSheet}
@@ -23,8 +23,8 @@ export default class M20eRollableSheet extends M20eItemSheet {
   /** @override */
   getData(options) {
     const sheetData = super.getData(options);
-    sheetData.throws = sheetData.data.throws.map( baseThrow => {
-      return { ...duplicate(baseThrow), flavor: baseThrow.getMiniFlavor(this.actor)}
+    sheetData.throws = sheetData.data.throws.map( m20eThrow => {
+      return { ...duplicate(m20eThrow), flavor: m20eThrow.getMiniFlavor(this.actor)}
     });
     sheetData.addButtonDisabled = sheetData.throws.length >= 10;
     sheetData.locks = this.locks;
@@ -80,7 +80,7 @@ export default class M20eRollableSheet extends M20eItemSheet {
 
 
   /**
-   * Note : In this context 'Item' refers to a BaseThrow object int he data.throws array
+   * Note : In this context 'Item' refers to a M20eThrow object int he data.throws array
    *  @override
    */
   async addItem(buttonElem) {
@@ -88,7 +88,7 @@ export default class M20eRollableSheet extends M20eItemSheet {
   }
 
   /**
-   * Note : In this context 'Item' refers to a BaseThrow object int he data.throws array
+   * Note : In this context 'Item' refers to a M20eThrow object int he data.throws array
    *  @override
    */
   async editItem(buttonElem) {
@@ -98,7 +98,7 @@ export default class M20eRollableSheet extends M20eItemSheet {
   }
 
   /**
-   * Note : In this context 'Item' refers to a BaseThrow object int he data.throws array
+   * Note : In this context 'Item' refers to a M20eThrow object int he data.throws array
    *  @override
    */
   async removeItem(buttonElem) {
