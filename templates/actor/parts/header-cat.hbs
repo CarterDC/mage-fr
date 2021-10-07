@@ -8,7 +8,9 @@
               <input class = "name" name="name" type="text" value="{{actor.data.name}}" data-dtype="String"/>
               <a class="entity-link personnal-je" data-entity="{{data.link.type}}" data-pack="{{data.link.pack}}" data-id="{{data.link.id}}" title="{{localize "M20E.hints.openPersonalJE"}}"><i class="fas fa-info-circle"></i></a>
             </div>
-            <div class="dice-button macro-ready" data-action = "roll-traits" title="{{localize "M20E.hints.diceButton"}}"></div>
+            <div class="dice-button macro-ready" data-action = "roll-traits" title="{{dt.flavor}}">
+              {{dt.length}}
+            </div>
         </div>
         <div class="header-row">
             <div class="resource-panel health" data-resource="health">
@@ -30,7 +32,7 @@
                         <div class="box" title="{{rez.title}}" data-clickable="{{../editable}}" data-index="{{index}}" data-state="{{rez.state}}"></div>
                     {{/each}}
                 </div>
-                <div class="trait willpower" style="margin-left:4px;" data-path="secondary.willpower" data-active= "false">
+                <div class="trait willpower" style="margin-left:4px;" data-path="secondary.willpower" data-highlighted= "{{data.secondary.willpower.isHighlighted}}">
                     <a class="stat-label resource-context" data-resource="willpower">
                         {{localize "M20E.resources.willpower"}}
                     </a>

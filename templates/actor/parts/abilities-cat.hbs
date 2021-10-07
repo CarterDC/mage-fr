@@ -10,7 +10,7 @@
           <a class="mini-button" data-category="abilities" data-sub-category="{{stKey}}" data-action="add" data-locked="{{../locks.abilities}}" title="{{localize 'M20E.hints.add'}}"><i class="fas fa-plus"></i></a>
         </div>
         {{#each subTypes as |ability key|}}
-        <div class="trait ability linkable" data-path="abilities.{{stKey}}.{{m20e-sanitize ability.name}}" data-item-id="{{ability._id}}" data-active= "false"> 
+        <div class="trait ability linkable" data-path="{{ability.data.path}}" data-item-id="{{ability._id}}" data-highlighted= "{{ability.data.isHighlighted}}"> 
           <div class="trait-extra">{{ability.data.extra}}</div>
           <a class="stat-label drag-ready tooltip" data-item-id="{{ability._id}}">
             {{#if ability.data.displayName}}

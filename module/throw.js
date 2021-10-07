@@ -119,10 +119,10 @@ import { log } from "./utils.js";
     if (category === 'spheres') {
       //cannot use a sphere in an effect if it's value null or not high enough
       if (!statValue) {
-        throw { msg: 'insufficentStatValue' };
+        throw { msg: 'insufficentSphereValue' };
       } else if (stat?.data?.valueOverride) { //in case of a rote
         if (statValue < stat.data.valueOverride) {
-          throw { msg: 'insufficentStatValue' };
+          throw { msg: 'insufficentSphereValue' };
         }
       }
     } else if (category === 'abilities' && !statValue) {
@@ -132,7 +132,7 @@ import { log } from "./utils.js";
       const subTypes = { talents: 0, skills: 1, knowledges: 2 };
       const malus = settings.substr(subTypes[subType], 1);
       if (strict && isNaN(malus)) {
-        throw { msg: 'insufficentStatValue' };
+        throw { msg: 'insufficentAbilityValue' };
       }
     }
   }
@@ -141,12 +141,16 @@ import { log } from "./utils.js";
    * Adds a new Trait to the stats array.
    * creates a new Trait instance if needed.
    * Limit the number of stats to 9.
+   * TODO : validate stat ?
    * @param  {Trait|Object|null} stat a Trait instance or obj containing a path property or null
    * 
    * @returns {Trait|null} the newly added stat as a Trait instance.
    */
   addStat(stat) {
-    if ( this.stats.length >= 9 ) { return null; }
+    if ( this.stats.length >= 9 ) { 
+      //todo throw error or notif
+      return null;
+    }
     if ( !(stat instanceof Trait) ) {
       if ( stat?.path ) {
         //stat may contain some traitData,
@@ -200,6 +204,7 @@ import { log } from "./utils.js";
   static fromElement(elem) {
 
   }
+
   //todo : create full element from data & options
   toElement() {
     return null;

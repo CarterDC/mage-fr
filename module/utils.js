@@ -544,6 +544,9 @@ export function registerHandlebarsHelpers() {
     return false;
   })
 
+  /*Handlebars.registerHelper('m20e-includes', function(path, stats) {
+    return stats.filter( stat => stat.path === path).length > 0;
+  })*/
 }
 
 

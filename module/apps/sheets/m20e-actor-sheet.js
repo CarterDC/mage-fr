@@ -86,6 +86,8 @@ export default class M20eActorSheet extends ActorSheet {
     sheetData.resources.health = this.getResourceData('health');
     sheetData.resources.willpower = this.getResourceData('willpower');
 
+    this.highlightTraits(sheetData);
+
     //dispatch items into categories and subtypes
     //at this point sheetData.items is already an array of standard js objects made from the individual itemData of each actor's item.
     //sheetData.items is already sorted on item.sort in the super
@@ -109,6 +111,12 @@ export default class M20eActorSheet extends ActorSheet {
     //todo : sort misc according to isConsumable ?
 
     //other usefull data
+    sheetData.dt = {
+      stats: this.actor.diceThrower._throw.stats,
+      length: this.actor.diceThrower._throw.stats.length,
+      flavor: this.actor.diceThrower.flavor
+    };
+
     sheetData.isGM = game.user.isGM;
     sheetData.config = CONFIG.M20E;
     sheetData.locks = this.locks;
@@ -118,9 +126,27 @@ export default class M20eActorSheet extends ActorSheet {
       sheetData.paraData = paradigm.data.data;
     }
     sheetData.dsnUserActive = utils.dsnUserActive();
-
     if (this.actor.type === 'npcsleeper') { log({sheetData: sheetData});}
     return sheetData;
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Adds a isHighlighted true property to sheetData elements
+   * if they are present in the diceThrower selected stats
+   * @param  {Object} sheetData
+   */
+  highlightTraits(sheetData) {
+    for ( const stat of this.actor.diceThrower._throw.stats ) {
+      const itemId = this.actor._getStat(stat.path, 'itemId');
+      if ( itemId ) {
+        const itemData = sheetData.items.filter( itemData => itemData._id === itemId )[0];
+        itemData.data.isHighlighted = true;
+      } else {
+        foundry.utils.setProperty(sheetData.data, `${stat.path}.isHighlighted`, true);
+      }
+    }
   }
 
   /* -------------------------------------------- */
@@ -245,8 +271,12 @@ export default class M20eActorSheet extends ActorSheet {
    _onStatLabelClick(event) {
     event.preventDefault();
     const statElem = event.currentTarget.closest(".trait");
-    //just toggle the active status
-    statElem.dataset.active = !(statElem.dataset.active === 'true');
+
+    if ( statElem.dataset.highlighted == 'true' ) {
+      this.actor.diceThrower.removeStatByPath(statElem.dataset.path);
+    } else {
+      this.actor.diceThrower.addStatByPath(statElem.dataset.path);
+    }
   }
 
   /* -------------------------------------------- */
@@ -377,14 +407,12 @@ export default class M20eActorSheet extends ActorSheet {
    */
    _onBigDiceButtonClick(event) {
     //try and get a new DiceThrow instance from our actor and chosen traits
-    const diceThrower = DiceThrower.create(this.actor, this.getThrow());
-    if ( !diceThrower ) { return; }
     if ( event.shiftKey ) {
       //throw right away
-      diceThrower.throwDice();
+      this.actor.diceThrower.throwDice();
     } else {
       //display dice throw dialog
-      diceThrower.render(true);
+      this.actor.diceThrower.render();
     }
   }
 

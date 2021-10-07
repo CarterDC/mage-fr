@@ -2,7 +2,9 @@
 import * as utils from '../utils.js'
 import { log } from "../utils.js";
 import { M20E } from '../config.js'
+
 import Trait from '../trait.js'
+import DiceThrower from '../dice-thrower.js'
 
 /**
  * The base actor class for the mage System, extends Foundry's Actor.
@@ -33,11 +35,7 @@ export default class M20eActor extends Actor {
     }
     //default behavior, just call super and do all the default Item inits.
     super(data, context);
-    this.diceThrower = {
-      stats: [],
-      name: this.data.name
-    };
-    log(this.diceThrower)
+    this.diceThrower = new DiceThrower(this);
   }
 
   /* -------------------------------------------- */
@@ -178,21 +176,24 @@ export default class M20eActor extends Actor {
       const result = change.effect.apply(this, change);
       if ( result !== null ) {
         //Mage-Fr specific
-        //todo : redo with check for AE other than on stats
-        //add _sourceValue to the overriden property
-        const path = change.key.match(/(?<=\.)(.+)(?=\.)/g);
-        if ( !foundry.utils.hasProperty(this.data.stats, `${path}._sourceValue`) ) {
-          //don't set sourceValue if it has already been set before
-          foundry.utils.setProperty(this.data.stats, `${path}._sourceValue`, sourceValue);
+        const path = change.key.match(/(?<=stats\.)(.+)(?=\.)/g);
+        if ( path ) {
+          //only for AE on the stats array
+          
+          if ( !foundry.utils.hasProperty(this.data.stats, `${path}._sourceValue`) ) {
+            //don't set sourceValue if it has already been set before
+            foundry.utils.setProperty(this.data.stats, `${path}._sourceValue`, sourceValue);
+          }
+          //also add the property to the item if stat is actually an item
+          const itemId = foundry.utils.getProperty(this.data.stats, `${path}.itemId`);
+          if ( itemId ) {
+            const item = this.items.get(itemId);
+            item.data.data._overrideValue = result;
+          } else {
+            foundry.utils.setProperty(this.data.data, `${path}._overrideValue`, result);
+          }
         }
-        //also add the property to the item if stat is actually an item
-        const itemId = foundry.utils.getProperty(this.data.stats, `${path}.itemId`);
-        if ( itemId ) {
-          const item = this.items.get(itemId);
-          item.data.data._overrideValue = result;
-        } else {
-          foundry.utils.setProperty(this.data.data, `${path}._overrideValue`, result);
-        }
+
         //vanilla
         overrides[change.key] = result;
       }
@@ -362,13 +363,10 @@ export default class M20eActor extends Actor {
    */
    async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
-    debugger
     const actorData = this.data;
 
     //check if actor is from existing actor (going in or out a compendiumColl)
     if ( actorData.flags.core?.sourceId ) { return; }
-    //second check cuz apparently duplicating an actor doesn't put the sourceId flag !
-    //if ( actorData.items.size ) { return; }
 
     //get baseAbilities from compendium if any or defaultAbilities from config
     const baseAbilities = await this._getBaseAbilities(data.pack);

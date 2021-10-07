@@ -6,7 +6,7 @@
     <label class="column-header">{{m20e-locadigm paraData "attributes.social"}}</label>
     <label class="column-header">{{m20e-locadigm paraData "attributes.mental"}}</label>
     {{#each data.attributes as |attribute key|}}
-    <div class="trait attribute linkable" data-path="attributes.{{key}}" data-active= "false">
+    <div class="trait attribute linkable" data-path="attributes.{{key}}" data-highlighted= "{{attribute.isHighlighted}}">
       <a class="stat-label tooltip">
         {{m20e-locadigm ../paraData "attributes." key}}
         {{#if attribute.specialisation}}

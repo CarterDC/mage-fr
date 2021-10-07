@@ -17,6 +17,10 @@
     </div>
     {{/if}}
 
+    {{#if isItem}}
+
+    {{/if}}
+
     {{#if hasPacks}}
     <div class="form-group">
         <label>{{ localize "SIDEBAR.TabCompendium" }}&nbsp;&nbsp;&nbsp;</label>
@@ -49,4 +53,14 @@
     </div>
     {{/if}}
     <br>
+    
+    {{#if isItem}}
+    <div class="dialog-buttons">
+      <button class="dialog-button ok default" data-button="ok">
+          <i class="fas fa-check"></i>
+          {{localize "M20E.new.createItem"}}
+      </button>
+    </div>
+    {{/if}}
+
 </form>

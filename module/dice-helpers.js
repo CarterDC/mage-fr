@@ -121,17 +121,23 @@ export class M20eRoll extends Roll {
       dpTotal: this.dice[0].number,
       diffTotal: this.getCsModifierValue(this.dice[0]),
     };
-    if (this.options.data) { //todo : don't create tt data if total === base
-      part.data.dpTooltips = [{
-        name: game.i18n.localize(`M20E.throwMod.base`),
-        class: '',
-        value: this.options.data.dicePoolBase
-      }, ...utils.getModsTooltipData(this.options.data.dicePoolMods)];
-      part.data.diffTooltips = [{
-        name: game.i18n.localize(`M20E.throwMod.base`),
-        class: '',
-        value: this.options.data.difficultyBase
-      }, ...utils.getModsTooltipData(this.options.data.difficultyMods, true)];
+
+    const data = this.options.data;
+    if (data) { //todo : don't create tt data if total === base
+      if ( data.dicePoolTotal !== data.dicePoolBase ) {
+        part.data.dpTooltips = [{
+          name: game.i18n.localize(`M20E.throwMod.base`),
+          class: '',
+          value: data.dicePoolBase
+        }, ...utils.getModsTooltipData(data.dicePoolMods)];
+      }
+      if ( data.difficultyTotal !== data.difficultyBase ) {
+        part.data.diffTooltips = [{
+          name: game.i18n.localize(`M20E.throwMod.base`),
+          class: '',
+          value: data.difficultyBase
+        }, ...utils.getModsTooltipData(data.difficultyMods, true)];
+      }
     }
 
     part.options = this.options;
@@ -168,6 +174,8 @@ export class M20eRoll extends Roll {
     if (!this._evaluated) this.evaluate();
 
     const total = Math.round(this.total * 100) / 100;
+
+    //TODO : have function to return, css class + totalString depending on options crit
     const totalString = total === 0 ? game.i18n.localize('M20E.throwresult.failure') :
       (total > 0 ? game.i18n.format('M20E.throwresult.success', { total: total }) :
         game.i18n.format('M20E.throwresult.critfailure', { total: total }));

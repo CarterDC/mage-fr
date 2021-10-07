@@ -33,7 +33,7 @@ export default class M20eRollableItem extends M20eItem {
     super._prepareOwnedItem();
     const itemData = this.data;
     itemData.data.miniFlavor = this.getMiniFlavor();
-    //itemData.data.isActuallyRollable = this._isActuallyRollable();
+    itemData.data.hasThrows = itemData.data.throws[0]?.stats.length > 0;
   }
 
   async addThrow() {
@@ -119,16 +119,19 @@ export default class M20eRollableItem extends M20eItem {
     * @param  {Number} throwIndex=0 
     */
    roll(shiftKey, throwIndex = 0) {
-    const m20eThrow = M20eThrow.fromData(this.data.data.throws[throwIndex]);
-    m20eThrow.options.throwIndex = throwIndex;
-    const diceThrower = DiceThrower.create(this, m20eThrow);
-    if ( !diceThrower ) { return; }
+    if ( ! this.isOwned ) { return; }
     if ( shiftKey ) {
       //throw right away
-      diceThrower.throwDice();
+      this.actor.diceThrower.throwDice(this.data.data.throws[throwIndex], {
+        throwOwner: this,
+        throwIndex: throwIndex
+      });
     } else {
       //display dice throw dialog
-      diceThrower.render(true);
+      this.actor.diceThrower.render(this.data.data.throws[throwIndex], {
+        throwOwner: this,
+        throwIndex: throwIndex
+      });
     }
   }
 
