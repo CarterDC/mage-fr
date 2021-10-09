@@ -134,7 +134,7 @@ export class ThrowSheet extends DocumentSheet {
     }
     //value has been validated => update the item
     const updatePath = inputElem.dataset.updatePath || 'data.value';
-    let updateValue = inputElem.value;
+    let updateValue = utils.isNumeric(inputElem.value) ? parseInt(inputElem.value) : inputElem.value;
 
     let currThrow = duplicate(this.m20eThrow);
     if ( updatePath === 'options' ) {

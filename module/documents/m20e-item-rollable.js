@@ -102,15 +102,6 @@ export default class M20eRollableItem extends M20eItem {
     return '';
   }
 
-  _getFlavor(throwIndex=0) {
-    return '';
-  }
-
-  /*_isActuallyRollable(actor=null) {
-    actor = actor || this.actor;
-    return this.data.data.throws.some( mageThrow => mageThrow.isRollable(actor));
-  }*/
-
    /**
     * get traits from a rollable item for the specific throw index (ie rotes only have 1 throw so it's index 0)
     * create a new {@link DiceThrow} from traitsToRoll and either throw or open config App based on shiftkey status

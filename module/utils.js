@@ -576,6 +576,7 @@ export async function preloadHandlebarsTemplates() {
     "systems/mage-fr/templates/actor/parts/events-cat.hbs",
     "systems/mage-fr/templates/actor/parts/a-effects-cat.hbs",
     "systems/mage-fr/templates/actor/parts/gear-cat.hbs",
+    "systems/mage-fr/templates/actor/parts/misc-gear-cat.hbs",
     // Item Sheet Partials
     "systems/mage-fr/templates/item/parts/header-block.hbs",
     "systems/mage-fr/templates/item/parts/nav-block.hbs",

@@ -124,6 +124,16 @@ Hooks.once('init', async function () {
   game.socket.on('system.mage-fr', chat.onSocketReceived);
 
   //test shit here !
+  CompendiumCollection.prototype.constructor.INDEX_FIELDS = {
+    Actor: ["name", "img", "type"],
+    Item: ["name", "img", "type"],
+    Scene: ["name", "thumb"],
+    //add flags path to the index
+    JournalEntry: ["name", "img", "flags.path"],
+    Macro: ["name", "img"],
+    RollTable: ["name", "img"],
+    Playlist: ["name"]
+  }
 
 })
 
@@ -163,9 +173,7 @@ Hooks.once('ready', async function () {
 /* -------------------------------------------- */
 /*  Other usefull Hooks                         */
 /* -------------------------------------------- */
-Hooks.on('renderSidebar', function(sideBarApp, html, appData) {
-  log("onRenderSidebar");
-});
+
 
 Hooks.on("chatMessage", (chatLog, message, chatData) => {
   return chat.onProcessMessage(chatLog, message, chatData);
@@ -174,4 +182,26 @@ Hooks.on('renderChatLog', chat.addChatListeners);
 Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
 
 //test shit here !
+//TODO : put that somewhere else & use div instead of anchor!
+Hooks.on('renderJournalSheet', function(App, html, appData) {
+  html.on('click', 'span.auto-link', onAutolinkClick);
+});
 
+function onAutolinkClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const anchorElem = event.currentTarget;
+  const link = anchorElem.dataset.link;
+  const contentElem = anchorElem.closest('.editor-content');
+  const elemToView = $(contentElem).find(link)[0];
+  if ( elemToView ) {
+    elemToView.scrollIntoView({ behavior: "smooth" });
+  } else {
+    ui.notifications.warn(`Broken Link : ${link}`);
+  }
+
+}
+
+Hooks.on('renderSidebar', function(sideBarApp, html, appData) {
+  log("onRenderSidebar");
+});

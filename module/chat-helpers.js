@@ -43,11 +43,11 @@ export function addChatListeners(app, html, data) {
 export function addChatMessageContextOptions(html, options) {
   options.push(
     {
-      name: game.i18n.localize("M20E.context.rollParadox"),
+      name: game.i18n.localize("M20E.context.paradoxEffect"),
       icon: '<i class="fas fa-radiation"></i>',
       condition: liElem => {
           const message = game.messages.get(liElem.data("messageId"));
-          const isEffectRoll = message._roll?.options?.isEffectRoll || false;
+          const isEffectRoll = message._roll?.options?.data.isMagickThrow || false;
           return game.user.isGM && isEffectRoll;
       },
       callback: liElem => rollParadox(liElem)
@@ -270,7 +270,7 @@ export async function versionWarningMessage(sysVersion) {
     whisper: [game.user.id]
   });
   //flag the user 
-  //game.user.setFlag("mage-fr", "versionWarning", true); //^^
+  game.user.setFlag("mage-fr", "versionWarning", sysVersion);
 }
 
 /* -------------------------------------------- */
@@ -341,7 +341,7 @@ function customParseMessage(message) {
  */
 async function createSystemRollFromCommand(formula, flavor) {
   //validate formula before going any further
-  const rollClass = CONFIG.Dice.MageRoll; //could also be CONFIG.Dice.rolls[1]
+  const rollClass = CONFIG.Dice.M20eRoll; //could also be CONFIG.Dice.rolls[1]
   if ( !rollClass.validate(formula) ) {
     ui.notifications.warn(game.i18n.format('MYSYSTEM.notifications.wrongFormula', {formula: formula}));
     return;

@@ -173,7 +173,7 @@
           "value": 0,
           "displayDescription": "",
           "signature": "",
-          "resonnanceFlavor": "pious",
+          "resonanceFlavor": "pious",
           "synergyFlavor": "dynamic" 
         }
       },
@@ -256,7 +256,7 @@
           "value": 0,
           "displayDescription": "",
           "signature": "",
-          "resonnanceFlavor": "devotional",
+          "resonanceFlavor": "devotional",
           "synergyFlavor": "dynamic" 
         }
       },

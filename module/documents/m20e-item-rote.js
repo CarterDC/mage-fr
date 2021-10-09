@@ -45,6 +45,7 @@ export default class M20eRoteItem extends M20eRollableItem {
   getMiniFlavor() {
     if ( !this.actor ) { return null; }
     const itemData = this.data;
+    
     let miniFlavor = itemData.data.throws[0].stats.map( stat => {
       return `${stat.getLocalizedName(this.actor)} (${stat.value})`;
     }).join(' + ');
@@ -56,18 +57,17 @@ export default class M20eRoteItem extends M20eRollableItem {
    * @override
    */
   getThrowFlavor() {
+    if ( !this.actor ) { return null; }
+    const itemData = this.data;
+
     const itemType = game.i18n.localize(`ITEM.Type${this.type.capitalize()}`);
-    const effect = this._getFlavor();
+    const effect = itemData.data.throws[0].stats.map( stat => {
+      return `${stat.getLocalizedName(this.actor)} (${stat.value})`;
+    }).join(' + ');
 
     return `${itemType} ${this.name} : <br>
     ${game.i18n.format('M20E.diceThrows.effect', {effect: effect})}.`;
   }
-  
-    _getFlavor() {
-      return this.data.data.throws[0]?.traits.map(effect => 
-        `${this.actor.locadigm(`traits.spheres.${effect.key}`)} (${effect.value})`
-        ).join(' + ');
-    }
 
   get roteEffects() {
     return this.data.data.throws[0].stats.map(effect => effect.key);
