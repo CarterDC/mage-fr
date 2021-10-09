@@ -175,11 +175,11 @@ export default class M20eActor extends Actor {
       const sourceValue = foundry.utils.getProperty(this.data, change.key);
       const result = change.effect.apply(this, change);
       if ( result !== null ) {
+        
         //Mage-Fr specific
         const path = change.key.match(/(?<=stats\.)(.+)(?=\.)/g);
         if ( path ) {
-          //only for AE on the stats array
-          
+          //only for AE on the stats array          
           if ( !foundry.utils.hasProperty(this.data.stats, `${path}._sourceValue`) ) {
             //don't set sourceValue if it has already been set before
             foundry.utils.setProperty(this.data.stats, `${path}._sourceValue`, sourceValue);
@@ -205,13 +205,18 @@ export default class M20eActor extends Actor {
 
   /* -------------------------------------------- */
 
+  /**
+   * Disables effect if it originates from an equipable item that's not equiped.
+   * @param  {ActiveEffect} effect
+   */
   manageLinkedEffect(effect) {
     const origins = effect.data.origin.split('.');
     if ( origins[2] !== 'Item' ) { return; }
+    //origin is obviously a uuid for an owned item 
     const item = this.items.get(origins[3])
     if ( !item ) { return; }
 
-    if ( item.isUnequiped ) {
+    if ( item.isUnequiped ) {//only works on equipable items
       effect.data.disabled = true;
     }
   }
@@ -230,7 +235,8 @@ export default class M20eActor extends Actor {
    const willpowerMax = this.data.data.resources.willpower.max;
    this._setStat('secondary.willpower', {value: willpowerMax});
    foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
-*/
+   */
+
    //add init to secondary stats
     const dext = this._getStat('attributes.dext','value');
     const wits = this._getStat('attributes.wits','value');
@@ -257,36 +263,6 @@ export default class M20eActor extends Actor {
   }
 
   /* -------------------------------------------- */
-  /*  Shorthands                                  */
-  /* -------------------------------------------- */
-
-  get alias() {
-    if ( this.data.data.aliases.list.length > 0 && game.settings.get("mage-fr", "allowAliases") ) {
-      if ( Math.ceil(CONFIG.Dice.randomUniform() * 100) <= this.data.data.aliases.frequency ) {
-        const aliasIndex = Math.ceil(CONFIG.Dice.randomUniform() * this.data.data.aliases.list.length) - 1;
-        return this.data.data.aliases.list[aliasIndex];
-      }
-    }
-    return this.data.name;
-  }
-
-  get isCharacter() {
-    return this.data.data.isCharacter === true;
-  }
-
-  get isNPC() {
-    return !this.isCharacter;
-  }
-
-  get isMage() { //obviously overriden in mageActor
-    return false;
-  }
-
-  get paradigm() {
-    return this.data.data.paraItem || null;
-  }
-
-  /* -------------------------------------------- */
   /*  New Actor Creation                          */
   /* -------------------------------------------- */
 
@@ -300,6 +276,8 @@ export default class M20eActor extends Actor {
     super.clone(data, options);
   }
 
+  /* -------------------------------------------- */
+
   /**
    * Added base abilities compendium support to vanilla function 
    * @override
@@ -312,7 +290,8 @@ export default class M20eActor extends Actor {
     const folders = game.folders.filter(f => (f.data.type === documentName) && f.displayed);
     const label = game.i18n.localize(this.metadata.label);
     const title = game.i18n.localize('M20E.new.createActor');
-    //system specific
+
+    //system specific : list of all base abilities compendiums
     const baseAbilitiesPacks = [...game.packs.entries()].reduce((acc, [key, value]) => {
       return value.metadata.name.includes('base-abilities') ?
        [...acc, {id: key, name: value.metadata.label}] : acc;
@@ -324,7 +303,7 @@ export default class M20eActor extends Actor {
       folder: data.folder,
       folders: folders,
       hasFolders: folders.length > 1,
-      pack: baseAbilitiesPacks[0].id,
+      pack: baseAbilitiesPacks[0]?.id,
       packs: baseAbilitiesPacks,
       hasPacks: baseAbilitiesPacks.length > 0,
       type: data.type || types[0],
@@ -354,7 +333,7 @@ export default class M20eActor extends Actor {
     });
   }
 
-
+  /* -------------------------------------------- */
 
   /**
    * Executed only once, just prior the actorData is actually sent to the database
@@ -389,6 +368,8 @@ export default class M20eActor extends Actor {
     actorData.token.update({bar1: {attribute: game.i18n.localize('M20E.resources.health')}});
   }
 
+  /* -------------------------------------------- */
+
   /**
    * returns base abilities from pack if any, otherwise default abilities from config
    * also sorts abilities alphabetically and adds values to the `sort`property
@@ -409,6 +390,8 @@ export default class M20eActor extends Actor {
       return {...itemData, ...{sort: (i+1) * CONST.SORT_INTEGER_DENSITY}};
     });
   }
+
+  /* -------------------------------------------- */
 
   /**
    * 
@@ -431,6 +414,8 @@ export default class M20eActor extends Actor {
         });
       });
   }
+
+  /* -------------------------------------------- */
 
   /**
    * Gets base abilities from config + localization 
@@ -461,7 +446,39 @@ export default class M20eActor extends Actor {
   }
 
   /* -------------------------------------------- */
-  /*  Exposed : used by sheets and other apps     */
+  /*  Shorthands                                  */
+  /* -------------------------------------------- */
+
+  get alias() {
+    if ( this.data.data.aliases.list.length > 0 && game.settings.get("mage-fr", "allowAliases") ) {
+      if ( Math.ceil(CONFIG.Dice.randomUniform() * 100) <= this.data.data.aliases.frequency ) {
+        const aliasIndex = Math.ceil(CONFIG.Dice.randomUniform() * this.data.data.aliases.list.length) - 1;
+        return this.data.data.aliases.list[aliasIndex];
+      }
+    }
+    return this.data.name;
+  }
+
+  /* -------------------------------------------- */
+
+  get isCharacter() {
+    return this.data.data.isCharacter === true;
+  }
+
+  get isNPC() {
+    return !this.isCharacter;
+  }
+
+  get isMage() { //obviously overriden in mageActor
+    return false;
+  }
+
+  get paradigm() {
+    return this.data.data.paraItem || null;
+  }
+
+  /* -------------------------------------------- */
+  /*  Other      */
   /* -------------------------------------------- */
 
   /**
@@ -482,6 +499,8 @@ export default class M20eActor extends Actor {
     return item;
   }
 
+  /* -------------------------------------------- */
+
   /**
    * get the system translation for M20E.relativePath or user lexiconEntry if axists
    * @param  {String} relativePath a localization path relative to the M20E root.
@@ -494,6 +513,8 @@ export default class M20eActor extends Actor {
     }
     return paraItem.locadigm(relativePath);
   }
+
+  /* -------------------------------------------- */
 
   /**
    * Get the user overridden translation for the specific path in the translation file
@@ -511,6 +532,8 @@ export default class M20eActor extends Actor {
     return paraItem.getLexiconEntry(relativePath);
   }
 
+  /* -------------------------------------------- */
+
   /**
    * Sets a user overridden translation for a specific path in the translation file
    * get the paradigm item to store that as a specific lexicon entry
@@ -524,6 +547,8 @@ export default class M20eActor extends Actor {
     return await paraItem.setLexiconEntry(relativePath, newValue);
   }
 
+  /* -------------------------------------------- */
+
   /** 
    * 'Safe' update as in
    * todo : do better !
@@ -535,6 +560,8 @@ export default class M20eActor extends Actor {
     const propertyValue = isNaN(newValue) ? newValue : parseInt(newValue);
     return await this.update({[`data.${relativePath}`]: propertyValue});
   }
+
+  /* -------------------------------------------- */
 
   /**
    * Adds the amount amount of wounds of type woundType to the resource resourceName
@@ -566,6 +593,8 @@ export default class M20eActor extends Actor {
     return await this.update(updateObj);
   }
 
+  /* -------------------------------------------- */
+
   /**
    * Removes the amount amount of wounds of type woundType to the resource resourceName
    * Has a built in overflow to heal remaining wounds to the directly below woundtype.
@@ -590,6 +619,8 @@ export default class M20eActor extends Actor {
     return await this.update(updateObj);
   }
 
+  /* -------------------------------------------- */
+
   async addXP(xpGain) {
     if ( xpGain > 0 ) {
       //update both currentXP and totalXP (total is just a reminder of all the xp gains)
@@ -599,6 +630,8 @@ export default class M20eActor extends Actor {
       await this.update(updateObj);
     }
   }
+
+  /* -------------------------------------------- */
 
   async removeXP(xpLoss) {
     if ( xpLoss > 0 ) {
@@ -631,6 +664,8 @@ export default class M20eActor extends Actor {
     }
   }
 
+  /* -------------------------------------------- */
+
   getMacroData(data) {
     const traits = data.map( d => new Trait(d));
     this.extendTraits(traits);
@@ -642,6 +677,8 @@ export default class M20eActor extends Actor {
       }
     }
   }
+
+  /* -------------------------------------------- */
 
   /**
    * Extends an array of {@link Trait} with relevant values to Throw dices
@@ -659,6 +696,8 @@ export default class M20eActor extends Actor {
       });
     });
   }
+
+  /* -------------------------------------------- */
 
   getExtendedTraitData(path) {
     return {

@@ -122,6 +122,7 @@
   max-width: none;
   border: none;
   cursor: pointer;
+  object-fit: scale-down;
 }
 .m20e.sheet .sheet-header .name,
 .m20e.dialog .sheet-header .name {
@@ -1037,7 +1038,7 @@
   padding-left: 3px;
 }
 .m20e .trait.throw .bullet-display {
-  flex: 0 0 100px;
+  flex: 0 0 150px;
   justify-content: flex-start;
   padding-left: 3px;
 }

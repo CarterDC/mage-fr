@@ -281,7 +281,10 @@ export default class M20eAeSheet extends DocumentSheet {
     });
     if ( !newTraitKey ) { return; }
     newTraitKey = `${prefix}.${newTraitKey}.${suffix}`;
-    if ( ! foundry.utils.hasProperty(this.actor.data, newTraitKey) ) { return;}
+    if ( this.actor ) {
+      //prevent adding a change to a property that doesn't exist 
+      if ( ! foundry.utils.hasProperty(this.actor.data, newTraitKey) ) { return;}
+    }
     changes[effectIndex].key = newTraitKey;
     return await this.effect.update({'changes': changes});
   }

@@ -312,15 +312,25 @@ export async function promptSelect(promptData={}) {
  * @returns {string} the resquested description (most usually containing html)
  */
 export async function getSystemDescription(category, key) {
-  //get the compendium module 'name' from the settings
-  const scope = game.settings.get("mage-fr", "compendiumScope");
-  const packName = `${scope}.${category}-desc`;
-  const pack = game.packs.get(packName);
   try {
     //get the systemDescription from Journal Entry compendium if any
-    const index = pack.index.getName(key);
-    const packItem = await pack.getDocument(index._id);
-    return packItem.data.content;
+    const pack = game.packs.find(entry => entry.metadata.name.includes('trait-desc'));
+    if ( !pack.indexed ) await pack.getIndex({fields: ["name", "img", "flags.path"]});
+    const journalId = pack.index.find(entry => entry.flags.path === `${category}.${key}`)._id;
+    const packItem = await pack.getDocument(journalId);
+    const fullContent = packItem.data.content;
+    //get only the first systemDesc if any
+    const first = fullContent.indexOf(`<div class="m20e systemDescription`);
+    if ( first != -1 ) {
+      const next = fullContent.indexOf(`<div class="m20e systemDescription`, first + 1);
+      if ( next != -1 ) {
+          return fullContent.substring(first, next);
+      } else {
+          return fullContent.substring(first, fullContent.length);
+      }
+    } else {
+      return fullContent;
+    }
   } catch (e) {
     //otherwise get a generic description for that category
     return await getDefaultDescription(category);
@@ -344,6 +354,7 @@ export async function getDefaultDescription(category) {
   const fullDescription = game.i18n.localize(path);
   return await renderTemplate(descTemplate, fullDescription);
 }
+
 /**
  * creates a new JE for a specific actor.
  * copy the actor's permissions onto the new journal
@@ -365,6 +376,7 @@ export async function createPersonnalJE(actor, options) {
   const perms = actor.data.permission;
   return await JournalEntry.create({
     name: actor.name,
+    img: actor.img,
     content: game.i18n.localize('M20E.blabla'),
     permission: perms,
     folder: folder.id

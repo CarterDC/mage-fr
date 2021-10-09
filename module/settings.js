@@ -82,18 +82,6 @@ export const registerSystemSettings = function () {
   });
 
   /**
-   * Chosen compendium module name (scope of the compendiumCollections)
-   */
-  game.settings.register("mage-fr", "compendiumScope", {
-    name: "SETTINGS.compendiumScope",
-    hint: "SETTINGS.compendiumScopeHint",
-    scope: "world",
-    config: true,
-    default: "mage-packs-fr",
-    type: String
-  });
-
-  /**
    * Base roll difficulty
    */
   game.settings.register("mage-fr", "difficultyBase", {
@@ -214,27 +202,5 @@ export const registerSystemSettings = function () {
     default: true,
     type: Boolean
   });
-
-    /**
-   * Display button to open the rules config panel
-   */
-  /*   game.settings.registerMenu("mage-fr", "rulesConfig", {
-      name: "SETTINGS.rulesConfig",
-      label: "SETTINGS.rulesConfig",
-      hint: "SETTINGS.rulesConfigHint",
-      icon: "fas fa-dice",
-      type: RulesConfig,
-      restricted: false
-    });*/
-
-  /**
-   * Display button to open the rules config panel
-   */
-  /*   game.settings.register("mage-fr", "rules", {
-      scope: "world",
-      config: false,
-      default: [{type: 'talent', value: 2}, {type: 'skill', value: 3}],
-      type: Object
-    });*/
 
 }

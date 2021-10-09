@@ -124,17 +124,14 @@ Hooks.once('init', async function () {
   game.socket.on('system.mage-fr', chat.onSocketReceived);
 
   //test shit here !
-  CompendiumCollection.prototype.constructor.INDEX_FIELDS = {
-    Actor: ["name", "img", "type"],
-    Item: ["name", "img", "type"],
-    Scene: ["name", "thumb"],
-    //add flags path to the index
-    JournalEntry: ["name", "img", "flags.path"],
-    Macro: ["name", "img"],
-    RollTable: ["name", "img"],
-    Playlist: ["name"]
-  }
 
+  //fix to prevent re-indexing with unwanted fields TODO : put that somewhere else
+  CompendiumCollection.prototype.indexDocument = function(document) {
+    const img = document.data.thumb ?? document.data.img;
+    if ( !this.index.has(document.id) ) {
+      this.index.set(document.id, {_id: document.id, name: document.name, type: document.type, img});
+    }
+  };
 })
 
 /* -------------------------------------------- */
@@ -199,7 +196,6 @@ function onAutolinkClick(event) {
   } else {
     ui.notifications.warn(`Broken Link : ${link}`);
   }
-
 }
 
 Hooks.on('renderSidebar', function(sideBarApp, html, appData) {

@@ -48,6 +48,7 @@ export class AliasEditor extends DocumentSheet {
     const sheetData = super.getData();
     sheetData.aliases = this.actor.data.data.aliases.list;
     sheetData.owner = this.actor.isOwner;
+    sheetData.addButtonDisabled = sheetData.aliases.length >= 10;
     sheetData.config = CONFIG.M20E;
     return sheetData;
   }
@@ -70,6 +71,12 @@ export class AliasEditor extends DocumentSheet {
     event.preventDefault();
     const buttonElem = event.currentTarget;
     const dataset = buttonElem.dataset;
+
+    //check if action is allowed before going any further
+    if ( dataset.disabled == 'true') {//'true' or true
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.notOutsideCreation'));
+      return;
+    }
 
     switch (dataset.action) {
 
@@ -98,7 +105,8 @@ export class AliasEditor extends DocumentSheet {
     });
   }
 
-  async addItem(buttonElem) {
+  async addItem(buttonElem) {//todo : should use an actor function instead
+    if ( this.actor.data.data.aliases.list.length >= 10 ) { return; }
     const aliases = duplicate(this.actor.data.data.aliases.list);
     aliases.push(game.i18n.localize('M20E.new.alias'));
     return await this.actor.update({'data.aliases.list': aliases});
