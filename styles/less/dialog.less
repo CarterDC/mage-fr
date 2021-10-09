@@ -1,5 +1,31 @@
 .m20e.dialog{
 
+  .title-line{
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    height: 20px;
+    .pre-line{
+      flex: 0 0 5%;
+      height: 1em;
+      margin: 0 2px 2px;
+      border-bottom: 1px solid var(--titleColor);
+    }
+    label{
+      margin: 0 3px 0 3px;
+      align-self: center;
+    }
+    .post-line{
+      flex: 1 1;
+      height: 1em;
+      margin: 0 2px 2px;
+      border-bottom: 1px solid var(--titleColor);
+    }
+    .mini-button{
+      align-self: flex-end;
+    }
+  }
   .flavor{
       margin-bottom: 6px;
       padding: 0 5px;
@@ -39,11 +65,8 @@
     flex-wrap: nowrap;
     align-items: center;
     justify-content: space-between;
-    font-family: var(--titleFontFam);
-    font-weight: bold;
-    text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
-    font-size: var(--catFontSize);
     text-align: center;
+    font-size: var(--catFontSize);
 
     div{
       flex-grow: 1;
@@ -87,6 +110,19 @@
         border-color: #7a7971;
       }
     }
+  }
+  .radio-group.dice{
+    font-family: var(--titleFontFam);
+    font-weight: bold;
+    text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
+    font-size: var(--catFontSize);
+  }
+
+  .mini-button.paradoxEffect{
+    height : 32px;
+    font-weight: bold;
+    font-size: var(--catFontSize);
+    margin: 10px 6px 5px 6px; 
   }
 
   .mini-button.throw-dice{

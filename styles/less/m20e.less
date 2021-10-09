@@ -65,6 +65,20 @@
 @import "./dialog.less";
 
 //everything that can be used outside the m20e scope goes here
+body {
+  position: fixed;
+}
+
+.editor-content {
+  span.auto-link{
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  span.auto-link:hover{
+    text-shadow: 0 0 1px var(--hoverColor);
+  }
+}
+
 .systemDescription{
   padding: 0px 2px;
   line-height: calc(var(--m20e-descFontSize) + 2px);

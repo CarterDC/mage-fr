@@ -20,6 +20,7 @@ export default class DiceThrower{
   constructor(actor) {
     this.actor = actor;
     this._throw = this.getNewFreeThrow();
+    this._app = null;
   }
 
   getNewFreeThrow() {
@@ -37,6 +38,7 @@ export default class DiceThrower{
 
   resetAll() {
     this._throw = this.getNewFreeThrow();
+    this.statsLock = false;
     this.flavor = '';
     this.data = {};
     this.actor.sheet.render();
@@ -68,9 +70,7 @@ export default class DiceThrower{
 
     // send the message
     const speaker = ChatMessage.getSpeaker({actor: this.actor});
-    /*if ( DiceThrower.isItemThrow(this._document) ) {
-      speaker.alias = this._document.name;
-    }*/
+    //todo : use alias is is wonder throw
 
     //the async evaluation is gonna be done by the toMessage()
     await m20eRoll.toMessage({
@@ -86,7 +86,7 @@ export default class DiceThrower{
     const rollOptions = {
       actorId: this.actor.id,
       stats: this._throw.stats,
-      data: this.data,
+      data: {...this.data, throwOwner: this.data.throwOwner?.id},
       flavor: this.flavor
     };
     
@@ -117,7 +117,7 @@ export default class DiceThrower{
         userMod: 0
       },
       rollMode: game.settings.get("core", "rollMode"),
-      isMagickEffect: false,
+      isMagickThrow: false,
       throwIndex: 0,
       difficultyOverride: null,
       ignoreHealthMod: false,
@@ -133,23 +133,29 @@ export default class DiceThrower{
     //this.prepareStats();
     if ( m20eThrow ) {
       //first check if throw is feasible 
-      if ( !m20eThrow.isAbleToThrow(this.actor) ) { return; }
+      m20eThrow.stats.forEach(stat => M20eThrow.validateStat(this.actor, stat, true));
+
       //process the throw data, stats and options
       this._throw = m20eThrow;
-      this._throw.stats = this.actor.getExtendedStats(this._throw.stats);
-      //todo : get flavor from item
-      this.flavor = this._throw.getStatsLocalizedNames(this.actor).join(' + ');
-      //store item + throwindex + put statsLock
+      if ( this._throw.stats.length > 0 ) {
+        this._throw.stats = this.actor.getExtendedStats(this._throw.stats);
+        this.statsLock = true;
+      }
       //sanitize the options before merging (we wouldn't want a 0 diff)
       if ( m20eThrow.options.difficultyBase === 0 ) {
         delete m20eThrow.options['difficultyBase'];
       }
-      this.data = foundry.utils.mergeObject(this.constructor.defaultData, m20eThrow.options);
+      //merge data & options
+      this.data = foundry.utils.mergeObject(this.constructor.defaultData, {
+        ...m20eThrow.options,
+        ...options
+      });
     } else {
-      this.data = this.constructor.defaultData;
+      this.data = foundry.utils.mergeObject(this.constructor.defaultData, {
+        ...options
+      });
     }
     this.prepareData();
-    this._initialized = true;
   }
 
   /**
@@ -171,8 +177,17 @@ export default class DiceThrower{
     this.data.difficultyTotal = this.data.difficultyOverride ?? 
       Math.clamped(this.data.difficultyBase + diffModTotal, 3, 9); //todo, have diff limits in config
 
-    //flavor
-    //this.flavor = this._document.getThrowFlavor(this._traits, this._thowIndex);
+    //todo : get flavor from item
+    this.flavor = this.getFlavor();
+    //this._throw.getStatsLocalizedNames(this.actor).join(' + ');
+  }
+
+  getFlavor() {
+    if ( this.data.throwOwner ) {
+      return this.data.throwOwner.getThrowFlavor(this.data.throwIndex);
+    } else {
+      return this.actor.getThrowFlavor(this._throw.stats);
+    }
   }
 
   /**
@@ -420,17 +435,16 @@ export default class DiceThrower{
    * called by ActorSheet or macro to display the DiceDialogue Application
    * @param  {Boolean} force=false
    */
-  render(force=false, options={}) {
+  render(m20eThrow, options) {
     // do the init (might throw an error if throw is actually impossible)
-    if ( !this._initialized ) {
-      try {
-        this.initialize();
-      } catch (e) {
-        ui.notifications.error(game.i18n.localize(`M20E.notifications.${e}`));
-        return;
-      }
+    try {
+      this.initialize(m20eThrow, options);
+      //if ( this.data.dicePoolTotal <= 0 ) { throw {msg: 'cannotThrow0Dice'}; }
+    } catch (e) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
+      return;
     }
-    this.app.render(force);
+    this.app.render(true);
   }
 
 

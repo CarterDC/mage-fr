@@ -2,6 +2,7 @@
 import M20eActor from './m20e-actor.js'
 
 import DiceThrower from '../dice-thrower.js'
+import M20eThrow from '../throw.js'
 // Import Helpers
 import * as utils from '../utils.js'
 import { log } from "../utils.js";
@@ -47,7 +48,7 @@ export default class M20eMageActor extends M20eActor {
   }
 
   getThrowFlavor(xTraitsToRoll=[]) {
-    if ( DiceThrower.getIsEffectRoll(xTraitsToRoll) ) {
+    if ( M20eThrow.isEffectThrow(xTraitsToRoll) ) {
       //pure magical throw => arete roll + all spheres with value in the effect 
       const throwEffect = xTraitsToRoll.map(effect => 
         `${effect.name} (${effect.value})`
@@ -59,7 +60,7 @@ export default class M20eMageActor extends M20eActor {
     }
   }
 
-  //todo : redo that shit !
+  //todo : redo that shit ! and put it in the sheet ! should use modQuint and modPara
   increaseMagepower(index){
     if( ! utils.canSeeParadox() ) { return; }
     const base1Index = index + 1;
@@ -93,22 +94,22 @@ export default class M20eMageActor extends M20eActor {
       }
     }
   }
-/*
+
   async modQuintessence(mod) {
-    const {quintessence, paradox}  = this.data.data.magepower;
+    let {quintessence, paradox}  = this.data.data.resources['magepower'];
     let newValue = quintessence + parseInt(mod);
-    if ( newValue < 0 ) { newValue = 0; }
-    if ( newValue + paradox > 20 ) { newValue = 20 - paradox; }
-    return this.safeUpdateProperty('magepower.quintessence', newValue);
+    //player can't gain quintessence over paradox points
+    quintessence = Math.clamped(newValue, 0, 20 - paradox);
+    return this.safeUpdateProperty('resources.magepower', {quintessence});
   }
 
   async modParadox(mod) {
-    const {quintessence, paradox}  = this.data.data.magepower;
+    let {quintessence, paradox}  = this.data.data.resources['magepower'];
     let newValue = paradox + parseInt(mod);
-    if ( newValue < 0 ) { newValue = 0; }
-    if ( newValue + quintessence > 20 ) { newValue = 20 - quintessence; }
-    //TODO : maybe add whisp to GM on certain paradox values
-    return this.safeUpdateProperty('magepower.paradox', newValue);
+    //player can gain paradox over it's quintessence points
+    paradox = Math.clamped(newValue, 0, 20);
+
+    return this.safeUpdateProperty('resources.magepower', {paradox});
   }
-*/
+
 }

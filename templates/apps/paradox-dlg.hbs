@@ -1,27 +1,112 @@
 <form class="{{cssClass}}" autocomplete="off">
-  <header class="sheet-header">
-    <div class="header-column">
-        <div class="header-row">
-            <input class = "name" type="text" value="{{document.name}}" data-dtype="String" disabled/>
-            <span class="item-type">{{document.type}}</span>
-        </div>
+  <section class="sheet-body">
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label>{{document.name}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="true" data-state="{{colapsibles.name}}">{{#if
+        colapsibles.name}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
     </div>
-  </header>
-
-    <section class="sheet-body">
-        <section>
-            <div class= "field" title="{{localize 'M20E.hints.value0to5'}}">
-                <label>{{prompt}}</label>
-            </div>
-            <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
-                <label>{{localize "M20E.labels.displayDescription"}} : </label>
-
-            </div>
-        </section>
-        <section>
-            <div class= "field" title="{{localize 'M20E.hints.compendiumEdit'}}">
-                <label>{{localize "M20E.labels.systemDescription"}} : </label>
-                
-            </div>
-        </section>
+    <div class="flexrow" name="name" {{#if colapsibles.name}}style="display:none;" {{/if}}>
+      <div class="field">
+        <label>{{localize "M20E.labels.currentParadox"}} : </label>
+        <input type="text" value="{{document.data.data.resources.magepower.paradox}}" disabled />
+      </div>
+      <i class="fas fa-plus" style ="font-size: 16px; flex: 0; padding-top: 25px;" ></i>
+      <div class="field">
+        <label>{{localize "M20E.labels.gain"}} : </label>
+        <input class="inline-edit" data-update-path="data.paradoxGain" type="text" value="{{data.paradoxGain}}" data-dtype="Number" min="0" max="20"/>
+      </div>
+      <i class="fas fa-equals" style ="font-size: 16px; flex: 0; padding-top: 25px;"></i>
+      <div class="field">
+        <label>{{localize "M20E.labels.total"}} : </label>
+        <input type="text" value="{{data.paradoxTotal}}" disabled/>
+      </div>
+    </div>
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label>{{localize "M20E.labels.results"}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.results}}">{{#if
+        colapsibles.results}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+    </div>
+    <div class="flexrow" name="results" {{#if colapsibles.results}}style="display:none;" {{/if}}>
+      <div class="field">
+        <label>{{localize "M20E.labels.result"}} : </label>
+        <input  type="text" value="{{localize (m20e-concat 'M20E.throwresult.' data.termResult)}}"
+          disabled />
+      </div>
+      <div class="field">
+        <label>{{localize "M20E.labels.total"}} : </label>
+        <input  type="text" value="{{data.termTotal}}" disabled />
+      </div>
+      <div class="field">
+        <label>{{localize "M20E.labels.effectLevel"}} : </label>
+        <input  type="text" value="{{data.maxLevel}}" disabled />
+      </div>
+    </div>
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label>{{localize "M20E.labels.resonance"}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.resonance}}">{{#if
+        colapsibles.resonance}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+    </div>
+    <div class="grid two-col" name="resonance" {{#if colapsibles.resonance}}style="display:none;" {{/if}}>
+      <div class="field">
+        <label>{{localize "M20E.labels.value"}} : </label>
+        <input type="text" value="{{document.data.stats.magick.resonance.value}}" disabled />
+      </div>
+      <div class="field">
+        <label>{{localize "M20E.labels.signature"}} : </label>
+        <input type="text" value="{{actorData.data.magick.resonance.signature}}" disabled />
+      </div>
+      <div class="field">
+        <label>{{localize "M20E.labels.resonanceFlavor"}} : </label>
+        <input type="text"
+          value="{{localize (m20e-concat 'M20E.resonanceFlavor.' actorData.data.magick.resonance.resonanceFlavor)}}"
+          disabled />
+      </div>
+      <div class="field">
+        <label>{{localize "M20E.labels.synergyFlavor"}} : </label>
+        <input type="text"
+          value="{{localize (m20e-concat 'M20E.synergyFlavor.' actorData.data.magick.resonance.synergyFlavor)}}"
+          disabled />
+      </div>
+    </div>
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label>{{localize "M20E.labels.magickType"}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="true" data-state="{{colapsibles.magickType}}">{{#if
+        colapsibles.magickType}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+    </div>
+    <div class="flexrow" name="magickType" {{#if colapsibles.magickType}}style="display:none;" {{/if}}>
+      <div class="radio-group">
+        {{#each radioOptions as |radio key|}}
+        <div>
+          <input id="rad{{radio.value}}" type="radio" value="{{radio.value}}" {{radio.checked}} />
+          <label class="radio-label" for="rad{{radio.value}}">
+            {{radio.label}}
+          </label>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label>{{localize "M20E.labels.paradoxEffect"}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="true" data-state="{{colapsibles.paradoxEffect}}">{{#if
+        colapsibles.paradoxEffect}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+    </div>
+    <div class="flexrow" name="paradoxEffect" {{#if colapsibles.paradoxEffect}}style="display:none;" {{/if}}>
+      <a class="mini-button paradoxEffect" data-action="add-paradox" data-disabled="{{eq data.paradoxGain 0}}">
+        <i class="fas fa-plus"></i><span>&nbsp;&nbsp;{{data.paradoxGain}} {{localize "M20E.labels.paradox"}}</span>
+      </a>
+      <a class="mini-button paradoxEffect" data-action="roll-feedback" data-disabled="{{eq data.paradoxTotal 0}}">
+        <i class="fas fa-dice"></i><span>&nbsp;&nbsp;{{localize "M20E.labels.feedback"}} ({{data.paradoxTotal}})</span>
+      </a>
+    </div>
+  </section>
 </form>

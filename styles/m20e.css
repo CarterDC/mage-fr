@@ -1298,6 +1298,32 @@ li.chat-message .card .card-footer .item-img {
 .tech .window-content {
   background: url(../assets/ui/parchment_b.jpg) repeat;
 }
+.m20e.dialog .title-line {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  height: 20px;
+}
+.m20e.dialog .title-line .pre-line {
+  flex: 0 0 5%;
+  height: 1em;
+  margin: 0 2px 2px;
+  border-bottom: 1px solid var(--titleColor);
+}
+.m20e.dialog .title-line label {
+  margin: 0 3px 0 3px;
+  align-self: center;
+}
+.m20e.dialog .title-line .post-line {
+  flex: 1 1;
+  height: 1em;
+  margin: 0 2px 2px;
+  border-bottom: 1px solid var(--titleColor);
+}
+.m20e.dialog .title-line .mini-button {
+  align-self: flex-end;
+}
 .m20e.dialog .flavor {
   margin-bottom: 6px;
   padding: 0 5px;
@@ -1334,11 +1360,8 @@ li.chat-message .card .card-footer .item-img {
   flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  font-family: var(--titleFontFam);
-  font-weight: bold;
-  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
-  font-size: var(--catFontSize);
   text-align: center;
+  font-size: var(--catFontSize);
 }
 .m20e.dialog .radio-group div {
   flex-grow: 1;
@@ -1380,6 +1403,18 @@ li.chat-message .card .card-footer .item-img {
   color: var(--highlightColor);
   background: rgba(0, 0, 0, 0.05);
   border-color: #7a7971;
+}
+.m20e.dialog .radio-group.dice {
+  font-family: var(--titleFontFam);
+  font-weight: bold;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
+  font-size: var(--catFontSize);
+}
+.m20e.dialog .mini-button.paradoxEffect {
+  height: 32px;
+  font-weight: bold;
+  font-size: var(--catFontSize);
+  margin: 10px 6px 5px 6px;
 }
 .m20e.dialog .mini-button.throw-dice {
   justify-content: space-evenly;
@@ -1425,6 +1460,16 @@ li.chat-message .card .card-footer .item-img {
   flex: 0 0;
   font-weight: normal;
   line-height: 26px;
+}
+body {
+  position: fixed;
+}
+.editor-content span.auto-link {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.editor-content span.auto-link:hover {
+  text-shadow: 0 0 1px var(--hoverColor);
 }
 .systemDescription {
   padding: 0px 2px;

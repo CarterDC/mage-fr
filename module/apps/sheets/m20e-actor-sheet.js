@@ -1068,6 +1068,7 @@ export default class M20eActorSheet extends ActorSheet {
 
 
   /**
+  * Not used anymore (old dice system)
   * Check all rollable categories for highlighted elements (ie data-active="true")
   * return said elements as Trait instances for later consumption by Throw app.
   * also toggle the active status of highlighted elements after we got them
@@ -1154,7 +1155,7 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
 
   /**
-   * added Journal Entry management
+   * added Journal Entry management 
    *  @override
    */
   async _onDrop(event) {
@@ -1171,7 +1172,7 @@ export default class M20eActorSheet extends ActorSheet {
       case "ActiveEffect":
         return super._onDropActiveEffect(event, data);
       case "Actor":
-        return super._onDropActor(event, data);//TODO : override for mentor/contact linking
+        return this._onDropActor(event, data);
       case "Item":
         return this._onDropItem(event, data);
       case "JournalEntry":
@@ -1302,6 +1303,58 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /* -------------------------------------------- */
+
+  /**
+   * Handle dropping of an Actor data onto another Actor sheet
+   * Prompts user for Contact Item creation from droped actor data
+   * @override
+   */
+   async _onDropActor(event, data) {
+    //if ( !this.actor.isOwner ) return false;
+    if ( this.actor.id === data.id ) { return false; } //can't add oneself
+    const droppedActor = game.actors.get(data.id);
+    if ( !droppedActor ) { return false; }
+    if ( droppedActor.name === this.actor.name ) { return; } //can't add oneself
+
+    //ask for confirmation before creating contact from drop
+    const confirmation = await Dialog.confirm({
+      options: {classes: ['dialog', 'm20e']},
+      title: this.actor.name,
+      content: game.i18n.format("M20E.prompts.dropActor", {
+        actorName: droppedActor.name
+      })
+    });
+    if ( !confirmation ) { return false; }
+
+    //check for duplicates in contacts
+    const duplicates = this.actor.items.filter(item => (item.type === 'contact') && (item.name === droppedActor.name));
+    if ( duplicates.length ) {
+      ui.notifications.error(game.i18n.format(`M20E.notifications.duplicateName`, {name: droppedActor.name}));
+      return false;
+    }
+  
+    //item got a valid name, create it's data
+    const itemData = {
+      name: droppedActor.name,
+      type: 'contact',
+      img: droppedActor.img,
+      data: {
+        value: 1,
+        displayName: droppedActor.alias,
+        displayDescription: droppedActor.data.data.description,
+        faction: droppedActor.data.data.bio.faction,
+        link: droppedActor.data.data.link
+      }
+    };
+    //add sourceID flag
+    foundry.utils.setProperty(itemData, 'flags.core.sourceId', droppedActor.uuid)
+    //send the itemData to be created on the actor
+    //and let the item._preCreate() deal with the specifics (sourceId, will in fact prevent precreate from altering our new item)
+    this.actor.createEmbeddedDocuments('Item', [itemData], {renderSheet: true});
+
+  }
+
+  /* -------------------------------------------- */
   /*  TESTING AREA                                */
   /* -------------------------------------------- */
 /*
@@ -1311,7 +1364,7 @@ export default class M20eActorSheet extends ActorSheet {
       log(type);
     })
   }*/
-
+/*
   testage(canvas) {
     const d3d = game.dice3d;
     const options = { dimensions: { w: 45, h: 45 }, autoscale: false, scale: 35, boxType:"showcase" };
@@ -1326,5 +1379,5 @@ export default class M20eActorSheet extends ActorSheet {
     this.box.initialize().then(()=>{
       this.box.showcase(config);
     });
-  }
+  }*/
 }

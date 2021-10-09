@@ -42,11 +42,11 @@ export const M20E = {
     vulgar: "M20E.magickType.vulgar",
     vulgarWitness: "M20E.magickType.vulgarWitness"
   },
-  resonnanceFlavors: {
-    devotional: "M20E.resonnanceFlavor.devotional",
-    elemental: "M20E.resonnanceFlavor.elemental",
-    stabilizing: "M20E.resonnanceFlavor.stabilizing",
-    temperamental: "M20E.resonnanceFlavor.temperamental"
+  resonanceFlavors: {
+    devotional: "M20E.resonanceFlavor.devotional",
+    elemental: "M20E.resonanceFlavor.elemental",
+    stabilizing: "M20E.resonanceFlavor.stabilizing",
+    temperamental: "M20E.resonanceFlavor.temperamental"
   },
   synergyFlavors: {
     dynamic: "M20E.synergyFlavor.dynamic",
@@ -158,6 +158,7 @@ export const M20E = {
     "contacts",
     "rotes",
     "equipables",
+    "miscgear",
     "xp",
     "aeffects"
   ],
@@ -226,6 +227,9 @@ export const M20E = {
     extra7: "🗸",
     extra8: "⛧",
     extra9: "⛥"
+  },
+  defaultH2HItem: {
+    
   },
 
   DiceThrower: {} //for storing the app class
