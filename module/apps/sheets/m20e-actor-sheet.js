@@ -206,6 +206,8 @@ export default class M20eActorSheet extends ActorSheet {
       new ContextMenu(html, '.trait.linkable', this._getTraitContextOptions());
       //ctx menu for current xp field
       new ContextMenu(html, '.currXP', this._getXPContextOptions());
+      //ctx menu for big dice button
+      new ContextMenu(html, '.dice-button', this._getDiceButtonContextOptions());
       //ctx menu for rollable items
       new DynaCtx(html, '.trait[data-rollable="true"]', (traitElem) => this._getRollableContextOptions(traitElem));
     }
@@ -322,20 +324,21 @@ export default class M20eActorSheet extends ActorSheet {
       case 'remove'://remove embedded doc item or AE
         this._removeEmbedded(trait);
         break;
-        
+      
       case 'check': //atm, only used to update the disabled value of an active affect
         this._toggleEmbeddedProperty(trait, dataset.updatePath);
         break;
-
+      
       case 'plus': //increment / decrement a property on an embedded doc 
       case 'minus': //atm only used for qtty on consumable items
         const mod = dataset.action === 'minus' ? -1 : 1;
         this._modEmbeddedProperty(trait, mod, dataset.updatePath);
-    
+        break;
+      
       case 'expand': //toggle expanded/collapsed status of a display description or other
         this._expandDescription(buttonElem);
         break;
-
+      
       case 'roll-item': // click on a mini-dice button roll the first throw of a rollable
         //note that's the only throw on a rote
         const rollableId = buttonElem.closest(".trait").dataset.itemId;
@@ -918,6 +921,23 @@ export default class M20eActorSheet extends ActorSheet {
         },
         condition: () => {
           return this.actor.data.data.currentXP > 0;
+        }
+      }
+    ]
+  }
+
+  /* -------------------------------------------- */
+
+  _getDiceButtonContextOptions() {
+    return [
+      {
+        name: '', //todo : find more place //game.i18n.localize('M20E.context.resetDiceTrhower'),
+        icon: '<i class="fas fa-undo-alt"></i>',
+        callback: () => {
+          this.actor.diceThrower.resetAll();
+        },
+        condition: () => {
+          return this.actor.diceThrower._throw.stats.length > 0;
         }
       }
     ]

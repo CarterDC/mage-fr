@@ -230,8 +230,7 @@ export async function welcomeMessage() {
   //prepare the template Data
   const templateData = game.i18n.localize('M20E.welcomeMessage');
   templateData.isGM = game.user.isGM;
-  const module = game.modules.get(game.settings.get("mage-fr", "compendiumScope"));
-  templateData.packModuleActivated = module && module.active;
+  templateData.packModuleActivated = true; //todo : get rid of that part
 
   const htmlContent = await renderTemplate(msgTemplate, templateData);
   //send message

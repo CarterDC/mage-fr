@@ -17,10 +17,10 @@ export default class M20eItem extends Item {
    * @override 
    */
   constructor(data, context) {
-    if ( data.type in CONFIG.Item.documentClasses && !context?.isExtendedClass) {
-        // instanciate our custom item subclass here
-        return new CONFIG.Item.documentClasses[data.type](data,{...{isExtendedClass: true}, ...context});
-    }    
+    if (data.type in CONFIG.Item.documentClasses && !context?.isExtendedClass) {
+      // instanciate our custom item subclass here
+      return new CONFIG.Item.documentClasses[data.type](data, { ...{ isExtendedClass: true }, ...context });
+    }
     //default behavior, just call super and do all the default Item inits.
     super(data, context);
   }
@@ -33,16 +33,18 @@ export default class M20eItem extends Item {
    * Added sourceId when cloning
    *  @override
    */
-   clone(data, options) {
+  clone(data, options) {
     data = data || {};
     data['flags.core.sourceId'] = this.uuid;
     super.clone(data, options);
   }
 
-/**
-   * Mostly vanilla function with support for subType selection
-   * @override
-   */
+  /* -------------------------------------------- */
+  //TODO : replace create dialog
+  /**
+     * Mostly vanilla function with support for subType selection
+     * @override
+     */
   /*
  static async createDialog(data={}, options={}) {
    debugger
@@ -59,6 +61,7 @@ export default class M20eItem extends Item {
 }
 */
 
+  /* -------------------------------------------- */
 
   /**
    * adds image path and systemDescription before sending the whole thing to the database
@@ -69,14 +72,14 @@ export default class M20eItem extends Item {
   async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     const itemData = this.data;
-    
+
     //check if item is from existing item (going in or out a compendiumColl or drag from actorSheet)
-    if ( itemData.flags.core?.sourceId || itemData._id ) { return; }
+    if (itemData.flags.core?.sourceId || itemData._id) { return; }
 
     //item is brand new => set some default values before sending it to the database
-    const updateData = {data: {}};
+    const updateData = { data: {} };
     // prompt for subtype if relevant
-    if ( itemData.data.subType && !options.fromActorSheet ) {
+    if (itemData.data.subType && !options.fromActorSheet) {
       const newSubType = await this.promptForSubType(itemData);
       updateData.data.subType = newSubType || itemData.data.subType;
     }
@@ -85,11 +88,13 @@ export default class M20eItem extends Item {
     //get appropriate default image
     updateData.img = CONFIG.M20E.defaultImg[specificType] || CONFIG.M20E.defaultImg[itemData.type] || CONFIG.M20E.defaultImg['default'];
     //get appropriate systemDescription
-    if ( itemData.data.systemDescription === '') {
+    if (itemData.data.systemDescription === '') {
       updateData.data.systemDescription = await utils.getDefaultDescription(specificType);
     }
-    itemData.update( updateData );
+    itemData.update(updateData);
   }
+
+  /* -------------------------------------------- */
 
   /**
    * Prompts the user for a subType from dropDown list of available subtypes for this particular itemType
@@ -103,8 +108,8 @@ export default class M20eItem extends Item {
     const subTypes = Object.entries(
       foundry.utils.getProperty(CONFIG.M20E, `${itemType}SubTypes`))
       .map(([key, value]) => {
-        return {value: key, name: game.i18n.localize(value)};
-    });
+        return { value: key, name: game.i18n.localize(value) };
+      });
 
     return utils.promptSelect({
       title: itemData.name,
@@ -120,6 +125,24 @@ export default class M20eItem extends Item {
   /*  Item Preparation                            */
   /* -------------------------------------------- */
 
+  /** @override */
+  prepareData() {
+    super.prepareData();
+    this.data.data.path = this.getPath();
+    //check if item type is amongst protected types
+    const protectedTypes = CONFIG.M20E.protectedCategories.reduce((acc, cur) => {
+      const itemType = CONFIG.M20E.categoryToType[cur]
+      return itemType ? [...acc, itemType] : acc;
+    }, []);
+    this.data.isProtectedType = protectedTypes.includes(this.type);
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Computes and returns a valid trait path from itemData.
+   * @returns path like "category.subType.key" or "category.key"
+   */
   getPath() {
     const cat = CONFIG.M20E.traitToCat[this.data.type];
     const subType = CONFIG.M20E.traitToCat[this.data.data.subType];
@@ -127,10 +150,13 @@ export default class M20eItem extends Item {
     return `${cat}.${subType ? subType + '.' : ''}${key}`;
   }
 
+  /* -------------------------------------------- */
+
   /**
    * returns a pair {path, data} to populate the actor's stats in the _prepateItemStats()
+   * @returns {Object}
    */
-   getStatData() {
+  getStatData() {
     const itemData = this.data;
 
     return {
@@ -143,6 +169,15 @@ export default class M20eItem extends Item {
     }
   }
 
+  /* -------------------------------------------- */
+
+  /**
+   * returns all necessary data to roll this stat.
+   * called by actor.extendStats().
+   * note : value could actually be fetched from either
+   * itemData.data.value or itemData.data._overrideValue.
+   * @param  {String} path
+   */
   getExtendedTraitData(path) {
     const itemData = this.data;
     return {
@@ -153,30 +188,57 @@ export default class M20eItem extends Item {
     };
   }
 
+  /* -------------------------------------------- */
+
+  /**
+   * Returns a Trait instance from item's constructed path and itemId
+   * @returns {Trait}
+   */
   toTrait() {
     const itemData = this.data;
-    return new Trait({path: this.getPath(), itemId: this.data._id});
+    return new Trait({ path: this.getPath(), itemId: this.data._id });
   }
 
-  /** @override */
-  prepareData() {
-    super.prepareData();
-    this.data.data.path = this.getPath();
-    //check if item type is amongst protected types
-    const protectedTypes = CONFIG.M20E.protectedCategories.reduce( (acc, cur) => {
-      const itemType = CONFIG.M20E.categoryToType[cur]
-      return itemType ? [...acc, itemType] : acc;
-    }, []);
-    this.data.isProtectedType = protectedTypes.includes(this.type);
-  }
+  /* -------------------------------------------- */
 
   /**
    * called at the end of actor._prepareData to deal with owned items whose data depend on the actor.
    * Implemented in subClasses
    */
-   _prepareOwnedItem() {
+  _prepareOwnedItem() {
+    //to be overridden
+  }
 
-   }
+  /* -------------------------------------------- */
+
+  /**
+   * Displays an item trait in chat.
+   * Prepares some templateData before feeding the to chat.displayCard
+   * overridden in subclasses
+  */
+  linkInChat() {
+    const itemData = this.data;
+
+    const templateData = {
+      category: CONFIG.M20E.traitToCat[itemData.type],
+      subType: CONFIG.M20E.traitToCat[itemData.data.subType],
+      key: utils.sanitize(itemData.name),
+      itemId: itemData._id
+    };
+    templateData.path = `${templateData.category}.${templateData.subType ?
+      templateData.subType + '.' : ''}${templateData.key}`;
+
+    //build the trait's data
+    templateData.traitData = {
+      type: game.i18n.localize(`M20E.category.${templateData.category}`),
+      name: itemData.name,
+      img: itemData.img,
+      data: itemData.data
+    };
+
+    //display the card
+    chat.displayCard(this.actor, templateData);
+  }
 
   /* -------------------------------------------- */
   /*  Shorthands                                  */
@@ -198,6 +260,9 @@ export default class M20eItem extends Item {
     return this.data.data.isEquipable === true;
   }
 
+  /**
+   * To be considered unequiped, item needs to be an equipable first !
+   */
   get isUnequiped() {
     return this.isEquipable && this.data.data.equiped === false;
   }

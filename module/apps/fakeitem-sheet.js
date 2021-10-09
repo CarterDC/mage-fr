@@ -73,6 +73,7 @@ export class FakeItem extends DocumentSheet {
     if ( this.actor.data.data.creationDone && !game.user.isGM ) {
       this._protectElements(html);
     }
+    html.find('span.auto-link').click(this._onAutolinkClick.bind(this));
     super.activateListeners(html);
   }
 
@@ -80,11 +81,47 @@ export class FakeItem extends DocumentSheet {
     super._activateEditor(div);
     const button = div.nextElementSibling;
     const hasButton = button && button.classList.contains("editor-edit");
-    if (hasButton) button.onclick = this._onEditorButton;
+    if (hasButton) button.onclick = this._onEditorButton.bind(this);
   }
 
   _onEditorButton() {
-    log("ça avance très bien !")
+    const {category, key} = this.itemData;
+    this.openJE(`${category}.${key}`);
+  }
+
+  async _onAutolinkClick(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const anchorElem = event.currentTarget;
+    const link = anchorElem.dataset.link;
+
+    //open the JournalEntry
+    const {category, key} = this.itemData;
+    this.openJE(`${category}.${key}`);
+
+    Hooks.once('renderJournalSheet', function(App, html, appData) {
+      const contentElem = html.find('.editor-content');
+      const elemToView = contentElem.find(link)[0];
+      if ( elemToView ) {
+        elemToView.scrollIntoView({ behavior: "smooth" });
+      } else {
+        ui.notifications.warn(`Broken Link : ${link}`);
+      }
+    });
+
+  }
+
+  async openJE(path) {
+    try {
+      const pack = game.packs.find(entry => entry.metadata.name.includes('trait-desc'));
+      if ( !pack.indexed ) await pack.getIndex({fields: ["name", "img", "flags.path"]});
+      const journalId = pack.index.find(entry => entry.flags.path === path)._id;
+      const packItem = await pack.getDocument(journalId);
+      return packItem.sheet.render(true);
+    } catch (e) {
+      //todo : msg or something ?
+      return null;
+    }
   }
 
   /** @inheritdoc */
