@@ -18,7 +18,7 @@
   "ITEM.TypeWeapon": "Arme",
   "M20E": {
     "attributes": {
-      "appa": "Apparence",
+      "appe": "Apparence",
       "char": "Charisme",
       "dext": "Dexterité",
       "inte": "Intelligence",
@@ -37,7 +37,7 @@
     "bio": {
       "appearance": "Apparence",
       "apparentAge": "Age<br>apparent",
-      "attitude": "Attitude",
+      "demeanor": "Attitude",
       "awakeningAge": "Age d'Éveil",
       "birthday": "Date de<br>Naissance",
       "cabale": "Cabale",
@@ -73,19 +73,18 @@
       "events": "Évènement",
       "contacts": "Contact",
       "description": "Description",
-      "equipables": "Équipements",
+      "equipables": "Équipement",
       "magick": "Magye",
       "meritsflaws": "Atout & Handicap",
       "rotes": "Routine",
       "secondary": "Secondaire",
       "spheres": "Sphère",
-      "story": "Background",
       "willpower": "Volonté"
     },
     "context": {
-      "addJournal": "Créer un journal personnel.",
+      "addJournal": "Créer un Journal Personnel.",
       "addXP": "Ajouter de l'XP.",
-      "editAliases" : "Éditer la liste d'alias",
+      "editAliases" : "Éditer la liste d'alias.",
       "editHealthMalus": "Éditer Malus Santé.",
       "editHealthMax": "Éditer Santé Max.",
       "editParadigm": "Éditer le paradigme.",
@@ -93,19 +92,19 @@
       "editWillpowerMax": "Éditer Volonté Max.",
       "extendThrow": "Étendre ce jet.",
       "linkInChat": "Envoyer vers le chat.",
-      "paradoxEffect": "Effet du Paradoxe",
-      "removeImage": "Supprimer cette image",
+      "paradoxEffect": "Effets du Paradoxe.",
+      "removeImage": "Supprimer cette image.",
       "removeLink": "Supprimer le lien vers ce Journal.",
       "removeParadigm": "Supprimer le paradigme actuel.",
       "removeXP": "Supprimer de l'XP.",
-      "resetDiceTrhower": "Remettre à 0",
+      "resetDiceTrhower": "Remettre à 0.",
       "sameThrow": "Faire le même jet.",
       "throwBlindRoll": "Lancer en Aveugle.",
       "throwGmRoll": "Lancer pour le GM.",
       "throwPublicRoll": "Lancer Public.",
       "throwSelfRoll": "Lancer pour Moi.",
       "throwStealthRoll": "Lancer Furtif.",
-      "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès"
+      "willpowerForSuccess": " -1pt Volonté  <=>  +1 Succès."
     },
     "damageType": {
       "bashing": "Étourdissant",
@@ -367,7 +366,7 @@
           "level5": {
             "bullets": "●●●●●",
             "title": "Éminent spécialiste :",
-            "description": "Dans ce domaine, si vous l'ingorez, c'est que vraissemblablement, personne ne le sait (ou que ça n'existe juste pas)."
+            "description": "Dans ce domaine, si vous l'ignorez, c'est que vraissemblablement, personne ne le sait (ou que ça n'existe juste pas)."
           }
         },
         "footer": "<p><strong>Description générique :</strong> Se référer au livre, à la page indiquée.</p>"
@@ -383,7 +382,7 @@
     },
     "healthStatus": {
       "0": "En pleine forme.",
-      "1": "Contusion.",
+      "1": "Contusion",
       "2": "Blessure Légère",
       "3": "Blessure Medium",
       "4": "Blessure  Grave",
@@ -401,11 +400,11 @@
       "createJE": "Créer un journal pour ce perso.",
       "date": "Une date approximative ?",
       "diceButton": "click pour lancer les traits séléctionnés (shift+click pour lancer rapide).",
-      "dicePool": "Si le pool de dé tombe à 0, un dé irréductible sera lancé.",
+      "dicePool": "Si le groupement de dé tombe à 0, le jet sera impossible.",
       "displayDescription": "Apparait souvent en info-bulle ou en 'linkant' dans le chat",
       "displayName": "Apparaît automatiquement à la place du nom d'origine.",
       "edit": "Éditer",
-      "extra": "Inutile et variable.",
+      "extra": "Inutile et indispensable.",
       "imgClick": "Cliquer pour choisir une image",
       "itemEffect": "Limité à 1 ActiveEffect par item. ⚠ Modifiable uniquement hors d'un actor.",
       "lexiconPath": "Un chemin relatif tel que défini dans le fichier de localisation.",
@@ -428,7 +427,7 @@
       "switch": "Intervertir",
       "systemDescription": "A éditer de préférence en mode HTML pour bien voir les tags.",
       "systemName": "Sert de référence, éditable par un GM.",
-      "difficulty": "Les bonus/malus ne peuvent pas changer la difficulté au delà de +3/-3.",
+      "difficulty": "Les bonus/malus ne devraient pas excéder -3/3, sinon il vaut mieux ajuster le seuil de succès",
       "difficultyCue": {
         "coincidental": "Effet coincidental.",
         "vulgar": "Effet vulgaire.",
@@ -444,6 +443,7 @@
       "toggleEquiped": "Basculer équipé/déséquipé.",
       "unlockToEdit": "Basculez en 'mode édition'(🔓) pour remplir ce champ.",
       "untrained": "Non Entrainé !",
+      "useAlternateDesc": "⚠ Essaiera de charger des descriptions alternatives utilisant le suffixe fourni.",
       "useSpecialisation": "Utiliser la spécialisation.",
       "value0to5": "Une valeur 'généralement' entre 0 et 5.",
       "wounds": {
@@ -456,6 +456,7 @@
       "aeDisabled": "Désactivé",
       "aeEnabled": "Actif",
       "carriedStuff": "Équipement porté",
+      "category": "Catégorie",
       "consumable": "Consommable",
       "creation": "Créa",
       "cssClass": "Classe CSS",
@@ -464,14 +465,15 @@
       "damageType": "Type de dégâts",
       "damage": "Dégâts",
       "date": "Date",
+      "descSuffix": "Suffixe de description",
       "dicePool": "Grpt. de Dés",
       "dicePoolMod": "Modificateur au Grpt.",
       "diff": "Diff.",
       "difficulty": "Difficulté",
       "difficultyBase": "Diff. de base",
-      "difficultyMod": "Modificateur à la diff.",
+      "difficultyMod": "Modificateur à la Diff.",
       "displayDescription": "Description Personnalisée",
-      "displayDesc": "Description Perso.",
+      "displayDesc": "Description perso.",
       "effectLevel": "Niveau de l'effet",
       "equipable": "Équipable",
       "equiped": "Équipé",
@@ -484,7 +486,7 @@
       "magickType": "Type de Magye",
       "mode": "Mode",
       "opacity": "Opacité",
-      "origin": "origin",
+      "origin": "Origin",
       "paradoxEffect": "Effet du Paradoxe",
       "paradox": "Paradoxe",
       "paradoxPoints": "Points de paradoxe",
@@ -515,6 +517,7 @@
       "totalXP": "Total XP",
       "trait": "Trait",
       "type": "Type",
+      "useAlternateDesc": "Descriptions Alternatives",
       "value": "Valeur"
     },
     "magick": {
@@ -526,6 +529,13 @@
       "vulgar": "Vulgaire",
       "vulgarWitness": "Vulgaire avec témoins"
     },
+    "mfType": {
+      "mental": "Mental",
+      "physical": "Physique",
+      "social": "Social",
+      "supernatural": "Surnaturel",
+      "genetic": "Génétique"
+    },
     "navtabs": {
       "aliases": "ALIAS",
       "bio": "BIO",
@@ -534,7 +544,7 @@
       "effects": "EFFETS",
       "extra": "EXTRA",
       "lexicon": "LEXIQUE",
-      "magye": "MAGYE",
+      "magick": "MAGYE",
       "picture": "PHOTO",
       "stats": "STATS",
       "stuff": "MATOS",
@@ -561,7 +571,7 @@
         "flaw": "Nv Handicap"
       },
       "rote": "Nvelle Routine",
-      "throw": "Nveau Jet"
+      "throw": "Nv Jet"
     },
     "notifications": {
       "actorNotFound": "L'acteur '{actorRef}' n'est pas trouvable !",
@@ -573,7 +583,7 @@
       "itemNotFoundInActor": "L'item '{itemRef}' n'est pas trouvable dans l'acteur '{actorName}' !",
       "itemNotFoundInCompendium": "L'item '{documentName}' n'est pas trouvable dans le compendium '{packName}' !",
       "journalLinked": "Journal de {name} créé et lié au personnage.",
-      "missingParadigm": "Il semblerait que ce personnage n'ait pas de pradigme !",
+      "missingParadigm": "Il semblerait que ce personnage n'ait pas de paradigme !",
       "nan": "'{value}' n'est pas un nombre !",
       "newParadigm": "Les modifications de CSS dûes au paradigme ne seront visibles qu'après un refresh (F5).",
       "noSingleTokenSelected": "1 token (et un seul) doit être sélectionné !",
@@ -702,13 +712,10 @@
   "SETTINGS.allowAliases": "Autoriser l'utilisation des alias.",
   "SETTINGS.allowAliasesHint": "Les alias remplacement le nom du perso de façon aléatoire, décocher pour empecher de voir des alias.",
   "SETTINGS.difficultyBase": "Difficulté de base des jets de dés.",
-  "SETTINGS.compendiumScope": "Nom du module de Compendiums.",
-  "SETTINGS.compendiumScopeHint": "Un module de compendiums (Items, Journaux, etc...) est sûrement téléchargeable quelque part.",
   "SETTINGS.discordInvite": "Discord",
   "SETTINGS.discordInviteHint": "Rejoindre le server discord 'Mage-Fr' (Carter_DC#1097 pour me contacter).",
   "SETTINGS.displayDifficultyCues": "Aide visuelle à la difficulté des effets.",
   "SETTINGS.displayDifficultyCuesHint": "Recommandations de diff pour la magie coincidentale/vulgaire, indexées sur la difficulté de base et le niveau max dans l'effet.",
-  "SETTINGS.M20E.rulesHeader": "Règles M20E.",
   "SETTINGS.None": "Vous n'avez pas les permissions nécessaires pour voir / modifier les options de ce système.",
   "SETTINGS.notImplementedYet": "Option non-modifiable pour l'instant.",
   "SETTINGS.openWiki": "Consulter le Wiki",
@@ -719,13 +726,8 @@
   "SETTINGS.playersCanSeeParadoxPointsHint": "⚠ Si désactivé, les joueurs ne pourront plus non plus interagir avec leur 'barre de puissance'.",
   "SETTINGS.roteRule": "Jet des Routines.",
   "SETTINGS.roteRuleHint": "Les 10 donnent un succès supplémentaire lors de l'utilisation d'une Routine.",
-  "SETTINGS.rulesConfig": "Configuration des règles",
-  "SETTINGS.rulesConfigHint": "Pas encore implémenté.",
   "SETTINGS.specialisationRule": "Jets avec Spécialisation.",
   "SETTINGS.specialisationRuleHint": "Les 10 donnent un succès supplémentaire lors de l'utilisation d'une Spé.",
-  "SETTINGS.throwSettingsBlandRoll": "Les 1 ne font rien de spécial.",
-  "SETTINGS.throwSettingsDeductFailure": "Chaque 1 retire un succès.",
-  "SETTINGS.throwSettingsDFXS": "'1' => -1 succès. + '10' => +1 succès.",
   "SETTINGS.untrainedMalus": "Malus de capacité non-entraînée.",
   "SETTINGS.untrainedMalusHint": "Malus à la difficulté : Premier chiffre pour les Talents, second pour les Compétences, troisième pour les Connaissances. ('X' indique un jet irréalisable)",
   "SETTINGS.useHealthMalus": "Malus de santé au pool de dés.",

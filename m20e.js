@@ -126,6 +126,7 @@ Hooks.once('init', async function () {
   //test shit here !
 
   //fix to prevent re-indexing with unwanted fields TODO : put that somewhere else
+  CompendiumCollection.prototype.constructor.INDEX_FIELDS['JournalEntry'].push('flags.path');
   CompendiumCollection.prototype.indexDocument = function(document) {
     const img = document.data.thumb ?? document.data.img;
     if ( !this.index.has(document.id) ) {

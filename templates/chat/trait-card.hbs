@@ -1,27 +1,44 @@
 <section class="m20e card">
     <header class="card-header">
+      {{!--This is outside the tooltip--}}
     </header>
     <header class="card-tooltip">
-      {{#if traitData.data.systemDescription}}
-        {{#if traitData.data.displayDescription}}
-        <div class="display-desc-button" data-action="display-desc">
-          <span>{{localize "M20E.labels.displayDesc"}} <i class="fas fa-chevron-down"></i></span>
-        </div>
-        <div class="tooltip-part item-ddesc hidden-field">
-          {{{traitData.data.displayDescription}}}
-        </div>
-        {{/if}}
-      <div class="tooltip-part">
-        {{{traitData.data.systemDescription}}}
-      </div>
+    {{#if traitData.data.systemDescription}}
+      {{#if traitData.data.displayDescription}}
+        {{!--Both descs -> use nav--}}
+        <nav class="chat-tabs tabs" data-group="primary">
+          <a data-tab="system-desc" class="active"><label>System</label></a>
+          <a data-tab="display-desc"><label>Perso</label></a>
+        </nav>
+        <section class="tab active" data-group="primary" data-tab="system-desc">
+          <div class="tooltip-part">
+            {{{traitData.data.systemDescription}}}
+          </div>
+        </section>
+        <section class="tab" data-group="primary" data-tab="display-desc">
+          <div class="tooltip-part item-ddesc">
+            {{{traitData.data.displayDescription}}}
+          </div>
+        </section>
       {{else}}
-        {{#if traitData.data.displayDescription}}
-        <div class="tooltip-part item-ddesc">
-          {{{traitData.data.displayDescription}}}
-        </div>
-        {{/if}}
+        {{!--only sys--}}
+          <div class="tooltip-part">
+            {{{traitData.data.systemDescription}}}
+          </div>
       {{/if}}
-    </header>
+    {{else}}
+      {{!--no sys--}}
+      {{#if traitData.data.displayDescription}}
+        {{!--only displ--}}
+          <div class="tooltip-part item-ddesc">
+            {{{traitData.data.displayDescription}}}
+          </div>
+      {{else}}
+        {{!--no desc at all--}}
+      {{/if}}
+    {{/if}}
+   </header>
+   {{!--This is outside the tooltip--}}
     {{#if (eq traitData.type 'rote')}}
     <div class="card-buttons">
       <button class="throw" data-action="throw-rote" data-item-id="{{traitData.itemId}}" data-actor-id="{{traitData.actorId}}">
@@ -29,12 +46,14 @@
       </button>
     </div>
     {{/if}}
+    {{!--This is outside the tooltip--}}
     <header class="card-footer">
         {{#if traitData.data.subType}}
         <span class="item-type">{{localize (m20e-concat 'M20E.subType.' traitData.data.subType)}}</span>
         {{else}}
         <span class="item-type">{{localize (m20e-concat 'M20E.category.' category)}}</span>
         {{/if}}
+
         {{#if traitData.img}}
         <img class="item-img" src="{{traitData.img}}"/>
         {{/if}}

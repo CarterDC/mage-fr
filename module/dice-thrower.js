@@ -11,7 +11,7 @@ import { log } from "./utils.js";
  * Manages everything dice throws related in mage-fr.
  * Can do standalone 'quick throw' or display it's own DiceDialog Application to drive throw options 
  */
-export default class DiceThrower{
+export default class DiceThrower {
 
   /**
    * @param {M20eActor} document an Actor or Item
@@ -369,8 +369,8 @@ export default class DiceThrower{
    * 
    * @param  {Number} index index of the trait in the throw's traits array
    */
-  removeTrait(index) {
-    this._traits.splice(index, 1);
+  removeStat(index) {
+    this._throw.stats.splice(index, 1);
     this.update();
   }
 
@@ -382,8 +382,8 @@ export default class DiceThrower{
    * @param  {Number} index index of the trait in the throw's traits array
    * @param  {Number} newValue 
    */
-  updateTraitValue(index, newValue) {
-    this._traits[index].data.valueOverride = newValue;
+  updateStatProperty(index, propertyPath, newValue) {
+    foundry.utils.setProperty(this._throw.stats[index], propertyPath, newValue);
     this.update();
   }
 
@@ -428,7 +428,7 @@ export default class DiceThrower{
     //recalc shit
     this.prepareData();
     //render
-    this.render(true);
+    this.app.render(true);
   }
 
   /**

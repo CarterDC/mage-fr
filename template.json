@@ -84,7 +84,7 @@
             "specialisation": "",
             "displayDescription": ""
           },
-          "appa":{
+          "appe":{
             "value": 1,
             "specialisation": "",
             "displayDescription": ""
@@ -220,7 +220,7 @@
         "height":{
           "displayValue": ""
         },
-        "attitude":{
+        "demeanor":{
           "displayValue": "",
           "link": {}
         },
@@ -303,7 +303,7 @@
         "height":{
           "displayValue": ""
         },
-        "attitude":{
+        "demeanor":{
           "displayValue": "",
           "link": {}
         },
@@ -369,7 +369,7 @@
         "height":{
           "displayValue": ""
         },
-        "attitude":{
+        "demeanor":{
           "displayValue": "",
           "link": {}
         },
@@ -418,13 +418,15 @@
       "active": {
         "isActive": true
       },
-      "mageRestricted": {
-        "restricted" : ["charmage", "npcmage"]
+      "restrictions": {
+        "restrictions": "",
+        "tags": ""
       }
     },
     "ability":{
       "templates":[
-        "stat"
+        "stat",
+        "restrictions"
       ],
       "subType": "talent",
       "specialisation": "",
@@ -436,7 +438,8 @@
     "background":{
       "templates":[
         "stat",
-        "active"
+        "active",
+        "restrictions"
       ],
       "displayName":"",
       "systemDescription": "",
@@ -451,6 +454,7 @@
         "link": {}
       },
       "displayName":"",
+      "systemDescription": "",
       "displayDescription":"",
       "link": {}
     },
@@ -461,9 +465,11 @@
     },
     "meritflaw":{
       "templates":[
-        "active"
+        "active",
+        "restrictions"
       ],
       "subType": "merit",
+      "mfType": "mental",
       "value": 0,
       "displayName":"",
       "systemDescription": "",
@@ -471,7 +477,8 @@
     },
     "misc": {
       "templates":[
-        "active"
+        "active",
+        "restrictions"
       ],
       "displayDescription": "",
       "isEquipable": false,
@@ -485,18 +492,21 @@
       "sheetLogo": "",
       "opacity": 0.2,
       "cssClass": "",
-      "spheresDesc": ""
+      "useAlternateDesc": false,
+      "descSuffix": "tech"
     },
     "rote": {
       "templates":[
         "rollable",
-        "mageRestricted"
-      ]
+        "restrictions"
+      ],
+      "restrictions": "charmage, npcmage"
     },
     "weapon": {
       "templates":[
         "rollable",
-        "equipable"
+        "equipable",
+        "restrictions"
       ],
       "subType": "handtohand",
       "damageType": "bashing",

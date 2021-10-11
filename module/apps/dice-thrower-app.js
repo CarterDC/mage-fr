@@ -18,14 +18,8 @@ import { log } from "../utils.js";
     this.dt = diceThrower;
     this.closeOnRoll = true;
 
-    this.expands = {
-      flavor: true,
-      stats: true,
-      pool: true, 
-      difficulty: true,
-      success: true,
-      buttons: true
-    }
+    this.colapsibles = {
+    };
 
     //add the paradigm css class if any to the default options.
     const paraItem = this.dt.actor.paradigm;
@@ -83,6 +77,8 @@ import { log } from "../utils.js";
     appData.throwLock = this.dt.dicePoolTotal === 0;
 
     appData.closeOnRoll = this.closeOnRoll;
+
+    appData.colapsibles = this.colapsibles;
     log({appData})
     return appData;
   }
@@ -190,12 +186,11 @@ import { log } from "../utils.js";
         this.dt.throwDice(null, {closeOnRoll: this.closeOnRoll});
         break;
       case 'remove':
-        this.dt.removeTrait(traitElem.dataset.key);
+        this.dt.removeStat(traitElem.dataset.key);
         break;
       case 'spe':
         const speToggle = (dataset.active === 'true');
-        this.dt.stats[traitElem.dataset.key].data.useSpec = !speToggle;
-        this.dt.update();
+        this.dt.updateStatProperty(traitElem.dataset.key, 'data.useSpec', !speToggle)
         break;
       case 'mod-plus':
         this.dt.data.dicePoolMods.userMod += 1;
@@ -306,7 +301,7 @@ import { log } from "../utils.js";
     //Hooks.off('updateActor', this.onUpdateActor);
     //Hooks.off('updateCoreRollMode', this.onUpdateCoreRollMode);
     //Hooks.off('systemSettingChanged', this.onSystemSettingChanged);
-    this.dt = null;
+    //this.dt = null;
     
     //call super
     return super.close(options);

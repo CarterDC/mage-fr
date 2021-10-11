@@ -1,4 +1,5 @@
 <section class="m20e">
+{{!--TODO : redo this shit--}}
 <div class="trait chat-flavor">
   <div class="trait-label">
     {{#if traitData.data.displayName}}
@@ -26,8 +27,8 @@
       </div>
     {{/if}}
   {{/if}}
-
 </div>
+{{!--specialisation--}}
 {{#if traitData.data.specialisation}}
 <div class="trait chat-flavor">
   <div class="trait-label">
@@ -35,6 +36,7 @@
   </div>
 </div>
 {{/if}}
+{{!--Rotes--}}
 {{#if traitData.data.magyeEffects}}
   {{#each traitData.data.magyeEffects as |effect index|}}
     <div class="trait chat-flavor">

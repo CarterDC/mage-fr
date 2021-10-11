@@ -135,6 +135,10 @@ export default class M20eItem extends Item {
       return itemType ? [...acc, itemType] : acc;
     }, []);
     this.data.isProtectedType = protectedTypes.includes(this.type);
+    //create restricted array from string
+    if ( this.data.data.restrictions ) {
+      this.data.data.restricted = this.data.data.restrictions.split(',').map( entry => entry.trim());
+    }
   }
 
   /* -------------------------------------------- */
