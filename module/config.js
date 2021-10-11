@@ -53,6 +53,13 @@ export const M20E = {
     entropic: "M20E.synergyFlavor.entropic",
     static: "M20E.synergyFlavor.static"
   },
+  mfTypes: {
+    mental: 'M20E.mfType.mental',
+    physical: 'M20E.mfType.physical',
+    social: 'M20E.mfType.social',
+    supernatural: 'M20E.mfType.supernatural',
+    genetic: 'M20E.mfType.genetic'
+  },
   //defaults
   defaultAbilities: {
     alertness: 'talent',

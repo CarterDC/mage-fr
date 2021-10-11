@@ -21,7 +21,7 @@ export function onSocketReceived(data) {
 }
 
 /* -------------------------------------------- */
-/*  Message Events Hanlders                     */
+/*  Message Hooks Hanlders                      */
 /* -------------------------------------------- */
 
 /**
@@ -31,10 +31,12 @@ export function onSocketReceived(data) {
  */
 export function addChatListeners(app, html, data) {
   html.on('click', '.m20e.card', onCardFooterClick); //drawer behavior of chatmessages
-  html.on('click', '.display-desc-button', onCardDescButtonClick);
+  html.on('click', '.tabs', onTabsClick);
   
   html.on('click', '#linkToOptions', onLinkToOptionsClick); //only present in the welcome message
 }
+
+  /* -------------------------------------------- */
 
 /**
  * Adds new items to a message's contextmenu
@@ -99,6 +101,65 @@ export function addChatMessageContextOptions(html, options) {
   return options;
 }
 
+/* -------------------------------------------- */
+/*  Message Events Hanlders                     */
+/* -------------------------------------------- */
+
+/**
+ * Slowly expands or collapses the inner content of a '.m20e.card'
+ * Does basically the same as Foundry vanilla roll messages 
+ * @param  {Event} event the event that triggered
+ */
+ function onCardFooterClick(event) {
+  event.preventDefault();
+  const card = $(event.currentTarget);
+  const tip = card.find(".card-tooltip");
+  if (!tip.is(":visible")) tip.slideDown(200);
+  else tip.slideUp(200);
+}
+
+  /* -------------------------------------------- */
+
+/**
+ * Switchs display between displayDesc and sysDesc
+ * much like the default tab system.
+ */
+ function onTabsClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const button = $(event.currentTarget);
+
+  const tab = event.target.closest("[data-tab]");
+  if ( !tab.classList.contains('active') ) {
+    //todo : find the header tooltip,
+    //-> find all tabs and tab and to a class toggle on everything (we only got 2 tabs ^^)
+    const header = button.closest('header.card-tooltip')[0];
+    const toggleList = $(header).find('[data-tab]');
+    for (const elem of toggleList) {
+      elem.classList.toggle('active');
+    }
+  }
+}
+
+  /* -------------------------------------------- */
+
+/**
+ * Open the gameSetting on the system tab
+ * called solely from the welcome message
+ * @param  {Event} event the event that triggered (from '#linkToOptions')
+ */
+ async function onLinkToOptionsClick(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const sheet = game.settings.sheet;
+  sheet._tabs[0].active = 'system';
+  sheet.render(true);
+}
+
+  /* -------------------------------------------- */
+  /*  Roll related                                */
+  /* -------------------------------------------- */
+
 /**
  * Modifies the total of a roll inside a message in exchange for a willpower point
  * @param  {String} messageId 
@@ -126,12 +187,16 @@ export async function sacrificeWillpower(messageId) {
   }
 }
 
+  /* -------------------------------------------- */
+
 async function extendThrow(liElem) {
   const message = game.messages.get(liElem.data("messageId"));
   const actor = utils.actorFromData(message.data.speaker);
   if ( !actor ) { return; }
   log(message._roll);
 }
+
+  /* -------------------------------------------- */
 
 async function sameThrow(liElem) {
   const message = game.messages.get(liElem.data("messageId"));  
@@ -151,6 +216,13 @@ async function sameThrow(liElem) {
   diceThrower.render(true);
 }
 
+  /* -------------------------------------------- */
+
+/**
+ * Opens the Paradox dialog for magick effects rolls only
+ * lets GM choose options from calcultated values
+ * @param  {} liElem
+ */
 async function rollParadox(liElem) {
   const message = game.messages.get(liElem.data("messageId"));
   const roll = message._roll;
@@ -160,44 +232,9 @@ async function rollParadox(liElem) {
   paradlg.render(true);
 }
 
-/**
- * Open the gameSetting on the system tab
- * called solely from the welcome message
- * @param  {Event} event the event that triggered (from '#linkToOptions')
- */
-async function onLinkToOptionsClick(event) {
-  event.preventDefault();
-  event.stopPropagation();
-  const sheet = game.settings.sheet;
-  sheet._tabs[0].active = 'system';
-  sheet.render(true);
-}
-
-/**
- * Slowly expands or collapses the inner content of a '.m20e.card'
- * Does basically the same as Foundry vanilla roll messages 
- * @param  {Event} event the event that triggered
- */
-function onCardFooterClick(event) {
-  event.preventDefault();
-  const card = $(event.currentTarget);
-  const tip = card.find(".card-tooltip");
-  if (!tip.is(":visible")) tip.slideDown(200);
-  else tip.slideUp(200);
-}
-
-/**
- * Switchs display between displayDesc and sysDesc
- * TODO : finish that
- */
- function onCardDescButtonClick(event) {
-  event.preventDefault();
-  event.stopPropagation();
-  const button = $(event.currentTarget);
-  /*const tip = card.find(".card-tooltip");
-  if (!tip.is(":visible")) tip.slideDown(200);
-  else tip.slideUp(200);*/
-}
+  /* -------------------------------------------- */
+  /*  Roll related                                */
+  /* -------------------------------------------- */
 
 /**
  * Displays a Trait Card in the chat
@@ -220,6 +257,8 @@ export async function displayCard(actor, templateData) {
     speaker: ChatMessage.getSpeaker({ actor: actor })
   });
 }
+
+  /* -------------------------------------------- */
 
 /**
  * Creates and send a welcome chatMessage
@@ -245,6 +284,8 @@ export async function welcomeMessage() {
   //flag the user
   game.user.setFlag("mage-fr", "welcomeMessageShown", true);
 }
+
+  /* -------------------------------------------- */
 
 /**
  * Creates and send a version-warning Message
@@ -303,6 +344,8 @@ export async function versionWarningMessage(sysVersion) {
   return !dealtWith; //return false if command has been dealt with in here
 }
 
+  /* -------------------------------------------- */
+
 /**
  * Searches for patterns matching our own 'custom' commands.
  * basically a dumb down copy of the vanilla ChatLog#parse().
@@ -332,6 +375,8 @@ function customParseMessage(message) {
   }
   return ["none", [message, "", message]];
 }
+
+  /* -------------------------------------------- */
 
 /**
  * Creates and sends a roll to chat, using our own custom Roll class rather than the vanilla one

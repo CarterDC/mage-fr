@@ -1,0 +1,737 @@
+{
+  "ACTOR.TypeCharmage": "Mage Character",
+  "ACTOR.TypeNpcmage": "Mage NPC",
+  "ACTOR.TypeNpcsleeper": "Sleeper NPC",
+  "ITEM.TypeAbility": "Ability",
+  "ITEM.TypeActiveeffect": "Active Effect",
+  "ITEM.TypeActiveeffectAlt": "Active<br>Effect",
+  "ITEM.TypeBackground": "Background",
+  "ITEM.TypeContact": "Contact",
+  "ITEM.TypeEvent": "Chronicle Event",
+  "ITEM.TypeEventAlt": "Chronicle&nbsp;:<br>Event",
+  "ITEM.TypeMeritflaw": "Merit & Flaw",
+  "ITEM.TypeMeritflawAlt": "Merit&nbsp;/<br>Flaw",
+  "ITEM.TypeMisc": "Misc",
+  "ITEM.TypeParadigm": "Paradigm",
+  "ITEM.TypeRote": "Rote",
+  "ITEM.TypeThrow": "Throw",
+  "ITEM.TypeWeapon": "Weapon",
+  "M20E": {
+    "attributes": {
+      "appe": "Appearance",
+      "char": "Charisma",
+      "dext": "Dexterity",
+      "inte": "Intelligence",
+      "mani": "Manipulation",
+      "mental": "Mental",
+      "perc": "Perception",
+      "physical": "Physical",
+      "social": "Social",
+      "stam": "Stamina",
+      "stre": "Strength",
+      "wits": "Wits"
+    },
+    "blabla": "Blabla...",
+    "paradigmName": "{name}'s Paradigm",
+    "effectName": "Effect from {name}",
+    "bio": {
+      "appearance": "Appearance",
+      "apparentAge": "Visible<br>age",
+      "demeanor": "Demeanor",
+      "awakeningAge": "Awakening<br>age",
+      "birthday": "Birthday",
+      "cabale": "Cabala",
+      "essence": "Essence",
+      "faction": "Faction",
+      "gender": "Gender",
+      "height": "Height",
+      "mentor": "Mentor",
+      "nature": "Nature",
+      "weight": "Weight"
+    },
+    "categories": {
+      "abilities": "ABILITIES",
+      "aeffects": "ACTIVE EFFECTS",
+      "attributes": "ATTRIBUTES",
+      "backgrounds": "BACKGROUNDS",
+      "contacts": "CONTACTS",
+      "description": "DESCRIPTION",
+      "equipables": "EQUIPEMENTS",
+      "events": "CHRONICLE",
+      "magick": "MAGICK",
+      "meritsflaws": "MERITS & FLAWS",
+      "miscgear": "MISCELLANEOUS POSSESSIONS",
+      "rotes": "ROTES",
+      "spheres": "SPHERES",
+      "xp": "EXPERIENCE"
+    },
+    "category": {
+      "abilities": "Ability",
+      "aeffects": "Active Effect",
+      "attributes": "Attribute",
+      "backgrounds": "Background",
+      "events": "Event",
+      "contacts": "Contact",
+      "description": "Description",
+      "equipables": "Equipement",
+      "magick": "Magick",
+      "meritsflaws": "Merit & Flaw",
+      "rotes": "Rote",
+      "secondary": "Secondary",
+      "spheres": "Sphere",
+      "willpower": "Willpower"
+    },
+    "context": {
+      "addJournal": "Create Personnal Journal Entry.",
+      "addXP": "Add some XP.",
+      "editAliases" : "Edit list of Aliases.",
+      "editHealthMalus": "Edit Health Maluses.",
+      "editHealthMax": "Edit Max Health.",
+      "editParadigm": "Edit Paradigm.",
+      "editTrait": "Edit this Trait.",
+      "editWillpowerMax": "Edit Max Willpower.",
+      "extendThrow": "Extend this Throw.",
+      "linkInChat": "Send to Chat.",
+      "paradoxEffect": "Paradoxe Effects.",
+      "removeImage": "Remove this image.",
+      "removeLink": "Remove link to this Journal Entry.",
+      "removeParadigm": "Remove current Paradigm.",
+      "removeXP": "Remove some XP.",
+      "resetDiceTrhower": "Reset to 0.",
+      "sameThrow": "Throw same Throw.",
+      "throwBlindRoll": "Throw blind.",
+      "throwGmRoll": "Throw for the GM.",
+      "throwPublicRoll": "Throw for everyone.",
+      "throwSelfRoll": "Throw for me only.",
+      "throwStealthRoll": "Stealth throw.",
+      "willpowerForSuccess": " -1pt Willpower  <=>  +1 Success."
+    },
+    "damageType": {
+      "bashing": "Bashing",
+      "lethal": "Lethal",
+      "aggravated": "Aggravated"
+    },
+    "defaultAbilities": {
+      "academics": "Academics",
+      "alertness": "Alertness",
+      "art": "Art",
+      "athletics": "Athletics",
+      "awareness": "Awareness",
+      "brawl": "Brawl",
+      "computer": "Computer",
+      "cosmology": "Cosmology",
+      "crafts": "Crafts",
+      "drive": "Drive",
+      "empathy": "Empathy",
+      "enigmas": "Enigmas",
+      "esoterica": "Esoterica",
+      "etiquette": "Etiquette",
+      "expression": "Expression",
+      "firearms": "Firearms",
+      "intimidation": "Intimidation",
+      "investigation": "Investigation",
+      "law": "Law",
+      "leadership": "Leadership",
+      "martialarts": "Martial Arts",
+      "medicine": "Medicine",
+      "meditation": "Meditation",
+      "melee": "Melee",
+      "occult": "Occult",
+      "politics": "Politics",
+      "research": "Research",
+      "science": "Science",
+      "stealth": "Stealth",
+      "streetwise": "Streetwise",
+      "subterfuge": "Subterfuge",
+      "survival": "Survival",
+      "technology": "Technology"
+    },
+    "defaultDescriptions": {
+      "default": {
+        "book": "Book",
+        "page": "Page",
+        "title": "Default Description",
+        "content": "<p>Template to be edited preferably in HTML mode.</p>",
+        "levels": {
+          "level1": {
+            "bullets": "🞫",
+            "title": "Title 1:",
+            "description": "Description can be displayed on multiple lines if it's too long."
+          },
+          "level2": {
+            "bullets": "●",
+            "title": "Title 2:",
+            "description": "You can add as many levels as you want."
+          },
+          "level3": {
+            "bullets": "♥♥♥♥♥",
+            "title": "Title 3:",
+            "description": "And also use the bullets you prefer."
+          },
+          "level4": {
+            "bullets": "⚠⚠",
+            "title": "Title 4:",
+            "description": "You just have to comply to the HTML template,"
+          },
+          "level5": {
+            "bullets": "★★★",
+            "title": "Title 5:",
+            "description": "or get rid of it and write whatever you want^^."
+          }
+        },
+        "footer": "<p><strong>Note:</strong> Page footer</p>"
+      },
+      "attributes": {
+        "book": "MLA-20e.",
+        "page": "p 273",
+        "title": "Attributes",
+        "content": "<p>Outside special circumstances, attribute values for most people are between 1 and 3.</p><p>Human maximum is set to 5.</p>",
+        "levels": {
+          "level0": {
+            "bullets": "🞫",
+            "title": "Terrible:",
+            "description": "You're certainly afflicted with a severe handicap."
+          },
+          "level1": {
+            "bullets": "●",
+            "title": "Weak:",
+            "description": "You're very bad at it, maybe you shouldn't even try."
+          },
+          "level2": {
+            "bullets": "●●",
+            "title": "Average:",
+            "description": "Being average is awsome, it means there are people worse than you are."
+          },
+          "level3": {
+            "bullets": "●●●",
+            "title": "Good:",
+            "description": "You can easily 'show-off' in bars and parties."
+          },
+          "level4": {
+            "bullets": "●●●●",
+            "title": "Remarquable:",
+            "description": "Movie and literature heroes got nothing on you."
+          },
+          "level5": {
+            "bullets": "●●●●●",
+            "title": "Extra-ordinary:",
+            "description": "If nobody recognizes you walking down the street, it's because you want it that way."
+          }
+        },
+        "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
+      },
+      "spheres": {
+        "book": "MLA-20e.",
+        "page": "p 512",
+        "title": "Spheres",
+        "content": "<p>Even though Spheres have several points in common in their mastery levels (most notably pattern ones), it'd be impossible to sum it all up in a generic fashion.</p><p>Either refer to the core rulebook page 512 or get some compendium module with more accurate descriptions</p>",
+        "levels": {
+          "level1": {
+            "bullets": "●",
+            "title": "Initiate:",
+            "description": "..."
+          },
+          "level2": {
+            "bullets": "●●",
+            "title": "Apprentice:",
+            "description": "..."
+          },
+          "level3": {
+            "bullets": "●●●",
+            "title": "Disciple:",
+            "description": "..."
+          },
+          "level4": {
+            "bullets": "●●●●",
+            "title": "Adept:",
+            "description": "..."
+          },
+          "level5": {
+            "bullets": "●●●●●",
+            "title": "Master:",
+            "description": "..."
+          }
+        },
+        "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
+      },
+      "talent": {
+        "book": "MLA-20e.",
+        "page": "p 275",
+        "title": "Talents",
+        "content": "<p>Talents have an element of natural predisposition, often also enhanced by experience and or training.</p><p>🛈 'Untrained' Talent rolls usually do not have a Difficulty penalty.</p>",
+        "levels": {
+          "level0": {
+            "bullets": "🞫",
+            "title": "Lame:",
+            "description": "At this point, you can only hope for some 'beginners luck'."
+          },
+          "level1": {
+            "bullets": "●",
+            "title": "Mediocre:",
+            "description": "There are some 10 yo kids out there innately more gifted than you are."
+          },
+          "level2": {
+            "bullets": "●●",
+            "title": "Decent:",
+            "description": "You either have a pretty good idea what you're doing, or it's just raw talent, in which case it's a shame you're not building up on it."
+          },
+          "level3": {
+            "bullets": "●●●",
+            "title": "Gifted:",
+            "description": "Among 'regular people' you're already regarded as an exception, what you're capable of would amaze most anyone."
+          },
+          "level4": {
+            "bullets": "●●●●",
+            "title": "Talented:",
+            "description": "Experience alone cannot explain everything, you definitely possess some tremendous innate talent."
+          },
+          "level5": {
+            "bullets": "●●●●●",
+            "title": "Prodigious:",
+            "description": "You are one of those geniuses who have an instinctive understanding of their art, but above all, who have actively developed it!"
+          }
+        },
+        "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
+      },
+      "skill": {
+        "book": "MLA-20e.",
+        "page": "p 279",
+        "title": "Skills",
+        "content": "<p>Skills are the result of rigorous training, diligent practice, and the application of proven techniques.</p><p>🛈 'Untrained' Skill rolls usually have Difficulty malus of 1.</p>",
+        "levels": {
+          "level0": {
+            "bullets": "🞫",
+            "title": "Incompetent:",
+            "description": "Were you to have the slightest idea of what to do, that you still wouldn't have a clue how to proceed anyway."
+          },
+          "level1": {
+            "bullets": "●",
+            "title": "Novice:",
+            "description": "You have the fundamentals of the field and can therefore vaguely cope with it."
+          },
+          "level2": {
+            "bullets": "●●",
+            "title": "Amateur:",
+            "description": "You are quite competent in everyday situations."
+          },
+          "level3": {
+            "bullets": "●●●",
+            "title": "Professionnal:",
+            "description": "With this competence level you could make it your job."
+          },
+          "level4": {
+            "bullets": "●●●●",
+            "title": "Specialist:",
+            "description": "You are trained for all possible situations, your technical mastery is matched only by your knowledge of the subject."
+          },
+          "level5": {
+            "bullets": "●●●●●",
+            "title": "Elite:",
+            "description": "A few hundred people around the world are capable of such feats. You are one of them."
+          }
+        },
+        "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
+      },
+      "knowledge": {
+        "book": "MLA-20e.",
+        "page": "p 282",
+        "title": "Knowledges",
+        "content": "<p>You either possess the Knowledge, or you don't have it... At all!</p><p>🛈 'Untrained' Knowledge rolls are usually unfeasible.</p>",
+        "levels": {
+          "level0": {
+            "bullets": "🞫",
+            "title": "Ignorant:",
+            "description": "If you can't accept your ignorance on the subject, you might as well make up answers."
+          },
+          "level1": {
+            "bullets": "●",
+            "title": "Layman:",
+            "description": "The worst (or best) part is that you don't even know how uneducated you are on this subject matter."
+          },
+          "level2": {
+            "bullets": "●●",
+            "title": "Student:",
+            "description": "You have some foundation knowledge, it may be incomplete (or even wrong), but at least you are aware of it."
+          },
+          "level3": {
+            "bullets": "●●●",
+            "title": "Teacher:",
+            "description": "It's definitely a personal passion of yours. With this amount of culture, you could respectably teach."
+          },
+          "level4": {
+            "bullets": "●●●●",
+            "title": "Doctor:",
+            "description": "Your research on this topic would be of interest to many; if you have not yet published, perhaps you should."
+          },
+          "level5": {
+            "bullets": "●●●●●",
+            "title": "Leading authority:",
+            "description": "If you're not aware of something regarding this field, it's more than likely no one knows about it either (or it just doesn't exist)."
+          }
+        },
+        "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
+      }
+    },
+    "diceThrows": {
+      "diceThrows": "Dice throws",
+      "freeThrow": "Free throw",
+      "mixedThrow": "Mixed throw",
+      "areteThrow": "Arete throw",
+      "effect": "{effect} effect",
+      "throwFor": "{trait} throw"
+    },
+    "healthStatus": {
+      "0": "Live and kicking.",
+      "1": "Bruised",
+      "2": "Hurt",
+      "3": "Injured",
+      "4": "Wounded",
+      "5": "Mauled",
+      "6": "Crippled",
+      "7": "Incapacitated"
+    },
+    "hints": {
+      "add": "Add",
+      "addDice": "Add a die",
+      "aeToggleDisabled": "Enable / disable this Active Effect",
+      "aliasFrequency": "Frenquency of aliases appearing",
+      "canDropJE": "Input a value or drag-drop a Journal Entry",
+      "compendiumEdit": "Only editable via a Compendium",
+      "createJE": "Create a Personnal Journal Entry for this character",
+      "date": "A more or less precise date?",
+      "diceButton": "Click to open the Dice Throw Panel (shift+click for a quick-throw)",
+      "dicePool": "If Dice Pool reaches 0, the throw won't be allowed",
+      "displayDescription": "Usually displayed in tooltip-text or when 'sending to chat'",
+      "displayName": "Displayed in lieu of real 'name'",
+      "edit": "Edit",
+      "extra": "Useless and indispensible",
+      "imgClick": "Click to choose an image",
+      "itemEffect": "Restricted to 1 Active Effect per Item. ⚠ Editable only when item is not Owned",
+      "lexiconPath": "A relative path as defined in the localization file",
+      "lexiconValue": "New translation/paradigm for the above path",
+      "magepower": {
+        "0": "🖱️ Left : Add Quintessence, 🖱️ Right : Add Paradox",
+        "1": "🖱️ Right : Remove Quintessence",
+        "2": "🖱️ Left : Remove Paradox"
+      },
+      "name": "Name of the Trait or Item",
+      "nonEditable": "Non-editable.",
+      "openJE": "Open/edit this Journal Entry.",
+      "openPersonalJE": "Open/edit Personnal Journal Entry for this character",
+      "quantityMinus": "Descrease quantity",
+      "quantityPlus": "Increase quantity",
+      "remove": "Remove",
+      "removeDice": "Remove a die",
+      "removeFromThrow": "Remove from this throw",
+      "specialisation": "Only used above rank 4",
+      "switch": "Switch",
+      "systemDescription": "Should be edited in HTML mode in order to see the tags",
+      "systemName": "Used as a reference, only editable by a GM",
+      "difficulty": "Bonuses and maluses shouldn't exceed -3/+3, otherwise one should adjust the success threshold",
+      "difficultyCue": {
+        "coincidental": "Coincidental effect",
+        "vulgar": "Vulgar effect",
+        "vulgarWitness": "Vulgar effect with Witnesses"
+      },
+      "throwSettings": {
+        "1": "Les '1' ne font rien de spécial.",
+        "2": "Chaque '1' retire un succès.",
+        "3": "Chaque '1' retire un succès. + Chaque '10' rajoute un succès supplémentaire."
+      },
+      "toggleAutoClose": "Toggle auto-close",
+      "toggleEditMode": "Toggle 'edition mode'/'display mode'",
+      "toggleEquiped": "Toggle equiped/unequiped",
+      "unlockToEdit": "Switch to 'edition mode'(🔓) in order to edit this field",
+      "untrained": "Untrained!",
+      "useAlternateDesc": "⚠ Will attempt to load alternative trait descriptions suffixed with given tag.",
+      "useSpecialisation": "Use Specialisation",
+      "value0to5": "A value 'usually' between 0 and 5",
+      "wounds": {
+        "1": "Bashing wound",
+        "2": "Lethal wound",
+        "3": "Aggravated wound"
+      }
+    },
+    "labels": {
+      "aeDisabled": "Disabled",
+      "aeEnabled": "Enabled",
+      "carriedStuff": "Carried Stuff",
+      "category": "Category",
+      "consumable": "Consumable",
+      "creation": "Crea",
+      "cssClass": "CSS class",
+      "currentParadox": "Current Paradox",
+      "currentXP": "Current XP",
+      "damageType": "Damage Type",
+      "damage": "Damage",
+      "date": "Date",
+      "descSuffix": "Description suffix",
+      "dicePool": "Dice Pool",
+      "dicePoolMod": "Pool modifier",
+      "diff": "Diff.",
+      "difficulty": "Difficulty",
+      "difficultyBase": "Base Diff.",
+      "difficultyMod": "Difficulty Modifier",
+      "displayDescription": "Personnal desciption",
+      "displayDesc": "Pers. description",
+      "effectLevel": "Effect Level",
+      "equipable": "Equipable",
+      "equiped": "Equiped",
+      "extra": "Extra",
+      "faction": "Faction",
+      "feedback": "Backlash",
+      "gain": "Gain",
+      "itemEffect": "⚠ Active Effect",
+      "key": "Key",
+      "magickType": "Magick type",
+      "mode": "Mode",
+      "opacity": "Opacity",
+      "origin": "Origin",
+      "paradoxEffect": "Paradox Effect",
+      "paradox": "Paradox",
+      "paradoxPoints": "Paradox Points",
+      "personnalJEs": "Personnal Journals",
+      "picture": "Picture",
+      "pool": "Pool",
+      "possessedStuff": "Owned Stuff",
+      "quantity": "Quantity",
+      "range": "Range",
+      "resonance": "Resonance",
+      "resonanceFlavor": "Resonance Flavor",
+      "result": "Result",
+      "results": "Results",
+      "sheetLogo": "Sheet Logo",
+      "signature": "Signature",
+      "spe": "Spe",
+      "specialisation": "Specialisation",
+      "stat": "Stat",
+      "studyPoints": "Study points",
+      "subType": "Sub-type",
+      "successMod": "Success threshold",
+      "synergyFlavor": "Synergy Flavor",
+      "systemDescription": "⚠ System Desciption",
+      "systemName": "⚠ System Name",
+      "throw": "THROW",
+      "throwOptions": "⚠ Throw options",
+      "total": "Total",
+      "totalXP": "Total XP",
+      "trait": "Trait",
+      "type": "Type",
+      "useAlternateDesc": "Use Alt-Descriptions",
+      "value": "Value"
+    },
+    "magick": {
+      "arete": "Arete",
+      "resonance": "Resonance"
+    },
+    "magickType": {
+      "coincidental": "Coincidental",
+      "vulgar": "Vulgar",
+      "vulgarWitness": "Vulgar with witness"
+    },
+    "mfType": {
+      "mental": "Mental",
+      "physical": "Physical",
+      "social": "Social",
+      "supernatural": "Supernatural",
+      "genetic": "Genetic"
+    },
+    "navtabs": {
+      "aliases": "ALIAS",
+      "bio": "BIO",
+      "description": "DESCRIPTION",
+      "detail": "DETAILS",
+      "effects": "EFFECTS",
+      "extra": "EXTRA",
+      "lexicon": "LEXICON",
+      "magcik": "MAGICK",
+      "picture": "PICTURE",
+      "stats": "STATS",
+      "stuff": "GEAR",
+      "traits": "TRAITS",
+      "throws": "THROWS"
+    },
+    "new": {
+      "ability": {
+        "talent": "New Talent",
+        "skill": "New Skill",
+        "knowledge": "New Knowledge"
+      },
+      "ActiveEffect": "New ActiveEffect",
+      "alias": "New alias",
+      "background": "New Background",
+      "consumable": "New Consumable",
+      "contact": "New Contact",
+      "createActor": "Create new Character",
+      "createItem": "Create new Item",
+      "default": "New Item",
+      "event": "New Event",
+      "meritflaw": {
+        "merit": "New Merit",
+        "flaw": "New Flaw"
+      },
+      "rote": "New Rote",
+      "throw": "New Throw"
+    },
+    "notifications": {
+      "actorNotFound": "Actor '{actorRef}' was not found!",
+      "aEffectOwnedItem": "Foundry doesn't allow for modification of an ActiveEffect on an Owned Item.<br> In the meantime, you can still drag-drop the item onto the sidebar and edit it from there.",
+      "duplicateName": "An item of the same type already exists with same name '{name}' !",
+      "gmPermissionNeeded": "You should ask a GM to do that for you!",
+      "impossibleThrow": "This throw is not feasible!",
+      "invalidFormat": "'{value}' doesn't have the correct format!",
+      "itemNotFoundInActor": "Item '{itemRef}' wasn't found on actor '{actorName}'!",
+      "itemNotFoundInCompendium": "Item '{documentName}' wasn't found in compendium '{packName}'!",
+      "journalLinked": "Personnal Journal entry for {name} was created and linked to it's actor.",
+      "missingParadigm": "Seems like this actor doesn't have a Paradigm!",
+      "nan": "'{value}' is not a number !",
+      "newParadigm": "CSS modifications from the paradigm will only be enforced after a refresh (F5).",
+      "noSingleTokenSelected": "1 (and only 1) Token must be selected!",
+      "noJournal": "No Journal Linked!",
+      "notImplemented": "Feature not yet implemented!" ,
+      "notLocalized": "Entry '{path}' doesn't exist within the localization file!",
+      "noMoreAvailEffects": "No more available Effect!",
+      "notEnoughWillpower": "Not enough Willpower!",
+      "notOutsideCreation": "You cannot perfom that action! ( 'Creation Mode' might be locked )",
+      "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
+      "packNotFound": "Compendium '{packName}' wasn't found!",
+      "restrictedItem": "{actorName} cannot use {itemType}-type Items!",
+      "unrollableRote": "{actorName} doesn't have the necessary sphere level in order to throw {itemName} !"
+    },
+    "placeholders": {
+      "appearance": "This character's appearence ..."
+    },
+    "prompts": {
+      "actorHasNoOwner": "<p><b>Actor {name} does not have an Owner!</b><br>Do you still wish to create it's Journal?<br><i>You'd have to assign permissions yourself later on, for it's owner to have edition privileges.</i></p>",
+      "addItemContent": "<p>Imput a name for <br><b>{name}</b>:</p>",
+      "addItemTitle": "Adding a new Item.",
+      "addItemWarning": "<p>⚠ Actual 'names' can be used as references by the system <br> As a consequence, they will only be <strong>modified by a GM</strong>.</p>",
+      "addXPContent": "<p>Imput the <b>XP Gain</b> for '{name}'<br><i>Positive integer only</i></p>",
+      "aliasesTitle": "{actorName}'s aliases",
+      "deleteContent": "<p>Deletion of '{name}' is <b>final</b>.<br>Do you wish to proceed ?</p>",
+      "deleteTitle": "Deleting {name}",
+      "dropActor": "<p>Add {actorName} as a contact?</p>",
+      "dropParadigm": "<p>Overwrite current Paradigm?</p>",
+      "editTitle": "Editing {name}.",
+      "lexiconContentAdd": "Adding a new Lexicon entry to this Paradigm.",
+      "lexiconContentEdit": "Editing a Lexicon entry for this this Paradigm.",
+      "lexiconTitle": "Lexicon",
+      "newValue": "<p>Input a new value for <br><b>{name}</b>:</p>",
+      "removeXPContent": "<p>Input the <b>XP loss</b> for '{name}'<br><i>Positive integer only</i></p>",
+      "paradoxTitle": "Consequences of a Magickal Effect",
+      "paradoxFeedback": "Paradox Backlash.",
+      "paradoxExpunged": "{points} Paradox Point(s) discharged.",
+      "selectTraitTitle": "Selecting a Trait for {name}",
+      "subTypeContent": "<p>Select a <b>sub type for {type}</b><br>This item will be created with default parameters according to the chosen sub type.</p>"
+    },
+    "resonanceFlavor": {
+      "devotional": "Devotional",
+      "elemental": "Elemental",
+      "stabilizing": "Stabilizing",
+      "temperamental": "Temperamental"
+    },
+    "resources": {
+      "health": "Health",
+      "willpower": "Willpower",
+      "magepower": "Mage Power"
+    },
+    "spheres": {
+      "corr": "Corresp.",
+      "entr": "Entropy",
+      "forc": "Forces",
+      "life": "Life",
+      "matt": "Matter",
+      "mind": "Mind",
+      "prim": "Prime",
+      "spir": "Spirit",
+      "time": "Time"
+    },
+    "secondary": {
+      "initiative": "Initiative",
+      "willpower": "Willpower"
+    },
+    "subType": {
+      "flaw": "Flaw",
+      "flaws": "Flaws",
+      "knowledge": "Knowledge",
+      "knowledges": "Knowledges",
+      "merit": "Merit",
+      "merits": "Merits",
+      "skill": "Skill",
+      "skills": "Skills",
+      "talent": "Talent",
+      "talents": "Talents",
+      "handtohand": "Hand to hand",
+      "melee": "Melee weapon",
+      "throw": "Throwing weapon",
+      "lightfire": "Light Firearm",
+      "heavyfire": "Heavy Firearm"
+    },
+    "synergyFlavor": {
+      "dynamic": "Dynamic",
+      "entropic": "Entropic",
+      "static": "Static"
+    },
+    "throwMod": {
+      "base": "Base",
+      "userMod": "User",
+      "throwMod": "Throw",
+      "healthMod": "Health",
+      "untrainedMod": "Untrained",
+      "systemMod": "System",
+      "gmMod": "GM"
+    },
+    "throwresult": {
+      "isWillpowered": "+ 1 Success (Willpower)",
+      "failure": "Failure!",
+      "success": "{total} Success!",
+      "critfailure": "Botched ({total})!",
+      "fail": "Failure",
+      "succ": "Success",
+      "crit": "Botch"
+    },
+    "throwType": {
+      "weapon": "Maneuver"
+    },
+    "versionWarning": {
+      "flavor": "⚠ Warning ⚠",
+      "header": "<p>New version : {sysVersion}</p>",
+      "warning": "<p>⚠ This system is still in alpha, at your disposal for testing purposes only!</p><p>Don't use it if you're not ready to start your world, actors and items from scratch with each update!!!</p>",
+      "changelogURL" : "<p><a href='https://github.com/CarterDC/mage-fr/wiki'>change log</a></p>",
+      "clickMe": "Click Me!"
+    },
+    "welcomeMessage": {
+      "flavor": "Welcome!",
+      "header": "<p>You're seing this message cuz it's the first time you connect to this worlds, so, Welcome !</p><p>I hope you'll have a good time using my take on a Mage 20th System.</p>",
+      "licence": "<p>This system agrees and complies to the terms et conditions set by the <a href='https://www.worldofdarkness.com/dark-pack'>Dark Pack !</a></p>",
+      "noModule": "<p>Although the system is meant as a standalone, there might be some non-copyright-infringing modules in your language already, containing Items (abilities, backgrounds, etc...), Journal Entries and maybe more ^^.</p>",
+      "settings": "<p>You can access some usefull system settings <a href='' id='linkToOptions'>here</a>.</p>",
+      "clickMe": "Click Me!"
+    }
+  },
+  "SETTINGS.allowAliases": "Allow the use of Aliases.",
+  "SETTINGS.allowAliasesHint": "Aliases randomly replace the original character name.",
+  "SETTINGS.difficultyBase": "Base Difficulty for dice throws.",
+  "SETTINGS.discordInvite": "Discord",
+  "SETTINGS.discordInviteHint": "Join the 'Mage-Fr' Discord server (Carter_DC#1097 to hit me).",
+  "SETTINGS.displayDifficultyCues": "Visual cues for Magick effects.",
+  "SETTINGS.displayDifficultyCuesHint": "An visual helper to decide on the difficulty for coincidental/vulgar magick indexed on base Diff. and effect max level.",
+  "SETTINGS.None": "You don't have the necessary permissions to see / modify this sytem's settings.",
+  "SETTINGS.notImplementedYet": "Setting not implemented Yet.",
+  "SETTINGS.openWiki": "Consult Wiki",
+  "SETTINGS.openWikiHint": "Open the Mage-Fr wiki in an external window.",
+  "SETTINGS.playersCanRemoveAggravated": "Can heal aggravated wounds.",
+  "SETTINGS.playersCanRemoveAggravatedHint": "If disabled, players won't be allowed to remove their aggravated-level wounds; however, they'll still be able to add some.",
+  "SETTINGS.playersCanSeeParadoxPoints": "Can see Paradox Points.",
+  "SETTINGS.playersCanSeeParadoxPointsHint": "⚠ If disabled, players won't see their paradox points but will also be prevented from interracting with the 'Mage Power' UI.",
+  "SETTINGS.roteRule": "Rote Throws.",
+  "SETTINGS.roteRuleHint": "Rolling a 10 grants an extra success when throwing a Rote.",
+  "SETTINGS.specialisationRule": "Specialisation Throws.",
+  "SETTINGS.specialisationRuleHint": "Rolling a 10 grants an extra success when throwing a Specialisation.",
+  "SETTINGS.untrainedMalus": "Untrained abilities Malus.",
+  "SETTINGS.untrainedMalusHint": "Malus to the Difficulty : First digit for Talents, second for Skills and last one for Knowledges. ('X' indicates an unfeasible throw)",
+  "SETTINGS.useHealthMalus": "Health Malus to the Dice Pool.",
+  "SETTINGS.useHealthMalusHint": "Automatically applies the health malus tothe Dice Pool (see : editable list of health maluses in context menu).",
+  "SETTINGS.useHealthMalusForMagic": "Health Malus to Magick.",
+  "SETTINGS.useHealthMalusForMagicHint": "Also applies the health malus to the dice pool when throwing magick effects."
+}

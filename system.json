@@ -9,7 +9,7 @@
       "discord": "Carter_DC#1097"
     }
   ],
-  "version": "0.21.54",
+  "version": "0.21.56",
   "templateVersion": "1",
   "minimumCoreVersion": "0.8.3",
   "compatibleCoreVersion": "0.8.9",
@@ -27,7 +27,7 @@
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/fr.json"
+      "path": "lang/en.json"
     }
   ],
 

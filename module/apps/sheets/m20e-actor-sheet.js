@@ -1241,7 +1241,8 @@ export default class M20eActorSheet extends ActorSheet {
    _isDropAllowed(item) {
     const itemData = item.data;
     //check name against all names in same itemType
-    const duplicates = this.actor.items.filter(item => (item.type === itemData.type) && (item.name === itemData.name));
+    //todo : only check for duplicates on stats !
+    const duplicates = this.actor.items.filter(item => (item.isStat) && (item.type === itemData.type) && (item.name === itemData.name));
     if ( duplicates.length ) {
       ui.notifications.error(game.i18n.format(`M20E.notifications.duplicateName`, {name: itemData.name}));
       return;
@@ -1255,7 +1256,7 @@ export default class M20eActorSheet extends ActorSheet {
     if ( itemData.data.restricted && !itemData.data.restricted.includes(this.actor.data.type) ) {
       const itemType = game.i18n.localize(`ITEM.Type${item.type.capitalize()}`);
       ui.notifications.error(game.i18n.format('M20E.notifications.restrictedItem',
-        {actorName:this.name, itemType: itemType}));
+        {actorName: this.actor.name, itemType: itemType}));
       return false;
     }
     return true;

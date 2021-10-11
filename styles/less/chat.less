@@ -29,6 +29,47 @@ li.chat-message{
     }
     .card-tooltip{
       display: none;
+      .chat-tabs{
+        height: 22px;
+        margin: 2px 0px 10px 0px;
+        border-bottom: 0px;
+        border-top:0px;
+        border-left: 1px var(--m20e-midGrey);
+        font-size: var(--mainFontSize);
+        //font-weight: bold;
+        text-align: center;
+        a {
+          cursor: pointer;
+          color: var(--m20e-darkGrey);
+          background: rgba(0,0,0,0.3);
+          border: 1px solid var(--m20e-lightGrey);
+          border-radius: 6px 6px 0px 0px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 2px;
+          padding-right: 2px;
+          label {
+            flex: 10 10;
+            text-align: center;
+          }
+        }
+        a.disabled {
+          cursor: default;
+        }
+        a.active {
+          font-size: calc(var(--mainFontSize) + 2px);
+          color:  var(--titleColor);
+          background: #bdb9b200; // todo : check that out
+          border-color: var(--m20e-midGrey);
+          border-bottom: 0px;
+          margin-top: 0px;
+          padding-top: 3px;
+        }
+        a:hover {
+          text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.7), 1px 1px 0 rgba(245, 242, 217, 1);
+        }
+      }
       .tooltip-part{
         font-size: var(--m20e-descFontSize);
         color: var(--m20e-midGrey);
@@ -51,6 +92,7 @@ li.chat-message{
     }
     .card-footer{
       display:flex;
+      justify-content: space-between;
       border-top: 2px ridge var(--m20e-superLightGrey);
       .item-type{
         height: 25px;
