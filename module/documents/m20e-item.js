@@ -188,7 +188,7 @@ export default class M20eItem extends Item {
       name: itemData.name,
       displayName: itemData.displayName,
       value: this.actor._getStat(path, 'value'),
-      specialisation: itemData.specialisation
+      specialty: itemData.specialty
     };
   }
 

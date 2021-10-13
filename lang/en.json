@@ -16,6 +16,7 @@
   "ITEM.TypeRote": "Rote",
   "ITEM.TypeThrow": "Throw",
   "ITEM.TypeWeapon": "Weapon",
+  
   "M20E": {
     "attributes": {
       "appe": "Appearance",
@@ -182,7 +183,7 @@
         "footer": "<p><strong>Note:</strong> Page footer</p>"
       },
       "attributes": {
-        "book": "MLA-20e.",
+        "book": "MTA-20e.",
         "page": "p 273",
         "title": "Attributes",
         "content": "<p>Outside special circumstances, attribute values for most people are between 1 and 3.</p><p>Human maximum is set to 5.</p>",
@@ -209,7 +210,7 @@
           },
           "level4": {
             "bullets": "●●●●",
-            "title": "Remarquable:",
+            "title": "Outstanding:",
             "description": "Movie and literature heroes got nothing on you."
           },
           "level5": {
@@ -221,7 +222,7 @@
         "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
       },
       "spheres": {
-        "book": "MLA-20e.",
+        "book": "MTA-20e.",
         "page": "p 512",
         "title": "Spheres",
         "content": "<p>Even though Spheres have several points in common in their mastery levels (most notably pattern ones), it'd be impossible to sum it all up in a generic fashion.</p><p>Either refer to the core rulebook page 512 or get some compendium module with more accurate descriptions</p>",
@@ -255,7 +256,7 @@
         "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
       },
       "talent": {
-        "book": "MLA-20e.",
+        "book": "MTA-20e.",
         "page": "p 275",
         "title": "Talents",
         "content": "<p>Talents have an element of natural predisposition, often also enhanced by experience and or training.</p><p>🛈 'Untrained' Talent rolls usually do not have a Difficulty penalty.</p>",
@@ -294,7 +295,7 @@
         "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
       },
       "skill": {
-        "book": "MLA-20e.",
+        "book": "MTA-20e.",
         "page": "p 279",
         "title": "Skills",
         "content": "<p>Skills are the result of rigorous training, diligent practice, and the application of proven techniques.</p><p>🛈 'Untrained' Skill rolls usually have Difficulty malus of 1.</p>",
@@ -333,8 +334,8 @@
         "footer": "<p><strong>Generic description:</strong> Please refer to the aforementioned page / rulebook.</p>"
       },
       "knowledge": {
-        "book": "MLA-20e.",
-        "page": "p 282",
+        "book": "MTA-20e.",
+        "page": "p 283",
         "title": "Knowledges",
         "content": "<p>You either possess the Knowledge, or you don't have it... At all!</p><p>🛈 'Untrained' Knowledge rolls are usually unfeasible.</p>",
         "levels": {
@@ -423,7 +424,7 @@
       "remove": "Remove",
       "removeDice": "Remove a die",
       "removeFromThrow": "Remove from this throw",
-      "specialisation": "Only used above rank 4",
+      "specialty": "Only used above rank 4",
       "switch": "Switch",
       "systemDescription": "Should be edited in HTML mode in order to see the tags",
       "systemName": "Used as a reference, only editable by a GM",
@@ -444,7 +445,7 @@
       "unlockToEdit": "Switch to 'edition mode'(🔓) in order to edit this field",
       "untrained": "Untrained!",
       "useAlternateDesc": "⚠ Will attempt to load alternative trait descriptions suffixed with given tag.",
-      "useSpecialisation": "Use Specialisation",
+      "useSpecialty": "Use Specialty",
       "value0to5": "A value 'usually' between 0 and 5",
       "wounds": {
         "1": "Bashing wound",
@@ -503,16 +504,20 @@
       "sheetLogo": "Sheet Logo",
       "signature": "Signature",
       "spe": "Spe",
-      "specialisation": "Specialisation",
+      "specialty": "Specialty",
       "stat": "Stat",
+      "statList": "Stats",
       "studyPoints": "Study points",
       "subType": "Sub-type",
+      "success": "Success",
       "successMod": "Success threshold",
       "synergyFlavor": "Synergy Flavor",
       "systemDescription": "⚠ System Desciption",
       "systemName": "⚠ System Name",
       "throw": "THROW",
+      "throwName": "Throw Flavor",
       "throwOptions": "⚠ Throw options",
+      "throwSettings": "Options",
       "total": "Total",
       "totalXP": "Total XP",
       "trait": "Trait",
@@ -544,7 +549,7 @@
       "effects": "EFFECTS",
       "extra": "EXTRA",
       "lexicon": "LEXICON",
-      "magcik": "MAGICK",
+      "magick": "MAGICK",
       "picture": "PICTURE",
       "stats": "STATS",
       "stuff": "GEAR",
@@ -696,7 +701,7 @@
     "versionWarning": {
       "flavor": "⚠ Warning ⚠",
       "header": "<p>New version : {sysVersion}</p>",
-      "warning": "<p>⚠ This system is still in alpha, at your disposal for testing purposes only!</p><p>Don't use it if you're not ready to start your world, actors and items from scratch with each update!!!</p>",
+      "warning": "<p>⚠ This system is still in beta, at your disposal for testing purposes only!</p><p>Don't use it if you're not ready to start your world, actors and items from scratch with each update!!!</p>",
       "changelogURL" : "<p><a href='https://github.com/CarterDC/mage-fr/wiki'>change log</a></p>",
       "clickMe": "Click Me!"
     },
@@ -726,9 +731,9 @@
   "SETTINGS.playersCanSeeParadoxPointsHint": "⚠ If disabled, players won't see their paradox points but will also be prevented from interracting with the 'Mage Power' UI.",
   "SETTINGS.roteRule": "Rote Throws.",
   "SETTINGS.roteRuleHint": "Rolling a 10 grants an extra success when throwing a Rote.",
-  "SETTINGS.specialisationRule": "Specialisation Throws.",
-  "SETTINGS.specialisationRuleHint": "Rolling a 10 grants an extra success when throwing a Specialisation.",
-  "SETTINGS.untrainedMalus": "Untrained abilities Malus.",
+  "SETTINGS.specialtyRule": "Specialty Throws.",
+  "SETTINGS.specialtyRuleHint": "Rolling a 10 grants an extra success when throwing a Specialty.",
+  "SETTINGS.untrainedMalus": "Untrained abilities Penalty.",
   "SETTINGS.untrainedMalusHint": "Malus to the Difficulty : First digit for Talents, second for Skills and last one for Knowledges. ('X' indicates an unfeasible throw)",
   "SETTINGS.useHealthMalus": "Health Malus to the Dice Pool.",
   "SETTINGS.useHealthMalusHint": "Automatically applies the health malus tothe Dice Pool (see : editable list of health maluses in context menu).",

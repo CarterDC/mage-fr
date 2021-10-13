@@ -1,12 +1,22 @@
 <form class="{{cssClass}}" autocomplete="off" spellcheck="false" style="display:block;">
-
-    <div class="dialog-block flavor">
-      <a class="mini-button" data-action="expand"><i class="fas fa-caret-up"></i></a>
-        {{{dt.flavor}}}
+{{!-- Flavor --}}
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label>{{localize 'M20E.labels.throwName'}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.throwName}}">{{#if colapsibles.throwName}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
     </div>
-
-    {{#if stats.length}}
-    <div class="dialog-block">
+    <div name="throwName" class="dialog-block flavor" {{#if colapsibles.throwName}}style="display:none;" {{/if}}>
+      {{{dt.flavor}}}
+    </div>
+{{!-- list of stats --}}
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label>{{localize 'M20E.labels.statList'}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.statList}}">{{#if colapsibles.statList}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+    </div>
+    <div name="statList" class="dialog-block stat-list"  {{#if colapsibles.statList}}style="display:none;" {{/if}}>
         {{#each stats as |stat key|}}
         <div class="trait dice-throw" data-key="{{key}}">
             <a class="mini-button" title="{{localize 'M20E.hints.removeFromThrow'}}" data-action="remove" data-disabled="{{../dt.isItemThrow}}"><i class="fas fa-times-circle"></i></a>
@@ -23,17 +33,21 @@
                 {{/m20e-forLoop}}
             </div>
             {{#if stat.canUseSpec}}
-                <a class="mini-button spe" title="{{localize 'M20E.hints.useSpecialisation'}}" data-action="spe" data-active = {{stat.useSpec}}>{{localize "M20E.labels.spe"}}</a>
+                <a class="mini-button spe" title="{{localize 'M20E.hints.useSpecialty'}}" data-action="spe" data-active = {{stat.useSpec}}>{{localize "M20E.labels.spe"}}</a>
             {{else}}
                 <div class="mini-button spe decoy"></div>
             {{/if}}
         </div>
         {{/each}}
     </div>
-    {{/if}}
-
-    <div class="dialog-block dice-pool">
-        <label style="text-align: center; margin-left:-6px;" title="{{localize 'M20E.hints.dicePool'}}">{{localize "M20E.labels.dicePool"}} :</label>
+{{!-- Dice Pool --}}
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label title="{{localize 'M20E.hints.dicePool'}}">{{localize 'M20E.labels.dicePool'}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.dicePool}}">{{#if colapsibles.dicePool}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+    </div>
+    <div name="dicePool" class="dialog-block dice-pool"  {{#if colapsibles.dicePool}}style="display:none;" {{/if}}>
         <input type="text" value="{{dt.data.dicePoolBase}}" data-dtype="Number" disabled/>
         <div class="double-button" style="margin:0 5px;">
             <a class="mini-button" title="{{localize 'M20E.hints.addDice'}}" data-action="mod-plus"><i class="fas fa-plus"></i></a>
@@ -52,10 +66,14 @@
         <i class="fas fa-equals" style ="font-size: 16px;" ></i>
         <input name="dicePoolTotal" type="text" value="{{dt.data.dicePoolTotal}}" data-dtype="Number" readonly/>
     </div>
-
-    <div class="dialog-block difficulty">
-        <label title="{{localize 'M20E.hints.difficulty'}}">{{localize "M20E.labels.difficulty"}} :</label>
-
+{{!-- Difficulty --}}
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label title="{{localize 'M20E.hints.difficulty'}}">{{localize 'M20E.labels.difficulty'}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.difficulty}}">{{#if colapsibles.difficulty}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+    </div>
+    <div name="difficulty" class="dialog-block difficulty" {{#if colapsibles.difficulty}}style="display:none;" {{/if}}>
         <div class="radio-group dice">
             {{#each radioOptions as |radio key|}}
             <div>
@@ -70,12 +88,23 @@
             {{/each}}
         </div>
     </div>
-
-    <div class="dialog-block success">
-      <a class="mini-button" data-action="expand"><i class="fas fa-caret-up"></i></a>
-        Success
+{{!-- Success --}}
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label title="{{localize 'M20E.hints.success'}}">{{localize 'M20E.labels.success'}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.success}}">{{#if colapsibles.success}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
     </div>
-
+    <div name="success" class="dialog-block success" {{#if colapsibles.success}}style="display:none;" {{/if}}>
+        Mettre des trucs ici !
+    </div>
+{{!-- Buttons --}}
+    <div class="title-line">
+      <div class="pre-line"></div>
+      <label title="{{localize 'M20E.hints.throwSettings'}}">{{localize 'M20E.labels.throwSettings'}}</label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="true" data-state="{{colapsibles.throwSettings}}">{{#if colapsibles.throwSettings}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+    </div>
     <a class="mini-button throw-settings" title="{{localize (m20e-concat 'M20E.hints.throwSettings.' dt.throwSettings)}}" data-action="settings" data-settings="{{dt.throwSettings}}"><i class="fas fa-dice-d20"></i></a>
     <a class="mini-button throw-dice" data-action="roll" title="{{localize extras.title}}" data-disabled="{{throwLock}}">
         <span>{{localize "M20E.labels.throw"}}</span> <i class="{{extras.icon}}"></i>

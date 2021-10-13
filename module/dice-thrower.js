@@ -20,8 +20,100 @@ export default class DiceThrower {
   constructor(actor) {
     this.actor = actor;
     this._throw = this.getNewFreeThrow();
+    this.data = {};
     this._app = null;
   }
+
+  /* -------------------------------------------- */
+  /*  Stats Management                            */
+  /* -------------------------------------------- */
+
+  addStatByPath(path) {
+    try {
+      //safe add, check it's not already in the stats array
+      if (this._throw.stats.some(stat => stat.path === path)) {
+        throw { msg: 'alreadyAdded' };
+      }
+      const stat = new Trait({ path: path });
+      this.addStat(stat);
+    } catch (e) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
+      return;
+    }
+  }
+
+  addStat(stat) {
+    try {
+      if (this.data.statLock === true) {
+        throw { msg: 'statLocked' };
+      }
+
+      M20eThrow.validateStat(this.actor, stat);
+      this._throw.addStat(stat);
+
+      this.prepareStats();
+
+      //render actor's sheet in order to refresh the highlighted stats
+      this.actor.sheet.render();
+
+    } catch (e) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
+      return;
+    }
+  }
+
+  removeStatByPath(path) {
+    const statIndex = this._throw.stats.findIndex(stat => stat.path === path);
+    if (statIndex !== -1) {
+      this.removeStatByIndex(statIndex);
+    }
+  }
+
+  removeStatByIndex(statIndex) {
+    try {
+      if (this.data.statLock === true) {
+        throw { msg: 'statLocked' };
+      }
+      this._throw.removeStat(statIndex);
+      this.prepareStats();
+      //render actor's sheet in order to refresh the highlighted stats
+      this.actor.sheet.render();
+      
+    } catch (e) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
+      return;
+    }
+  }
+
+  /**
+   * @param {Number} index index of the stat in the throw's stat array
+   * @param {String} propertyPath the stat's property to be updated
+   * @param {} newValue 
+   */
+  updateStatProperty(index, propertyPath, newValue) {
+    try {
+      if (this.data.statLock === true) {
+        throw { msg: 'statLocked' };
+      }
+      foundry.utils.setProperty(this._throw.stats[index], propertyPath, newValue);
+      this.prepareStats();
+    } catch (e) {
+      ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
+      return;
+    }
+  }
+
+  prepareStats() {
+    this._throw.stats = this.actor.getExtendedStats(this._throw.stats);
+    this.flavor = this._throw.getStatsLocalizedNames(this.actor).join(' + ');
+
+    if (this._app) {
+      if (this._app._state !== -1) {
+        this._app.render();
+      }
+    }
+  }
+
 
   getNewFreeThrow() {
     return new M20eThrow([
@@ -32,7 +124,7 @@ export default class DiceThrower {
       type: 'manual'
     }, {
       //options
-      
+
     });
   }
 
@@ -42,6 +134,7 @@ export default class DiceThrower {
     this.flavor = '';
     this.data = {};
     this.actor.sheet.render();
+    ui.notifications.info('DiceThrower reset to default.')
   }
 
   /* -------------------------------------------- */
@@ -55,11 +148,11 @@ export default class DiceThrower {
    * send roll to chat and autocloses the app if needed
    * 
    */
-   async throwDice(m20eThrow, options) {
+  async throwDice(m20eThrow, options) {
     // do the init (might throw an error if throw is actually impossible)
     try {
       this.initialize(m20eThrow, options);
-      if ( this.data.dicePoolTotal <= 0 ) { throw {msg: 'cannotThrow0Dice'}; }
+      if (this.data.dicePoolTotal <= 0) { throw { msg: 'cannotThrow0Dice' }; }
     } catch (e) {
       ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
       return;
@@ -69,14 +162,14 @@ export default class DiceThrower {
     const m20eRoll = this.getRoll();
 
     // send the message
-    const speaker = ChatMessage.getSpeaker({actor: this.actor});
+    const speaker = ChatMessage.getSpeaker({ actor: this.actor });
     //todo : use alias is is wonder throw
 
     //the async evaluation is gonna be done by the toMessage()
     await m20eRoll.toMessage({
-      speaker : speaker,
-      flavor : this.flavor
-    }, {rollMode: this.rollMode});
+      speaker: speaker,
+      flavor: this.flavor
+    }, { rollMode: this.rollMode });
 
     this.resetAll()
   }
@@ -86,17 +179,17 @@ export default class DiceThrower {
     const rollOptions = {
       actorId: this.actor.id,
       stats: this._throw.stats,
-      data: {...this.data, throwOwner: this.data.throwOwner?.id},
+      data: { ...this.data, throwOwner: this.data.throwOwner?.id },
       flavor: this.flavor
     };
-    
+
     //prepare the formula
-    const {dicePoolTotal, difficultyTotal} = this.data;
+    const { dicePoolTotal, difficultyTotal } = this.data;
     //this.data.throwMode = this.data.throwMode | M20E.THROWMODE.XPLODE_SUCCESS
     const tenXplodeSuccess = (this.data.throwMode & M20E.THROWMODE.XPLODE_SUCCESS) ? 'xs=10' : '';
     const deductFailures = (this.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES) ? 'df=1' : '';
     const formula = `${dicePoolTotal}d10${tenXplodeSuccess}cs>=${difficultyTotal}${deductFailures}`;
-    
+
     const cls = CONFIG.Dice.M20eRoll;
     return new cls(formula, null, rollOptions);
   }
@@ -121,7 +214,7 @@ export default class DiceThrower {
       throwIndex: 0,
       difficultyOverride: null,
       ignoreHealthMod: false,
-      throwMode : M20E.THROWMODE.DEDUCT_FAILURES | M20E.THROWMODE.RESULT_CRITICAL
+      throwMode: M20E.THROWMODE.DEDUCT_FAILURES | M20E.THROWMODE.RESULT_CRITICAL
     };
   }
 
@@ -131,18 +224,18 @@ export default class DiceThrower {
 
   initialize(m20eThrow, options) {
     //this.prepareStats();
-    if ( m20eThrow ) {
+    if (m20eThrow) {
       //first check if throw is feasible 
       m20eThrow.stats.forEach(stat => M20eThrow.validateStat(this.actor, stat, true));
 
       //process the throw data, stats and options
       this._throw = m20eThrow;
-      if ( this._throw.stats.length > 0 ) {
+      if (this._throw.stats.length > 0) {
         this._throw.stats = this.actor.getExtendedStats(this._throw.stats);
         this.statsLock = true;
       }
       //sanitize the options before merging (we wouldn't want a 0 diff)
-      if ( m20eThrow.options.difficultyBase === 0 ) {
+      if (m20eThrow.options.difficultyBase === 0) {
         delete m20eThrow.options['difficultyBase'];
       }
       //merge data & options
@@ -174,7 +267,7 @@ export default class DiceThrower {
     //Difficulty
     this.data.difficultyMods['untrainedMod'] = this.getUntrainedMod();
     const diffModTotal = this.getDifficultyModTotal();
-    this.data.difficultyTotal = this.data.difficultyOverride ?? 
+    this.data.difficultyTotal = this.data.difficultyOverride ??
       Math.clamped(this.data.difficultyBase + diffModTotal, 3, 9); //todo, have diff limits in config
 
     //todo : get flavor from item
@@ -182,8 +275,12 @@ export default class DiceThrower {
     //this._throw.getStatsLocalizedNames(this.actor).join(' + ');
   }
 
+  /* -------------------------------------------- */
+  /*  Calculations                                */
+  /* -------------------------------------------- */
+
   getFlavor() {
-    if ( this.data.throwOwner ) {
+    if (this.data.throwOwner) {
       return this.data.throwOwner.getThrowFlavor(this.data.throwIndex);
     } else {
       return this.actor.getThrowFlavor(this._throw.stats);
@@ -196,8 +293,8 @@ export default class DiceThrower {
    * 
    * @returns {Number} the base dice pool for this throw
    */
-   getDicePoolBase() {
-    if ( this.data.isMagickThrow ) {
+  getDicePoolBase() {
+    if (this.data.isMagickThrow) {
       //dice pool base is just arete
       //items might have an arete score (ie Wonders, Talismans...)
       return this.actor.data.stats.magick.arete.value;
@@ -216,15 +313,16 @@ export default class DiceThrower {
    * 
    * @returns {Number} a negative modifier
    */
-   getHealthMod() {
+  getHealthMod() {
+    // TODO : Some other throws might not require health malus (like willpower, resonance, contacts, etc)
     //if ( DiceThrower.isItemThrow(document) ) { return 0;} //wonders don't have a health malus
     const healthMalus = this.actor.data.data.resources.health.malus;
 
-    if ( game.settings.get("mage-fr", "useHealthMalus") ) {
-      if ( this.data.isMagickThrow ) {
+    if (game.settings.get("mage-fr", "useHealthMalus")) {
+      if (this.data.isMagickThrow) {
         //throw is pure magic, check for specific setting
-        return game.settings.get("mage-fr", "useHealthMalusForMagic") ? 
-        healthMalus * -1 : 0;
+        return game.settings.get("mage-fr", "useHealthMalusForMagic") ?
+          healthMalus * -1 : 0;
       } else {
         return healthMalus * -1;
       }
@@ -236,10 +334,10 @@ export default class DiceThrower {
    * @param {Boolean} ignoreHealthMod if true => doesn't add the healthmod
    * @returns {Number} sum of all relevant dice pool modifiers
    */
-   getDicePoolModTotal(ignoreHealthMod = false) {
+  getDicePoolModTotal(ignoreHealthMod = false) {
     let totalMod = 0;
-    for( const mod in this.data.dicePoolMods) {
-      if ( mod !== 'healthMod' || !ignoreHealthMod) {
+    for (const mod in this.data.dicePoolMods) {
+      if (mod !== 'healthMod' || !ignoreHealthMod) {
         totalMod += this.data.dicePoolMods[mod];
       }
     }
@@ -249,10 +347,10 @@ export default class DiceThrower {
   /**
    * @returns {Number} sum of ALL Difficulty modifiers
    */
-   getDifficultyModTotal() {
+  getDifficultyModTotal() {
     let totalMod = 0;
-    for( const mod in this.data.difficultyMods) {
-        totalMod += this.data.difficultyMods[mod];
+    for (const mod in this.data.difficultyMods) {
+      totalMod += this.data.difficultyMods[mod];
     }
     return totalMod;
   }
@@ -264,83 +362,43 @@ export default class DiceThrower {
    * 
    * @returns {Number} a positive modifier
    */
-   getUntrainedMod() {
+  getUntrainedMod() {
     let untrainedMod = 0;
     const settings = game.settings.get("mage-fr", "untrainedMalus");
-    if ( settings === "000" ) { return 0; }
+    if (settings === "000") { return 0; }
     //settings is 3 digit string => first char for talents, second char for skills and third char for knowledges
-    const subTypes = {talents: 0, skills: 1, knowledges: 2};
+    const subTypes = { talents: 0, skills: 1, knowledges: 2 };
     //check if untrained ability
-    this._throw.stats.forEach( stat => {
+    this._throw.stats.forEach(stat => {
       const { category, subType } = stat.split();
-      if ( category === "abilities" && !stat.value) {
+      if (category === "abilities" && !stat.value) {
         //get specific game setting relative to untrained abilities
-        const malus = settings.substr(subTypes[subType],1);
-        if ( isNaN(malus) ) { throw {msg:'impossibleThrow'}; }
+        const malus = settings.substr(subTypes[subType], 1);
+        if (isNaN(malus)) { throw { msg: 'impossibleThrow' }; }
         untrainedMod += parseInt(malus);
       }
     })
     return untrainedMod;
   }
 
-   /**
-   * Whether the items own stats are used in lieue of the actor's
-   * Atm only wonders / talismans qualify as itemThrows (using their own arete value)
-   * @param  {Document} document
-   * 
-   * @returns {Boolean} false unless document is a owned item of type 'wonder'
-   */
-    static isItemThrow(document) {
-      if ( document.isEmbedded ) {//idem .isOwned
-        return ['wonder'].includes(document.type);
-      }
-      return false;
+  /**
+  * Whether the items own stats are used in lieue of the actor's
+  * Atm only wonders / talismans qualify as itemThrows (using their own arete value)
+  * @param  {Document} document
+  * 
+  * @returns {Boolean} false unless document is a owned item of type 'wonder'
+  */
+  static isItemThrow(document) {
+    if (document.isEmbedded) {//idem .isOwned
+      return ['wonder'].includes(document.type);
     }
+    return false;
+  }
 
 
   static useCritical(throwMode) {
-    return !!(throwMode &  M20E.THROWMODE.RESULT_CRITICAL)
+    return !!(throwMode & M20E.THROWMODE.RESULT_CRITICAL)
   }
-
-  /* -------------------------------------------- */
-  /*  Stats                                       */
-  /* -------------------------------------------- */
-
-  refreshStats() {
-    this._throw.stats = this.actor.getExtendedStats(this._throw.stats);
-    this.flavor = this._throw.getStatsLocalizedNames(this.actor).join(' + ');
-    this.actor.sheet.render();
-  }
-
-  addStatByPath(path) {
-    try {
-      //safe add, check it's not already in the stats array
-      if ( this._throw.stats.some( stat => stat.path === path ) ) {
-        throw { msg: 'alreadyAdded'};
-      }
-      const stat = new Trait({path : path});
-      M20eThrow.validateStat(this.actor, stat);
-      this._throw.addStat(stat);
-      this.refreshStats();
-
-    } catch (e) {
-      ui.notifications.error(game.i18n.localize(`M20E.notifications.${e.msg}`));
-      return;
-    }
-  }
-
-  removeStatByPath(path) {
-    const statIndex = this._throw.stats.findIndex( stat => stat.path === path);
-    if ( statIndex !== -1 ) {
-      this.removeStatByIndex(statIndex);
-    }
-  }
-
-  removeStatByIndex(statIndex) {
-    this._throw.removeStat(statIndex);
-    this.refreshStats();
-  }
-
 
   /* -------------------------------------------- */
   /*  {DiceThrowerApp} App Handlers               */
@@ -352,39 +410,15 @@ export default class DiceThrower {
    * 
    * @returns {DiceThrowerApp} an instance of a DiceThrowerApp Application
    */
-   get app() {
+  get app() {
     //todo : maybe add game setting to prevent players from editing their throws ?
-    if ( !this._app ) {
+    if (!this._app) {
       const cls = CONFIG.M20E.DiceThrower.appClass;
-      this._app = new cls (this, {
-        editable: game.user.isGM || true 
+      this._app = new cls(this, {
+        editable: game.user.isGM || true
       });
     }
     return this._app;
-  }
-
-  /**
-   * remove a trait from both the traitToRoll array an it's extended counterpart
-   * from user interaction with an indexed remove button on the DiceDialog App
-   * 
-   * @param  {Number} index index of the trait in the throw's traits array
-   */
-  removeStat(index) {
-    this._throw.stats.splice(index, 1);
-    this.update();
-  }
-
-  /**
-   * updates the value of a trait from the extended traits array
-   * from user interaction with clickable bullets on the DiceDialog App
-   * note only allowed on actor magical effect throw
-   * 
-   * @param  {Number} index index of the trait in the throw's traits array
-   * @param  {Number} newValue 
-   */
-  updateStatProperty(index, propertyPath, newValue) {
-    foundry.utils.setProperty(this._throw.stats[index], propertyPath, newValue);
-    this.update();
   }
 
   /**
@@ -392,7 +426,7 @@ export default class DiceThrower {
    * 
    * @param  {Number} newValue
    */
-   updateChosenThreshold(newValue) {
+  updateChosenThreshold(newValue) {
     this.thresholdChosen = newValue;
     //this.thresholdMods.userMod = this.thresholdChosen - this.thresholdBase;
 
@@ -407,9 +441,9 @@ export default class DiceThrower {
    */
   rotateSetting(mod) {
     this.throwSettings += mod;
-    if ( this.throwSettings < TROWSETTINGS_BLANDROLL ) {
+    if (this.throwSettings < TROWSETTINGS_BLANDROLL) {
       this.throwSettings = TROWSETTINGS_DFXPLODESUCCESS;
-    } else if ( this.throwSettings > TROWSETTINGS_DFXPLODESUCCESS ) {
+    } else if (this.throwSettings > TROWSETTINGS_DFXPLODESUCCESS) {
       this.throwSettings = TROWSETTINGS_BLANDROLL;
     }
     this.render(true);
@@ -420,8 +454,8 @@ export default class DiceThrower {
    * 
    * @param  {Boolean} fullUpdate forces the reevaluation of the traits too
    */
-  update(fullUpdate=false) {
-    if ( fullUpdate ) {
+  update(fullUpdate = false) {
+    if (fullUpdate) {
       //happens usually when actor is updated
       this.prepareStats();
     }
@@ -451,11 +485,11 @@ export default class DiceThrower {
   /**
    * Only non 0 mods
    */
-  static getModsTooltipData(mods, invert=false) {
+  static getModsTooltipData(mods, invert = false) {
     let data = {};
-    for( const mod in mods) {
+    for (const mod in mods) {
       const value = mods[mod];
-      if ( value ) {
+      if (value) {
         data[mod] = {
           name: utils.safeLocalize(`M20E.throwMod.${mod}`, mod),
           class: (invert ? -1 * value : value) < 0 ? 'red-thingy' : 'green-thingy',

@@ -1382,7 +1382,6 @@ li.chat-message .card .card-footer .item-img {
   width: 100%;
   margin: 0;
   padding: 3px 5px;
-  border-bottom: 1px solid var(--titleColor);
 }
 .m20e.dialog .dialog-block.dice-pool {
   display: flex;

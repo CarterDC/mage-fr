@@ -121,24 +121,24 @@ import { log } from "./utils.js";
   }
 
   /**
-   * Returns whether user is allowed to use a specialisation
+   * Returns whether user is allowed to use a specialty
    */
   get canUseSpec() {
-    return this.value >= 4 && this.data.specialisation && this.data.specialisation !== '';
+    return this.value >= 4 && this.data.specialty && this.data.specialty !== '';
   }
 
   /**
-   * Returns whether this trait should use it's specialisation (with extra check)
+   * Returns whether this trait should use it's specialty (with extra check)
    */
   get useSpec() {
     return this.canUseSpec && this.data.useSpec;
   }
 
   /**
-   * returns traits name, displayName or specialisation depending on circumstances
+   * returns traits name, displayName or specialty depending on circumstances
    */
   get name() {
-    return this.useSpec ? this.data.specialisation :
+    return this.useSpec ? this.data.specialty :
       (this.data.displayName ? this.data.displayName : this.data.name);
   }
 
@@ -146,7 +146,7 @@ import { log } from "./utils.js";
    * returns value that will be displayed in the tooltip of the name
    */
   get specName() {
-    return this.useSpec ? this.name : this.data.specialisation;
+    return this.useSpec ? (this.data.displayName ? this.data.displayName : this.data.name) : this.data.specialty;
   }
 
 

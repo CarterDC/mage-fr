@@ -180,7 +180,7 @@ Hooks.on('renderChatLog', chat.addChatListeners);
 Hooks.on('getChatLogEntryContext', chat.addChatMessageContextOptions);
 
 //test shit here !
-//TODO : put that somewhere else & use div instead of anchor!
+//TODO : put that somewhere else !
 Hooks.on('renderJournalSheet', function(App, html, appData) {
   html.on('click', 'span.auto-link', onAutolinkClick);
 });
