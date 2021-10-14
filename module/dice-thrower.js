@@ -20,7 +20,7 @@ export default class DiceThrower {
   constructor(actor) {
     this.actor = actor;
     this._throw = this.getNewFreeThrow();
-    this.data = {};
+    this.data = this.constructor.defaultData;
     this._app = null;
   }
 
@@ -107,13 +107,8 @@ export default class DiceThrower {
     this._throw.stats = this.actor.getExtendedStats(this._throw.stats);
     this.flavor = this._throw.getStatsLocalizedNames(this.actor).join(' + ');
 
-    if (this._app) {
-      if (this._app._state !== -1) {
-        this._app.render();
-      }
-    }
+    this.prepareData();
   }
-
 
   getNewFreeThrow() {
     return new M20eThrow([
@@ -132,9 +127,15 @@ export default class DiceThrower {
     this._throw = this.getNewFreeThrow();
     this.statsLock = false;
     this.flavor = '';
-    this.data = {};
+    this.data = this.constructor.defaultData; // todo instancier les data !!!
     this.actor.sheet.render();
     ui.notifications.info('DiceThrower reset to default.')
+  }
+
+  updateData(propertyPath, newValue, options= {silent:false}) {
+    foundry.utils.setProperty(this.data, propertyPath, newValue);
+
+    this.prepareData(options);
   }
 
   /* -------------------------------------------- */
@@ -158,6 +159,10 @@ export default class DiceThrower {
       return;
     }
 
+    this.roll();
+  }
+
+  async roll() {
     // get the m20eRoll instance
     const m20eRoll = this.getRoll();
 
@@ -171,7 +176,7 @@ export default class DiceThrower {
       flavor: this.flavor
     }, { rollMode: this.rollMode });
 
-    this.resetAll()
+    this.resetAll();
   }
 
   getRoll() {
@@ -273,6 +278,12 @@ export default class DiceThrower {
     //todo : get flavor from item
     this.flavor = this.getFlavor();
     //this._throw.getStatsLocalizedNames(this.actor).join(' + ');
+
+    if (this._app) {
+      if (this._app._state !== -1) {
+        this._app.render();
+      }
+    }
   }
 
   /* -------------------------------------------- */
@@ -454,7 +465,7 @@ export default class DiceThrower {
    * 
    * @param  {Boolean} fullUpdate forces the reevaluation of the traits too
    */
-  update(fullUpdate = false) {
+  /*update(fullUpdate = false) {
     if (fullUpdate) {
       //happens usually when actor is updated
       this.prepareStats();
@@ -463,7 +474,7 @@ export default class DiceThrower {
     this.prepareData();
     //render
     this.app.render(true);
-  }
+  }*/
 
   /**
    * called by ActorSheet or macro to display the DiceDialogue Application
@@ -486,7 +497,7 @@ export default class DiceThrower {
    * Only non 0 mods
    */
   static getModsTooltipData(mods, invert = false) {
-    let data = {};
+    let data = [];
     for (const mod in mods) {
       const value = mods[mod];
       if (value) {

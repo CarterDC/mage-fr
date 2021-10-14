@@ -181,6 +181,8 @@ li.chat-message{
               left: 5%;
               margin: 5px 0px 0px 0px; 
               z-index: 1;
+              line-height: 18px;
+              font-weight: bold;
             }
             .bottomtooltiptext::after {
               content: " ";
@@ -202,14 +204,13 @@ li.chat-message{
     }
   }
   .dice-total{
-      color:var(--m20e-goodGreen);
+    color:var(--m20e-midGrey);
   }
-  .dice-total[data-result="0"],
-  .dice-total[data-result="?"]{
-      color:var(--m20e-midGrey);
+  .dice-total.red-thingy {
+    color:var(--m20e-badRed);
   }
-  .dice-total[data-result^="-"]{
-      color:var(--m20e-badRed);
+  .dice-total.green-thingy {
+    color:var(--m20e-goodGreen);
   }
 }
 

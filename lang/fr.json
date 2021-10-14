@@ -228,12 +228,12 @@
         "levels": {
           "level1": {
             "bullets": "●",
-            "title": "Initié :",
+            "title": "Apprenti :",
             "description": "..."
           },
           "level2": {
             "bullets": "●●",
-            "title": "Apprenti :",
+            "title": "Initié :",
             "description": "..."
           },
           "level3": {
@@ -494,6 +494,7 @@
       "picture": "Photo",
       "pool": "Grpt.",
       "possessedStuff": "Équipement possédé",
+      "previousSuccesses": "Succès accumulés",
       "quantity": "Quantité",
       "range": "Portée",
       "resonance": "Résonance",
@@ -510,6 +511,7 @@
       "subType": "Sous-Type",
       "success": "Succès",
       "successMod": "Seuil de succès",
+      "successThreshold": "Seuil de succès",
       "synergyFlavor": "Saveur de la synergie",
       "systemDescription": "⚠ Description Système",
       "systemName": "⚠ Nom système",
@@ -687,9 +689,9 @@
     },
     "throwresult": {
       "isWillpowered": "+ 1 Succès (Volonté)",
-      "failure": "Échec !",
-      "success": "{total} Succès !",
-      "critfailure": "Échec Critique ({total}) !",
+      "failure": "Échec {total}",
+      "success": "Succès ! {total}",
+      "critfailure": "Échec Critique ! {total}",
       "fail": "Échec",
       "succ": "Succès",
       "crit": "Échec critique"

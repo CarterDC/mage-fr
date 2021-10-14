@@ -229,12 +229,12 @@
         "levels": {
           "level1": {
             "bullets": "●",
-            "title": "Initiate:",
+            "title": "Apprentice:",
             "description": "..."
           },
           "level2": {
             "bullets": "●●",
-            "title": "Apprentice:",
+            "title": "Initite:",
             "description": "..."
           },
           "level3": {
@@ -495,6 +495,7 @@
       "picture": "Picture",
       "pool": "Pool",
       "possessedStuff": "Owned Stuff",
+      "previousSuccesses": "Accumulated Successes",
       "quantity": "Quantity",
       "range": "Range",
       "resonance": "Resonance",
@@ -511,6 +512,7 @@
       "subType": "Sub-type",
       "success": "Success",
       "successMod": "Success threshold",
+      "successThreshold": "Success threshold",
       "synergyFlavor": "Synergy Flavor",
       "systemDescription": "⚠ System Desciption",
       "systemName": "⚠ System Name",
@@ -688,9 +690,9 @@
     },
     "throwresult": {
       "isWillpowered": "+ 1 Success (Willpower)",
-      "failure": "Failure!",
-      "success": "{total} Success!",
-      "critfailure": "Botched ({total})!",
+      "failure": "Failure {total}",
+      "success": "Success! {total}",
+      "critfailure": "Botched ! {total}",
       "fail": "Failure",
       "succ": "Success",
       "crit": "Botch"

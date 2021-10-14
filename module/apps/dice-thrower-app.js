@@ -19,6 +19,8 @@ import { log } from "../utils.js";
     this.closeOnRoll = true;
 
     this.colapsibles = {
+      dicePool: true,
+      difficulty: true
     };
 
     //add the paradigm css class if any to the default options.
@@ -114,7 +116,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-user-secret"></i>',
         callback: element => {
           this.dt.rollMode = "stealthroll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         },
         condition: element => {
           return game.user.isGM;
@@ -125,7 +127,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-user"></i>',
         callback: element => {
           this.dt.rollMode = "selfroll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         }
       },
       {
@@ -133,7 +135,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-eye-slash"></i>',
         callback: element => {
           this.dt.rollMode = "blindroll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         }
       },
       {
@@ -141,7 +143,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-user-friends"></i>',
         callback: element => {
           this.dt.rollMode = "gmroll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         }
       },
       {
@@ -149,7 +151,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-users"></i>',
         callback: element => {
           this.dt.rollMode = "roll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         }
       }
     ];
@@ -165,7 +167,9 @@ import { log } from "../utils.js";
    */
   _onRadioClick(event) {
     const labelElem = event.currentTarget;
-    this.dt.updateChosenThreshold(parseInt(labelElem.innerHTML.trim()))
+    const newTotalDiff = parseInt(labelElem.htmlFor.match(/(\d)/g)[0]);
+    const newUserMod = this.dt.data.difficultyMods.userMod + (newTotalDiff - this.dt.data.difficultyTotal);
+    this.dt.updateData('difficultyMods.userMod', newUserMod);
   }
 
   /**
@@ -187,7 +191,7 @@ import { log } from "../utils.js";
 
     switch ( dataset.action ) {
       case 'roll':
-        this.dt.throwDice(null, {closeOnRoll: this.closeOnRoll});
+        this.dt.roll({closeOnRoll: this.closeOnRoll});
         break;
       case 'remove':
         this.dt.removeStatByIndex(traitElem.dataset.key);
@@ -197,12 +201,10 @@ import { log } from "../utils.js";
         this.dt.updateStatProperty(traitElem.dataset.key, 'data.useSpec', !speToggle)
         break;
       case 'mod-plus':
-        this.dt.data.dicePoolMods.userMod += 1;
-        this.dt.update();
+        this.dt.updateData('dicePoolMods.userMod', this.dt.data.dicePoolMods.userMod + 1);
         break;
       case 'mod-minus':
-        this.dt.data.dicePoolMods.userMod -= 1;
-        this.dt.update();
+        this.dt.updateData('dicePoolMods.userMod', this.dt.data.dicePoolMods.userMod - 1);
         break;
       case 'auto-close':
         this.closeOnRoll = !this.closeOnRoll;

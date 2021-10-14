@@ -119,25 +119,30 @@ export class M20eRoll extends Roll {
 
     part.data = {
       dpTotal: this.dice[0].number,
-      diffTotal: this.getCsModifierValue(this.dice[0]),
+      diffTotal: this.getCsModifierValue(this.dice[0])
     };
 
     const data = this.options.data;
-    if (data) { //todo : don't create tt data if total === base
-      if ( data.dicePoolTotal !== data.dicePoolBase ) {
+    if (data) {
+      const dpTooltips = utils.getModsTooltipData(data.dicePoolMods);
+      if ( dpTooltips.length ) {
         part.data.dpTooltips = [{
           name: game.i18n.localize(`M20E.throwMod.base`),
-          class: '',
+          class: 'underlined-thingy',// todo : underline !
           value: data.dicePoolBase
-        }, ...utils.getModsTooltipData(data.dicePoolMods)];
+        }, ...dpTooltips];
       }
-      if ( data.difficultyTotal !== data.difficultyBase ) {
+      const diffTooltips = utils.getModsTooltipData(data.difficultyMods, true);
+      if ( diffTooltips.length ) {
         part.data.diffTooltips = [{
           name: game.i18n.localize(`M20E.throwMod.base`),
-          class: '',
+          class: 'underlined-thingy',// todo : underline !
           value: data.difficultyBase
-        }, ...utils.getModsTooltipData(data.difficultyMods, true)];
+        }, ...diffTooltips];
       }
+    } else {
+      //attempts to extract success mods if any
+      part.data = {...part.data, ...this.getNumericTerms()};
     }
 
     part.options = this.options;
@@ -145,6 +150,27 @@ export class M20eRoll extends Roll {
     return renderTemplate(this.constructor.TOOLTIP_TEMPLATE, { part });
   }
 
+  /**
+   * not really numeric terms, only values that directly follows a + or - operator
+   */
+  getNumericTerms() {
+    let positiveSum = 0, negativeSum = 0;
+    for ( let i = 0; i < this.terms.length; i++ ) {
+      if ( this.terms[i].operator === '+' ) {
+        i++;
+        positiveSum += this.terms[i].total;
+      } else if ( this.terms[i].operator === '-' ) {
+        i++;
+        negativeSum += this.terms[i].total;
+      } 
+    }
+    return {previousSuccesses: positiveSum, successThreshold: negativeSum };
+  }
+
+  /**
+   * Returns the value of the Count Success modifier as if it were 'cs>='.
+   * @param  {} dice
+   */
   getCsModifierValue(dice) {
     for (let i = 0; i < dice.modifiers.length; i++) {
       let match = dice.modifiers[i].match(/cs?([<>=]+)?([0-9]+)?/i);
@@ -175,11 +201,6 @@ export class M20eRoll extends Roll {
 
     const total = Math.round(this.total * 100) / 100;
 
-    //TODO : have function to return, css class + totalString depending on options crit
-    const totalString = total === 0 ? game.i18n.localize('M20E.throwresult.failure') :
-      (total > 0 ? game.i18n.format('M20E.throwresult.success', { total: total }) :
-        game.i18n.format('M20E.throwresult.critfailure', { total: total }));
-
     // Define chat data
     const chatData = {
       formula: isPrivate ? "???" : this._formula,
@@ -187,11 +208,52 @@ export class M20eRoll extends Roll {
       user: chatOptions.user,
       tooltip: isPrivate ? "" : await this.getTooltip(),
       total: isPrivate ? "?" : total,
-      totalString: isPrivate ? "?" : totalString
+      totalExtras: isPrivate ? "?" : this.getTotalExtras()
     };
 
     // Render the roll display template
     return renderTemplate(chatOptions.template, chatData);
+  }
+
+  get isCritFailure() {
+    //sum up cuz there might be a regular dice + a success dice in there
+    const diceTotal = this.dice.reduce((acc, cur) => {
+      return acc + cur.total;
+    }, 0);
+
+    //in the abscence of a valid throwMode, roll is considered critAble by default
+    const isCritAble = this.options?.data ? 
+      this.options?.data.throwMode & CONFIG.M20E.THROWMODE.RESULT_CRITICAL : true;
+
+    //determine if crit failure based on diceTotal and not roll total !
+    return isCritAble && diceTotal < 0;
+  }
+
+  /**
+   */
+  getTotalExtras() {
+    const extras = {
+      class: '',
+      label: ''
+    };
+    const rollRotal = Math.round(this.total * 100) / 100;
+    const {previousSuccesses = 0, successThreshold = 0} = this.getNumericTerms();
+    const totalString = successThreshold ? 
+      `${rollRotal + successThreshold}/${successThreshold}` : 
+      ( rollRotal !== 0 ? `${rollRotal}` : '');
+
+    if ( this.isCritFailure ) {
+      extras.class = 'red-thingy';
+      extras.label = game.i18n.format('M20E.throwresult.critfailure', { total: totalString });
+    } else if ( rollRotal <= 0 ) {
+      //regular failure
+      extras.label = game.i18n.format('M20E.throwresult.failure', { total: totalString });
+    } else {
+      //success
+      extras.class = 'green-thingy';
+      extras.label = game.i18n.format('M20E.throwresult.success', { total: totalString });
+    }
+    return extras;
   }
 }
 

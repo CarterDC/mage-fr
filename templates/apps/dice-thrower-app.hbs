@@ -1,11 +1,5 @@
 <form class="{{cssClass}}" autocomplete="off" spellcheck="false" style="display:block;">
 {{!-- Flavor --}}
-    <div class="title-line">
-      <div class="pre-line"></div>
-      <label>{{localize 'M20E.labels.throwName'}}</label>
-      <div class="post-line"></div>
-      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.throwName}}">{{#if colapsibles.throwName}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
-    </div>
     <div name="throwName" class="dialog-block flavor" {{#if colapsibles.throwName}}style="display:none;" {{/if}}>
       {{{dt.flavor}}}
     </div>
@@ -43,9 +37,24 @@
 {{!-- Dice Pool --}}
     <div class="title-line">
       <div class="pre-line"></div>
+      {{#if colapsibles.dicePool}}
+      <label class="tooltip">
+        {{localize 'M20E.labels.dicePool'}} : {{dt.data.dicePoolTotal}}
+            {{#if data.dpTooltips}}
+            <span class="righttooltiptext">
+              {{#each data.dpTooltips as |tt key|}}
+              <label class="{{tt.class}}">{{tt.name}}: {{tt.value}}</label><br>
+              {{/each}}
+            </span>
+            {{/if}}
+      </label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.dicePool}}"><i class="fas fa-caret-down"></i></a>
+      {{else}}
       <label title="{{localize 'M20E.hints.dicePool'}}">{{localize 'M20E.labels.dicePool'}}</label>
       <div class="post-line"></div>
-      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.dicePool}}">{{#if colapsibles.dicePool}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.dicePool}}"><i class="fas fa-caret-up"></i></a>
+      {{/if}}
     </div>
     <div name="dicePool" class="dialog-block dice-pool"  {{#if colapsibles.dicePool}}style="display:none;" {{/if}}>
         <input type="text" value="{{dt.data.dicePoolBase}}" data-dtype="Number" disabled/>
@@ -69,9 +78,24 @@
 {{!-- Difficulty --}}
     <div class="title-line">
       <div class="pre-line"></div>
+      {{#if colapsibles.difficulty}}
+      <label class="tooltip">
+        {{localize 'M20E.labels.difficulty'}} : {{dt.data.difficultyTotal}}
+            {{#if data.diffTooltips}}
+            <span class="righttooltiptext">
+              {{#each data.diffTooltips as |tt key|}}
+              <label class="{{tt.class}}">{{tt.name}}: {{tt.value}}</label><br>
+              {{/each}}
+            </span>
+            {{/if}}
+      </label>
+      <div class="post-line"></div>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.difficulty}}"><i class="fas fa-caret-down"></i></a>
+      {{else}}
       <label title="{{localize 'M20E.hints.difficulty'}}">{{localize 'M20E.labels.difficulty'}}</label>
       <div class="post-line"></div>
-      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.difficulty}}">{{#if colapsibles.difficulty}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
+      <a class="mini-button" data-action="colapse" data-disabled="" data-state="{{colapsibles.difficulty}}"><i class="fas fa-caret-up"></i></a>
+      {{/if}}
     </div>
     <div name="difficulty" class="dialog-block difficulty" {{#if colapsibles.difficulty}}style="display:none;" {{/if}}>
         <div class="radio-group dice">
