@@ -38,6 +38,7 @@
                     {{/if}}
                 </div>
                 {{/if}}
+                {{!-- TODO : colorize total according to roll.isCritFailure() --}}
                 <span class="part-total">{{part.total}}</span>
             </header>
             <ol class="dice-rolls">
@@ -45,6 +46,28 @@
                 <li class="roll {{roll.classes}}">{{{roll.result}}}</li>
             {{/each}}
             </ol>
+            {{#if part.data.previousSuccesses}}
+            <header class="part-header flexrow">
+              <div class="tooltip-infos">
+                <span class="tooltip-info">
+                  {{localize 'M20E.labels.previousSuccesses'}}
+                </span>
+              </div>
+              <span class="part-total">{{part.data.previousSuccesses}}</span>
+            </header>
+            <br>
+            {{/if}}
+            {{#if part.data.successThreshold}}
+            <header class="part-header flexrow">
+              <div class="tooltip-infos">
+                <span class="tooltip-info">
+                  {{localize 'M20E.labels.successThreshold'}}
+                </span>
+              </div>
+              <span class="part-total">{{part.data.successThreshold}}</span>
+            </header>
+            <br>
+            {{/if}}
         </div>
     </section>
 </div>

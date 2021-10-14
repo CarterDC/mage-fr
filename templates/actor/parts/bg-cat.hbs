@@ -3,7 +3,7 @@
     {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="backgrounds" lock = locks.backgrounds addButton = true}}
     <div class="grid two-col">
         {{#each items.backgrounds as |background key|}}
-        <div class="trait background linkable" data-path="backgrounds.{{m20e-sanitize background.name}}" data-item-id="{{background._id}}" data-active= "false"> 
+        <div class="trait background linkable" data-path="backgrounds.{{m20e-sanitize background.name}}" data-item-id="{{background._id}}" data-highlighted= "{{background.data.isHighlighted}}"> 
             <img class="trait-img" src="{{background.img}}"/>
             <a class="stat-label drag-ready tooltip" data-item-id="{{background._id}}">
                 {{#if background.data.displayName}}

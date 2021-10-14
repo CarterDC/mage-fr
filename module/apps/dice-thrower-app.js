@@ -19,6 +19,8 @@ import { log } from "../utils.js";
     this.closeOnRoll = true;
 
     this.colapsibles = {
+      dicePool: true,
+      difficulty: true
     };
 
     //add the paradigm css class if any to the default options.
@@ -39,8 +41,8 @@ import { log } from "../utils.js";
       classes: ['m20e', 'dialog'],
       template: 'systems/mage-fr/templates/apps/dice-thrower-app.hbs',
       width: 290,
-      height: 'fit-content',
-      resizable: true
+      height: 'auto',
+      resizable: false
     });
   }
 
@@ -114,7 +116,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-user-secret"></i>',
         callback: element => {
           this.dt.rollMode = "stealthroll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         },
         condition: element => {
           return game.user.isGM;
@@ -125,7 +127,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-user"></i>',
         callback: element => {
           this.dt.rollMode = "selfroll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         }
       },
       {
@@ -133,7 +135,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-eye-slash"></i>',
         callback: element => {
           this.dt.rollMode = "blindroll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         }
       },
       {
@@ -141,7 +143,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-user-friends"></i>',
         callback: element => {
           this.dt.rollMode = "gmroll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         }
       },
       {
@@ -149,7 +151,7 @@ import { log } from "../utils.js";
         icon: '<i class="fas fa-users"></i>',
         callback: element => {
           this.dt.rollMode = "roll";
-          this.dt.throwDice(this.closeOnRoll);
+          this.dt.roll(this.closeOnRoll);
         }
       }
     ];
@@ -165,7 +167,9 @@ import { log } from "../utils.js";
    */
   _onRadioClick(event) {
     const labelElem = event.currentTarget;
-    this.dt.updateChosenThreshold(parseInt(labelElem.innerHTML.trim()))
+    const newTotalDiff = parseInt(labelElem.htmlFor.match(/(\d)/g)[0]);
+    const newUserMod = this.dt.data.difficultyMods.userMod + (newTotalDiff - this.dt.data.difficultyTotal);
+    this.dt.updateData('difficultyMods.userMod', newUserMod);
   }
 
   /**
@@ -176,50 +180,64 @@ import { log } from "../utils.js";
     event.preventDefault();
     const buttonElem = event.currentTarget;
     const dataset = buttonElem.dataset;
-    if ( dataset.disabled == 'true' ) { return; }
 
+    //check if action is allowed before going any further
+    if ( dataset.disabled == 'true' ) {
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.gmPermissionNeeded'));
+      return;
+    }
     const traitElem = buttonElem.closest('.trait');
     //const statIndex = traitElem.dataset.key;
 
     switch ( dataset.action ) {
       case 'roll':
-        this.dt.throwDice(null, {closeOnRoll: this.closeOnRoll});
+        this.dt.roll({closeOnRoll: this.closeOnRoll});
         break;
       case 'remove':
-        this.dt.removeStat(traitElem.dataset.key);
+        this.dt.removeStatByIndex(traitElem.dataset.key);
         break;
       case 'spe':
         const speToggle = (dataset.active === 'true');
         this.dt.updateStatProperty(traitElem.dataset.key, 'data.useSpec', !speToggle)
         break;
       case 'mod-plus':
-        this.dt.data.dicePoolMods.userMod += 1;
-        this.dt.update();
+        this.dt.updateData('dicePoolMods.userMod', this.dt.data.dicePoolMods.userMod + 1);
         break;
       case 'mod-minus':
-        this.dt.data.dicePoolMods.userMod -= 1;
-        this.dt.update();
+        this.dt.updateData('dicePoolMods.userMod', this.dt.data.dicePoolMods.userMod - 1);
         break;
       case 'auto-close':
         this.closeOnRoll = !this.closeOnRoll;
         buttonElem.dataset.active = this.closeOnRoll;
+        break;
+      case 'colapse':
+        this.colapseNext(buttonElem.closest('.title-line'));
         break;
       default :
         break;
     };
   }
 
+  colapseNext(titleElem) {
+    const colapsibleName = titleElem.nextElementSibling.getAttribute('name');
+    const toggle = this.colapsibles[colapsibleName] === true;
+    this.colapsibles[colapsibleName] = !toggle;
+    this.render();
+  }
+
   /**
    * update the value of a trait given the bullet that's been clicked
    * only avail from clickable bullets
-   * atm got no gameplay effect besides the final flavor text
+   * This value is mostly used to calculate max effect level and thus paradox points
    * @param  {} event
    */
   _onBulletClick(event) {
     event.preventDefault();
     const element = event.currentTarget;
-    const traitElem = element.closest('.trait');
-    this.dt.updateTraitValue(traitElem.dataset.key, parseInt(element.dataset.index) + 1);
+    const index = element.closest('.trait').dataset.key;
+    const newValue = parseInt(element.dataset.index) + 1;
+
+    this.dt.updateStatProperty(index, 'data.valueOverride', newValue);
   }
 
   /**

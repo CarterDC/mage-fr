@@ -107,11 +107,11 @@ export const registerSystemSettings = function () {
   });
 
   /**
-   * Whether specialisation rolls use the xs modifier
+   * Whether specialty rolls use the xs modifier
    */
-  game.settings.register("mage-fr", "specialisationRule", {
-    name: "SETTINGS.specialisationRule",
-    hint: "SETTINGS.specialisationRuleHint",
+  game.settings.register("mage-fr", "specialtyRule", {
+    name: "SETTINGS.specialtyRule",
+    hint: "SETTINGS.specialtyRuleHint",
     scope: "world",
     config: true,
     default: true,
@@ -119,7 +119,7 @@ export const registerSystemSettings = function () {
   });
 
   /**
-   * Whether specialisation rolls use the xs modifier
+   * Whether rote rolls use the xs modifier
    */
   game.settings.register("mage-fr", "roteRule", {
     name: "SETTINGS.roteRule",
@@ -199,7 +199,7 @@ export const registerSystemSettings = function () {
     hint: "SETTINGS.allowAliasesHint",
     scope: "world",
     config: true,
-    default: true,
+    default: false,
     type: Boolean
   });
 

@@ -100,7 +100,7 @@ export default class ParadoxDialog extends Application {
     appData.isGM = game.user.isGM;
     appData.colapsibles = this.colapsibles;
 
-    log(appData)
+    log(appData);
     return appData;
   }
 

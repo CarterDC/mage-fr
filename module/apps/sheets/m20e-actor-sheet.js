@@ -577,7 +577,7 @@ export default class M20eActorSheet extends ActorSheet {
   /**
   * Displays a "fake item-sheet" from actor's attributes, spheres or ? 
   * Enables edition of misc values : paradigmic name (actually stored in the lexicon),
-  * specialisation and description, along with main value.
+  * specialty and description, along with main value.
   * also displays the associated systemDescription sourced from matching compendium.
   * 
   * @param {Trait} trait  the Trait to be edited

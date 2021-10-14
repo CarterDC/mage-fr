@@ -292,8 +292,9 @@ export default class M20eActor extends Actor {
     const title = game.i18n.localize('M20E.new.createActor');
 
     //system specific : list of all base abilities compendiums
+    //todo : change entity for type come v9
     const baseAbilitiesPacks = [...game.packs.entries()].reduce((acc, [key, value]) => {
-      return value.metadata.name.includes('base-abilities') ?
+      return ( value.metadata.entity === 'Item' && value.metadata.name.includes('base-abilities') ) ?
        [...acc, {id: key, name: value.metadata.label}] : acc;
     }, []);
 
@@ -704,7 +705,7 @@ export default class M20eActor extends Actor {
       name: game.i18n.localize(`M20E.${path}`),
       displayName: this.getLexiconEntry(path),
       value: this._getStat(path, 'value'),
-      specialisation: foundry.utils.getProperty(this.data.data, `${path}.specialisation`)
+      specialty: foundry.utils.getProperty(this.data.data, `${path}.specialty`)
     };
   }
 }

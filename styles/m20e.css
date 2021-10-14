@@ -1292,6 +1292,8 @@ li.chat-message .card .card-footer .item-img {
   left: 5%;
   margin: 5px 0px 0px 0px;
   z-index: 1;
+  line-height: 18px;
+  font-weight: bold;
 }
 .m20e.dice-roll .dice-tooltip .part-header .tooltip-infos .bottomtooltiptext::after {
   content: " ";
@@ -1310,14 +1312,13 @@ li.chat-message .card .card-footer .item-img {
   visibility: visible;
 }
 .m20e.dice-roll .dice-total {
-  color: var(--m20e-goodGreen);
-}
-.m20e.dice-roll .dice-total[data-result="0"],
-.m20e.dice-roll .dice-total[data-result="?"] {
   color: var(--m20e-midGrey);
 }
-.m20e.dice-roll .dice-total[data-result^="-"] {
+.m20e.dice-roll .dice-total.red-thingy {
   color: var(--m20e-badRed);
+}
+.m20e.dice-roll .dice-total.green-thingy {
+  color: var(--m20e-goodGreen);
 }
 .mage {
   --titleColor: #4c39ae;
@@ -1382,7 +1383,6 @@ li.chat-message .card .card-footer .item-img {
   width: 100%;
   margin: 0;
   padding: 3px 5px;
-  border-bottom: 1px solid var(--titleColor);
 }
 .m20e.dialog .dialog-block.dice-pool {
   display: flex;
@@ -1614,6 +1614,9 @@ body {
 }
 .m20e .green-thingy {
   color: var(--m20e-goodGreen);
+}
+.m20e .underlined-thingy {
+  text-decoration: underline;
 }
 .m20e .hidden-field {
   display: none;

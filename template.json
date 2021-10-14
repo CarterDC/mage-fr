@@ -51,47 +51,47 @@
         "attributes":{
           "stre":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "char":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "perc":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "dext":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "mani":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },    
           "inte":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },   
           "stam":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "appe":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "wits":{
             "value": 1,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           }
         }
@@ -100,47 +100,47 @@
         "spheres":{
           "forc":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "corr":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "spir":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "matt":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "entr":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "prim":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "life":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "time":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           },
           "mind":{
             "value": 0,
-            "specialisation": "",
+            "specialty": "",
             "displayDescription": ""
           }
         }
@@ -166,7 +166,7 @@
       "magick": {
         "arete": {
           "value": 1,
-          "specialisation": "",
+          "specialty": "",
           "displayDescription": ""
         },
         "resonance": {
@@ -249,7 +249,7 @@
       "magick": {
         "arete": {
           "value": 1,
-          "specialisation": "",
+          "specialty": "",
           "displayDescription": ""
         },
         "resonance": {
@@ -419,8 +419,7 @@
         "isActive": true
       },
       "restrictions": {
-        "restrictions": "",
-        "tags": ""
+        "restrictions": ""
       }
     },
     "ability":{
@@ -429,7 +428,7 @@
         "restrictions"
       ],
       "subType": "talent",
-      "specialisation": "",
+      "specialty": "",
       "displayName":"",
       "systemDescription": "",
       "displayDescription":"",
@@ -441,6 +440,7 @@
         "active",
         "restrictions"
       ],
+      "specialty": "",
       "displayName":"",
       "systemDescription": "",
       "displayDescription":""
