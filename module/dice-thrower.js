@@ -18,9 +18,10 @@ export default class DiceThrower {
    * @param {M20eThrow}
    */
   constructor(actor) {
+    debugger
     this.actor = actor;
     this._throw = this.getNewFreeThrow();
-    this.data = this.constructor.defaultData;
+    this.data = DiceThrower.defaultData; //todo : go for something else when extended !
     this._app = null;
   }
 
@@ -110,6 +111,52 @@ export default class DiceThrower {
     this.prepareData();
   }
 
+  /* -------------------------------------------- */
+  /*  Data Management                             */
+  /* -------------------------------------------- */
+  
+  updateData(propertyPath, newValue, options= {silent:false}) {
+    foundry.utils.setProperty(this.data, propertyPath, newValue);
+
+    this.prepareData(options);
+  }
+
+  /**
+   * Calculates the relevant data for display / roll
+   * also called by every update method call in order to display accurate values in case diceThrow has an App
+   */
+   prepareData(options) {
+    this.data.isMagickThrow = M20eThrow.isMagickThrow(this._throw.stats);
+
+    //Dice Pool
+    this.data.dicePoolBase = this.getDicePoolBase();
+    this.data.dicePoolMods['healthMod'] = this.getHealthMod();
+    const dpModTotal = this.getDicePoolModTotal();
+    this.data.dicePoolTotal = Math.max(this.data.dicePoolBase + dpModTotal, 0);
+
+    //Difficulty
+    this.data.difficultyMods['untrainedMod'] = this.getUntrainedMod();
+    const diffModTotal = this.getDifficultyModTotal();
+    this.data.difficultyTotal = this.data.difficultyOverride ??
+      Math.clamped(this.data.difficultyBase + diffModTotal, 3, 9); //todo, have diff limits in config
+
+    //todo : get flavor from item
+    this.flavor = this.getFlavor();
+    //this._throw.getStatsLocalizedNames(this.actor).join(' + ');
+
+    this._render(options);
+  }
+
+  _render(options) {
+    if ( options?.silent === true ) { return; }
+
+    if (this._app) {
+      if (this._app._state !== -1) {
+        this._app.render();
+      }
+    }
+  }
+
   getNewFreeThrow() {
     return new M20eThrow([
       //stats
@@ -127,15 +174,12 @@ export default class DiceThrower {
     this._throw = this.getNewFreeThrow();
     this.statsLock = false;
     this.flavor = '';
-    this.data = this.constructor.defaultData; // todo instancier les data !!!
+    this.data = DiceThrower.defaultData;
     this.actor.sheet.render();
-    ui.notifications.info('DiceThrower reset to default.')
-  }
 
-  updateData(propertyPath, newValue, options= {silent:false}) {
-    foundry.utils.setProperty(this.data, propertyPath, newValue);
+    ui.notifications.info('DiceThrower reset to default.');
 
-    this.prepareData(options);
+    this.prepareStats();
   }
 
   /* -------------------------------------------- */
@@ -189,11 +233,19 @@ export default class DiceThrower {
     };
 
     //prepare the formula
+
     const { dicePoolTotal, difficultyTotal } = this.data;
-    //this.data.throwMode = this.data.throwMode | M20E.THROWMODE.XPLODE_SUCCESS
     const tenXplodeSuccess = (this.data.throwMode & M20E.THROWMODE.XPLODE_SUCCESS) ? 'xs=10' : '';
     const deductFailures = (this.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES) ? 'df=1' : '';
-    const formula = `${dicePoolTotal}d10${tenXplodeSuccess}cs>=${difficultyTotal}${deductFailures}`;
+    //preparation of the success mods
+    const {bonus, malus} = Object.values(this.data.successMods).reduce((acc, cur) => {
+      return cur < 0 ? {...acc, malus: acc.malus + parseInt(cur)} : {...acc, bonus: acc.bonus + parseInt(cur)}
+    },{bonus: 0, malus: 0});
+    let successString = '';
+    if ( bonus ) { successString += `+${bonus}`; }
+    if ( malus ) { successString += ` ${malus}`; }
+
+    const formula = `${dicePoolTotal}d10${tenXplodeSuccess}cs>=${difficultyTotal}${deductFailures}${successString}`;
 
     const cls = CONFIG.Dice.M20eRoll;
     return new cls(formula, null, rollOptions);
@@ -207,12 +259,14 @@ export default class DiceThrower {
         userMod: 0,
         untrainedMod: 0
       },
+      dicePoolBase: 0,
       dicePoolMods: {
         userMod: 0,
         healthMod: 0
       },
       successMods: {
-        userMod: 0
+        userMod: 0,
+        willpowerMod: 0
       },
       rollMode: game.settings.get("core", "rollMode"),
       isMagickThrow: false,
@@ -256,35 +310,7 @@ export default class DiceThrower {
     this.prepareData();
   }
 
-  /**
-   * Calculates the relevant data for display / roll
-   * also called by every update method call in order to display accurate values in case diceThrow has an App
-   */
-  prepareData() {
-    this.data.isMagickThrow = M20eThrow.isMagickThrow(this._throw.stats);
 
-    //Dice Pool
-    this.data.dicePoolBase = this.getDicePoolBase();
-    this.data.dicePoolMods['healthMod'] = this.getHealthMod();
-    const dpModTotal = this.getDicePoolModTotal();
-    this.data.dicePoolTotal = Math.max(this.data.dicePoolBase + dpModTotal, 0);
-
-    //Difficulty
-    this.data.difficultyMods['untrainedMod'] = this.getUntrainedMod();
-    const diffModTotal = this.getDifficultyModTotal();
-    this.data.difficultyTotal = this.data.difficultyOverride ??
-      Math.clamped(this.data.difficultyBase + diffModTotal, 3, 9); //todo, have diff limits in config
-
-    //todo : get flavor from item
-    this.flavor = this.getFlavor();
-    //this._throw.getStatsLocalizedNames(this.actor).join(' + ');
-
-    if (this._app) {
-      if (this._app._state !== -1) {
-        this._app.render();
-      }
-    }
-  }
 
   /* -------------------------------------------- */
   /*  Calculations                                */
@@ -490,25 +516,6 @@ export default class DiceThrower {
       return;
     }
     this.app.render(true);
-  }
-
-
-  /**
-   * Only non 0 mods
-   */
-  static getModsTooltipData(mods, invert = false) {
-    let data = [];
-    for (const mod in mods) {
-      const value = mods[mod];
-      if (value) {
-        data[mod] = {
-          name: utils.safeLocalize(`M20E.throwMod.${mod}`, mod),
-          class: (invert ? -1 * value : value) < 0 ? 'red-thingy' : 'green-thingy',
-          value: (value > 0) ? `+${value}` : `${value}`
-        };
-      }
-    }
-    return data;
   }
 
   /* -------------------------------------------- */

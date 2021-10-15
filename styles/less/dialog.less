@@ -25,6 +25,24 @@
     .mini-button{
       align-self: flex-end;
     }
+    .tooltip{
+      .righttooltiptext {
+        text-align: left;
+        font-size: 12px;
+        line-height: 18px;
+        margin: -5px 0px 0px 10px; 
+      }
+      .righttooltiptext::after {
+        content: " ";
+        position: absolute;
+        top: 20%;
+        right: 100%;
+        margin-top: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent var(--m20e-darkGrey) transparent transparent;
+      }
+    }
   }
   .flavor{
       margin-bottom: 6px;
@@ -37,6 +55,11 @@
       padding: 3px 5px;
       //border-bottom: 1px solid var(--titleColor);
   }
+  .dialog-block.success{
+    #inverted{
+      transform:rotateY(180deg);
+    }
+  }
 
   .dialog-block.dice-pool{
       display: flex;
@@ -44,9 +67,54 @@
       align-items: center;
       justify-content: space-between;
       padding: 5px 10px;
+      font-family: var(--titleFontFam);
+      font-size: var(--catFontSize);
+      color: var(--m20e-midGrey);
+      font-weight: bold;
+      text-align: center;
 
       label{
-          width:60px;
+        background: rgba(0, 0, 0, 0.05);
+        text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
+        height: 23px;
+        border-radius: 3px;
+        width: 100%;
+        flex-grow: 1;
+        margin:5px 5px;
+      }
+      label.icon{
+        font-weight:normal;
+        font-size:  var(--navFontSize);
+        padding-top: 3px;
+        text-shadow: none;
+      }
+      label.total{
+        color: var(--m20e-darkGrey);
+        border: 1px solid var(--m20e-darkGrey);
+      }
+      .number-spinner {
+        height: 23px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 3px;
+        width: 100%;
+        flex-grow: 1;
+        margin:5px 1px;
+        .double-button{
+          top: 2px;
+        }
+        .tooltip{
+          margin-left: 2px;
+          width: fit-content;
+          width: -moz-fit-content;
+          .righttooltiptext{
+            font-family: var(--mainFontFam);
+            font-size: var(--mainFontSize);
+          }
+        }
+        label {
+          background: none;
+          margin: none;
+        }
       }
       input{
           height:32px;
@@ -90,7 +158,7 @@
         span{
           color: var(--m20e-goodGreen);
           position: absolute;
-          left: 10px;
+          left: 13px;
           top: -6px;
         }
         span[data-cue='vulgar']{
@@ -125,14 +193,44 @@
     margin: 10px 6px 5px 6px; 
   }
 
+  .throw-mode{
+    margin:0 0 0 0;
+    position:relative;
+    display: inline-flex;
+    flex-direction: column;
+    .mini-button{
+      font-family: var(--titleFontFam);
+      font-size: var(--catFontSize);
+      color: var(--m20e-lightGrey);
+      text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.5), 1px 1px 0 rgba(245, 242, 217, 0.8);
+      font-weight: bold;
+      text-align: center;
+      height: 22px;
+      width: 36px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 3px;
+    }
+    .mini-button[data-state='1']{
+      color: var(--m20e-darkGrey);
+    }
+    .mini-button[data-state='2']{
+      color: var(--m20e-badRed);
+    }
+    .mini-button[data-state='3']{
+      color: var(--m20e-goodGreen);
+    }
+  }
   .mini-button.throw-dice{
+    display: inline-flex;
     justify-content:space-evenly;
-    height : 32px;
-    width: 70%;
+    height : 30px;
+    width: 66%;
+    top: 10px;
+    position:relative;
     font-family: "Diablo";
     font-weight: bold;
     font-size: 18px;
-    margin: 10px 6px 5px 6px; 
+    margin: 0px 5px 0px 5px; 
   }
   .mini-button.auto-close{
     height : 32px;
@@ -145,22 +243,6 @@
   .mini-button.auto-close[data-active='true']{
       color: var(--highlightColor);
   }
-  .mini-button.throw-settings{
-    color: var(--m20e-midGrey);
-    height : 32px;
-    width : 32px;
-    font-size: 18px;
-    margin:0 0 0 0;
-    position:relative;
-    top: 2px;
-  }
-  .mini-button.throw-settings[data-settings="2"]{
-    color: var(--m20e-goodGreen);
-  }
-  .mini-button.throw-settings[data-settings="3"]{
-    color: var(--m20e-badRed);
-  }
-
   .disabledInput{
     border: none;
     color: #4b4a44;

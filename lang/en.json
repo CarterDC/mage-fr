@@ -434,10 +434,14 @@
         "vulgar": "Vulgar effect",
         "vulgarWitness": "Vulgar effect with Witnesses"
       },
-      "throwSettings": {
-        "1": "Les '1' ne font rien de spécial.",
-        "2": "Chaque '1' retire un succès.",
-        "3": "Chaque '1' retire un succès. + Chaque '10' rajoute un succès supplémentaire."
+      "throwModeOnes": {
+        "0": "1's don't do anything particular.",
+        "1": "Each '1' deducts a success.",
+        "2": "Risk of Critical Failure."
+      },
+      "throwModeTens": {
+        "0": "10's don't do anything particular.",
+        "3": "Each '10' adds an extra success."
       },
       "toggleAutoClose": "Toggle auto-close",
       "toggleEditMode": "Toggle 'edition mode'/'display mode'",
@@ -498,6 +502,7 @@
       "previousSuccesses": "Accumulated Successes",
       "quantity": "Quantity",
       "range": "Range",
+      "reset": "Reset",
       "resonance": "Resonance",
       "resonanceFlavor": "Resonance Flavor",
       "result": "Result",
@@ -682,6 +687,7 @@
     "throwMod": {
       "base": "Base",
       "userMod": "User",
+      "willpowerMod": "Willpower",
       "throwMod": "Throw",
       "healthMod": "Health",
       "untrainedMod": "Untrained",
