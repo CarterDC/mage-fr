@@ -1,4 +1,6 @@
 import DiceThrower  from '../dice-thrower.js'
+import M20eThrow from '../throw.js' 
+import { M20E } from '../config.js'
 // Import Helpers
 import * as utils from '../utils.js'
 import { log } from "../utils.js";
@@ -20,7 +22,8 @@ import { log } from "../utils.js";
 
     this.colapsibles = {
       dicePool: true,
-      difficulty: true
+      difficulty: true,
+      success: true
     };
 
     //add the paradigm css class if any to the default options.
@@ -30,7 +33,6 @@ import { log } from "../utils.js";
     }
 
     //register a hook on updateActor in order to refresh the diceThrow with updated actor values.
-    //Hooks.on('updateActor', this.onUpdateActor);
     //Hooks.on('updateCoreRollMode', this.onUpdateCoreRollMode);
     //Hooks.on('systemSettingChanged', this.onSystemSettingChanged);
   }
@@ -51,16 +53,40 @@ import { log } from "../utils.js";
   }
 
   /** @override */
+  _getHeaderButtons() {
+    let buttons = super._getHeaderButtons();
+    // reset dt button
+    buttons = [
+      {
+        class: "reset-dt",
+        label: game.i18n.localize('M20E.labels.reset'),
+        icon: 'fas fa-undo-alt',
+        onclick: ev => this._onResetButtonClick(ev)
+      }
+    ].concat(buttons);
+
+    return buttons;
+  }
+
+  /** @override */
   getData () {
     const appData = super.getData();
 
     appData.dt = this.dt;
     appData.stats = this.dt._throw.stats;
+    this.isEffectThrow = M20eThrow.isEffectThrow(appData.stats);
+    this.maxEffectLevel = M20eThrow.getThrowLevel(appData.stats);
+
     appData.data = {
       dpModTotal: this.dt.getDicePoolModTotal(),
       dpTooltips: utils.getModsTooltipData(this.dt.data.dicePoolMods),
       diffModTotal: this.dt.getDifficultyModTotal(),
-      diffTooltips: utils.getModsTooltipData(this.dt.data.difficultyMods, true)
+      diffTooltips: utils.getModsTooltipData(this.dt.data.difficultyMods, true),
+      successMods: Object.values(this.dt.data.successMods).reduce((acc, cur) => {
+        return cur < 0 ? {...acc, malus: acc.malus + parseInt(cur)} : {...acc, bonus: acc.bonus + parseInt(cur)}
+      },{bonus: 0, malus: 0}),
+      modeOnesState: this.getModeOnesState(),
+      modeTensState: this.getModeTensState()
     };
 
     //creates an array for the radio options : value from 3 to 9, checked or ''
@@ -71,12 +97,12 @@ import { log } from "../utils.js";
     });
 
     //icon and title for the throw button
-    appData.extras = CONFIG.M20E.rollModeExtras[game.settings.get("core", "rollMode")];
+    appData.extras = M20E.rollModeExtras[game.settings.get("core", "rollMode")];
 
     //lock bullets for every thing but pure actor effects
     appData.mainLock = false;
-    appData.bulletLock = true;
-    appData.throwLock = this.dt.dicePoolTotal === 0;
+    appData.bulletLock = !this.isEffectThrow || this.dt.data.statLock;
+    appData.throwLock = this.dt.data.dicePoolTotal <= 0;
 
     appData.closeOnRoll = this.closeOnRoll;
 
@@ -89,16 +115,16 @@ import { log } from "../utils.js";
   activateListeners (html) {
     super.activateListeners(html)
 
-    //special handeling of the throw settings button since it works with both mouse buttons
-    html.find('.mini-button.throw-settings').mousedown(this._onSettingsClick.bind(this));
     //roll threshold adjustement
     html.find('.radio-label').click(this._onRadioClick.bind(this));
     //adjustement of trait values (only on player magical effects)
     html.find('.bullet[data-clickable="true"').click(this._onBulletClick.bind(this));
     //every other button on the app
     html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
+    //success range
+    html.find('#inverted').change(this._onSuccessRangeChange.bind(this));
     //rollMode options in the context menu for the throw button
-    new ContextMenu(html, '.throw-dice', this._getRollModeContextMenu());
+    new ContextMenu(html, '.throw-dice[data-disabled="false"]', this._getRollModeContextMenu());
   }
 
   /* -------------------------------------------- */
@@ -161,6 +187,15 @@ import { log } from "../utils.js";
   /*  Event Handlers                              */
   /* -------------------------------------------- */
 
+  _onResetButtonClick(event){
+    this.dt.resetAll();
+  }
+
+  _onSuccessRangeChange(event){
+    const inputElem = event.currentTarget;
+    this.dt.updateData('successMods.userMod', inputElem.value);
+  }
+
   /**
    * Updates the DiceThrow threshold according to the radio button that's been clicked
    * @param  {} event
@@ -213,9 +248,33 @@ import { log } from "../utils.js";
       case 'colapse':
         this.colapseNext(buttonElem.closest('.title-line'));
         break;
+      case 'check': // can either be 1 or 0
+        ui.notifications.info('Feature currently deactivated.')
+        //const newWillpowerMod = ( this.dt.data.successMods.willpowerMod === 1 )? 0 : 1;
+        //this.dt.updateData('successMods.willpowerMod', newWillpowerMod);
+        break;
+      case 'mode-ones':
+        this.updateModeOnes();
+        break;
+      case 'mode-tens':
+        this.dt.updateData('throwMode', this.dt.data.throwMode ^ M20E.THROWMODE.XPLODE_SUCCESS);
+        break;
       default :
         break;
     };
+  }
+
+  updateModeOnes() {
+    const currentOneMode = this.dt.data.throwMode;
+    let newOneMode;
+    if ( currentOneMode & M20E.THROWMODE.RESULT_CRITICAL ) { //state 2 -> state 0
+      newOneMode = currentOneMode ^ M20E.THROWMODE.DEFAULT;
+    } else if ( currentOneMode & M20E.THROWMODE.DEDUCT_FAILURES ) { //state 1 -> state 2
+      newOneMode = currentOneMode | M20E.THROWMODE.RESULT_CRITICAL;
+    } else { //state 0 -> state 1
+      newOneMode = currentOneMode | M20E.THROWMODE.DEDUCT_FAILURES;
+    }
+    this.dt.updateData('throwMode', newOneMode);
   }
 
   colapseNext(titleElem) {
@@ -240,6 +299,15 @@ import { log } from "../utils.js";
     this.dt.updateStatProperty(index, 'data.valueOverride', newValue);
   }
 
+  getModeOnesState() {
+    return ( this.dt.data.throwMode & M20E.THROWMODE.DEDUCT_FAILURES ) ? 
+    (( this.dt.data.throwMode & M20E.THROWMODE.RESULT_CRITICAL ) ? 2 : 1) : 0;
+  }
+
+  getModeTensState() {
+    return (this.dt.data.throwMode & M20E.THROWMODE.XPLODE_SUCCESS) ? 3 : 0;
+  }
+
   /**
    * @param  {Number} thresholdValue the 2 to 10 index of a radio button (corresponding to an actual threshold value)
    * 
@@ -248,9 +316,8 @@ import { log } from "../utils.js";
   getVisualCue(thresholdValue) {
     if ( !game.settings.get('mage-fr', 'displayDifficultyCues') ) { return null; }
 
-    if ( this.dt.isEffectRoll ) {
-      const maxEffectLevel = this.getMaxEffectLevel();
-      switch ( thresholdValue - (maxEffectLevel + (this.dt.thresholdBase - 3)) ) {
+    if ( this.isEffectThrow ) {
+      switch ( thresholdValue - (this.maxEffectLevel + (this.dt.data.difficultyBase - 3)) ) {
         case 0:
           return 'coincidental';
         case 1:
@@ -262,37 +329,6 @@ import { log } from "../utils.js";
       }
     }
     return null;
-  }
-
-  /**
-   * rotate between the 3 throw settings depending on the mouse button
-   * throw settings drive the roll modifiers df=1 and xs=10 
-   * @param  {} event
-   */
-  _onSettingsClick(event) {
-    switch ( event.which ) {
-      case 1://left button
-        this.dt.rotateSetting(-1);
-        break;
-      case 3://right button
-        this.dt.rotateSetting(1);
-        break;
-    };
-  }
-
-  /**
-   * From the hooks on updateActor
-   * call an update of the diceThrow if hook options indicate a render true on our actor
-   * @param  {M20eActor} actor
-   * @param  {Object} data
-   * @param  {Object} options
-   * @param  {String} userId
-   */
-  onUpdateActor = (actor, data, options, userId) => {
-    if ( actor.id !== this.dt.actor.id ) { return ; }
-    if ( options.render === true ) {
-      this.dt.update(true);
-    }
   }
 
   /**
@@ -308,20 +344,5 @@ import { log } from "../utils.js";
     /*if ( settingName === 'baseRollThreshold' ) {
       this.dt.update();
     }*/
-  }
-
-  /**
-   * removes the hook and the circular reference to the diceThrow
-   * @param  {} options={}
-   */
-  async close(options={}) {
-    //do some cleaning
-    //Hooks.off('updateActor', this.onUpdateActor);
-    //Hooks.off('updateCoreRollMode', this.onUpdateCoreRollMode);
-    //Hooks.off('systemSettingChanged', this.onSystemSettingChanged);
-    //this.dt = null;
-    
-    //call super
-    return super.close(options);
   }
 }

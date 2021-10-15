@@ -195,6 +195,8 @@ export default class M20eActorSheet extends ActorSheet {
       html.find('.resource-panel .box[data-clickable="true"]').mousedown(this._onResourceBoxClick.bind(this));
       //edition of item value when cat is unlocked
       html.find('.inline-edit').change(this._onInlineEditChange.bind(this));
+      //dice resetting (Big Dice Button)
+      html.find('.dice-button').mousedown(this._onBigDiceButtonMouseDown.bind(this));
       //dice throwing (Big Dice Button)
       html.find('.dice-button').click(this._onBigDiceButtonClick.bind(this));
       //click on the 'i' buttons (blue or grey)
@@ -206,8 +208,6 @@ export default class M20eActorSheet extends ActorSheet {
       new ContextMenu(html, '.trait.linkable', this._getTraitContextOptions());
       //ctx menu for current xp field
       new ContextMenu(html, '.currXP', this._getXPContextOptions());
-      //ctx menu for big dice button
-      new ContextMenu(html, '.dice-button', this._getDiceButtonContextOptions());
       //ctx menu for rollable items
       new DynaCtx(html, '.trait[data-rollable="true"]', (traitElem) => this._getRollableContextOptions(traitElem));
     }
@@ -416,6 +416,13 @@ export default class M20eActorSheet extends ActorSheet {
     } else {
       //display dice throw dialog
       this.actor.diceThrower.render();
+    }
+  }
+  _onBigDiceButtonMouseDown(event) {
+    if ( event.which === 3 ) { //right button
+      event.preventDefault();
+      event.stopPropagation();
+      this.actor.diceThrower.resetAll();
     }
   }
 
@@ -927,23 +934,6 @@ export default class M20eActorSheet extends ActorSheet {
   }
 
   /* -------------------------------------------- */
-
-  _getDiceButtonContextOptions() {
-    return [
-      {
-        name: '', //todo : find more place //game.i18n.localize('M20E.context.resetDiceTrhower'),
-        icon: '<i class="fas fa-undo-alt"></i>',
-        callback: () => {
-          this.actor.diceThrower.resetAll();
-        },
-        condition: () => {
-          return this.actor.diceThrower._throw.stats.length > 0;
-        }
-      }
-    ]
-  }
-
-  /* -------------------------------------------- */
   /*  Context Menus Callbacks                     */
   /*  some implemented in 'mini-button dispatch'  */
   /* -------------------------------------------- */
@@ -1378,27 +1368,5 @@ export default class M20eActorSheet extends ActorSheet {
   /* -------------------------------------------- */
   /*  TESTING AREA                                */
   /* -------------------------------------------- */
-/*
-  _onDragOver(event) {
-    const testage = event.dataTransfer?.types;
-    testage.forEach(type => {
-      log(type);
-    })
-  }*/
-/*
-  testage(canvas) {
-    const d3d = game.dice3d;
-    const options = { dimensions: { w: 45, h: 45 }, autoscale: false, scale: 35, boxType:"showcase" };
-    let diceFactory = d3d.box.dicefactory;
-    log(diceFactory);
-    //diceFactory.dice = {};
-    //diceFactory.dice.d10 = d3d.box.dicefactory.dice.d10;
 
-    const config = mergeObject(d3d.constructor.ALL_CONFIG(), options);
-
-    this.box = new d3d.box.constructor(canvas, diceFactory, config);
-    this.box.initialize().then(()=>{
-      this.box.showcase(config);
-    });
-  }*/
 }

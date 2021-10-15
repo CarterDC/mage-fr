@@ -1,4 +1,8 @@
 
+/* -------------------------------------------- */
+/*  Helper Functions for all                    */
+/* -------------------------------------------- */
+
 //loging & tracing
 const consoleTrace = args => {
   console.groupCollapsed(`%cM20E | %c`, "color: royalblue; font-weight: bold;", "color: #ccc; font-weight: normal;", args);
@@ -12,25 +16,7 @@ export function log(args) {
   return consoleTrace(args);
 }
 
-  /**
-   * todo put that somewhere else or not ?
-   * Only non 0 mods
-   */
-   export function getModsTooltipData(mods, invert=false) {
-    let data = [];
-    for( const mod in mods) {
-      const value = mods[mod];
-      if ( value ) {
-        data.push({
-          name: safeLocalize(`M20E.throwMod.${mod}`, mod),
-          class: (invert ? -1 * value : value) < 0 ? 'red-thingy' : 'green-thingy',
-          value: (value > 0) ? `+${value}` : `${value}`
-        });
-      }
-    }
-    return data;
-  }
-
+/* -------------------------------------------- */
 
 /**
  * Whether the passed variable is actually instanciated,
@@ -42,6 +28,8 @@ export function log(args) {
 export const isObject = myVariable =>
   myVariable && typeof myVariable === 'object' && !Array.isArray(myVariable);
 
+/* -------------------------------------------- */
+
 /**
  * Whether the passed variable is actually a number
  * stolen from the internet !
@@ -52,6 +40,8 @@ export const isObject = myVariable =>
 export const isNumeric = myVariable =>
   !isNaN(parseFloat(myVariable)) && isFinite(myVariable);
 
+/* -------------------------------------------- */
+
 /**
  * For use in array.sort()
  * implements a basic alpha sorting on the property passed in argument
@@ -61,13 +51,15 @@ export const isNumeric = myVariable =>
  */
 export function alphaSort(path = 'name') {
   const lang = game.settings.get('core', 'language');
-  return function(a, b) {
+  return function (a, b) {
     const aKey = foundry.utils.getProperty(a, path);
     const bKey = foundry.utils.getProperty(b, path);
     //return ( aKey < bKey ) ? -1 : (( aKey > bKey ) ? 1 : 0);
     return aKey.localeCompare(bKey, lang, { sensitivity: 'base' });
   }
 }
+
+/* -------------------------------------------- */
 
 /**
  * regex replace to get rid of some characters in the string (to be used as a property name)
@@ -77,6 +69,8 @@ export function alphaSort(path = 'name') {
 export function sanitize(myString) {
   return myString.replace(/[. +]/gi, '_').toLowerCase();
 }
+
+/* -------------------------------------------- */
 
 /**
  * Checks for the existence of a translation string in le localization
@@ -89,10 +83,12 @@ export function sanitize(myString) {
  */
 export function safeLocalize(completePath, override = true) {
   let translation = game.i18n.localize(completePath);
-  if ( typeof(translation) !== 'string' ) { translation = ''; }
-  return translation !== completePath ? translation : 
-    (!!override ? '' : ( override ? override : completePath ) )
+  if (typeof (translation) !== 'string') { translation = ''; }
+  return translation !== completePath ? translation :
+    (!!override ? '' : (override ? override : completePath))
 }
+
+/* -------------------------------------------- */
 
 /**
  * returns an Actor object from {actorId, sceneId, tokenId}
@@ -102,22 +98,22 @@ export function safeLocalize(completePath, override = true) {
  * @return {M20eActor|null} a token actor or world actor, null if not found
  */
 export function actorFromData(data) {
-  const actorId = data.actorId || data.actor; 
+  const actorId = data.actorId || data.actor;
   const sceneId = data.sceneId || data.scene;
   const tokenId = data.tokenId || data.token;
-  
+
   let actor;
-  if ( tokenId ) {
+  if (tokenId) {
     //try and get actor from scene and tokenId
     const scene = game.scenes.get(sceneId);
-    const tokenDoc = scene?.tokens.get( tokenId );
+    const tokenDoc = scene?.tokens.get(tokenId);
     actor = tokenDoc?.actor;
   }
-  if ( !actor ) {
+  if (!actor) {
     //token method not fruitful, get actor from world actors
     actor = game.actors.get(actorId);
   }
-  if ( !actor ) {
+  if (!actor) {
     //no success in getting the actor
     ui.notifications.error(game.i18n.format('M20E.notifications.actorNotFound', {
       actorRef: actorId || tokenId
@@ -126,6 +122,8 @@ export function actorFromData(data) {
   }
   return actor;
 }
+
+/* -------------------------------------------- */
 
 /**
  * returns actor from user owned and selected token.
@@ -136,10 +134,10 @@ export function actorFromData(data) {
 export function getUserActor() {
   let actor = null;
   //get tokens that are selected and owned by the user
-  const selectedOwnedTokens = game.canvas?.tokens.controlled.filter( token => 
+  const selectedOwnedTokens = game.canvas?.tokens.controlled.filter(token =>
     token.actor && token.actor.isOwner) || [];
-  
-  switch ( selectedOwnedTokens.length ) {
+
+  switch (selectedOwnedTokens.length) {
     case 1:
       actor = selectedOwnedTokens[0].actor;
       break;
@@ -149,11 +147,13 @@ export function getUserActor() {
     default:
       break;
   }
-  if ( !actor ) {
+  if (!actor) {
     ui.notifications.warn(game.i18n.localize('M20E.notifications.noSingleTokenSelected'));
   }
   return actor;
 }
+
+/* -------------------------------------------- */
 
 /**
  * Whether current user can see/interract with his paradox points
@@ -161,6 +161,8 @@ export function getUserActor() {
 export function canSeeParadox() {
   return game.settings.get("mage-fr", "playersCanSeeParadoxPoints") || game.user.isGM;
 }
+
+/* -------------------------------------------- */
 
 /**
  * @returns {Boolean} Whether Dice So Nice module is actually present and active
@@ -170,48 +172,55 @@ export function dsnActive() {
   return dsnModule ? dsnModule.active : false;
 }
 
+/* -------------------------------------------- */
+
 /**
  * @returns {Boolean} Whether 3D dice are actually avail to display for this user
  */
 export function dsnUserActive() {
-  return dsnActive() ? 
-  game.settings.get('dice-so-nice','settings').enabled && 
-  !!game.user.getFlag('dice-so-nice','appearance') :
-  false;
+  return dsnActive() ?
+    game.settings.get('dice-so-nice', 'settings').enabled &&
+    !!game.user.getFlag('dice-so-nice', 'appearance') :
+    false;
 }
+
+/* -------------------------------------------- */
 
 /**
  * upon update event (mostly from _onChangeInput) 
  * validate planned update against d-type and min/max values if number.
+ * TODO : redo with error thowing an return of the validated value instead of bool !
  * @param {object} element the html element that triggered the update event
  * 
  * @returns {boolean}  Whether it's deemed valid or not
  */
 export function isValidUpdate(element) {
-  if ( element === null ) { return false; }
+  if (element === null) { return false; }
   let isValid = true;
-  if ( (element.type === 'text' || element.type === 'number') && element.dataset.dtype === 'Number' ) {
-    if ( isNaN( element.value ) || element.value === '') {
-      ui.notifications.error(game.i18n.format("M20E.notifications.nan", {value: element.value}));
+  if ((element.type === 'text' || element.type === 'number') && element.dataset.dtype === 'Number') {
+    if (isNaN(element.value) || element.value === '') {
+      ui.notifications.error(game.i18n.format("M20E.notifications.nan", { value: element.value }));
       isValid = false;
     } else {
-      const newNumber = Number( element.value );
+      const newNumber = Number(element.value);
       //todo: not assume that there's always a min & max value ^^
       const min = Number(element.min);
       const max = Number(element.max);
-      if ( (newNumber < min) || (newNumber > max) ) {
+      if ((newNumber < min) || (newNumber > max)) {
         ui.notifications.error(game.i18n.format("M20E.notifications.outtaBounds",
           {
             value: newNumber,
             min: min,
             max: max
-        }));
+          }));
         isValid = false;
       }
     }
   }
   return isValid;
 }
+
+/* -------------------------------------------- */
 
 /**
  * renders a Dialog.prompt tailored to the promptData passed in argument.
@@ -221,15 +230,15 @@ export function isValidUpdate(element) {
  * @returns {object} the HTML input element or null if prompt was closed/escaped
 */
 export async function promptNewValue(promptData) {
-  const {currentValue, min = '', max = ''} = promptData;
+  const { currentValue, min = '', max = '' } = promptData;
   let dtype = 'String';
   let minmax = '';
-  if ( isNumeric(currentValue) ) {
+  if (isNumeric(currentValue)) {
     dtype = 'Number';
     minmax += min !== '' ? ` min="${promptData.min}"` : '';
     minmax += max !== '' ? ` max="${promptData.max}"` : '';
   }
-  
+
   //configure the prompt message and add the input element
   let content = promptData.promptContent;
   content += `<input type='text' value='${currentValue}'
@@ -238,7 +247,7 @@ export async function promptNewValue(promptData) {
     ${minmax}/>`;
 
   return await Dialog.prompt({
-    options: {classes: ['dialog', 'm20e']},
+    options: { classes: ['dialog', 'm20e'] },
     title: promptData.title,
     content: content,
     rejectClose: false, // escaping or closing returns null (does not trigger an error)
@@ -246,13 +255,15 @@ export async function promptNewValue(promptData) {
   })
 }
 
+/* -------------------------------------------- */
+
 /**
  * Prompts the user for a choice from options in a DropDown List
  * @param {Object} promptData an object of the form {title:'',promptString:'', curValue:'', options:{value:'', name:''}}
  * 
  * @returns {Promise<String>|null} value of the selected option|null is escaped
  */
-export async function promptSelect(promptData={}) {
+export async function promptSelect(promptData = {}) {
   //prepare the select options
   const options = promptData.options.map((option) => {
     const selected = option.value === promptData.curValue ? 'selected' : '';
@@ -262,20 +273,23 @@ export async function promptSelect(promptData={}) {
   const content = `${promptData.promptString}<select>${options}</select>`;
   //prompt
   return Dialog.prompt({
-    options: {classes: ['dialog', 'm20e']},
+    options: { classes: ['dialog', 'm20e'] },
     title: promptData.title,
     content: content,
     rejectClose: false, //escaping or closing returns null (does not trigger an error)
-    callback: (html) => { 
+    callback: (html) => {
       const selectElem = html.find('select')[0];
-      return selectElem.options[selectElem.selectedIndex].value }
+      return selectElem.options[selectElem.selectedIndex].value
+    }
   });
 }
+
+/* -------------------------------------------- */
 
 /**
  * helper class to be used by utils.prompts functions
  */
- export class PromptData {
+export class PromptData {
   constructor(obj) {
     this.title = obj.title || null;
     this.name = obj.name || null;
@@ -284,22 +298,26 @@ export async function promptSelect(promptData={}) {
     this._promptContent = obj.promptContent || null;
   }
 
+  /* -------------------------------------------- */
+
   /**
    * retruns the actual _promptContent or generates a basic 'prompt new value' one.
    * @returns {String} 
    */
   get promptContent() {
-    if ( this._promptContent ) {
+    if (this._promptContent) {
       return this._promptContent;
     } else {
-      if ( this.name ) {
-        return game.i18n.format("M20E.prompts.newValue", {name : this.name});
+      if (this.name) {
+        return game.i18n.format("M20E.prompts.newValue", { name: this.name });
       } else {
         return '';
       }
     }
   }
 }
+
+/* -------------------------------------------- */
 
 /**
  * gets a systemDescription given the category and name (key) of a trait/item.
@@ -315,18 +333,19 @@ export async function getSystemDescription(category, key) {
   try {
     //get the systemDescription from Journal Entry compendium if any
     const pack = game.packs.find(entry => entry.metadata.name.includes('trait-desc'));
-    if ( !pack.indexed ) await pack.getIndex({fields: ["name", "img", "flags.path"]});
+    if (!pack.indexed) await pack.getIndex({ fields: ["name", "img", "flags.path"] });
     const journalId = pack.index.find(entry => entry.flags.path === `${category}.${key}`)._id;
     const packItem = await pack.getDocument(journalId);
     const fullContent = packItem.data.content;
     //get only the first systemDesc if any
+    //todo maybe trim the end if needed
     const first = fullContent.indexOf(`<div class="m20e systemDescription`);
-    if ( first != -1 ) {
+    if (first != -1) {
       const next = fullContent.indexOf(`<div class="m20e systemDescription`, first + 1);
-      if ( next != -1 ) {
-          return fullContent.substring(first, next);
+      if (next != -1) {
+        return fullContent.substring(first, next);
       } else {
-          return fullContent.substring(first, fullContent.length);
+        return fullContent.substring(first, fullContent.length);
       }
     } else {
       return fullContent;
@@ -336,6 +355,8 @@ export async function getSystemDescription(category, key) {
     return await getDefaultDescription(category);
   }
 }
+
+/* -------------------------------------------- */
 
 /**
  * Returns a rendered Template populated with localized info given the category of a trait/item.
@@ -355,12 +376,15 @@ export async function getDefaultDescription(category) {
   return await renderTemplate(descTemplate, fullDescription);
 }
 
+/* -------------------------------------------- */
+
 /**
  * creates a new JE for a specific actor.
  * copy the actor's permissions onto the new journal
  * creates new folder if doesn't exist
  * todo : maybe create journal from flag ?
  * todo : create description template
+ * todo : maybe put that in actor instead !
  * 
  * @param {M20eActor} actor
  * @param {Object} options
@@ -370,8 +394,8 @@ export async function createPersonnalJE(actor, options) {
   let folder = game.folders.find(folder => {
     return folder.name === folderName && folder.type === 'JournalEntry';
   });
-  if ( !folder ) {
-    folder = await Folder.create({name: folderName, type: 'JournalEntry'});
+  if (!folder) {
+    folder = await Folder.create({ name: folderName, type: 'JournalEntry' });
   }
   const perms = actor.data.permission;
   return await JournalEntry.create({
@@ -382,6 +406,8 @@ export async function createPersonnalJE(actor, options) {
     folder: folder.id
   }, options);
 }
+
+/* -------------------------------------------- */
 
 /**
  * Returns a document from a compendium given packName and documentName
@@ -394,23 +420,27 @@ export async function createPersonnalJE(actor, options) {
  */
 export async function getCompendiumDocumentByName(packName, documentName) {
   const pack = game.packs.get(packName);
-  if ( !pack ) {
+  if (!pack) {
     ui.notifications.error(game.i18n.format("M20E.notifications.packNotFound", { packName: packName }));
     return Promise.reject();
   }
   const index = pack.index.getName(documentName);
-  if ( !index ) {
+  if (!index) {
     ui.notifications.error(game.i18n.format("M20E.notifications.itemNotFoundInCompendium", { packName: packName, documentName: documentName }));
     return Promise.reject();
   }
   return await pack.getDocument(index._id);
 }
 
+/* -------------------------------------------- */
+
 /**
  * concatenates an object property chain by inserting a '.'
  */
 const addDelimiter = (a, b) =>
   a ? `${a}.${b}` : b;
+
+/* -------------------------------------------- */
 
 /**
  * TODO : recode from foundry's flattenObject utils/helper.mjs if possible
@@ -425,67 +455,130 @@ const addDelimiter = (a, b) =>
  */
 export function propertiesToArray(obj = {}, prevPath = '') {
   return Object.entries(obj)
-    .reduce((acc, [key, value]) => 
-      {
-        let path = addDelimiter(prevPath, key);
-        return isObject(value) ?
-          acc.concat(propertiesToArray(value, path))
-         : acc.concat({path : path, value: value})
-      }, []);
+    .reduce((acc, [key, value]) => {
+      let path = addDelimiter(prevPath, key);
+      return isObject(value) ?
+        acc.concat(propertiesToArray(value, path))
+        : acc.concat({ path: path, value: value })
+    }, []);
 }
 
+/* -------------------------------------------- */
+
+/**
+ * Returns an array of delimiter-concatenated strings made from property names
+ * recursion stops when it encounters a value property
+ * Should be called statsToPath since it's based on the presence of a value property in order to decide what to do
+ * Might not be used anymore anyway !
+ * @param  {Object} obj={} usually actor.data.data.attributes/spheres
+ * @param  {} prevPath='' used only by the recursion
+ */
 export function traitsToPaths(obj = {}, prevPath = '') {
   return Object.entries(obj)
-    .reduce((acc, [key, value]) => 
-      {
-        let path = addDelimiter(prevPath, key);
-        return value.value !== undefined ?
-          acc.concat(path) :
-          acc.concat(traitsToPaths(value, path))
-      }, []);
+    .reduce((acc, [key, value]) => {
+      let path = addDelimiter(prevPath, key);
+      return value.value !== undefined ?
+        acc.concat(path) :
+        acc.concat(traitsToPaths(value, path))
+    }, []);
 }
 
+
+/* -------------------------------------------- */
+
+/**
+ * Returns an array of {name, class, value} objects, from a 'diceMods' object.
+ * ie prepares data to be displayed in a diceMods's tooltiptext.
+ * 
+ * todo maybe put that in diceHelper ?
+ * @param  {Object} mods either dicePoolMods, difficultyMods or successMods.
+ * @param  {Boolean} invert when set to true, makes negative values good and positive values bad.
+ * 
+ * @returns {Array} [{name, class, value},] may be length === 0 if no non-zero mod in the object
+ */
+ export function getModsTooltipData(mods, invert = false) {
+  let data = [];
+  for (const mod in mods) {
+    const value = mods[mod];
+    if ( value ) { //Only non 0 mods
+      data.push({
+        name: safeLocalize(`M20E.throwMod.${mod}`, mod),
+        class: (invert ? -1 * value : value) < 0 ? 'red-thingy' : 'green-thingy',
+        value: (value > 0) ? `+${value}` : `${value}`
+      });
+    }
+  }
+  return data;
+}
+
+
+/* -------------------------------------------- */
+/*  Handlebars Helpers                          */
+/* -------------------------------------------- */
+
+/**
+ * registers all the m20e-prefixed handlebars helpers specific to the system
+ */
 export function registerHandlebarsHelpers() {
 
   /**
    * usage {{#m20e-forLoop nbIterr}}<p>Iterration n°{{this}}</p>{{/m20e-forLoop}}
    */
-  Handlebars.registerHelper('m20e-forLoop', function(nbIterr, loopInner) {
+  Handlebars.registerHelper('m20e-forLoop', function (nbIterr, loopInner) {
     return [...Array(nbIterr)].reduce((acc, cur, index) => (acc + loopInner.fn(index)), "");
   })
 
+  /* -------------------------------------------- */
+
   //github.com/adg29/concat.js
-  Handlebars.registerHelper('m20e-concat', function() {
+  Handlebars.registerHelper('m20e-concat', function () {
     let outStr = '';
-    for ( const arg in arguments ) {
-      if ( typeof arguments[arg] !== 'object' ) {
+    for (const arg in arguments) {
+      if (typeof arguments[arg] !== 'object') {
         outStr += arguments[arg];
       }
     }
     return outStr;
   })
 
+  /* -------------------------------------------- */
+
   /**
    */
-   Handlebars.registerHelper('m20e-sanitize', function(myString) {
+  Handlebars.registerHelper('m20e-sanitize', function (myString) {
     return sanitize(myString);
   })
 
+  /* -------------------------------------------- */
+
   /**
+   * todo : see if !(!!) wouldn't be better ?
    */
-  Handlebars.registerHelper('m20e-not', function(bool) {
+  Handlebars.registerHelper('m20e-not', function (bool) {
     return !bool;
   })
 
- /**
- * Returns the paradigmic translation of the arguments
- * works like a localize(concat()) but substitutes the lexicon value if any
- * @param {object} arguments   First argument must be the paradigm data object
- */
-  Handlebars.registerHelper('m20e-locadigm', function() {
+  /* -------------------------------------------- */
+
+  /**
+   * 
+   */
+   Handlebars.registerHelper('m20e-abs', function (num) {
+    if ( !isNumeric(num) ) { return 'NaN'; } 
+    return Math.abs(num);
+  })
+
+  /* -------------------------------------------- */
+
+  /**
+  * Returns the paradigmic translation of the arguments
+  * works like a localize(concat()) but substitutes the lexicon value if any
+  * @param {object} arguments   First argument must be the paradigm data object
+  */
+  Handlebars.registerHelper('m20e-locadigm', function () {
     let concatStr = '';
-    for(let i = 1; i< arguments.length -1; i++){
-      if(typeof arguments[i] !== 'object'){
+    for (let i = 1; i < arguments.length - 1; i++) {
+      if (typeof arguments[i] !== 'object') {
         concatStr += arguments[i]
       }
     }
@@ -494,38 +587,48 @@ export function registerHandlebarsHelpers() {
     return lexiconValue || game.i18n.localize(`M20E.${concatStr}`);
   })
 
- /**
- * Adds a '+' sign in front of a non negative value (no need for negative ones, obviously)
- * @param {Number} num the number to be concatenated
- * @param {Optional} forcePrefix forces a prefix before a non negative value
- */
-  Handlebars.registerHelper('m20e-sign', function(num) {
-    if ( num < 0 ) { return num; }
+  /* -------------------------------------------- */
+
+  /**
+  * Adds a '+' sign in front of a non negative value (no need for negative ones, obviously)
+  * @param {Number} num the number to be concatenated
+  * @param {Optional} forcePrefix forces a prefix before a non negative value
+  */
+  Handlebars.registerHelper('m20e-sign', function (num) {
+    if (num < 0) { return num; }
     const forcePrefix = arguments[arguments.length - 2];
     return forcePrefix !== num ? `${forcePrefix}${num}` : `+${num}`;
   })
 
-  Handlebars.registerHelper('m20e-disabled', function(isDisabled) {
+  /* -------------------------------------------- */
+
+  Handlebars.registerHelper('m20e-disabled', function (isDisabled) {
     return isDisabled ? 'disabled' : '';
   })
 
-  Handlebars.registerHelper('m20e-enabled', function(isEnabled) {
+  /* -------------------------------------------- */
+
+  Handlebars.registerHelper('m20e-enabled', function (isEnabled) {
     return isEnabled ? '' : 'disabled';
   })
 
-  Handlebars.registerHelper("m20e-clickableBullet", function(availEffects, key) {
-    if ( !availEffects ) { return; }
+  /* -------------------------------------------- */
+
+  Handlebars.registerHelper("m20e-clickableBullet", function (availEffects, key) {
+    if (!availEffects) { return; }
     const valueMax = availEffects.filter(effect => effect.key === key)[0].valueMax || 0;
     //index of 'this' is base 0
     return this < valueMax;
   })
 
- /**
- * returns a html string that displays 'nbIterr' bullets computed from 'trait' parameter
- * takes into account if trait has been overriden by ActiveEffect to adjust data-state
- * also adds a overflow in the dataset for values that are greater than nbIterr
- */
-  Handlebars.registerHelper("m20e-bulletDisplay", function(trait, nbIterr) {
+  /* -------------------------------------------- */
+
+  /**
+  * returns a html string that displays 'nbIterr' bullets computed from 'trait' parameter
+  * takes into account if trait has been overriden by ActiveEffect to adjust data-state
+  * also adds a overflow in the dataset for values that are greater than nbIterr
+  */
+  Handlebars.registerHelper("m20e-bulletDisplay", function (trait, nbIterr) {
     let returnString = '';
     const currValue = foundry.utils.hasProperty(trait, '_overrideValue') ? trait._overrideValue : trait.value;
     const origValue = foundry.utils.hasProperty(trait, '_sourceValue') ? trait._sourceValue : trait.value;
@@ -534,33 +637,42 @@ export function registerHandlebarsHelpers() {
     for (let index = 0; index < nbIterr; index++) {
       let state = '';
       const overflow = currValue > index + nbIterr;
-      if ( index < min ) {
+      if (index < min) {
         state = 'active';
-      } else if ( index < max ) {
-        state = ( currValue > origValue ? 'upgraded': 'downgraded');
+      } else if (index < max) {
+        state = (currValue > origValue ? 'upgraded' : 'downgraded');
       }
       returnString += `<span class="bullet" data-index="${index}" data-state="${state}" data-overflow="${overflow}"></span>`;
     }
     return returnString;
   })
 
-  Handlebars.registerHelper("m20e-bulletState", function(currValue, index) {
+  /* -------------------------------------------- */
+
+  Handlebars.registerHelper("m20e-bulletState", function (currValue, index) {
     return (currValue > index) ? "active" : "";
   })
 
-  Handlebars.registerHelper('m20e-in', function() {
+  /* -------------------------------------------- */
+
+  Handlebars.registerHelper('m20e-in', function () {
     let entryToFind = arguments[0];
-    for(let i = 1; i < arguments.length; i++){
-      if(entryToFind === arguments[i]){return true;}
+    for (let i = 1; i < arguments.length; i++) {
+      if (entryToFind === arguments[i]) { return true; }
     }
     return false;
   })
+
+  /* -------------------------------------------- */
 
   /*Handlebars.registerHelper('m20e-includes', function(path, stats) {
     return stats.filter( stat => stat.path === path).length > 0;
   })*/
 }
 
+/* -------------------------------------------- */
+/*  Partials and templates                      */
+/* -------------------------------------------- */
 
 /**
  * Define a set of template paths to pre-load
@@ -571,7 +683,7 @@ export function registerHandlebarsHelpers() {
  * @return {Promise}
  */
 export async function preloadHandlebarsTemplates() {
-  return loadTemplates ([
+  return loadTemplates([
     // Actor Sheet Partials
     "systems/mage-fr/templates/actor/parts/header-cat.hbs",
     "systems/mage-fr/templates/actor/parts/cat-banner.hbs",

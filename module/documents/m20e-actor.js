@@ -447,6 +447,28 @@ export default class M20eActor extends Actor {
   }
 
   /* -------------------------------------------- */
+
+  /**
+   * Updates the diceThrower on actor update
+   * @override
+   */
+  _onUpdate(changed, options, userId) {
+    super._onUpdate(changed, options, userId);
+    this.diceThrower.prepareStats();
+  }
+
+  /* -------------------------------------------- */
+
+  /**
+   * Updates the diceThrower on actor's items update
+   * @override
+   */
+  _onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId){
+    super._onUpdateEmbeddedDocuments(embeddedName, documents, result, options, userId);
+    this.diceThrower.prepareStats();
+  }
+
+  /* -------------------------------------------- */
   /*  Shorthands                                  */
   /* -------------------------------------------- */
 

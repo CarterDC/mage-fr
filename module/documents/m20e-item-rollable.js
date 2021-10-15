@@ -146,13 +146,15 @@ export default class M20eRollableItem extends M20eItem {
       //throw right away
       this.actor.diceThrower.throwDice(this.data.data.throws[throwIndex], {
         throwOwner: this,
-        throwIndex: throwIndex
+        throwIndex: throwIndex,
+        statLock: true
       });
     } else {
       //display dice throw dialog
       this.actor.diceThrower.render(this.data.data.throws[throwIndex], {
         throwOwner: this,
-        throwIndex: throwIndex
+        throwIndex: throwIndex,
+        statLock: true
       });
     }
   }
