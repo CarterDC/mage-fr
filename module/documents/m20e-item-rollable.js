@@ -128,7 +128,15 @@ export default class M20eRollableItem extends M20eItem {
   /* -------------------------------------------- */
 
   getThrowFlavor(throwIndex = 0) {
-    return '';
+    if ( !this.actor ) { return null; }
+    const itemData = this.data;
+    const m20eThrow = this.data.data.throws[throwIndex];
+
+    const itemType = game.i18n.localize(`ITEM.Type${this.type.capitalize()}`);
+    const throwType = game.i18n.localize(`M20E.throwType.${m20eThrow.data.type}`);
+
+    return `${itemData.name} - ${throwType} : <br>
+      ${m20eThrow.data.name}`;
   }
 
   /* -------------------------------------------- */
@@ -162,9 +170,9 @@ export default class M20eRollableItem extends M20eItem {
   /* -------------------------------------------- */
 
   getMacroData(data) {
-    const itemType = game.i18n.localize(`ITEM.Type${this.type.capitalize()}`);
+    //const itemType = game.i18n.localize(`ITEM.Type${this.type.capitalize()}`);
     return {
-      name: `${itemType} ${this.name}`,
+      name: this.getThrowFlavor(),
       img: this.img,
       commandParameters: {
         data: {

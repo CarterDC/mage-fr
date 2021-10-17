@@ -524,8 +524,8 @@ export function registerHandlebarsHelpers() {
   /**
    * usage {{#m20e-forLoop nbIterr}}<p>Iterration n°{{this}}</p>{{/m20e-forLoop}}
    */
-  Handlebars.registerHelper('m20e-forLoop', function (nbIterr, loopInner) {
-    return [...Array(nbIterr)].reduce((acc, cur, index) => (acc + loopInner.fn(index)), "");
+  Handlebars.registerHelper('m20e-forLoop', function (nbIterr, innerLoop) {
+    return [...Array(nbIterr)].reduce((acc, cur, index) => (acc + innerLoop.fn(index)), "");
   })
 
   /* -------------------------------------------- */

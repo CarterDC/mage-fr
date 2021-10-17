@@ -219,9 +219,15 @@ export default class M20eItem extends Item {
    * Displays an item trait in chat.
    * Prepares some templateData before feeding the to chat.displayCard
    * overridden in subclasses
+   * atm only for stat items (ie not events, misc etc)
   */
   linkInChat() {
     const itemData = this.data;
+
+    if ( !this.isStat ) {
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.notImplemented'));
+      return;
+    }
 
     const templateData = {
       category: CONFIG.M20E.traitToCat[itemData.type],

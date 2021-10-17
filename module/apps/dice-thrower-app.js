@@ -1,6 +1,7 @@
 import DiceThrower  from '../dice-thrower.js'
 import M20eThrow from '../throw.js' 
 import { M20E } from '../config.js'
+import { DynaCtx } from "../dyna-ctx.js"
 // Import Helpers
 import * as utils from '../utils.js'
 import { log } from "../utils.js";
@@ -19,6 +20,7 @@ import { log } from "../utils.js";
 
     this.dt = diceThrower;
     this.closeOnRoll = true;
+    this.resetOnRoll = true;
 
     this.colapsibles = {
       dicePool: true,
@@ -33,7 +35,6 @@ import { log } from "../utils.js";
     }
 
     //register a hook on updateActor in order to refresh the diceThrow with updated actor values.
-    //Hooks.on('updateCoreRollMode', this.onUpdateCoreRollMode);
     //Hooks.on('systemSettingChanged', this.onSystemSettingChanged);
   }
 
@@ -97,17 +98,18 @@ import { log } from "../utils.js";
     });
 
     //icon and title for the throw button
-    appData.extras = M20E.rollModeExtras[game.settings.get("core", "rollMode")];
+    appData.extras = M20E.rollModeExtras[this.dt.data.rollMode];
 
     //lock bullets for every thing but pure actor effects
-    appData.mainLock = false;
+    appData.mainLock = false; // not used atm
     appData.bulletLock = !this.isEffectThrow || this.dt.data.statLock;
     appData.throwLock = this.dt.data.dicePoolTotal <= 0;
 
     appData.closeOnRoll = this.closeOnRoll;
+    appData.resetOnRoll = this.resetOnRoll;
 
     appData.colapsibles = this.colapsibles;
-    log({appData})
+    log({appData});
     return appData;
   }
 
@@ -124,7 +126,8 @@ import { log } from "../utils.js";
     //success range
     html.find('#inverted').change(this._onSuccessRangeChange.bind(this));
     //rollMode options in the context menu for the throw button
-    new ContextMenu(html, '.throw-dice[data-disabled="false"]', this._getRollModeContextMenu());
+    new DynaCtx(html, '.throw-dice[data-disabled="false"]', (button) => this._getRollModeContextMenu(button), true);
+    //new ContextMenu(html, '.throw-dice[data-disabled="false"]', this._getRollModeContextMenu());
   }
 
   /* -------------------------------------------- */
@@ -141,8 +144,8 @@ import { log } from "../utils.js";
         name: game.i18n.localize('M20E.context.throwStealthRoll'),
         icon: '<i class="fas fa-user-secret"></i>',
         callback: element => {
-          this.dt.rollMode = "stealthroll";
-          this.dt.roll(this.closeOnRoll);
+          this.dt.updateData('rollMode', "stealthroll", {silent: true});
+          this.dt.roll({closeOnRoll: this.closeOnRoll, resetOnRoll: this.resetOnRoll});
         },
         condition: element => {
           return game.user.isGM;
@@ -152,32 +155,32 @@ import { log } from "../utils.js";
         name: game.i18n.localize('M20E.context.throwSelfRoll'),
         icon: '<i class="fas fa-user"></i>',
         callback: element => {
-          this.dt.rollMode = "selfroll";
-          this.dt.roll(this.closeOnRoll);
+          this.dt.updateData('rollMode', "selfroll", {silent: true});
+          this.dt.roll({closeOnRoll: this.closeOnRoll, resetOnRoll: this.resetOnRoll});
         }
       },
       {
         name: game.i18n.localize('M20E.context.throwBlindRoll'),
         icon: '<i class="fas fa-eye-slash"></i>',
         callback: element => {
-          this.dt.rollMode = "blindroll";
-          this.dt.roll(this.closeOnRoll);
+          this.dt.updateData('rollMode', "blindroll", {silent: true});
+          this.dt.roll({closeOnRoll: this.closeOnRoll, resetOnRoll: this.resetOnRoll});
         }
       },
       {
         name: game.i18n.localize('M20E.context.throwGmRoll'),
         icon: '<i class="fas fa-user-friends"></i>',
         callback: element => {
-          this.dt.rollMode = "gmroll";
-          this.dt.roll(this.closeOnRoll);
+          this.dt.updateData('rollMode', "gmroll", {silent: true});
+          this.dt.roll({closeOnRoll: this.closeOnRoll, resetOnRoll: this.resetOnRoll});
         }
       },
       {
         name: game.i18n.localize('M20E.context.throwPublicRoll'),
         icon: '<i class="fas fa-users"></i>',
         callback: element => {
-          this.dt.rollMode = "roll";
-          this.dt.roll(this.closeOnRoll);
+          this.dt.updateData('rollMode', "roll", {silent: true});
+          this.dt.roll({closeOnRoll: this.closeOnRoll, resetOnRoll: this.resetOnRoll});
         }
       }
     ];
@@ -226,7 +229,7 @@ import { log } from "../utils.js";
 
     switch ( dataset.action ) {
       case 'roll':
-        this.dt.roll({closeOnRoll: this.closeOnRoll});
+        this.dt.roll({closeOnRoll: this.closeOnRoll, resetOnRoll: this.resetOnRoll});
         break;
       case 'remove':
         this.dt.removeStatByIndex(traitElem.dataset.key);
@@ -241,10 +244,14 @@ import { log } from "../utils.js";
       case 'mod-minus':
         this.dt.updateData('dicePoolMods.userMod', this.dt.data.dicePoolMods.userMod - 1);
         break;
-      case 'auto-close':
-        this.closeOnRoll = !this.closeOnRoll;
-        buttonElem.dataset.active = this.closeOnRoll;
+      case 'resetOnRoll':
+        this.resetOnRoll = !this.resetOnRoll;
+        buttonElem.dataset.active = this.resetOnRoll;
         break;
+      case 'closeOnRoll':
+          this.closeOnRoll = !this.closeOnRoll;
+          buttonElem.dataset.active = this.closeOnRoll;
+          break;
       case 'colapse':
         this.colapseNext(buttonElem.closest('.title-line'));
         break;
@@ -266,13 +273,13 @@ import { log } from "../utils.js";
 
   updateModeOnes() {
     const currentOneMode = this.dt.data.throwMode;
-    let newOneMode;
+    let newOneMode =  currentOneMode;
     if ( currentOneMode & M20E.THROWMODE.RESULT_CRITICAL ) { //state 2 -> state 0
-      newOneMode = currentOneMode ^ M20E.THROWMODE.DEFAULT;
+      newOneMode ^= M20E.THROWMODE.DEFAULT;
     } else if ( currentOneMode & M20E.THROWMODE.DEDUCT_FAILURES ) { //state 1 -> state 2
-      newOneMode = currentOneMode | M20E.THROWMODE.RESULT_CRITICAL;
+      newOneMode |= M20E.THROWMODE.RESULT_CRITICAL;
     } else { //state 0 -> state 1
-      newOneMode = currentOneMode | M20E.THROWMODE.DEDUCT_FAILURES;
+      newOneMode |= M20E.THROWMODE.DEDUCT_FAILURES;
     }
     this.dt.updateData('throwMode', newOneMode);
   }
@@ -329,14 +336,6 @@ import { log } from "../utils.js";
       }
     }
     return null;
-  }
-
-  /**
-   * callback for custom hooks on updateCoreRollMode
-   * just render the sheet in order to have the roll icon changed (see getData extra)
-   */
-  onUpdateCoreRollMode = (newRollMode) => {
-    this.render(true);
   }
 
   //might not be ncessary

@@ -10,7 +10,7 @@
                 <a class="mini-button" data-category="meritsflaws" data-sub-category="{{key}}" data-action="add" data-locked="{{../locks.meritsflaws}}"><i class="fas fa-plus"></i></a>
             </div>
             {{#each meritflawgroup as |meritflaw key|}}
-            <div class="trait meritflaw linkable" data-item-id="{{meritflaw._id}}" data-active= "false"> 
+            <div class="trait meritflaw ctx" data-item-id="{{meritflaw._id}}" data-active= "false"> 
                 <img class="trait-img" src="{{meritflaw.img}}"/>
                 <label class="trait-label drag-ready tooltip" data-item-id="{{meritflaw._id}}">
                     {{#if meritflaw.data.displayName}}

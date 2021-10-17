@@ -96,6 +96,16 @@ import { log } from "./utils.js";
     return stats.reduce((acc, cur) => (Math.max(acc, cur.value)), 0);
   }
 
+  /**
+   * Returns whether or not one of the stats uses Specialty (that's canUseSpec and actually uses spec ).
+   * @param {[Trait,]} stats an array of Traits instances (theses must be extended with correct data).
+   * 
+   * @returns {Bolean} whether one of the stats uses Specialty.
+   */
+  static isSpecialtyRoll(stats) {
+    return stats.some( stat => stat.useSpec);
+  }
+
   isAbleToThrow(actor) {
     try {
       this.stats.forEach(stat => M20eThrow.validateStat(actor, stat, true));

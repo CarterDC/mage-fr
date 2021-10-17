@@ -262,6 +262,10 @@ export default class M20eAeSheet extends DocumentSheet {
 
   //In this instance 'item' is a change entry in the changes array for this ActiveEffect
   async addItem(buttonElem) {
+    if ( Object.keys(CONFIG.M20E.stats).length === 0 ) {
+      ui.notifications.warn('M20E.notifications.noActorInWorld');
+      return;
+    }
     const changes = duplicate(this.effect.data.changes);
     changes.push({key: "stats.attributes.stre.value", mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: "0"});
     return await this.effect.update({'changes': changes});

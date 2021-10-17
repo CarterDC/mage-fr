@@ -84,6 +84,10 @@ export default class M20eRollableSheet extends M20eItemSheet {
    *  @override
    */
   async addItem(buttonElem) {
+    if ( Object.keys(CONFIG.M20E.stats).length === 0 ) {
+      ui.notifications.warn('M20E.notifications.noActorInWorld');
+      return;
+    }
     this.item.addThrow();
   }
 

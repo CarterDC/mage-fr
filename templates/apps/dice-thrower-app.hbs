@@ -149,13 +149,19 @@
       <div class="post-line"></div>
       <a class="mini-button" data-action="colapse" data-disabled="true" data-state="{{colapsibles.throwSettings}}">{{#if colapsibles.throwSettings}}<i class="fas fa-caret-down"></i>{{else}}<i class="fas fa-caret-up"></i>{{/if}}</a>
     </div>
-    <div class="throw-mode">
-        <a class="mini-button" data-action="mode-ones" data-state="{{data.modeOnesState}}" title="{{localize (m20e-concat 'M20E.hints.throwModeOnes.' data.modeOnesState)}}">1</a>
-        <a class="mini-button" data-action="mode-tens" data-state="{{data.modeTensState}}" title="{{localize (m20e-concat 'M20E.hints.throwModeTens.' data.modeTensState)}}">10</a>
+    <div name="throwSettings" class="dialog-block throwSettings" {{#if colapsibles.throwSettings}}style="display:none;" {{/if}}>
+        <div class="throw-mode">
+            <a class="mini-button" data-action="mode-ones" data-state="{{data.modeOnesState}}" title="{{localize (m20e-concat 'M20E.hints.throwModeOnes.' data.modeOnesState)}}">1</a>
+            <a class="mini-button" data-action="mode-tens" data-state="{{data.modeTensState}}" title="{{localize (m20e-concat 'M20E.hints.throwModeTens.' data.modeTensState)}}">10</a>
+        </div>
+        <a class="mini-button throw-dice" data-action="roll" title="{{localize extras.title}}" data-disabled="{{throwLock}}">
+            <span>{{localize "M20E.labels.throw"}}</span> <i class="{{extras.icon}}"></i>
+        </a>
+        <div class="throw-mode">
+            <a class="mini-button" data-action="resetOnRoll" data-active="{{resetOnRoll}}" title="{{localize 'M20E.hints.toggleResetOnRoll'}}" style="font-size:12px;"><i class="fas fa-redo-alt"></i></a>
+            <a class="mini-button" data-action="closeOnRoll" data-active="{{closeOnRoll}}" title="{{localize 'M20E.hints.toggleCloseOnRoll'}}" style="font-size:16px;"><i class="fas fa-ellipsis-h"></i></a>
+        </div>
     </div>
-    <a class="mini-button throw-dice" data-action="roll" title="{{localize extras.title}}" data-disabled="{{throwLock}}">
-        <span>{{localize "M20E.labels.throw"}}</span> <i class="{{extras.icon}}"></i>
-    </a>
     {{!--<a class="mini-button auto-close" title="{{localize 'M20E.hints.toggleAutoClose'}}" data-action="auto-close" data-active="{{closeOnRoll}}"><i class="fas fa-ellipsis-h"></i></a>
     --}}
 </form>

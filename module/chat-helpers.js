@@ -3,6 +3,7 @@ import * as utils from './utils.js'
 import { log } from "./utils.js";
 import Trait from './trait.js'
 import DiceThrower from './dice-thrower.js'
+import M20eThrow from './throw.js'
 import ParadoxDialog from './apps/paradox-dlg.js'
 
 /* -------------------------------------------- */
@@ -83,8 +84,7 @@ export function addChatMessageContextOptions(html, options) {
       icon: '<i class="fas fa-sync-alt"></i>',
       condition: liElem => {
           const message = game.messages.get(liElem.data("messageId"));
-          const isVisible = (game.user.isGM || message.isAuthor) && message.isContentVisible;
-          return isVisible && message._roll?._total >= 0;
+          return message.isContentVisible && message.isRoll && message._roll?.isCritFailure === false;
       },
       callback: liElem => extendThrow(liElem)
     },
@@ -191,29 +191,61 @@ export async function sacrificeWillpower(messageId) {
 
 async function extendThrow(liElem) {
   const message = game.messages.get(liElem.data("messageId"));
-  const actor = utils.actorFromData(message.data.speaker);
-  if ( !actor ) { return; }
-  log(message._roll);
+  const prevRoll = message._roll;
+
+  const diceTotal = prevRoll.dice.reduce((acc, cur) => {
+    return acc + cur.total;
+  }, 0);
+  const {previousSuccesses, successThreshold } = prevRoll.getNumericTerms();
+
+  const successMods = {
+    previousMod: previousSuccesses + diceTotal,
+    throwMod : successThreshold * -1 
+  };
+  sameThrow(liElem, {successMods});
 }
 
   /* -------------------------------------------- */
 
-async function sameThrow(liElem) {
+async function sameThrow(liElem, options = {}) {
   const message = game.messages.get(liElem.data("messageId"));  
-  //get actor from current scene/selected token if any, or user chosen character from userConfig
-  const actor = utils.getUserActor();
-  if (! actor ) { return; }
   const throwData = message._roll.options;
-  const traits = throwData.traits.map( traitData => {
-    return Trait.fromData(traitData.path, traitData.data, traitData.itemId);
-  });
-  //todo add some of the throwData as options of the new throw ?
-  const diceThrower = new DiceThrower({
-    document: actor,
-    traits: traits,
-    options: throwData.options
-  });
-  diceThrower.render(true);
+
+  //get actor from current scene/selected token if any, or user chosen character from userConfig
+  const userActor = utils.getUserActor();
+  const rollActor = utils.actorFromData(message.data.speaker);
+
+  let m20eThrow = null;
+  const itemId = throwData.data.throwOwnerId;
+  if ( itemId ) {
+    if ( userActor.id !== rollActor.id || !rollActor.isOwner ) { 
+      ui.notifications.warn('M20E.notifications.notTheItemOwner');
+      return; 
+    }
+    const item = rollActor.getItemFromId(throwData.data.throwOwnerId);
+    const throwIndex = parseInt(throwData.data.throwIndex);
+    if ( !item ) { return false; }
+
+    m20eThrow = item.data.data.throws[throwIndex];
+    options = {...options,
+      throwOwner: item,
+      throwIndex: throwIndex,
+      statLock: true
+    };
+
+    rollActor.diceThrower.render(m20eThrow, options);
+  } else {
+
+    m20eThrow = M20eThrow.fromData({
+      stats: throwData.stats.map( stat => ({path: stat.path}))
+    });
+
+    if ( userActor ) {
+      userActor.diceThrower.render(m20eThrow, options);
+    } else if ( rollActor.isOwner ) {
+      rollActor.diceThrower.render(m20eThrow, options);
+    }
+  }
 }
 
   /* -------------------------------------------- */

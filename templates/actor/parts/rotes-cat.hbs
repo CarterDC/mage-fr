@@ -3,7 +3,7 @@
     {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="rotes" lock = locks.rotes addButton = true}}
     <div class="grid one-col">
         {{#each items.rotes as |rote key|}}
-        <div class="trait rote" data-item-id="{{rote._id}}">
+        <div class="trait rote item" data-item-id="{{rote._id}}">
             <div class="item-img" style="background-image: url({{rote.img}}), radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));">
               {{#if rote.data.hasThrows}}
                   <div class="mini-button trait-dice macro-ready" data-action="roll-item" data-item-id="{{rote._id}}"></div>
