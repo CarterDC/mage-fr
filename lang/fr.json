@@ -84,6 +84,7 @@
     "context": {
       "addJournal": "Créer un Journal Personnel.",
       "addXP": "Ajouter de l'XP.",
+      "castEffect": "Lancer l'effet.",
       "editAliases" : "Éditer la liste d'alias.",
       "editHealthMalus": "Éditer Malus Santé.",
       "editHealthMax": "Éditer Santé Max.",
@@ -442,7 +443,8 @@
         "0": "Les '10' ne font rien de spécial.",
         "3": "Chaque '10' rajoute un succès supplémentaire."
       },
-      "toggleAutoClose": "Basculer fermeture auto",
+      "toggleCloseOnRoll": "Basculer 'Fermer au lancer'",
+      "toggleResetOnRoll": "Basculer 'Reset au lancer'",
       "toggleEditMode": "Basculer 'mode édition'/'mode affichage'.",
       "toggleEquiped": "Basculer équipé/déséquipé.",
       "unlockToEdit": "Basculez en 'mode édition'(🔓) pour remplir ce champ.",
@@ -587,9 +589,13 @@
     "notifications": {
       "actorNotFound": "L'acteur '{actorRef}' n'est pas trouvable !",
       "aEffectOwnedItem": "Foundry ne permet pas de modifier les ActiveEffects sur un item possédé par un acteur.<br> En revanche vous pouvez drag-drop l'item dans la sidebar puis l'éditer.",
+      "alreadyAdded": "Ce Trait a déjà été ajouté au jet !",
+      "cannotThrow0Dice": "Jet impossible : Votre groupement de dés est à 0 !", 
       "duplicateName": "Il existe déjà un item de ce type nommé '{name}' !",
       "gmPermissionNeeded": "Vous devez demander à un GM de faire celà !",
       "impossibleThrow": "Ce jet est irréalisable !",
+      "insufficentAbilityValue" : "Votre niveau de Capacité est trop faible !",
+      "insufficentSphereValue": "Votre niveau de Sphère est trop faible !",
       "invalidFormat": "'{value}' n'a pas un format conforme !",
       "itemNotFoundInActor": "L'item '{itemRef}' n'est pas trouvable dans l'acteur '{actorName}' !",
       "itemNotFoundInCompendium": "L'item '{documentName}' n'est pas trouvable dans le compendium '{packName}' !",
@@ -604,9 +610,11 @@
       "noMoreAvailEffects": "Pas d'effet de sphère disponible !",
       "notEnoughWillpower": "Pas assez de volonté !",
       "notOutsideCreation": "Vous ne pouvez pas faire celà en dehors de la 'Création de perso' - demandez au GM.",
+      "notTheItemOwner": "Ce jet nécessite un item particulier !",
       "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
       "packNotFound": "Le compendium '{packName}' n'est pas trouvable !",
       "restrictedItem": "{actorName} ne peut as utiliser les items de type {itemType} !",
+      "statLocked": "Vous ne pouvez pas changer les Traits de ce jet !",
       "unrollableRote": "{actorName} n'a pas le(s) niveau(x) de sphère nécessaire(s) pour lancer la routine {itemName} !"
     },
     "placeholders": {
@@ -704,7 +712,7 @@
       "crit": "Échec critique"
     },
     "throwType": {
-      "weapon": "Manoeuvre"
+      "weapon": "Manoeuvre de combat"
     },
     "versionWarning": {
       "flavor": "⚠ Avertissement ⚠",
@@ -734,7 +742,7 @@
   "SETTINGS.openWiki": "Consulter le Wiki",
   "SETTINGS.openWikiHint": "Ouvre le wiki Mage-Fr dans une fenetre externe.",
   "SETTINGS.playersCanRemoveAggravated": "Peut soigner les blessures aggravées.",
-  "SETTINGS.playersCanRemoveAggravatedHint": "Si déssactivé les joueurs ne pourront plus enlever eux-même leurs blessures aggravées, mais pourront encore en mettre.",
+  "SETTINGS.playersCanRemoveAggravatedHint": "Si déssactivé les joueurs ne pourront plus ni ajouter ni enlever eux-même les blessures aggravées sur leur fiche.",
   "SETTINGS.playersCanSeeParadoxPoints": "Peut voir les points de Paradoxe.",
   "SETTINGS.playersCanSeeParadoxPointsHint": "⚠ Si désactivé, les joueurs ne pourront plus non plus interagir avec leur 'barre de puissance'.",
   "SETTINGS.roteRule": "Jet des Routines.",

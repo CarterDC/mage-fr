@@ -1,9 +1,10 @@
 
 export class DynaCtx extends ContextMenu {
 
-  constructor(element, selector, callback) {
+  constructor(element, selector, callback, forceUp=false) {
     super(element, selector, []);
     this.callback = callback;
+    this.forceUp = forceUp;
   }
 
   render(target) {
@@ -64,5 +65,40 @@ export class DynaCtx extends ContextMenu {
 
     // Animate open the menu
     return this._animateOpen(html);
+  }
+
+  /**
+ * Set the position of the context menu, taking into consideration whether the menu should expand upward or downward
+ * @Override
+ */
+  _setPosition(html, target) {
+    const container = target[0].parentElement;
+
+    // Append to target and get the context bounds
+    target.css('position', 'relative');
+    html.css("visibility", "hidden");
+    target.append(html);
+    if ( this.forceUp ) {
+      this._expandUp = true;
+    } else {
+      const contextRect = html[0].getBoundingClientRect();
+      const parentRect = target[0].getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+  
+      // Determine whether to expand upwards
+      const contextTop = parentRect.top - contextRect.height;
+      const contextBottom = parentRect.bottom + contextRect.height;
+      const canOverflowUp = (contextTop > containerRect.top) || (getComputedStyle(container).overflowY === "visible");
+  
+      // If it overflows the container bottom, but not the container top
+      const containerUp = ( contextBottom > containerRect.bottom ) && ( contextTop >= containerRect.top );
+      const windowUp = ( contextBottom > window.innerHeight ) && ( contextTop > 0 ) && canOverflowUp;
+      this._expandUp = containerUp || windowUp;
+    }
+
+    // Display the menu
+    html.addClass(this._expandUp ? "expand-up" : "expand-down");
+    html.css("visibility", "");
+    target.addClass("context");
   }
 }

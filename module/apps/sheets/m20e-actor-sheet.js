@@ -205,11 +205,11 @@ export default class M20eActorSheet extends ActorSheet {
       //ctx menu on the character name (paradigm edition...)
       new ContextMenu(html, '.name-wrapper', this._getNameContextOptions());
       //ctx menu on traits (edition / link)
-      new ContextMenu(html, '.trait.linkable', this._getTraitContextOptions());
+      new ContextMenu(html, '.trait.ctx', this._getTraitContextOptions());
       //ctx menu for current xp field
       new ContextMenu(html, '.currXP', this._getXPContextOptions());
       //ctx menu for rollable items
-      new DynaCtx(html, '.trait[data-rollable="true"]', (traitElem) => this._getRollableContextOptions(traitElem));
+      new DynaCtx(html, '.trait.item', (traitElem) => this._getRollableContextOptions(traitElem));
     }
     
     if ( game.user.isGM ) {
@@ -366,7 +366,10 @@ export default class M20eActorSheet extends ActorSheet {
     switch ( event.which ) {
       case 1://left button
         if ( state < CONFIG.M20E.WOUNDTYPE.AGGRAVATED) {
-          this.actor.wound(resourceName, 1, state + 1);
+          const canDealAggravated = game.user.isGM || game.settings.get("mage-fr", "playersCanRemoveAggravated");
+          if ( state !== CONFIG.M20E.WOUNDTYPE.LETHAL || canDealAggravated) {
+            this.actor.wound(resourceName, 1, state + 1);
+          }
         }
         break;
       case 3://right button
@@ -405,17 +408,24 @@ export default class M20eActorSheet extends ActorSheet {
    * On a click on the big dice, round up every highlighted trait on the sheet
    * send it to a new DiceThrow object and either render it for further options or
    * just throw the dice
+   * If dt is statlocked, don't use the functions that risk reinit the dt
    * 
    * @param  {} event
    */
    _onBigDiceButtonClick(event) {
-    //try and get a new DiceThrow instance from our actor and chosen traits
     if ( event.shiftKey ) {
       //throw right away
+      if ( this.actor.diceThrower.statsLock ) {
+        this.actor.diceThrower.roll();
+      }
       this.actor.diceThrower.throwDice();
     } else {
       //display dice throw dialog
-      this.actor.diceThrower.render();
+      if ( this.actor.diceThrower.statsLock ) {
+        this.actor.diceThrower._render();
+      } else {
+        this.actor.diceThrower.render();
+      }
     }
   }
   _onBigDiceButtonMouseDown(event) {
@@ -842,8 +852,7 @@ export default class M20eActorSheet extends ActorSheet {
             }
           },
           condition: element => {//todo : maybe find different a condition if any ?
-            return true;
-            //return element[0].classList.contains('linkable');
+            return !element[0].classList.contains('description');
           }
         },
         {//link actor trait or item in chat
@@ -859,8 +868,7 @@ export default class M20eActorSheet extends ActorSheet {
             }
           },
           condition: element => {
-            return true;
-            //return element[0].classList.contains('linkable');
+            return !element[0].classList.contains('description');
           }
         }
       ]
@@ -890,11 +898,13 @@ export default class M20eActorSheet extends ActorSheet {
   _getRollableContextOptions(traitElem) {
     const itemId = traitElem.dataset.itemId;
     const item = this.actor.items.get(itemId);
+    if ( !item.isRollable ) { return this._getBaseTraitContextOptions(); }
+
     //prepare context menu options from list of throws in this rollable
     return [...this._getBaseTraitContextOptions(), 
       ...item.data.data.throws.map( (m20eThrow, throwIndex) => {
           return {
-            name: m20eThrow.data.name,
+            name: (item.type === 'rote') ? game.i18n.localize('M20E.context.castEffect'): m20eThrow.data.name,
             itemId: itemId,
             throwIndex: throwIndex,
             icon: '<i class="fas fa-dice"></i>',
@@ -1145,8 +1155,10 @@ export default class M20eActorSheet extends ActorSheet {
     }
     switch ( dataset?.action ) {
       case 'roll-traits' : 
+        //don't start if no stats
+        if ( this.actor.diceThrower._throw.stats.length === 0 ) { return; }
         dragData.type = "m20e-roll";
-        dragData.data = this.getTraitsToRoll();
+        dragData.data = null; //maybe something to add here in the future
         event.dataTransfer.setData("text/plain", JSON.stringify(dragData));
         break;
       case 'roll-throw' :

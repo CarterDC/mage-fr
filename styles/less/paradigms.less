@@ -1,10 +1,22 @@
+@font-face {
+  font-family: "Tech";
+  //src: url("../assets/fonts/AbbessRegular.woff") format("woff");
+  src: url("../assets/fonts/mars-police.regular.ttf") format("truetype");
+  font-weight: 700;
+  font-style: bold;
+}
+
+@font-face {
+  font-family: "Abbess";
+  //src: url("../assets/fonts/AbbessRegular.woff") format("woff");
+  src: url("../assets/fonts/AbbessRegular.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}
+
 .mage{
-  @font-face {
-    font-family: "Abbess";
-    src: url("../assets/fonts/AbbessRegular.woff") format("woff");
-    font-weight: 400;
-    font-style: normal;
-  }
+
+
   --titleColor: #4c39ae; // var(--titleColor);
   --highlightColor: #4c39ae; // var(--highlightColor);
   --hoverColor: #4c39ae; // var(--hoverColor);
@@ -17,13 +29,24 @@
   --mainFontSize: 14px; // var(--titleColor);
   --smallFontSize: 12px; // var(--smallFontSize);
 }
+
 .tech{
-  --titleColor: #3a537a; // var(--titleColor)
-  --highlightColor: #67957f; // var(--highlightColor)
-  --hoverColor: #d69806; // var(--hoverColor)
-  --titleFontFam: "signika", sans-serif; // var(--titleFontFam)
+
+  --titleColor: #4d8b99; // var(--titleColor);
+  --highlightColor: #56397E; // var(--highlightColor);
+  --hoverColor: #271737; // var(--hoverColor);
+  --titleFontFam: "Tech"; // var(--titleFontFam);
+  --charNameFontSize : 22px; // var(--charNameFontSize);
+  --itemNameFontSize : 20px; // var(--itemNameFontSize);
+  --navFontSize: 16px; // var(--navFontSize);
+  --catFontSize: 18px; // var(--catFontSize);
+  --mainFontFam: "signika", sans-serif; // var(--mainFontFam);
+  --mainFontSize: 14px; // var(--mainFontSize);
+  --smallFontSize: 12px; // var(--smallFontSize);
 
   .window-content{
-    background:url(../assets/ui/parchment_b.jpg) repeat;
+    background: rgb(216,215,219);
+    background: radial-gradient(circle, rgba(216,215,219,1) 14%, rgba(180,200,210,1) 100%);
+    //background:url(../assets/ui/parchment_b.jpg) repeat;
   }
 }

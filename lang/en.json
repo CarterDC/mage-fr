@@ -85,6 +85,7 @@
     "context": {
       "addJournal": "Create Personnal Journal Entry.",
       "addXP": "Add some XP.",
+      "castEffect": "Cast Effect.",
       "editAliases" : "Edit list of Aliases.",
       "editHealthMalus": "Edit Health Maluses.",
       "editHealthMax": "Edit Max Health.",
@@ -443,7 +444,8 @@
         "0": "10's don't do anything particular.",
         "3": "Each '10' adds an extra success."
       },
-      "toggleAutoClose": "Toggle auto-close",
+      "toggleCloseOnRoll": "Toggle 'Close on roll'",
+      "toggleResetOnRoll": "Toggle 'Reset on roll'",
       "toggleEditMode": "Toggle 'edition mode'/'display mode'",
       "toggleEquiped": "Toggle equiped/unequiped",
       "unlockToEdit": "Switch to 'edition mode'(🔓) in order to edit this field",
@@ -588,9 +590,13 @@
     "notifications": {
       "actorNotFound": "Actor '{actorRef}' was not found!",
       "aEffectOwnedItem": "Foundry doesn't allow for modification of an ActiveEffect on an Owned Item.<br> In the meantime, you can still drag-drop the item onto the sidebar and edit it from there.",
+      "alreadyAdded": "This Trait is already added to the throw!",
+      "cannotThrow0Dice": "Impossible Throw: Your Dice pool is empty!", 
       "duplicateName": "An item of the same type already exists with same name '{name}' !",
       "gmPermissionNeeded": "You should ask a GM to do that for you!",
       "impossibleThrow": "This throw is not feasible!",
+      "insufficentAbilityValue" : "Your Ability level is too low!",
+      "insufficentSphereValue": "Your Sphere level is too low!",
       "invalidFormat": "'{value}' doesn't have the correct format!",
       "itemNotFoundInActor": "Item '{itemRef}' wasn't found on actor '{actorName}'!",
       "itemNotFoundInCompendium": "Item '{documentName}' wasn't found in compendium '{packName}'!",
@@ -605,9 +611,11 @@
       "noMoreAvailEffects": "No more available Effect!",
       "notEnoughWillpower": "Not enough Willpower!",
       "notOutsideCreation": "You cannot perfom that action! ( 'Creation Mode' might be locked )",
-      "outtaBounds": "'{value}' est en dehors de la plage de valeurs ({min} - {max}) !",
+      "notTheItemOwner": "This throw requires a particular item!",
+      "outtaBounds": "'{value}' is out of range ({min} - {max})!",
       "packNotFound": "Compendium '{packName}' wasn't found!",
       "restrictedItem": "{actorName} cannot use {itemType}-type Items!",
+      "statLocked": "You cannot change Traits for this throw!",
       "unrollableRote": "{actorName} doesn't have the necessary sphere level in order to throw {itemName} !"
     },
     "placeholders": {
@@ -704,7 +712,7 @@
       "crit": "Botch"
     },
     "throwType": {
-      "weapon": "Maneuver"
+      "weapon": "Combat maneuver"
     },
     "versionWarning": {
       "flavor": "⚠ Warning ⚠",
@@ -734,7 +742,7 @@
   "SETTINGS.openWiki": "Consult Wiki",
   "SETTINGS.openWikiHint": "Open the Mage-Fr wiki in an external window.",
   "SETTINGS.playersCanRemoveAggravated": "Can heal aggravated wounds.",
-  "SETTINGS.playersCanRemoveAggravatedHint": "If disabled, players won't be allowed to remove their aggravated-level wounds; however, they'll still be able to add some.",
+  "SETTINGS.playersCanRemoveAggravatedHint": "If disabled, players won't be allowed to either add nor remove aggravated-level wounds on their sheet by themselves.",
   "SETTINGS.playersCanSeeParadoxPoints": "Can see Paradox Points.",
   "SETTINGS.playersCanSeeParadoxPointsHint": "⚠ If disabled, players won't see their paradox points but will also be prevented from interracting with the 'Mage Power' UI.",
   "SETTINGS.roteRule": "Rote Throws.",

@@ -66,7 +66,7 @@ export default class M20eRoteItem extends M20eRollableItem {
     }).join(' + ');
 
     return `${itemType} ${this.name} : <br>
-    ${game.i18n.format('M20E.diceThrows.effect', {effect: effect})}.`;
+      ${game.i18n.format('M20E.diceThrows.effect', {effect: effect})}.`;
   }
 
   get roteEffects() {

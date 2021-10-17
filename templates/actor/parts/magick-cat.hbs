@@ -2,7 +2,7 @@
   {{!-- magick --}}
   {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="magick" lock = locks.magick}}
   <div class="grid two-col">
-    <div class="trait magick linkable" data-path="magick.arete" data-highlighted= "{{data.magick.arete.isHighlighted}}">
+    <div class="trait magick ctx" data-path="magick.arete" data-highlighted= "{{data.magick.arete.isHighlighted}}">
       <a class="stat-label tooltip">
         {{m20e-locadigm paraData "magick." "arete"}}
         {{#if data.magick.arete.specialty}}
@@ -18,7 +18,7 @@
           {{{m20e-bulletDisplay data.magick.arete 10}}}
       </div>
     </div>
-    <div class="trait magick linkable" data-path="magick.resonance" data-highlighted= "{{data.magick.resonance.isHighlighted}}">
+    <div class="trait magick ctx" data-path="magick.resonance" data-highlighted= "{{data.magick.resonance.isHighlighted}}">
       <a class="stat-label tooltip">
         {{m20e-locadigm paraData "magick." "resonance"}}
         {{#if data.magick.resonance.signature}}

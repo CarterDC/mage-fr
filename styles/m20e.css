@@ -174,6 +174,7 @@
 .m20e.dialog .sheet-tabs a label {
   flex: 10 10;
   text-align: center;
+  cursor: pointer;
 }
 .m20e.sheet .sheet-tabs a .mini-button,
 .m20e.dialog .sheet-tabs a .mini-button {
@@ -756,6 +757,7 @@
   border-radius: 3px;
   padding: 3px 6px;
   height: 25px;
+  max-height: 85px;
   font-family: var(--mainFontFam);
   font-size: var(--mainFontSize);
   line-height: 20px;
@@ -824,7 +826,7 @@
   margin-left: 10px;
 }
 .m20e .trait.dice-throw .mini-button.spe[data-active='true'] {
-  color: var(--highlightColor);
+  color: var(--m20e-goodGreen);
   text-shadow: none;
 }
 .m20e .trait.chat-flavor {
@@ -1320,6 +1322,18 @@ li.chat-message .card .card-footer .item-img {
 .m20e.dice-roll .dice-total.green-thingy {
   color: var(--m20e-goodGreen);
 }
+@font-face {
+  font-family: "Tech";
+  src: url("../assets/fonts/mars-police.regular.ttf") format("truetype");
+  font-weight: 700;
+  font-style: bold;
+}
+@font-face {
+  font-family: "Abbess";
+  src: url("../assets/fonts/AbbessRegular.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}
 .mage {
   --titleColor: #4c39ae;
   --highlightColor: #4c39ae;
@@ -1333,20 +1347,22 @@ li.chat-message .card .card-footer .item-img {
   --mainFontSize: 14px;
   --smallFontSize: 12px;
 }
-@font-face {
-  font-family: "Abbess";
-  src: url("../assets/fonts/AbbessRegular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-}
 .tech {
-  --titleColor: #3a537a;
-  --highlightColor: #67957f;
-  --hoverColor: #d69806;
-  --titleFontFam: "signika", sans-serif;
+  --titleColor: #4d8b99;
+  --highlightColor: #56397E;
+  --hoverColor: #271737;
+  --titleFontFam: "Tech";
+  --charNameFontSize: 22px;
+  --itemNameFontSize: 20px;
+  --navFontSize: 16px;
+  --catFontSize: 18px;
+  --mainFontFam: "signika", sans-serif;
+  --mainFontSize: 14px;
+  --smallFontSize: 12px;
 }
 .tech .window-content {
-  background: url(../assets/ui/parchment_b.jpg) repeat;
+  background: #d8d7db;
+  background: radial-gradient(circle, #d8d7db 14%, #b4c8d2 100%);
 }
 .m20e.dialog .title-line {
   position: relative;
@@ -1450,9 +1466,10 @@ li.chat-message .card .card-footer .item-img {
   width: fit-content;
   width: -moz-fit-content;
 }
-.m20e.dialog .dialog-block.dice-pool .number-spinner .tooltip .righttooltiptext {
+.m20e.dialog .dialog-block.dice-pool .number-spinner .tooltip .righttooltiptext label {
   font-family: var(--mainFontFam);
   font-size: var(--mainFontSize);
+  text-shadow: none;
 }
 .m20e.dialog .dialog-block.dice-pool .number-spinner label {
   background: none;
@@ -1490,9 +1507,9 @@ li.chat-message .card .card-footer .item-img {
   width: 100%;
   flex-grow: 1;
   margin: 5px 1px;
-  color: #585858;
-  background: #bdb9b2;
-  border: 1px solid #bdb9b2;
+  color: var(--m20e-midGrey);
+  background: rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0);
   border-radius: 3px;
   cursor: pointer;
 }
@@ -1509,13 +1526,13 @@ li.chat-message .card .card-footer .item-img {
   color: var(--m20e-badRed);
 }
 .m20e.dialog .radio-group div label:hover {
-  color: #303030;
-  text-shadow: 0 0 1px #aa0011;
+  color: var(--m20e-darkGrey);
+  text-shadow: 0 0 1px var(--hoverColor);
 }
 .m20e.dialog .radio-group div input[type="radio"]:checked + label {
   color: var(--highlightColor);
   background: rgba(0, 0, 0, 0.05);
-  border-color: #7a7971;
+  border-color: var(--m20e-lightGrey);
 }
 .m20e.dialog .radio-group.dice {
   font-family: var(--titleFontFam);
@@ -1529,13 +1546,18 @@ li.chat-message .card .card-footer .item-img {
   font-size: var(--catFontSize);
   margin: 10px 6px 5px 6px;
 }
-.m20e.dialog .throw-mode {
+.m20e.dialog .dialog-block.throwSettings {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.m20e.dialog .dialog-block.throwSettings .throw-mode {
   margin: 0 0 0 0;
   position: relative;
   display: inline-flex;
   flex-direction: column;
 }
-.m20e.dialog .throw-mode .mini-button {
+.m20e.dialog .dialog-block.throwSettings .throw-mode .mini-button {
   font-family: var(--titleFontFam);
   font-size: var(--catFontSize);
   color: var(--m20e-lightGrey);
@@ -1546,17 +1568,25 @@ li.chat-message .card .card-footer .item-img {
   width: 36px;
   background: rgba(0, 0, 0, 0.05);
   border-radius: 3px;
+  padding-top: 1px;
 }
-.m20e.dialog .throw-mode .mini-button[data-state='1'] {
+.m20e.dialog .dialog-block.throwSettings .throw-mode .mini-button[data-state='1'] {
   color: var(--m20e-darkGrey);
 }
-.m20e.dialog .throw-mode .mini-button[data-state='2'] {
+.m20e.dialog .dialog-block.throwSettings .throw-mode .mini-button[data-state='2'] {
   color: var(--m20e-badRed);
 }
-.m20e.dialog .throw-mode .mini-button[data-state='3'] {
+.m20e.dialog .dialog-block.throwSettings .throw-mode .mini-button[data-state='3'] {
   color: var(--m20e-goodGreen);
 }
-.m20e.dialog .mini-button.throw-dice {
+.m20e.dialog .dialog-block.throwSettings .throw-mode .mini-button:hover {
+  color: var(--m20e-darkGrey);
+  box-shadow: 0 0 2px 1px var(--hoverColor);
+}
+.m20e.dialog .dialog-block.throwSettings .throw-mode .mini-button[data-active='true'] {
+  color: var(--highlightColor);
+}
+.m20e.dialog .dialog-block.throwSettings .mini-button.throw-dice {
   display: inline-flex;
   justify-content: space-evenly;
   height: 30px;
@@ -1566,28 +1596,6 @@ li.chat-message .card .card-footer .item-img {
   font-family: "Diablo";
   font-weight: bold;
   font-size: 18px;
-  margin: 0px 5px 0px 5px;
-}
-.m20e.dialog .mini-button.auto-close {
-  height: 32px;
-  width: 32px;
-  font-size: 18px;
-  margin: 0 0 0 0;
-  position: relative;
-  top: 2px;
-}
-.m20e.dialog .mini-button.auto-close[data-active='true'] {
-  color: var(--highlightColor);
-}
-.m20e.dialog .disabledInput {
-  border: none;
-  color: #4b4a44;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 3px;
-  padding: 1px 3px;
-  flex: 0 0;
-  font-weight: normal;
-  line-height: 26px;
 }
 body {
   position: fixed;

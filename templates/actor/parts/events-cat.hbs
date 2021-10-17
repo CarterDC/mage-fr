@@ -3,7 +3,7 @@
     {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="events" lock = locks.events addButton = true}}
     <div class="grid one-col">
         {{#each items.events as |event key|}}
-        <div class="trait event" data-item-id="{{event._id}}">
+        <div class="trait event ctx" data-item-id="{{event._id}}">
             <img class="trait-img" src="{{event.img}}"/>
             <div class="vertical-wrapper">
                 <div class="horizontal-wrapper">

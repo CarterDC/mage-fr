@@ -3,7 +3,7 @@
   {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="spheres" lock = locks.spheres}}
   <div class="grid three-col">
     {{#each data.spheres as |sphere key|}}
-    <div class="trait sphere linkable" data-path="spheres.{{key}}" data-highlighted= "{{sphere.isHighlighted}}">
+    <div class="trait sphere ctx" data-path="spheres.{{key}}" data-highlighted= "{{sphere.isHighlighted}}">
       <a class="stat-label tooltip">
         {{m20e-locadigm ../paraData "spheres." key}}
         {{#if sphere.specialty}}
