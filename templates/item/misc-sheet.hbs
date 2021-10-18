@@ -6,6 +6,7 @@
   <section class="sheet-body">
       <section class="tab" data-group="primary" data-tab="detail">
           <div class="grid two-col">
+              {{#if isGM}}
               <div class= "field" title="{{localize 'M20E.hints.consumable'}}">
                   <label>{{localize "M20E.labels.consumable"}} : </label>
                   <input name="data.isConsumable" type="checkbox" {{checked data.isConsumable}} data-dtype="Boolean"/>
@@ -14,6 +15,7 @@
                   <label>{{localize "M20E.labels.equipable"}} : </label>
                   <input name="data.isEquipable" type="checkbox" {{checked data.isEquipable}} data-dtype="Boolean"/>
               </div>
+              {{/if}}
               {{#if data.isConsumable}}
               <div class= "field" title="{{localize 'M20E.hints.quantity'}}">
                   <label>{{localize "M20E.labels.quantity"}} : </label>
@@ -21,6 +23,12 @@
               </div>
               {{/if}}
               {{#if data.isEquipable}}
+              {{#if item.isOwned}}
+              <div class= "field">
+                  <label>{{localize "M20E.labels.equipped"}} : </label>
+                  <input name="data.equipped" type="checkbox" {{checked data.equipped}} data-dtype="Boolean"/>
+              </div>
+              {{/if}}
               {{#if showEffectField}}
               <div class= "field" title="{{localize 'M20E.hints.itemEffect'}}">
                   <label>{{localize "M20E.labels.itemEffect"}} : </label><br>

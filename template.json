@@ -409,7 +409,7 @@
       },
       "equipable":{
         "isEquipable": true,
-        "equiped":false
+        "equipped":false
       },
       "consumable": {
         "isConsumable": true,
@@ -481,7 +481,7 @@
       ],
       "displayDescription": "",
       "isEquipable": false,
-      "equiped": false,
+      "equipped": false,
       "isConsumable": false,
       "quantity": 0,
       "extra": {}
@@ -510,7 +510,7 @@
       "subType": "handtohand",
       "damageType": "bashing",
       "damage": 0,
-      "range": 0,
+      "range": 1,
       "displayDescription": "",
       "extra": {}
     }

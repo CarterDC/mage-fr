@@ -140,6 +140,8 @@ export class M20eRoll extends Roll {
           value: data.difficultyBase
         }, ...diffTooltips];
       }
+      //attempts to extract success mods if any
+      part.data = {...part.data, ...this.getNumericTerms()};
     } else {
       //attempts to extract success mods if any
       part.data = {...part.data, ...this.getNumericTerms()};

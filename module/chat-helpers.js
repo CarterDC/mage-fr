@@ -219,7 +219,7 @@ async function sameThrow(liElem, options = {}) {
   const itemId = throwData.data.throwOwnerId;
   if ( itemId ) {
     if ( userActor.id !== rollActor.id || !rollActor.isOwner ) { 
-      ui.notifications.warn('M20E.notifications.notTheItemOwner');
+      ui.notifications.warn(game.i18n.localize('M20E.notifications.notTheItemOwner'));
       return; 
     }
     const item = rollActor.getItemFromId(throwData.data.throwOwnerId);

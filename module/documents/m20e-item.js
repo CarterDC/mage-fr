@@ -186,9 +186,9 @@ export default class M20eItem extends Item {
     const itemData = this.data;
     return {
       name: itemData.name,
-      displayName: itemData.displayName,
+      displayName: itemData.data.displayName ?? null,
       value: this.actor._getStat(path, 'value'),
-      specialty: itemData.specialty
+      specialty: itemData.data.specialty ?? null
     };
   }
 
@@ -271,10 +271,10 @@ export default class M20eItem extends Item {
   }
 
   /**
-   * To be considered unequiped, item needs to be an equipable first !
+   * To be considered unequipped, item needs to be an equipable first !
    */
-  get isUnequiped() {
-    return this.isEquipable && this.data.data.equiped === false;
+  get isUnequipped() {
+    return this.isEquipable && this.data.data.equipped === false;
   }
 }
 

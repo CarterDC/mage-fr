@@ -1,5 +1,5 @@
 {
-  "ACTOR.TypeCharmage": "Mage Character",
+  "ACTOR.TypeCharmage": "Mage Player",
   "ACTOR.TypeNpcmage": "Mage NPC",
   "ACTOR.TypeNpcsleeper": "Sleeper NPC",
   "ITEM.TypeAbility": "Ability",
@@ -416,9 +416,10 @@
         "1": "🖱️ Right : Remove Quintessence",
         "2": "🖱️ Left : Remove Paradox"
       },
+      "moveup": "Move Upwards",
       "name": "Name of the Trait or Item",
-      "nonEditable": "Non-editable.",
-      "openJE": "Open/edit this Journal Entry.",
+      "nonEditable": "Non-editable",
+      "openJE": "Open/edit this Journal Entry",
       "openPersonalJE": "Open/edit Personnal Journal Entry for this character",
       "quantityMinus": "Descrease quantity",
       "quantityPlus": "Increase quantity",
@@ -436,21 +437,21 @@
         "vulgarWitness": "Vulgar effect with Witnesses"
       },
       "throwModeOnes": {
-        "0": "1's don't do anything particular.",
-        "1": "Each '1' deducts a success.",
-        "2": "Risk of Critical Failure."
+        "0": "1's don't do anything particular",
+        "1": "Each '1' deducts a success",
+        "2": "Risk of Critical Failure"
       },
       "throwModeTens": {
-        "0": "10's don't do anything particular.",
-        "3": "Each '10' adds an extra success."
+        "0": "10's don't do anything particular",
+        "3": "Each '10' adds an extra success"
       },
       "toggleCloseOnRoll": "Toggle 'Close on roll'",
       "toggleResetOnRoll": "Toggle 'Reset on roll'",
       "toggleEditMode": "Toggle 'edition mode'/'display mode'",
-      "toggleEquiped": "Toggle equiped/unequiped",
+      "toggleEquipped": "Toggle equipped/unequipped",
       "unlockToEdit": "Switch to 'edition mode'(🔓) in order to edit this field",
       "untrained": "Untrained!",
-      "useAlternateDesc": "⚠ Will attempt to load alternative trait descriptions suffixed with given tag.",
+      "useAlternateDesc": "⚠ Will attempt to load alternative trait descriptions suffixed with given tag",
       "useSpecialty": "Use Specialty",
       "value0to5": "A value 'usually' between 0 and 5",
       "wounds": {
@@ -483,7 +484,7 @@
       "displayDesc": "Pers. description",
       "effectLevel": "Effect Level",
       "equipable": "Equipable",
-      "equiped": "Equiped",
+      "equipped": "Equipped",
       "extra": "Extra",
       "faction": "Faction",
       "feedback": "Backlash",
@@ -604,6 +605,7 @@
       "missingParadigm": "Seems like this actor doesn't have a Paradigm!",
       "nan": "'{value}' is not a number !",
       "newParadigm": "CSS modifications from the paradigm will only be enforced after a refresh (F5).",
+      "noActorInWorld": "You need at least one actor in this world in order to do that!",
       "noSingleTokenSelected": "1 (and only 1) Token must be selected!",
       "noJournal": "No Journal Linked!",
       "notImplemented": "Feature not yet implemented!" ,
@@ -718,7 +720,7 @@
       "flavor": "⚠ Warning ⚠",
       "header": "<p>New version : {sysVersion}</p>",
       "warning": "<p>⚠ This system is still in beta, at your disposal for testing purposes only!</p><p>Don't use it if you're not ready to start your world, actors and items from scratch with each update!!!</p>",
-      "changelogURL" : "<p><a href='https://github.com/CarterDC/mage-fr/wiki'>change log</a></p>",
+      "changelogURL" : "<p><a href='https://github.com/CarterDC/mage-fr/releases/latest'>change log</a></p>",
       "clickMe": "Click Me!"
     },
     "welcomeMessage": {
