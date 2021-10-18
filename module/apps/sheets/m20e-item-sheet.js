@@ -72,13 +72,14 @@ export default class M20eItemSheet extends ItemSheet {
     return sheetData;
   }
 
-
   /** @override */
   activateListeners(html) {
     //disable buttons/inputs given their 'protection status'
-    const isProtected = this.item.data.isProtectedType && this.actor.data.data.creationDone;
-    if ( isProtected && !game.user.isGM ) {
-      this._protectElements(html);
+    if ( this.isOwned ) {
+      const isProtected = this.item.data.isProtectedType && this.actor.data.data.creationDone;
+      if ( isProtected && !game.user.isGM ) {
+        this._protectElements(html);
+      }
     }
 
     //actions for everyone
