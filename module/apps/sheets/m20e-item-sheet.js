@@ -60,6 +60,7 @@ export default class M20eItemSheet extends ItemSheet {
     const itemData = sheetData.data; 
     sheetData.data = itemData.data; //shorthand for convenience to avoid 'data.data' all the time
     
+    
     sheetData.showEffectField = !this.item.isOwned || this.item.effects.size;
     sheetData.hasEffect = this.item.effects.size;
 
@@ -75,7 +76,8 @@ export default class M20eItemSheet extends ItemSheet {
   /** @override */
   activateListeners(html) {
     //disable buttons/inputs given their 'protection status'
-    if ( this.item.data.isProtectedType && !game.user.isGM ) {
+    const isProtected = this.item.data.isProtectedType && this.actor.data.data.creationDone;
+    if ( isProtected && !game.user.isGM ) {
       this._protectElements(html);
     }
 

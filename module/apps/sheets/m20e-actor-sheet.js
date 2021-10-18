@@ -107,7 +107,7 @@ export default class M20eActorSheet extends ActorSheet {
     //gear & other possessions
     sheetData.items.equipables = sheetData.items.filter((itemData) => itemData.data.isEquipable === true);
     sheetData.items.miscs = sheetData.items.filter((itemData) => ( itemData.type === 'misc' && itemData.data.isEquipable === false ));
-    //todo : sort equipables according to type and isEquiped ?
+    //todo : sort equipables according to type and isEquipped ?
     //todo : sort misc according to isConsumable ?
 
     //other usefull data

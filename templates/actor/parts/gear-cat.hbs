@@ -1,7 +1,7 @@
 <section class="category equipables" data-category="equipables">
   {{!-- gear --}}
   {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="equipables" lock = locks.equipables addButton =
-  true}}
+  false}}
   <p>⚠ Under Heavy Construction ⚠</p>
   <div class="grid one-col">
     {{#each items.equipables as |equipable key|}}
@@ -38,8 +38,8 @@
               </div>
             </div>
             {{/if}}
-            <a class="mini-button" data-update-path="data.equiped" data-action="check"
-              title="{{localize 'M20E.hints.toggleEquiped'}}" checked="{{equipable.data.equiped}}"><i
+            <a class="mini-button" data-update-path="data.equipped" data-action="check"
+              title="{{localize 'M20E.hints.toggleEquipped'}}" checked="{{equipable.data.equipped}}"><i
                 class="fas fa-check"></i></a>
           </div>
         </div>

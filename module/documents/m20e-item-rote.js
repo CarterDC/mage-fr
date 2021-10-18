@@ -41,6 +41,10 @@ export default class M20eRoteItem extends M20eRollableItem {
     }
   }
 
+  _isActuallyRollable(actor) {
+    return this.data.data.throws[0].isAbleToThrow(actor);
+  }
+
   //get that's displayed on the actorsheet
   getMiniFlavor() {
     if ( !this.actor ) { return null; }

@@ -206,7 +206,7 @@ export default class M20eActor extends Actor {
   /* -------------------------------------------- */
 
   /**
-   * Disables effect if it originates from an equipable item that's not equiped.
+   * Disables effect if it originates from an equipable item that's not equipped.
    * @param  {ActiveEffect} effect
    */
   manageLinkedEffect(effect) {
@@ -216,7 +216,7 @@ export default class M20eActor extends Actor {
     const item = this.items.get(origins[3])
     if ( !item ) { return; }
 
-    if ( item.isUnequiped ) {//only works on equipable items
+    if ( item.isUnequipped ) {//only works on equipable items
       effect.data.disabled = true;
     }
   }
@@ -727,7 +727,7 @@ export default class M20eActor extends Actor {
       name: game.i18n.localize(`M20E.${path}`),
       displayName: this.getLexiconEntry(path),
       value: this._getStat(path, 'value'),
-      specialty: foundry.utils.getProperty(this.data.data, `${path}.specialty`)
+      specialty: foundry.utils.getProperty(this.data.data, `${path}.specialty`) ?? null
     };
   }
 }

@@ -3,7 +3,7 @@
     {{> "systems/mage-fr/templates/actor/parts/cat-banner.hbs" category="contacts" lock = locks.contacts addButton = true}}
     <div class="grid two-col">
         {{#each items.contacts as |contact key|}}
-        <div class="trait contact ctx" data-path="contacts.{{m20e-sanitize contact.name}}" data-item-id="{{contact._id}}" data-active= "false"> 
+        <div class="trait contact ctx" data-path="contacts.{{m20e-sanitize contact.name}}" data-item-id="{{contact._id}}" data-highlighted= "{{contact.data.isHighlighted}}"> 
             <div class="vertical-wrapper">
                 <div class="horizontal-wrapper">
                     <a class="stat-label drag-ready tooltip" data-item-id="{{contact._id}}">
