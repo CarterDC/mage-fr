@@ -98,6 +98,7 @@ export const M20E = {
   },
   defaultImg: {
     ability: "systems/mage-fr/assets/icons/auto-repair.svg",
+    armor: "systems/mage-fr/assets/icons/kevlar-vest.svg",
     paradigm: "systems/mage-fr/assets/icons/abstract-013.svg",
     merit: "icons/svg/upgrade.svg",
     flaw: "icons/svg/downgrade.svg",
@@ -195,6 +196,7 @@ export const M20E = {
   },
   traitToCat: {
     ability: "abilities",
+    armor: "armors",
     background: "backgrounds",
     contact: "contacts",
     talent: "talents",

@@ -228,7 +228,11 @@ export class M20eRoll extends Roll {
       this.options?.data.throwMode & CONFIG.M20E.THROWMODE.RESULT_CRITICAL : true;
 
     //determine if crit failure based on diceTotal and not roll total !
-    return isCritAble && diceTotal < 0;
+    return isCritAble && diceTotal < 0 && !this.hasAnySuccess;
+  }
+
+  get hasAnySuccess() {
+    return this.dice.some( die => (die.results.some( result => result.success )));
   }
 
   /**

@@ -5,6 +5,7 @@
   "ITEM.TypeAbility": "Ability",
   "ITEM.TypeActiveeffect": "Active Effect",
   "ITEM.TypeActiveeffectAlt": "Active<br>Effect",
+  "ITEM.TypeArmor": "Armor",
   "ITEM.TypeBackground": "Background",
   "ITEM.TypeContact": "Contact",
   "ITEM.TypeEvent": "Chronicle Event",
@@ -41,7 +42,7 @@
       "demeanor": "Demeanor",
       "awakeningAge": "Awakening<br>age",
       "birthday": "Birthday",
-      "cabale": "Cabala",
+      "cabale": "Cabal",
       "essence": "Essence",
       "faction": "Faction",
       "gender": "Gender",
@@ -68,6 +69,7 @@
     },
     "category": {
       "abilities": "Ability",
+      "armors": "Armors",
       "aeffects": "Active Effect",
       "attributes": "Attribute",
       "backgrounds": "Background",
@@ -87,7 +89,7 @@
       "addXP": "Add some XP.",
       "castEffect": "Cast Effect.",
       "editAliases" : "Edit list of Aliases.",
-      "editHealthMalus": "Edit Health Maluses.",
+      "editHealthMalus": "Edit Health Penalty.",
       "editHealthMax": "Edit Max Health.",
       "editParadigm": "Edit Paradigm.",
       "editTrait": "Edit this Trait.",
@@ -299,7 +301,7 @@
         "book": "MTA-20e.",
         "page": "p 279",
         "title": "Skills",
-        "content": "<p>Skills are the result of rigorous training, diligent practice, and the application of proven techniques.</p><p>🛈 'Untrained' Skill rolls usually have Difficulty malus of 1.</p>",
+        "content": "<p>Skills are the result of rigorous training, diligent practice, and the application of proven techniques.</p><p>🛈 'Untrained' Skill rolls usually have Difficulty penalty of 1.</p>",
         "levels": {
           "level0": {
             "bullets": "🞫",
@@ -430,7 +432,7 @@
       "switch": "Switch",
       "systemDescription": "Should be edited in HTML mode in order to see the tags",
       "systemName": "Used as a reference, only editable by a GM",
-      "difficulty": "Bonuses and maluses shouldn't exceed -3/+3, otherwise one should adjust the success threshold",
+      "difficulty": "Bonuses and Penalties shouldn't exceed -3/+3, otherwise one should adjust the success threshold",
       "difficultyCue": {
         "coincidental": "Coincidental effect",
         "vulgar": "Vulgar effect",
@@ -461,6 +463,7 @@
       }
     },
     "labels": {
+      "absorbtion": "Absorption",
       "aeDisabled": "Disabled",
       "aeEnabled": "Enabled",
       "carriedStuff": "Carried Stuff",
@@ -474,6 +477,7 @@
       "damage": "Damage",
       "date": "Date",
       "descSuffix": "Description suffix",
+      "dextPenalty": "Dexterity Penalty",
       "dicePool": "Dice Pool",
       "dicePoolMod": "Pool modifier",
       "diff": "Diff.",
@@ -618,6 +622,7 @@
       "packNotFound": "Compendium '{packName}' wasn't found!",
       "restrictedItem": "{actorName} cannot use {itemType}-type Items!",
       "statLocked": "You cannot change Traits for this throw!",
+      "unequipped": "This item is not equipped",
       "unrollableRote": "{actorName} doesn't have the necessary sphere level in order to throw {itemName} !"
     },
     "placeholders": {
@@ -752,9 +757,9 @@
   "SETTINGS.specialtyRule": "Specialty Throws.",
   "SETTINGS.specialtyRuleHint": "Rolling a 10 grants an extra success when throwing a Specialty.",
   "SETTINGS.untrainedMalus": "Untrained abilities Penalty.",
-  "SETTINGS.untrainedMalusHint": "Malus to the Difficulty : First digit for Talents, second for Skills and last one for Knowledges. ('X' indicates an unfeasible throw)",
-  "SETTINGS.useHealthMalus": "Health Malus to the Dice Pool.",
-  "SETTINGS.useHealthMalusHint": "Automatically applies the health malus tothe Dice Pool (see : editable list of health maluses in context menu).",
-  "SETTINGS.useHealthMalusForMagic": "Health Malus to Magick.",
-  "SETTINGS.useHealthMalusForMagicHint": "Also applies the health malus to the dice pool when throwing magick effects."
+  "SETTINGS.untrainedMalusHint": "Penalty to the Difficulty : First digit for Talents, second for Skills and last one for Knowledges. ('X' indicates an unfeasible throw)",
+  "SETTINGS.useHealthMalus": "Health Penalty to the Dice Pool.",
+  "SETTINGS.useHealthMalusHint": "Automatically applies the health penalty to the Dice Pool (see : editable list of health penalty in context menu).",
+  "SETTINGS.useHealthMalusForMagic": "Health Penalty to Magick.",
+  "SETTINGS.useHealthMalusForMagicHint": "Also applies the health penalty to the dice pool when throwing magick effects."
 }

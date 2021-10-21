@@ -81,12 +81,12 @@ export default class M20eItemSheet extends ItemSheet {
         this._protectElements(html);
       }
     }
-
     //actions for everyone
 
     //editable only (roughly equals 'isOwner')
     if ( this.options.editable ) {
       html.find('.mini-button').click(this._onMiniButtonClick.bind(this));
+      html.find('#dextPenalty').change(this._onDextPenaltyChange.bind(this));
       html.find('select.inline-edit').change(this._onSubtypeChange.bind(this));
     }
     if ( game.user.isGM ) {
@@ -223,5 +223,41 @@ export default class M20eItemSheet extends ItemSheet {
     let updateObj = {['img']: newImg};
     updateObj['data.subType'] = newSubType;
     return this.item.update(updateObj);
+  }
+
+  async _onDextPenaltyChange(event) {
+    const inputElem = event.currentTarget;
+    if ( ! utils.isValidUpdate(inputElem) ) {
+      event.preventDefault();
+      return this.render();
+    }
+    const newPenaltyValue = parseInt(inputElem.value);
+
+    const effectId = Array.from(this.item.effects.keys())[0];
+    if ( newPenaltyValue ) {
+      let armorEffect;
+      if ( effectId ) {
+        //already an effet => update it
+        armorEffect = this.item.effects.get(effectId);
+        const changes = duplicate(armorEffect.data.changes);
+        changes[0].value = -1 * newPenaltyValue;
+        return await armorEffect.update({'changes': changes});
+      } else {
+        const effectData = {
+          label: game.i18n.format('M20E.effectName', {name: this.item.data.name}),
+          icon: CONFIG.M20E.defaultImg['ActiveEffect'],
+          origin: 'added-manually',
+          tint: '#000000',
+          changes: [{
+            key: "stats.attributes.dext.value",
+            mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+             value:  -1 * newPenaltyValue
+          }]
+        };
+        this.item.createEmbeddedDocuments('ActiveEffect', [effectData]);
+      }
+    } else {
+      this.item.deleteEmbeddedDocuments('ActiveEffect', [effectId]);
+    }
   }
 }

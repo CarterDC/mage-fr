@@ -128,16 +128,43 @@ export default class M20eItem extends Item {
   /** @override */
   prepareData() {
     super.prepareData();
-    this.data.data.path = this.getPath();
+    const itemData = this.data;
+
+    itemData.data.path = this.getPath();
+
     //check if item type is amongst protected types
     const protectedTypes = CONFIG.M20E.protectedCategories.reduce((acc, cur) => {
       const itemType = CONFIG.M20E.categoryToType[cur]
       return itemType ? [...acc, itemType] : acc;
     }, []);
-    this.data.isProtectedType = protectedTypes.includes(this.type);
+    itemData.isProtectedType = protectedTypes.includes(itemData.type);
     //create restricted array from string
-    if ( this.data.data.restrictions ) {
-      this.data.data.restricted = this.data.data.restrictions.split(',').map( entry => entry.trim());
+    if ( itemData.data.restrictions ) {
+      itemData.data.restricted = itemData.data.restrictions.split(',').map(entry => entry.trim());
+    }
+
+    //deal with armor types
+    if ( itemData.type === 'armor' ) {
+      //check for effect
+      const armorEffect = this.effects.get(Array.from(this.effects.keys())[0]);
+      if ( armorEffect ) {
+        itemData.data.dextPenalty = -1* armorEffect.data.changes[0].value;
+      } else {
+        itemData.data.dextPenalty = 0;
+      }
+    }
+
+  }
+
+  /* -------------------------------------------- */
+
+  //get that's displayed on the actorsheet
+  getMiniFlavor() {
+    const itemData = this.data;
+    let miniFlavor = '';
+    if ( itemData.type === 'armor' ) {//todo maybe make armor types their own class ?
+      miniFlavor = `${game.i18n.localize("M20E.labels.absorbtion")} : ${itemData.data.value}D`;
+      return miniFlavor;
     }
   }
 
@@ -184,6 +211,7 @@ export default class M20eItem extends Item {
    */
   getExtendedTraitData(path) {
     const itemData = this.data;
+    if ( this.isUnequipped ) { throw {msg: 'unequipped'}}
     return {
       name: itemData.name,
       displayName: itemData.data.displayName ?? null,
@@ -210,7 +238,8 @@ export default class M20eItem extends Item {
    * Implemented in subClasses
    */
   _prepareOwnedItem() {
-    //to be overridden
+    //to be overridde
+    this.data.data.miniFlavor = this.getMiniFlavor();
   }
 
   /* -------------------------------------------- */
@@ -224,7 +253,7 @@ export default class M20eItem extends Item {
   linkInChat() {
     const itemData = this.data;
 
-    if ( !this.isStat ) {
+    if (!this.isStat) {
       ui.notifications.warn(game.i18n.localize('M20E.notifications.notImplemented'));
       return;
     }

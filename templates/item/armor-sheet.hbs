@@ -1,0 +1,38 @@
+<form class="{{cssClass}}" autocomplete="off" spellcheck="false"> 
+  {{> "systems/mage-fr/templates/item/parts/header-block.hbs" useDisplayName=false itemImg = item.data.img itemType = "ITEM.TypeArmor"}}
+
+  {{> "systems/mage-fr/templates/item/parts/nav-block.hbs" secondTab='none'}}
+
+  <section class="sheet-body">
+      <section class="tab" data-group="primary" data-tab="detail">
+          <div class="grid two-col">
+              <div class= "field">
+                  <label>{{localize "M20E.labels.absorbtion"}} : </label>
+                  <input name="data.value" type="text" value="{{data.value}}" data-dtype="Number" min="0" max="10"/>
+              </div>
+              <div class= "field">
+                  <label>{{localize "M20E.labels.dextPenalty"}} : </label>
+                  <input id="dextPenalty" type="text" value="{{data.dextPenalty}}" data-dtype="Number" min="0" max="10" {{m20e-disabled item.isOwned}}/>
+              </div>
+              {{#if item.isOwned}}
+              <div class= "field">
+                  <label>{{localize "M20E.labels.equipped"}} : </label>
+                  <input name="data.equipped" type="checkbox" {{checked data.equipped}} data-dtype="Boolean"/>
+              </div>
+              {{/if}}
+              {{#if isGM}}
+              {{#if hasEffect}}
+              <div class= "field" title="{{localize 'M20E.hints.itemEffect'}}">
+                  <label>{{localize "M20E.labels.itemEffect"}} : </label><br>
+                  <a class="mini-button" data-action="edit" title = "{{localize 'M20E.hints.edit'}}"><i class="fas fa-pencil-alt"></i></a>
+              </div>
+              {{/if}}
+              {{/if}}
+          </div>
+          <div class= "field" title="{{localize 'M20E.hints.displayDescription'}}">
+              <label>{{localize "M20E.labels.displayDescription"}} : </label>
+<textarea name="data.displayDescription">{{data.displayDescription}}</textarea>
+          </div>
+      </section>
+  </section>
+</form>

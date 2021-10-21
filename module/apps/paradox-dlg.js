@@ -37,7 +37,7 @@ export default class ParadoxDialog extends Application {
     this.data.magickType = MAGICK_TYPE_COINCIDENTAL;
     this.data.termResult = this.data.termTotal === 0 ? 'fail' : 
         (this.data.termTotal > 0 ? 'succ' :
-        (this.roll.options.data.throwMode & M20E.THROWMODE.RESULT_CRITICAL ? 'crit' : 'fail'));
+        (this.roll.isCritFailure() ? 'crit' : 'fail'));
     this.calculateParadoxGain();
   }
 
