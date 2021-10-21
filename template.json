@@ -389,6 +389,7 @@
   "Item": {
     "types": [
       "ability",
+      "armor",
       "background",
       "contact",
       "event",
@@ -433,6 +434,15 @@
       "systemDescription": "",
       "displayDescription":"",
       "extra": ""
+    },
+    "armor": {
+      "templates":[
+        "stat",
+        "restrictions",
+        "active",
+        "equipable"
+      ],
+      "displayDescription":""
     },
     "background":{
       "templates":[

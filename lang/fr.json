@@ -5,6 +5,7 @@
   "ITEM.TypeAbility": "Capacité",
   "ITEM.TypeActiveeffect": "Active Effect",
   "ITEM.TypeActiveeffectAlt": "Active<br>Effect",
+  "ITEM.TypeArmor": "Armure",
   "ITEM.TypeBackground": "Historique",
   "ITEM.TypeContact": "Contact",
   "ITEM.TypeEvent": "Évènement de Chronique",
@@ -67,6 +68,7 @@
     },
     "category": {
       "abilities": "Capacité",
+      "armors": "Armures",
       "aeffects": "Active Effect",
       "attributes": "Attribut",
       "backgrounds": "Historique",
@@ -460,6 +462,7 @@
       }
     },
     "labels": {
+      "absorbtion": "Absorption",
       "aeDisabled": "Désactivé",
       "aeEnabled": "Actif",
       "carriedStuff": "Équipement porté",
@@ -473,6 +476,7 @@
       "damage": "Dégâts",
       "date": "Date",
       "descSuffix": "Suffixe de description",
+      "dextPenalty": "Malus à la Dext",
       "dicePool": "Grpt. de Dés",
       "dicePoolMod": "Modificateur au Grpt.",
       "diff": "Diff.",
@@ -617,6 +621,7 @@
       "packNotFound": "Le compendium '{packName}' n'est pas trouvable !",
       "restrictedItem": "{actorName} ne peut as utiliser les items de type {itemType} !",
       "statLocked": "Vous ne pouvez pas changer les Traits de ce jet !",
+      "unequipped": "Cet item n'est pas équipé",
       "unrollableRote": "{actorName} n'a pas le(s) niveau(x) de sphère nécessaire(s) pour lancer la routine {itemName} !"
     },
     "placeholders": {

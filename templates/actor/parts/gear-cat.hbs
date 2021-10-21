@@ -5,7 +5,7 @@
   <p>⚠ Under Heavy Construction ⚠</p>
   <div class="grid one-col">
     {{#each items.equipables as |equipable key|}}
-    <div class="trait equipable item" data-item-id="{{equipable._id}}" data-rollable="{{equipable.data.isRollable}}">
+    <div class="trait equipable item" data-path="{{equipable.data.path}}" data-item-id="{{equipable._id}}" data-rollable="{{equipable.data.isRollable}}" data-highlighted= "{{equipable.data.isHighlighted}}">
       <div class="item-img"
         style="background-image: url({{equipable.img}}), radial-gradient(rgba(130,81,20,0.4), rgba(0,0,0,0));">
         {{#if equipable.data.hasThrows}}
@@ -14,9 +14,15 @@
       </div>
       <div class="vertical-wrapper" data-rollable="{{equipable.data.isRollable}}">
         <div class="horizontal-wrapper">
+          {{#if equipable.data.isStat}}
+          <a class="stat-label" data-item-id="{{equipable._id}}">
+            {{equipable.name}}
+          </a>
+          {{else}}
           <label class="trait-label" data-item-id="{{equipable._id}}">
             {{equipable.name}}
           </label>
+          {{/if}}
           <div class="ligne"></div>
           <div class="edit-bar" data-locked="{{../locks.equipables}}">
             <a class="mini-button" data-action="edit"><i class="fas fa-pencil-alt"></i></a>

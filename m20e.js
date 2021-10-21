@@ -50,6 +50,7 @@ Hooks.once('init', async function () {
   game.m20e = { //store some things here for later access
     config: M20E,
     mageMacro: DiceThrower.fromMacro,
+    sysDesc: utils.getSystemDescription,
     socketCallbacks: {
       sacrificeWillpower: (messageId) => chat.sacrificeWillpower(messageId)
     }
@@ -88,7 +89,7 @@ Hooks.once('init', async function () {
   //Item Sheets overrides
   Items.unregisterSheet('core', ItemSheet);
   Items.registerSheet('m20e', M20eItemSheet, {
-    types: ["ability", "background", "meritflaw", "event", "misc", "contact"], //todo , add all the other base item types
+    types: ["ability", "background", "meritflaw", "event", "misc", "contact", "armor"], 
     makeDefault: true
   });
   Items.registerSheet("m20e", M20eParadigmSheet, {
