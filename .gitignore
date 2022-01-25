@@ -10,3 +10,4 @@ mage-fr.lock
 workspace.code-workspace
 # original photoshop files
 *.psd
+.idea
