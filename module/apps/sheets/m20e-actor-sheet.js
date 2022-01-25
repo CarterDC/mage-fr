@@ -272,8 +272,17 @@ export default class M20eActorSheet extends ActorSheet {
   */
    _onStatLabelClick(event) {
     event.preventDefault();
-    const statElem = event.currentTarget.closest(".trait");
 
+    const statElem = event.currentTarget.closest(".trait");
+    if(event.ctrlKey) {
+        const trait = Trait.fromElement(statElem);
+        if ( trait.itemId ) {
+            this._editEmbedded(trait);
+        } else {
+            this._editTrait(trait);
+        }
+        return;
+    }
     if ( statElem.dataset.highlighted == 'true' ) {
       this.actor.diceThrower.removeStatByPath(statElem.dataset.path);
     } else {

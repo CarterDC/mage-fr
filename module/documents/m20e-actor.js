@@ -1,4 +1,4 @@
-// Import Helpers
+8// Import Helpers
 import * as utils from '../utils.js'
 import { log } from "../utils.js";
 import { M20E } from '../config.js'
@@ -9,16 +9,16 @@ import DiceThrower from '../dice-thrower.js'
 /**
  * The base actor class for the mage System, extends Foundry's Actor.
  * Natively used by NPC sleepers, and extended by every other actor types.
- * 
+ *
  * Implements a custom constructor in order to allow for inheritance of actor classes (not natively possible).
- * Also adds, extends and overrides a number of functions specific to the system (obviously). 
- * 
+ * Also adds, extends and overrides a number of functions specific to the system (obviously).
+ *
  * Notes : during preparation, usefull items values are duplicated in the actor's data.traits object.
  * usefull actor traits and derived data (attributes, willpower, initiative, etc) are also duplicated in data.traits.
  * So that every rollable value (and associated data) stands in one place with one common accessible structure.
- * 
+ *
  * ActiveEffects are applied to theses duplicates and not the original values.
- * 
+ *
  * @extends {Actor}
  */
 export default class M20eActor extends Actor {
@@ -56,7 +56,7 @@ export default class M20eActor extends Actor {
     this.data.stats = {};
     this._prepareActorStats();
     this._prepareItemsStats();
-    this._prepareResources(); 
+    this._prepareResources();
   }
 
   /* -------------------------------------------- */
@@ -84,7 +84,7 @@ export default class M20eActor extends Actor {
   /* -------------------------------------------- */
 
   /**
-   * populates the actor's stats object with path and statData from 'stat' items 
+   * populates the actor's stats object with path and statData from 'stat' items
    */
   _prepareItemsStats() {
     const actorData = this.data;
@@ -111,32 +111,32 @@ export default class M20eActor extends Actor {
    * also computes secondary health stats 'status' and 'malus',
    * according to health values and the list of maluses.
    */
-   _prepareResources() {
+  _prepareResources() {
     const WT = CONFIG.M20E.WOUNDTYPE;
     const actorData = this.data;
-    
+
     //create willpower property with {value, max} pair
     const willpower = actorData.data.resources.willpower;
     foundry.utils.setProperty(actorData.data,
         game.i18n.localize('M20E.resources.willpower'), {
-        value: willpower.max - willpower[WT.BASHING],
-        max: willpower.max
-    });
+          value: willpower.max - willpower[WT.BASHING],
+          max: willpower.max
+        });
     //Add willpower to the secondary stats
     const willpowerMax = this.data.data.resources.willpower.max;
     this._setStat('secondary.willpower', {value: willpowerMax});
     if ( !foundry.utils.hasProperty(CONFIG.M20E.stats, 'secondary.willpower') ) {
       foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
     }
-    
-    
+
+
     //create health property with {value, max} pair
     const health = actorData.data.resources.health;
     foundry.utils.setProperty(actorData.data,
-      game.i18n.localize('M20E.resources.health'), {
-        value: health.max - health[WT.BASHING],
-        max: health.max
-    });
+        game.i18n.localize('M20E.resources.health'), {
+          value: health.max - health[WT.BASHING],
+          max: health.max
+        });
     //prepare an array of integers from the comma separated string
     const maluses = health.malusList.split(',').map(v => (parseInt(v)));
     //create derived data for health resource, to be displayed and used later
@@ -150,7 +150,7 @@ export default class M20eActor extends Actor {
    * Called by prepareEmbeddedEntities() during the second phase of data preparation
    * mostly vanilla function
    * adds a _sourceValue to properties that are gonna be changed by the data override
-   * 
+   *
    * @override
    */
   applyActiveEffects() {
@@ -175,11 +175,11 @@ export default class M20eActor extends Actor {
       const sourceValue = foundry.utils.getProperty(this.data, change.key);
       const result = change.effect.apply(this, change);
       if ( result !== null ) {
-        
+
         //Mage-Fr specific
         const path = change.key.match(/(?<=stats\.)(.+)(?=\.)/g);
         if ( path ) {
-          //only for AE on the stats array          
+          //only for AE on the stats array
           if ( !foundry.utils.hasProperty(this.data.stats, `${path}._sourceValue`) ) {
             //don't set sourceValue if it has already been set before
             foundry.utils.setProperty(this.data.stats, `${path}._sourceValue`, sourceValue);
@@ -212,7 +212,7 @@ export default class M20eActor extends Actor {
   manageLinkedEffect(effect) {
     const origins = effect.data.origin.split('.');
     if ( origins[2] !== 'Item' ) { return; }
-    //origin is obviously a uuid for an owned item 
+    //origin is obviously a uuid for an owned item
     const item = this.items.get(origins[3])
     if ( !item ) { return; }
 
@@ -231,13 +231,13 @@ export default class M20eActor extends Actor {
   prepareDerivedData() {
     super.prepareDerivedData();
 
-   /*//todo : decide if willpower can be overridden before or after ?
-   const willpowerMax = this.data.data.resources.willpower.max;
-   this._setStat('secondary.willpower', {value: willpowerMax});
-   foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
-   */
+    /*//todo : decide if willpower can be overridden before or after ?
+    const willpowerMax = this.data.data.resources.willpower.max;
+    this._setStat('secondary.willpower', {value: willpowerMax});
+    foundry.utils.setProperty(CONFIG.M20E.stats, 'secondary.willpower', game.i18n.localize('M20E.secondary.willpower'));
+    */
 
-   //add init to secondary stats
+    //add init to secondary stats
     const dext = this._getStat('attributes.dext','value');
     const wits = this._getStat('attributes.wits','value');
     this._setStat('secondary.initiative', {value: dext + wits});
@@ -279,14 +279,14 @@ export default class M20eActor extends Actor {
   /* -------------------------------------------- */
 
   /**
-   * Added base abilities compendium support to vanilla function 
+   * Added base abilities compendium support to vanilla function
    * @override
    */
-   static async createDialog(data={}, options={}) {
+  static async createDialog(data={}, options={}) {
 
     // Collect data
     const documentName = this.metadata.name;
-    const types = game.system.entityTypes[documentName];
+    const types = game.system.documentTypes[documentName];
     const folders = game.folders.filter(f => (f.data.type === documentName) && f.displayed);
     const label = game.i18n.localize(this.metadata.label);
     const title = game.i18n.localize('M20E.new.createActor');
@@ -295,7 +295,7 @@ export default class M20eActor extends Actor {
     //todo : change entity for type come v9
     const baseAbilitiesPacks = [...game.packs.entries()].reduce((acc, [key, value]) => {
       return ( value.metadata.entity === 'Item' && value.metadata.name.includes('base-abilities') ) ?
-       [...acc, {id: key, name: value.metadata.label}] : acc;
+          [...acc, {id: key, name: value.metadata.label}] : acc;
     }, []);
 
     // Render the entity creation form
@@ -341,7 +341,7 @@ export default class M20eActor extends Actor {
    * Adds base options/items to the actor (only if created from scratch !)
    *  @override
    */
-   async _preCreate(data, options, user) {
+  async _preCreate(data, options, user) {
     await super._preCreate(data, options, user);
     const actorData = this.data;
 
@@ -376,13 +376,13 @@ export default class M20eActor extends Actor {
    * also sorts abilities alphabetically and adds values to the `sort`property
    * @return {Array} alpha sorted array of item data
    */
-   async _getBaseAbilities(fullPackName) {
+  async _getBaseAbilities(fullPackName) {
     //try and get the pack from given packname
     const pack = game.packs.get(fullPackName);
-    const baseAbilities = pack ? 
-      await this._getAbilitiesFromPack(pack) :
-      await this._getDefaultAbilities();
-    
+    const baseAbilities = pack ?
+        await this._getAbilitiesFromPack(pack) :
+        await this._getDefaultAbilities();
+
     //alpha sort the abilities now that they're localized
     baseAbilities.sort(utils.alphaSort());
     //defines the sort property so that later user-added abilities will display on top
@@ -395,31 +395,31 @@ export default class M20eActor extends Actor {
   /* -------------------------------------------- */
 
   /**
-   * 
-   * Gets base abilities from a valid pack 
+   *
+   * Gets base abilities from a valid pack
    * maps them to itemData objects (mostly for uniformity with _getDefaultAbilities())
    * @param  {CompendiumCollection} pack a valid base.abilities CompendiumCollection
    * @return {Array} an array of item data objects
-  */
+   */
   async _getAbilitiesFromPack(pack) {
     return await pack.getDocuments()
-      .then(myDocs => {
-        //return myDocs.map(packItem => packItem.data.toObject());
-        return myDocs.map(packItem => {
-          return {
-            type: 'ability',
-            img: 'systems/mage-fr/assets/icons/auto-repair.svg',
-            name: packItem.name,
-            data: packItem.data.data
-          };
+        .then(myDocs => {
+          //return myDocs.map(packItem => packItem.data.toObject());
+          return myDocs.map(packItem => {
+            return {
+              type: 'ability',
+              img: 'systems/mage-fr/assets/icons/auto-repair.svg',
+              name: packItem.name,
+              data: packItem.data.data
+            };
+          });
         });
-      });
   }
 
   /* -------------------------------------------- */
 
   /**
-   * Gets base abilities from config + localization 
+   * Gets base abilities from config + localization
    * get subType description from html template + localization file
    * @return {Array} an array of item data objects
    */
@@ -433,17 +433,17 @@ export default class M20eActor extends Actor {
 
     //prepare default abilities from config object that's the form {abilityKey: abilitySubtype}
     return Object.entries(CONFIG.M20E.defaultAbilities)
-      .map(([key, value]) => {
-        return {
-          type: 'ability',
-          img: 'systems/mage-fr/assets/icons/auto-repair.svg',
-          name: game.i18n.localize(`M20E.defaultAbilities.${key}`),
-          data: {
-            subType: value,
-            systemDescription: defaultDescriptions[value]
-          }
-        };
-    });
+        .map(([key, value]) => {
+          return {
+            type: 'ability',
+            img: 'systems/mage-fr/assets/icons/auto-repair.svg',
+            name: game.i18n.localize(`M20E.defaultAbilities.${key}`),
+            data: {
+              subType: value,
+              systemDescription: defaultDescriptions[value]
+            }
+          };
+        });
   }
 
   /* -------------------------------------------- */
@@ -543,8 +543,8 @@ export default class M20eActor extends Actor {
    * Get the user overridden translation for the specific path in the translation file
    * Ask the paradigm item for that specific lexicon entry
    * Mostly called by the locadigm HB helper
-   * 
-   * @return {String|undefined} the text the user chose for this translation path 
+   *
+   * @return {String|undefined} the text the user chose for this translation path
    */
   getLexiconEntry(relativePath) {
     const paraItem = this.paradigm;
@@ -572,7 +572,7 @@ export default class M20eActor extends Actor {
 
   /* -------------------------------------------- */
 
-  /** 
+  /**
    * 'Safe' update as in
    * todo : do better !
    * "if value is a number, parseInt it just to be on the 'safe' side"
@@ -590,15 +590,15 @@ export default class M20eActor extends Actor {
    * Adds the amount amount of wounds of type woundType to the resource resourceName
    * Has a built in overflow to apply remaining wounds to the directly above woundtype.
    * Todo : maybe check if actor is unconscious or dead and put relevant AE or message ?
-  */
+   */
   async wound(resourceName, amount, woundType = M20E.WOUNDTYPE.BASHING) {
 
     //recursively add wounds to higher woundTypes in case of overflow
     const overflow = (rez, amount, woundType, updateObj={}) => {
       const remainder = Math.max(amount - (rez.max - rez[woundType]), 0);
       updateObj[`data.resources.${resourceName}.${woundType}`] = Math.min(rez.max, rez[woundType] + amount);
-      return ( remainder &&  woundType < M20E.WOUNDTYPE.AGGRAVATED ) ? 
-        overflow(rez, remainder, woundType + 1, updateObj) : updateObj;
+      return ( remainder &&  woundType < M20E.WOUNDTYPE.AGGRAVATED ) ?
+          overflow(rez, remainder, woundType + 1, updateObj) : updateObj;
     }
     //recursively standardize lower woundTypes values to the highest value if needed
     const standardize = (rez, updateObj, woundType) => {
@@ -632,8 +632,8 @@ export default class M20eActor extends Actor {
       updateObj[`data.resources.${resourceName}.${woundType}`] = newValue;
       //calculate remainder based on the actual healed value for this wountType
       const remainder = Math.max(amount - (rez[woundType] - newValue), 0);
-      return ( remainder &&  woundType > M20E.WOUNDTYPE.BASHING ) ? 
-        overflow(rez, remainder, woundType - 1, newValue, updateObj) : updateObj;
+      return ( remainder &&  woundType > M20E.WOUNDTYPE.BASHING ) ?
+          overflow(rez, remainder, woundType - 1, newValue, updateObj) : updateObj;
     }
 
     //create & populate the updateObj
@@ -678,7 +678,7 @@ export default class M20eActor extends Actor {
       case 2: //classic (or not) 2 traits
         const throwTrait = traits.map(trait => {
           return trait.useSpec ? `${trait.name}(S)` :
-            ( trait.value === 0 ? `<span class= "red-thingy">${trait.name}</span>` : trait.name) ;
+              ( trait.value === 0 ? `<span class= "red-thingy">${trait.name}</span>` : trait.name) ;
         }).join(' + ');
         return `${game.i18n.format("M20E.diceThrows.throwFor", {trait: throwTrait})}.`;
         break;
@@ -709,9 +709,9 @@ export default class M20eActor extends Actor {
   getExtendedStats(stats) {
     return stats.map( trait => {
       const itemId = trait.itemId || this._getStat(trait.path, 'itemId');
-      const xData = itemId ? 
-        this.getItemFromId(itemId).getExtendedTraitData(trait.path) :
-        this.getExtendedTraitData(trait.path);
+      const xData = itemId ?
+          this.getItemFromId(itemId).getExtendedTraitData(trait.path) :
+          this.getExtendedTraitData(trait.path);
       return new Trait({
         path: trait.path,
         itemId: itemId,
