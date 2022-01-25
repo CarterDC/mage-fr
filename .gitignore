@@ -1,5 +1,6 @@
 # IDE
 .vscode/
+.idea/
 
 # Node Modules
 node_modules/
@@ -10,4 +11,3 @@ mage-fr.lock
 workspace.code-workspace
 # original photoshop files
 *.psd
-.idea
